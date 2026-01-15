@@ -46,11 +46,10 @@ def _as_float(x: Any) -> Optional[float]:
 def _as_str(x: Any) -> Optional[str]:
     return x.strip() if isinstance(x, str) and x.strip() else None
 
-
 def _iter_entry_files(db_dir: Path) -> List[Path]:
     ignore = {
         "index.json",
-        "benchmarks.csv"
+        "benchmarks.csv",
         "manifest.json",
         "entry_content_hashes.json",
         "trusted_index.json",
