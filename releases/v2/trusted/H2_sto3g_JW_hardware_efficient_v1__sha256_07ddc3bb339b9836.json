@@ -147,13 +147,32 @@
   },
   "provenance": {
     "source_schema_version": "v1",
-    "migrated_utc": "2026-01-15T18:16:45Z",
+    "migrated_utc": "2026-01-15T22:22:20Z",
     "entry_hash_sha256": "671aa993e4ede25b767025978e9a54481aa992086dfc4068aabdfbf00770884a",
     "migration": {
       "tool": "migrate_v1_to_v2.py",
       "from_file": "H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836.json",
       "gap_threshold": 0.01
     },
-    "environment": null
+    "environment": {
+      "generated_utc": "2026-01-15T22:22:20Z",
+      "python_version": "3.12.3 (main, Jan  8 2026, 11:30:50) [GCC 13.3.0]",
+      "python_implementation": "CPython",
+      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+      "machine": "x86_64",
+      "processor": "x86_64",
+      "packages": {
+        "numpy": "2.4.0",
+        "scipy": "1.16.3",
+        "qiskit": "2.2.3",
+        "qiskit-terra": null,
+        "jsonschema": "4.25.1"
+      },
+      "dependency_fingerprint": {
+        "source": "importlib.metadata.distributions",
+        "count": 25,
+        "sha256": "b0b72f8d7c01838c69557eafd1daac3d6057b9cf1dc1c63b45b65e1650aa2d2b"
+      }
+    }
   }
 }

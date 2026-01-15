@@ -147,7 +147,7 @@
   },
   "provenance": {
     "source_schema_version": "v1",
-    "migrated_utc": "2026-01-15T19:09:01Z",
+    "migrated_utc": "2026-01-15T22:22:20Z",
     "entry_hash_sha256": "671aa993e4ede25b767025978e9a54481aa992086dfc4068aabdfbf00770884a",
     "migration": {
       "tool": "migrate_v1_to_v2.py",
@@ -155,7 +155,7 @@
       "gap_threshold": 0.01
     },
     "environment": {
-      "generated_utc": "2026-01-15T19:09:01Z",
+      "generated_utc": "2026-01-15T22:22:20Z",
       "python_version": "3.12.3 (main, Jan  8 2026, 11:30:50) [GCC 13.3.0]",
       "python_implementation": "CPython",
       "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
