@@ -148,7 +148,7 @@
   },
   "provenance": {
     "source_schema_version": "v1",
-    "migrated_utc": "2026-01-15T17:58:26Z",
+    "migrated_utc": "2026-01-15T18:16:45Z",
     "entry_hash_sha256": "b7642199bc9d0e1c3b6188e376d232a4f4d7e6e6f85930cc2eab5f105bfa8e6d",
     "migration": {
       "tool": "migrate_v1_to_v2.py",

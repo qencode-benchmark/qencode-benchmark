@@ -137,8 +137,11 @@
           "additionalProperties": true
         },
         "environment": {
-          "type": ["object", "null"],
-          "additionalProperties": true
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string", "number", "boolean", "null", "object", "array"]
+          }
+         },
         }
       }
     }
