@@ -170,9 +170,11 @@
       "method": "FCI",
       "energy": null,
       "units": "hartree",
-      "hf_energy_hartree": -1.2563390730032498,
+      "hf_energy_hartree": null,
       "hf_energy_units": "hartree_like",
-      "hf_rebuilt": false
+      "hf_rebuilt": false,
+      "hf_energy_hartree_like": null,
+      "note": "HF energy was inconsistent with exact; set to null pending recomputation."
     },
     "tolerance": {
       "abs_energy_error": null
@@ -267,7 +269,9 @@
           }
         ],
         "computed_utc": "2026-01-02T11:29:37Z"
-      }
+      },
+      "previous_hf_energy_hartree": -1.2563390730032498,
+      "previous_hf_energy_hartree_like": null
     }
   },
   "provenance": {
