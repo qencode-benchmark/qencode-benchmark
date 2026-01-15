@@ -1,0 +1,159 @@
+{
+  "schema_version": "2.0.0",
+  "entry_id": "H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836",
+  "created_utc": "2026-01-02T23:33:23Z",
+  "problem": {
+    "name": "H2",
+    "basis": "sto3g",
+    "active_space": {
+      "enabled": false,
+      "num_electrons": null,
+      "num_spatial_orbitals": null
+    }
+  },
+  "encoding": {
+    "mapping": "jordan_wigner"
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 4,
+      "pauli_terms": [
+        {
+          "pauli": "IIII",
+          "coeff": -0.8105479805373275
+        },
+        {
+          "pauli": "IIIZ",
+          "coeff": 0.1721839326191556
+        },
+        {
+          "pauli": "IIZI",
+          "coeff": -0.22575349222402394
+        },
+        {
+          "pauli": "IIZZ",
+          "coeff": 0.12091263261776623
+        },
+        {
+          "pauli": "IZII",
+          "coeff": 0.17218393261915566
+        },
+        {
+          "pauli": "IZIZ",
+          "coeff": 0.16892753870087907
+        },
+        {
+          "pauli": "ZIII",
+          "coeff": -0.22575349222402394
+        },
+        {
+          "pauli": "ZIIZ",
+          "coeff": 0.16614543256382408
+        },
+        {
+          "pauli": "YYYY",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "XXYY",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "YYXX",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "XXXX",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "IZZI",
+          "coeff": 0.16614543256382408
+        },
+        {
+          "pauli": "ZIZI",
+          "coeff": 0.17464343068300453
+        },
+        {
+          "pauli": "ZZII",
+          "coeff": 0.12091263261776623
+        }
+      ]
+    },
+    "circuits": {
+      "hf_qpy_b64": null,
+      "ansatz_template_qpy_b64": "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",
+      "ansatz_includes_hf": null
+    }
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree_like": -1.2445845498133266,
+      "exact_qubit_ground_energy_hartree_like": -1.8572750302023797
+    },
+    "vqe": {
+      "best_energy_hartree_like": -1.8563173079393922,
+      "method": "scipy_cobyla",
+      "chosen_mode": null,
+      "computed_utc": "2026-01-02T23:33:25Z"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 0.0009577222629875148,
+      "flags": [
+        "has_legacy"
+      ],
+      "notes": "Trusted: exact+vqe present and within gap threshold."
+    },
+    "experimental": {
+      "legacy_validation": {
+        "vqe_run": {
+          "method": "statevector_expectation",
+          "optimizer": "scipy_cobyla",
+          "best_energy_hartree_like": -1.857275025697786,
+          "best_parameters": [
+            3.141566881635551,
+            1.86670677247228e-05,
+            1.317074522723894,
+            1.5707886276963976,
+            1.4308776270292907,
+            0.4679619756101099,
+            -2.504843560580954e-05,
+            -3.2132279095560454e-05,
+            0.2235178582552292,
+            -1.4400773559079366e-05,
+            1.8245069533904388,
+            -1.5707984395602075,
+            -0.0004421278766324311,
+            -0.3336523534443768,
+            -0.29759317669654983,
+            0.7508984291920494
+          ],
+          "n_params": 16,
+          "nfev": 805,
+          "nit": 0,
+          "success": true,
+          "message": "Return from COBYLA because the trust region radius reaches its lower bound.",
+          "init": "random",
+          "seed": 123,
+          "maxiter": 1200,
+          "ran_utc": "2026-01-13T10:52:40Z",
+          "multistart": 25,
+          "init_sigma": 0.4
+        }
+      }
+    }
+  },
+  "provenance": {
+    "source_schema_version": "v1",
+    "migrated_utc": "2026-01-15T16:31:25Z",
+    "entry_hash_sha256": "671aa993e4ede25b767025978e9a54481aa992086dfc4068aabdfbf00770884a",
+    "migration": {
+      "tool": "migrate_v1_to_v2.py",
+      "from_file": "H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836.json",
+      "gap_threshold": 0.01
+    },
+    "environment": null
+  }
+}

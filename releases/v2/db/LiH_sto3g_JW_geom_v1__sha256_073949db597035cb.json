@@ -1,0 +1,260 @@
+{
+  "schema_version": "2.0.0",
+  "entry_id": "LiH_sto3g_JW_geom_v1__sha256_073949db597035cb",
+  "created_utc": "2025-12-31T09:05:45Z",
+  "problem": {
+    "name": "LiH",
+    "basis": "sto3g",
+    "active_space": {
+      "enabled": true,
+      "num_electrons": 2,
+      "num_spatial_orbitals": 2
+    }
+  },
+  "encoding": {
+    "mapping": "jordan_wigner"
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 4,
+      "pauli_terms": [
+        {
+          "pauli": "IIII",
+          "coeff": -0.7051449008248349
+        },
+        {
+          "pauli": "IIIZ",
+          "coeff": 0.15592409137654964
+        },
+        {
+          "pauli": "IIZI",
+          "coeff": -0.015039822240409395
+        },
+        {
+          "pauli": "IIZZ",
+          "coeff": 0.05263651530244964
+        },
+        {
+          "pauli": "IZII",
+          "coeff": 0.15592409137654967
+        },
+        {
+          "pauli": "IZIZ",
+          "coeff": 0.12182774168311172
+        },
+        {
+          "pauli": "YYII",
+          "coeff": 0.01401594744373174
+        },
+        {
+          "pauli": "YYIZ",
+          "coeff": 0.012144898067811716
+        },
+        {
+          "pauli": "XXII",
+          "coeff": 0.01401594744373174
+        },
+        {
+          "pauli": "XXIZ",
+          "coeff": 0.012144898067811716
+        },
+        {
+          "pauli": "ZIII",
+          "coeff": -0.015039822240409423
+        },
+        {
+          "pauli": "ZIIZ",
+          "coeff": 0.055902511197650905
+        },
+        {
+          "pauli": "IIYY",
+          "coeff": 0.01401594744373174
+        },
+        {
+          "pauli": "IZYY",
+          "coeff": 0.012144898067811716
+        },
+        {
+          "pauli": "IIXX",
+          "coeff": 0.01401594744373174
+        },
+        {
+          "pauli": "IZXX",
+          "coeff": 0.012144898067811716
+        },
+        {
+          "pauli": "YYYY",
+          "coeff": 0.003265995895201267
+        },
+        {
+          "pauli": "XXYY",
+          "coeff": 0.003265995895201267
+        },
+        {
+          "pauli": "YYXX",
+          "coeff": 0.003265995895201267
+        },
+        {
+          "pauli": "XXXX",
+          "coeff": 0.003265995895201267
+        },
+        {
+          "pauli": "ZIYY",
+          "coeff": -0.0018710430187554522
+        },
+        {
+          "pauli": "ZIXX",
+          "coeff": -0.0018710430187554522
+        },
+        {
+          "pauli": "IZZI",
+          "coeff": 0.055902511197650905
+        },
+        {
+          "pauli": "YYZI",
+          "coeff": -0.0018710430187554522
+        },
+        {
+          "pauli": "XXZI",
+          "coeff": -0.0018710430187554522
+        },
+        {
+          "pauli": "ZIZI",
+          "coeff": 0.08447056786924174
+        },
+        {
+          "pauli": "ZZII",
+          "coeff": 0.05263651530244964
+        }
+      ]
+    },
+    "circuits": {
+      "hf_qpy_b64": null,
+      "ansatz_template_qpy_b64": "UUlTS0lUEAICAwAAAAAAAAABcHEAAAAAAAAAHAAKZgAIAAAABAAAAAAAAAAAAAAAAgAAAAEAAAAAAAAACwAAAABjaXJjdWl0LTQxAAAAAAAAAAB7fXEBAAAABAABAXEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAIAAAAAAAAAAwAAAAAAAAAAAAAAAAAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJZR2F0ZXEAAAAAdgAAAAAAAAAnAAUAAAAAAAAACJbLA4Nx1UlQnFF5dOyepNwAAAAAAAAAAHRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUllHYXRlcQAAAAF2AAAAAAAAACcABQAAAAAAAAAIlssDg3HVSVCcUXl07J6k3QAAAAAAAAABdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWUdhdGVxAAAAAnYAAAAAAAAAJwAFAAAAAAAAAAiWywODcdVJUJxReXTsnqTeAAAAAAAAAAJ0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJZR2F0ZXEAAAADdgAAAAAAAAAnAAUAAAAAAAAACJbLA4Nx1UlQnFF5dOyepN8AAAAAAAAAA3RoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUlpHYXRlcQAAAAB2AAAAAAAAACcABQAAAAAAAAAIlssDg3HVSVCcUXl07J6k4AAAAAAAAAAEdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWkdhdGVxAAAAAXYAAAAAAAAAJwAFAAAAAAAAAAiWywODcdVJUJxReXTsnqThAAAAAAAAAAV0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJaR2F0ZXEAAAACdgAAAAAAAAAnAAUAAAAAAAAACJbLA4Nx1UlQnFF5dOyepOIAAAAAAAAABnRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUlpHYXRlcQAAAAN2AAAAAAAAACcABQAAAAAAAAAIlssDg3HVSVCcUXl07J6k4wAAAAAAAAAHdGhldGEABgAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAFDWEdhdGVxAAAAAHEAAAABAAYAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAEAAAABQ1hHYXRlcQAAAAFxAAAAAgAGAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAUNYR2F0ZXEAAAACcQAAAAMAAAD///////////////8AAAAAAAAAAA==",
+      "ansatz_includes_hf": null
+    }
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree_like": -0.7725817191195236,
+      "exact_qubit_ground_energy_hartree_like": -1.0581165351365407
+    },
+    "vqe": null,
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": false,
+      "abs_vqe_exact_gap": null,
+      "flags": [
+        "missing_vqe",
+        "has_legacy"
+      ],
+      "notes": "Incomplete: missing vqe and/or exact reference."
+    },
+    "experimental": {
+      "legacy_validation": {
+        "vqe_run": {
+          "optimizer": "scipy_cobyla",
+          "maxiter": 800,
+          "estimated_ground_energy": null,
+          "units": "hartree",
+          "best_energy_hartree_like": -1.058106357013542,
+          "method": "statevector_expectation",
+          "imported_from": "vqe_simple_search",
+          "imported_utc": "2026-01-13T10:41:42Z",
+          "best_parameters": [
+            3.1026669503501885,
+            -3.14157617946716,
+            3.153013847840542,
+            -3.141514745056124,
+            3.181213490574762,
+            -1.3465509201462593,
+            3.810652048744172,
+            0.5094342426294118
+          ],
+          "n_params": 8,
+          "nfev": 240,
+          "nit": 0,
+          "success": true,
+          "message": "Return from COBYLA because the trust region radius reaches its lower bound.",
+          "init": "random",
+          "seed": 123,
+          "multistart": 20,
+          "init_sigma": 0.35,
+          "ran_utc": "2026-01-13T11:21:38Z",
+          "hf_mismatch": {
+            "hf_qubits": 8,
+            "ham_qubits": 4
+          },
+          "hf_mode_used": "zeros_on_mismatch",
+          "hf_source_used": "zeros_on_mismatch",
+          "composed_mode": "hf_plus_ansatz"
+        },
+        "vqe_simple_search": {
+          "best_energy": -1.0544460062207839,
+          "units": "hartree",
+          "improvement_vs_hf": 0.2818642871012603,
+          "settings": {
+            "steps": 200,
+            "sigma": 0.2,
+            "seed": 123,
+            "num_params": 8
+          },
+          "example_improvements": [
+            {
+              "step": 0,
+              "energy": -0.5644145809145047
+            },
+            {
+              "step": 1,
+              "energy": -0.5689833161749749
+            },
+            {
+              "step": 2,
+              "energy": -0.5750500585928947
+            },
+            {
+              "step": 3,
+              "energy": -0.5823616140252035
+            },
+            {
+              "step": 5,
+              "energy": -0.613085064573835
+            },
+            {
+              "step": 7,
+              "energy": -0.6488498064019087
+            },
+            {
+              "step": 9,
+              "energy": -0.6680922163984073
+            },
+            {
+              "step": 10,
+              "energy": -0.7241381521140229
+            },
+            {
+              "step": 11,
+              "energy": -0.7655505205490808
+            },
+            {
+              "step": 12,
+              "energy": -0.8030319981052455
+            }
+          ],
+          "computed_utc": "2026-01-02T10:07:00Z"
+        }
+      }
+    }
+  },
+  "provenance": {
+    "source_schema_version": "v1",
+    "migrated_utc": "2026-01-15T16:31:25Z",
+    "entry_hash_sha256": "44f325ec80d80718cdc70a53e37b832df4bef18f0f372e5aaffdcbcff8c4457c",
+    "migration": {
+      "tool": "migrate_v1_to_v2.py",
+      "from_file": "LiH_sto3g_JW_geom_v1__sha256_073949db597035cb.json",
+      "gap_threshold": 0.01
+    },
+    "environment": null
+  }
+}

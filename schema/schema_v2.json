@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qencode.example/schema_v2.json",
+  "title": "qencode-db entry schema v2",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "entry_id", "created_utc", "problem", "encoding", "artifacts", "results", "provenance"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^2\\."
+    },
+    "entry_id": { "type": "string", "minLength": 1 },
+    "created_utc": { "type": "string", "minLength": 1 },
+
+    "problem": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name", "basis"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "basis": { "type": "string", "minLength": 1 },
+        "charge": { "type": ["integer", "number", "null"] },
+        "multiplicity": { "type": ["integer", "number", "null"] },
+        "geometry": {
+          "description": "Optional. If present, should describe the molecular geometry. Format is not enforced in v2.0.",
+          "type": ["object", "array", "string", "null"]
+        },
+        "active_space": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "enabled": { "type": ["boolean", "null"] },
+            "num_electrons": { "type": ["integer", "number", "null"] },
+            "num_spatial_orbitals": { "type": ["integer", "number", "null"] }
+          }
+        }
+      }
+    },
+
+    "encoding": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["mapping"],
+      "properties": {
+        "mapping": { "type": "string", "minLength": 1 },
+        "tapering": { "type": ["object", "null"] },
+        "symmetry_reduction": { "type": ["object", "null"] }
+      }
+    },
+
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["qubit_hamiltonian", "circuits"],
+      "properties": {
+        "qubit_hamiltonian": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["num_qubits", "pauli_terms"],
+          "properties": {
+            "num_qubits": { "type": ["integer", "number"] },
+            "pauli_terms": {
+              "type": "array",
+              "items": { "type": "object" }
+            }
+          }
+        },
+        "circuits": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "hf_qpy_b64": { "type": ["string", "null"] },
+            "ansatz_template_qpy_b64": { "type": ["string", "null"] },
+            "ansatz_includes_hf": { "type": ["boolean", "null"] }
+          }
+        }
+      }
+    },
+
+    "results": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["quality"],
+      "properties": {
+        "reference": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "hf_energy_hartree_like": { "type": ["number", "null"] },
+            "exact_qubit_ground_energy_hartree_like": { "type": ["number", "null"] }
+          }
+        },
+        "vqe": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "best_energy_hartree_like": { "type": ["number", "null"] },
+            "method": { "type": ["string", "null"] },
+            "chosen_mode": { "type": ["string", "null"] },
+            "computed_utc": { "type": ["string", "null"] }
+          }
+        },
+        "quality": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["gap_threshold", "trusted", "flags"],
+          "properties": {
+            "gap_threshold": { "type": "number" },
+            "trusted": { "type": "boolean" },
+            "abs_vqe_exact_gap": { "type": ["number", "null"] },
+            "flags": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "notes": { "type": ["string", "null"] }
+          }
+        },
+        "experimental": {
+          "description": "Non-canonical results (kept for research / traceability).",
+          "type": ["object", "null"],
+          "additionalProperties": true
+        }
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["source_schema_version", "migrated_utc", "entry_hash_sha256"],
+      "properties": {
+        "source_schema_version": { "type": "string" },
+        "migrated_utc": { "type": "string" },
+        "entry_hash_sha256": { "type": "string", "minLength": 1 },
+        "migration": {
+          "type": ["object", "null"],
+          "additionalProperties": true
+        },
+        "environment": {
+          "type": ["object", "null"],
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

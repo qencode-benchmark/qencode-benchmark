@@ -1,0 +1,215 @@
+{
+  "schema_version": "2.0.0",
+  "entry_id": "H2_sto3g_JW_geom_v1__sha256_e2167895d13b67c4",
+  "created_utc": "2025-12-29T23:25:02Z",
+  "problem": {
+    "name": "H2",
+    "basis": "sto3g",
+    "active_space": {
+      "enabled": null,
+      "num_electrons": null,
+      "num_spatial_orbitals": null
+    }
+  },
+  "encoding": {
+    "mapping": "jordan_wigner"
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 4,
+      "pauli_terms": [
+        {
+          "pauli": "IIII",
+          "coeff": -0.8105479805373275
+        },
+        {
+          "pauli": "IIIZ",
+          "coeff": 0.17218393261915566
+        },
+        {
+          "pauli": "IIZI",
+          "coeff": -0.22575349222402394
+        },
+        {
+          "pauli": "IZII",
+          "coeff": 0.1721839326191556
+        },
+        {
+          "pauli": "ZIII",
+          "coeff": -0.2257534922240239
+        },
+        {
+          "pauli": "IIZZ",
+          "coeff": 0.12091263261776623
+        },
+        {
+          "pauli": "IZIZ",
+          "coeff": 0.16892753870087907
+        },
+        {
+          "pauli": "ZIIZ",
+          "coeff": 0.16614543256382408
+        },
+        {
+          "pauli": "YYYY",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "XXYY",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "YYXX",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "XXXX",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "IZZI",
+          "coeff": 0.16614543256382408
+        },
+        {
+          "pauli": "ZIZI",
+          "coeff": 0.17464343068300453
+        },
+        {
+          "pauli": "ZZII",
+          "coeff": 0.12091263261776623
+        }
+      ]
+    },
+    "circuits": {
+      "hf_qpy_b64": null,
+      "ansatz_template_qpy_b64": "UUlTS0lUEAICAwAAAAAAAAABcHEAAAAAAAAAHAAKZgAIAAAABAAAAAAAAAAAAAAAAgAAAAEAAAAAAAAACwAAAABjaXJjdWl0LTQxAAAAAAAAAAB7fXEBAAAABAABAXEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAIAAAAAAAAAAwAAAAAAAAAAAAAAAAAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJZR2F0ZXEAAAAAdgAAAAAAAAAnAAUAAAAAAAAACCkw5BmAVkf4pi2Er857bxcAAAAAAAAAAHRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUllHYXRlcQAAAAF2AAAAAAAAACcABQAAAAAAAAAIKTDkGYBWR/imLYSvzntvGAAAAAAAAAABdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWUdhdGVxAAAAAnYAAAAAAAAAJwAFAAAAAAAAAAgpMOQZgFZH+KYthK/Oe28ZAAAAAAAAAAJ0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJZR2F0ZXEAAAADdgAAAAAAAAAnAAUAAAAAAAAACCkw5BmAVkf4pi2Er857bxoAAAAAAAAAA3RoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUlpHYXRlcQAAAAB2AAAAAAAAACcABQAAAAAAAAAIKTDkGYBWR/imLYSvzntvGwAAAAAAAAAEdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWkdhdGVxAAAAAXYAAAAAAAAAJwAFAAAAAAAAAAgpMOQZgFZH+KYthK/Oe28cAAAAAAAAAAV0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJaR2F0ZXEAAAACdgAAAAAAAAAnAAUAAAAAAAAACCkw5BmAVkf4pi2Er857bx0AAAAAAAAABnRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUlpHYXRlcQAAAAN2AAAAAAAAACcABQAAAAAAAAAIKTDkGYBWR/imLYSvzntvHgAAAAAAAAAHdGhldGEABgAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAFDWEdhdGVxAAAAAHEAAAABAAYAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAEAAAABQ1hHYXRlcQAAAAFxAAAAAgAGAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAUNYR2F0ZXEAAAACcQAAAAMAAAD///////////////8AAAAAAAAAAA==",
+      "ansatz_includes_hf": null
+    }
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree_like": null,
+      "exact_qubit_ground_energy_hartree_like": -1.8572750302023797
+    },
+    "vqe": null,
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": false,
+      "abs_vqe_exact_gap": null,
+      "flags": [
+        "missing_hf",
+        "missing_vqe",
+        "has_legacy"
+      ],
+      "notes": "Incomplete: missing vqe and/or exact reference."
+    },
+    "experimental": {
+      "legacy_validation": {
+        "vqe_run": {
+          "optimizer": "scipy_cobyla",
+          "maxiter": 800,
+          "estimated_ground_energy": null,
+          "units": "hartree",
+          "best_energy_hartree_like": -1.8572750286962596,
+          "method": "statevector_expectation",
+          "imported_from": "vqe_simple_search",
+          "imported_utc": "2026-01-13T10:41:42Z",
+          "best_parameters": [
+            -2.9180845770092274,
+            3.1415621806876404,
+            3.1416176421076627,
+            3.1415791921642136,
+            -0.00018260989098819793,
+            0.8251264249354502,
+            1.7731345359449677,
+            -0.621390532839065
+          ],
+          "n_params": 8,
+          "nfev": 387,
+          "nit": 0,
+          "success": true,
+          "message": "Return from COBYLA because the trust region radius reaches its lower bound.",
+          "init": "random",
+          "seed": 123,
+          "multistart": 20,
+          "init_sigma": 0.35,
+          "ran_utc": "2026-01-13T11:19:30Z",
+          "hf_mismatch": {
+            "hf_qubits": 8,
+            "ham_qubits": 4
+          },
+          "hf_mode_used": "zeros_on_mismatch",
+          "hf_source_used": "zeros_on_mismatch",
+          "composed_mode": "hf_plus_ansatz"
+        },
+        "vqe_simple_search": {
+          "best_energy": -1.2554910759157107,
+          "units": "hartree",
+          "improvement_vs_hf": -0.0008479970875390208,
+          "settings": {
+            "steps": 200,
+            "sigma": 0.2,
+            "seed": 123,
+            "num_params": 8
+          },
+          "example_improvements": [
+            {
+              "step": 0,
+              "energy": 0.1857194528301469
+            },
+            {
+              "step": 1,
+              "energy": 0.15304245244408815
+            },
+            {
+              "step": 3,
+              "energy": 0.10206013092148551
+            },
+            {
+              "step": 4,
+              "energy": 0.01603404871584703
+            },
+            {
+              "step": 5,
+              "energy": -0.1966218295540464
+            },
+            {
+              "step": 6,
+              "energy": -0.2639015467003455
+            },
+            {
+              "step": 7,
+              "energy": -0.44293996537468533
+            },
+            {
+              "step": 10,
+              "energy": -0.4911663520005933
+            },
+            {
+              "step": 11,
+              "energy": -0.611982159062318
+            },
+            {
+              "step": 12,
+              "energy": -0.7757622210489055
+            }
+          ],
+          "computed_utc": "2026-01-02T10:05:58Z"
+        },
+        "previous_hf_energy_hartree": -1.2563390730032498,
+        "previous_hf_energy_hartree_like": null
+      }
+    }
+  },
+  "provenance": {
+    "source_schema_version": "v1",
+    "migrated_utc": "2026-01-15T16:31:25Z",
+    "entry_hash_sha256": "54b42833bdf60102e49c5463661b14fca48d378da211db79348e6cba7374b87a",
+    "migration": {
+      "tool": "migrate_v1_to_v2.py",
+      "from_file": "H2_sto3g_JW_geom_v1__sha256_e2167895d13b67c4.json",
+      "gap_threshold": 0.01
+    },
+    "environment": null
+  }
+}

@@ -1,0 +1,10 @@
+molecule,basis,mapping,ansatz_type,ansatz_reps,ansatz_storage,active_space_enabled,num_qubits,num_pauli_terms,hf_energy_hartree,vqe_best_energy_hartree,vqe_method,exact_qubit_min_eig_hartree_like,file
+BeH2,sto3g,jordan_wigner,uccsd,1.000000,qpy,None,8.000000,61.000000,None,None,None,None,BeH2_sto3g_JW_uccsd_v1__sha256_587c317d327d8cd8.json
+H2,sto3g,jordan_wigner,UNKNOWN,None,qpy,None,4.000000,15.000000,None,None,None,None,H2_sto3g_JW_geom_v1__sha256_ab4e15697ba4058a.json
+H2,sto3g,jordan_wigner,UNKNOWN,None,qpy,None,4.000000,15.000000,None,None,None,None,H2_sto3g_JW_geom_v1__sha256_e2167895d13b67c4.json
+H2,sto3g,jordan_wigner,hardware_efficient,None,qpy,None,4.000000,15.000000,None,None,None,None,H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836.json
+H2,sto3g,jordan_wigner,uccsd,1.000000,qpy,None,4.000000,15.000000,None,None,None,None,H2_sto3g_JW_uccsd_v1__sha256_35b2b9a55f67ff1e.json
+LiH,sto3g,jordan_wigner,UNKNOWN,None,qpy,None,4.000000,27.000000,None,None,None,None,LiH_sto3g_JW_geom_v1__sha256_073949db597035cb.json
+LiH,sto3g,jordan_wigner,UNKNOWN,None,qpy,None,12.000000,631.000000,None,None,None,None,LiH_sto3g_JW_geom_v1__sha256_c35fe44ce005413d.json
+LiH,sto3g,jordan_wigner,uccsd,1.000000,qpy,None,4.000000,27.000000,None,None,None,None,LiH_sto3g_JW_uccsd_v1__sha256_073949db597035cb.json
+LiH,sto3g,jordan_wigner,uccsd,1.000000,UNKNOWN,None,12.000000,631.000000,None,None,None,None,LiH_sto3g_JW_uccsd_v1__sha256_34404f455aca04e5.json
