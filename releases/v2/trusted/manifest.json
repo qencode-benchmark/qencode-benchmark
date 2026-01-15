@@ -1,23 +1,57 @@
 {
-  "manifest_version": "1.0.0",
-  "generated_utc": "2026-01-15T19:11:21Z",
+  "manifest_version": "1.1.0",
+  "generated_utc": "2026-01-15T20:05:04Z",
   "root_dir": "/home/jovan/qencode-db/releases/v2/trusted",
   "entry_count": 5,
   "files": [
     {
       "path": "BeH2_sto3g_JW_uccsd_v1__sha256_587c317d327d8cd8.json",
       "bytes": 489987,
-      "sha256": "e7054ca1b580a7b3d3c8c1583153b059c0d2d1b799b9dfb7d9baa8d47043242f"
+      "sha256": "e7054ca1b580a7b3d3c8c1583153b059c0d2d1b799b9dfb7d9baa8d47043242f",
+      "entry": {
+        "entry_id": "BeH2_sto3g_JW_uccsd_v1__sha256_587c317d327d8cd8",
+        "schema_version": "2.0.0",
+        "trusted": true,
+        "flags": [],
+        "hf_energy_hartree": null,
+        "vqe_best_energy_hartree": null,
+        "exact_energy_hartree": null,
+        "abs_gap": null
+      }
     },
     {
       "path": "H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836.json",
       "bytes": 7340,
-      "sha256": "29831b30d59269b16e7f19329aa827a41d87d27b826fc1305f108dc83b2be9f6"
+      "sha256": "29831b30d59269b16e7f19329aa827a41d87d27b826fc1305f108dc83b2be9f6",
+      "entry": {
+        "entry_id": "H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836",
+        "schema_version": "2.0.0",
+        "trusted": true,
+        "flags": [
+          "has_legacy"
+        ],
+        "hf_energy_hartree": null,
+        "vqe_best_energy_hartree": null,
+        "exact_energy_hartree": null,
+        "abs_gap": null
+      }
     },
     {
       "path": "H2_sto3g_JW_uccsd_v1__sha256_35b2b9a55f67ff1e.json",
       "bytes": 34687,
-      "sha256": "3d036e2c35a97bd6940cd9b6bfd05922a21fb7561d8546e9fd813d57bb8a7e5c"
+      "sha256": "3d036e2c35a97bd6940cd9b6bfd05922a21fb7561d8546e9fd813d57bb8a7e5c",
+      "entry": {
+        "entry_id": "H2_sto3g_JW_uccsd_v1__sha256_35b2b9a55f67ff1e",
+        "schema_version": "2.0.0",
+        "trusted": true,
+        "flags": [
+          "has_legacy"
+        ],
+        "hf_energy_hartree": null,
+        "vqe_best_energy_hartree": null,
+        "exact_energy_hartree": null,
+        "abs_gap": null
+      }
     },
     {
       "path": "trusted_benchmarks.csv",
