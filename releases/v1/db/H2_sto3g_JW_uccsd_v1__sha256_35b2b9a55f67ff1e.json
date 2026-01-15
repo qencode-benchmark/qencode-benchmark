@@ -225,23 +225,31 @@
         "ran_utc": "2026-01-12T14:29:51Z",
         "seed": 123,
         "success": true
+      },
+      "bad_vqe": {
+        "best_energy": -1.2563390729850614,
+        "chosen_mode": "hf_plus_ansatz",
+        "computed_utc": "2026-01-15T10:10:54Z",
+        "message": "Return from COBYLA because the trust region radius reaches its lower bound.",
+        "method": "cobyla",
+        "nfev": 38,
+        "nit": null,
+        "params": [
+          4.815247950908036e-06,
+          0.7473279595133109,
+          1.941827274332847
+        ],
+        "success": true,
+        "units": "hartree_like"
       }
     },
     "vqe": {
-      "best_energy": -1.2563390729850614,
-      "chosen_mode": "hf_plus_ansatz",
-      "computed_utc": "2026-01-15T10:10:54Z",
-      "message": "Return from COBYLA because the trust region radius reaches its lower bound.",
-      "method": "cobyla",
-      "nfev": 38,
-      "nit": null,
-      "params": [
-        4.815247950908036e-06,
-        0.7473279595133109,
-        1.941827274332847
-      ],
-      "success": true,
-      "units": "hartree_like"
+      "best_energy": -1.8572750149087185,
+      "method": "scipy_cobyla",
+      "chosen_mode": "legacy_promoted",
+      "units": "hartree_like",
+      "computed_utc": "2026-01-15T10:22:03Z",
+      "note": "Promoted from validation.legacy.vqe_run because validation.vqe was inconsistent with exact/HF."
     }
   }
 }

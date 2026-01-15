@@ -53,7 +53,16 @@ def run_vqe_statevector(
         else:
             x0 = rng.normal(0.0, float(init_sigma), size=n)
 
-        res = minimize(obj, x0, method=method, options={"maxiter": int(maxiter)})
+        method_map = {
+            "scipy_cobyla": "COBYLA",
+            "cobyla": "COBYLA",
+            "COBYLA": "COBYLA",
+            "nelder_mead": "Nelder-Mead",
+            "Nelder-Mead": "Nelder-Mead",
+        }
+
+        scipy_method = method_map.get(str(method), str(method))
+        res = minimize(obj, x0, method=scipy_method, options={"maxiter": int(maxiter)})
 
         e = float(res.fun)
         if e < best["energy"]:
