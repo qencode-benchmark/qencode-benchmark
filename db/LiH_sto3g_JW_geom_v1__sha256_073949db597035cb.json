@@ -1,0 +1,291 @@
+{
+  "schema_version": "1.0.0",
+  "entry_id": "LiH_sto3g_JW_geom_v1__sha256_073949db597035cb",
+  "created_utc": "2025-12-31T09:05:45Z",
+  "source": {
+    "generator": {
+      "name": "qencode-db",
+      "version": "0.1.0",
+      "git_commit": "local"
+    },
+    "software": {
+      "python": "local",
+      "qiskit": "2.2.3",
+      "qiskit_nature": "0.7.2",
+      "pyscf": "2.11.0"
+    }
+  },
+  "problem": {
+    "type": "molecule",
+    "name": "LiH",
+    "geometry": {
+      "units": "angstrom",
+      "atoms": [
+        {
+          "element": "Li",
+          "xyz": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.0,
+            0.0,
+            1.6
+          ]
+        }
+      ]
+    },
+    "charge": 0,
+    "multiplicity": 1
+  },
+  "settings": {
+    "chemistry": {
+      "basis": "sto3g",
+      "driver": "pyscf",
+      "reference_method": "hf"
+    },
+    "reduction": {
+      "freeze_core": false,
+      "active_space": {
+        "enabled": true,
+        "num_electrons": 2,
+        "num_spatial_orbitals": 2
+      }
+    },
+    "mapping": {
+      "type": "jordan_wigner",
+      "two_qubit_reduction": false,
+      "z2_symmetry_reduction": false
+    },
+    "ansatz": {
+      "type": "uccsd",
+      "initial_state": "hartree_fock",
+      "reps": 1
+    },
+    "estimation": {
+      "shots": 0,
+      "backend": "statevector_simulator"
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 4,
+      "format": "pauli_sum",
+      "pauli_terms": [
+        {
+          "pauli": "IIII",
+          "coeff": -0.7051449008248349
+        },
+        {
+          "pauli": "IIIZ",
+          "coeff": 0.15592409137654964
+        },
+        {
+          "pauli": "IIZI",
+          "coeff": -0.015039822240409395
+        },
+        {
+          "pauli": "IIZZ",
+          "coeff": 0.05263651530244964
+        },
+        {
+          "pauli": "IZII",
+          "coeff": 0.15592409137654967
+        },
+        {
+          "pauli": "IZIZ",
+          "coeff": 0.12182774168311172
+        },
+        {
+          "pauli": "YYII",
+          "coeff": 0.01401594744373174
+        },
+        {
+          "pauli": "YYIZ",
+          "coeff": 0.012144898067811716
+        },
+        {
+          "pauli": "XXII",
+          "coeff": 0.01401594744373174
+        },
+        {
+          "pauli": "XXIZ",
+          "coeff": 0.012144898067811716
+        },
+        {
+          "pauli": "ZIII",
+          "coeff": -0.015039822240409423
+        },
+        {
+          "pauli": "ZIIZ",
+          "coeff": 0.055902511197650905
+        },
+        {
+          "pauli": "IIYY",
+          "coeff": 0.01401594744373174
+        },
+        {
+          "pauli": "IZYY",
+          "coeff": 0.012144898067811716
+        },
+        {
+          "pauli": "IIXX",
+          "coeff": 0.01401594744373174
+        },
+        {
+          "pauli": "IZXX",
+          "coeff": 0.012144898067811716
+        },
+        {
+          "pauli": "YYYY",
+          "coeff": 0.003265995895201267
+        },
+        {
+          "pauli": "XXYY",
+          "coeff": 0.003265995895201267
+        },
+        {
+          "pauli": "YYXX",
+          "coeff": 0.003265995895201267
+        },
+        {
+          "pauli": "XXXX",
+          "coeff": 0.003265995895201267
+        },
+        {
+          "pauli": "ZIYY",
+          "coeff": -0.0018710430187554522
+        },
+        {
+          "pauli": "ZIXX",
+          "coeff": -0.0018710430187554522
+        },
+        {
+          "pauli": "IZZI",
+          "coeff": 0.055902511197650905
+        },
+        {
+          "pauli": "YYZI",
+          "coeff": -0.0018710430187554522
+        },
+        {
+          "pauli": "XXZI",
+          "coeff": -0.0018710430187554522
+        },
+        {
+          "pauli": "ZIZI",
+          "coeff": 0.08447056786924174
+        },
+        {
+          "pauli": "ZZII",
+          "coeff": 0.05263651530244964
+        }
+      ],
+      "energy_offset": 0.0
+    },
+    "circuits": {
+      "hartree_fock_qasm": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[8];\nx q[0];\nx q[4];",
+      "ansatz_template_qasm": "",
+      "ansatz_template_qpy_b64": "UUlTS0lUEAICAwAAAAAAAAABcHEAAAAAAAAAHAAKZgAIAAAABAAAAAAAAAAAAAAAAgAAAAEAAAAAAAAACwAAAABjaXJjdWl0LTQxAAAAAAAAAAB7fXEBAAAABAABAXEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAIAAAAAAAAAAwAAAAAAAAAAAAAAAAAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJZR2F0ZXEAAAAAdgAAAAAAAAAnAAUAAAAAAAAACJbLA4Nx1UlQnFF5dOyepNwAAAAAAAAAAHRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUllHYXRlcQAAAAF2AAAAAAAAACcABQAAAAAAAAAIlssDg3HVSVCcUXl07J6k3QAAAAAAAAABdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWUdhdGVxAAAAAnYAAAAAAAAAJwAFAAAAAAAAAAiWywODcdVJUJxReXTsnqTeAAAAAAAAAAJ0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJZR2F0ZXEAAAADdgAAAAAAAAAnAAUAAAAAAAAACJbLA4Nx1UlQnFF5dOyepN8AAAAAAAAAA3RoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUlpHYXRlcQAAAAB2AAAAAAAAACcABQAAAAAAAAAIlssDg3HVSVCcUXl07J6k4AAAAAAAAAAEdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWkdhdGVxAAAAAXYAAAAAAAAAJwAFAAAAAAAAAAiWywODcdVJUJxReXTsnqThAAAAAAAAAAV0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJaR2F0ZXEAAAACdgAAAAAAAAAnAAUAAAAAAAAACJbLA4Nx1UlQnFF5dOyepOIAAAAAAAAABnRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUlpHYXRlcQAAAAN2AAAAAAAAACcABQAAAAAAAAAIlssDg3HVSVCcUXl07J6k4wAAAAAAAAAHdGhldGEABgAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAFDWEdhdGVxAAAAAHEAAAABAAYAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAEAAAABQ1hHYXRlcQAAAAFxAAAAAgAGAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAUNYR2F0ZXEAAAACcQAAAAMAAAD///////////////8AAAAAAAAAAA==",
+      "ansatz_param_names": [
+        "theta[0]",
+        "theta[1]",
+        "theta[2]",
+        "theta[3]",
+        "theta[4]",
+        "theta[5]",
+        "theta[6]",
+        "theta[7]"
+      ],
+      "notes": "HF stored as QASM2; ansatz stored as QPY (base64) because it has parameters"
+    },
+    "resources": {}
+  },
+  "validation": {
+    "classical_reference": {
+      "method": "FCI",
+      "energy": null,
+      "units": "hartree"
+    },
+    "vqe_run": {
+      "optimizer": null,
+      "maxiter": null,
+      "estimated_ground_energy": null,
+      "units": "hartree"
+    },
+    "tolerance": {
+      "abs_energy_error": null
+    },
+    "hf_energy_statevector": {
+      "energy": -0.7725817191195236,
+      "units": "hartree",
+      "computed_utc": "2026-01-02T10:06:59Z"
+    },
+    "vqe_simple_search": {
+      "best_energy": -1.0544460062207839,
+      "units": "hartree",
+      "improvement_vs_hf": 0.2818642871012603,
+      "settings": {
+        "steps": 200,
+        "sigma": 0.2,
+        "seed": 123,
+        "num_params": 8
+      },
+      "example_improvements": [
+        {
+          "step": 0,
+          "energy": -0.5644145809145047
+        },
+        {
+          "step": 1,
+          "energy": -0.5689833161749749
+        },
+        {
+          "step": 2,
+          "energy": -0.5750500585928947
+        },
+        {
+          "step": 3,
+          "energy": -0.5823616140252035
+        },
+        {
+          "step": 5,
+          "energy": -0.613085064573835
+        },
+        {
+          "step": 7,
+          "energy": -0.6488498064019087
+        },
+        {
+          "step": 9,
+          "energy": -0.6680922163984073
+        },
+        {
+          "step": 10,
+          "energy": -0.7241381521140229
+        },
+        {
+          "step": 11,
+          "energy": -0.7655505205490808
+        },
+        {
+          "step": 12,
+          "energy": -0.8030319981052455
+        }
+      ],
+      "computed_utc": "2026-01-02T10:07:00Z"
+    }
+  },
+  "provenance": {
+    "input_fingerprint": {
+      "sha256": "073949db597035cb19c4a8c2715c61dffe38c20a4e863b173e3c714554fd4320"
+    },
+    "notes": [
+      "Real qubit Hamiltonian generated with PySCF + Qiskit Nature + Jordan-Wigner"
+    ]
+  }
+}

@@ -1,0 +1,289 @@
+{
+  "schema_version": "1.0.0",
+  "entry_id": "H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836",
+  "created_utc": "2026-01-02T23:33:23Z",
+  "source": {
+    "generator": {
+      "name": "qencode-db",
+      "version": "0.1.0",
+      "git_commit": "local"
+    },
+    "software": {
+      "python": "local",
+      "qiskit": "2.2.3",
+      "qiskit_nature": "0.7.2",
+      "pyscf": "2.11.0"
+    }
+  },
+  "problem": {
+    "type": "molecule",
+    "name": "H2",
+    "geometry": {
+      "units": "angstrom",
+      "atoms": [
+        {
+          "element": "H",
+          "xyz": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.0,
+            0.0,
+            0.735
+          ]
+        }
+      ]
+    },
+    "charge": 0,
+    "multiplicity": 1,
+    "basis": "sto3g",
+    "mapping": "jordan_wigner"
+  },
+  "settings": {
+    "chemistry": {
+      "basis": "sto3g",
+      "driver": "pyscf",
+      "reference_method": "hf"
+    },
+    "reduction": {
+      "freeze_core": false,
+      "active_space": {
+        "enabled": false
+      }
+    },
+    "mapping": {
+      "type": "jordan_wigner",
+      "two_qubit_reduction": false,
+      "z2_symmetry_reduction": false
+    },
+    "ansatz": {
+      "type": "hardware_efficient",
+      "initial_state": "hartree_fock",
+      "reps": 2
+    },
+    "estimation": {
+      "shots": 0,
+      "backend": "statevector_simulator"
+    },
+    "ansatz_reps": 2,
+    "ansatz_type": "hardware_efficient"
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 4,
+      "format": "pauli_sum",
+      "pauli_terms": [
+        {
+          "pauli": "IIII",
+          "coeff": -0.8105479805373275
+        },
+        {
+          "pauli": "IIIZ",
+          "coeff": 0.1721839326191556
+        },
+        {
+          "pauli": "IIZI",
+          "coeff": -0.22575349222402394
+        },
+        {
+          "pauli": "IIZZ",
+          "coeff": 0.12091263261776623
+        },
+        {
+          "pauli": "IZII",
+          "coeff": 0.17218393261915566
+        },
+        {
+          "pauli": "IZIZ",
+          "coeff": 0.16892753870087907
+        },
+        {
+          "pauli": "ZIII",
+          "coeff": -0.22575349222402394
+        },
+        {
+          "pauli": "ZIIZ",
+          "coeff": 0.16614543256382408
+        },
+        {
+          "pauli": "YYYY",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "XXYY",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "YYXX",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "XXXX",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "IZZI",
+          "coeff": 0.16614543256382408
+        },
+        {
+          "pauli": "ZIZI",
+          "coeff": 0.17464343068300453
+        },
+        {
+          "pauli": "ZZII",
+          "coeff": 0.12091263261776623
+        }
+      ],
+      "energy_offset": 0.0
+    },
+    "circuits": {
+      "hartree_fock_qasm": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[4];\nx q[2];\nx q[3];\n",
+      "ansatz_template_qasm": "",
+      "ansatz_template_qpy_b64": "UUlTS0lUEAICAwAAAAAAAAABcHEAAAAAAAAAHAAKZgAIAAAABAAAAAAAAAAAAAAAAgAAAAEAAAAAAAAAFgAAAABjaXJjdWl0LTQxAAAAAAAAAAB7fXEBAAAABAABAXEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAIAAAAAAAAAAwAAAAAAAAAAAAAAAAAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJZR2F0ZXEAAAAAdgAAAAAAAAAnAAUAAAAAAAAAEAoJVCv5p0NUmQfZMI9dGqgAAAAAAAAAAHRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUllHYXRlcQAAAAF2AAAAAAAAACcABQAAAAAAAAAQCglUK/mnQ1SZB9kwj10aqQAAAAAAAAABdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWUdhdGVxAAAAAnYAAAAAAAAAJwAFAAAAAAAAABAKCVQr+adDVJkH2TCPXRqqAAAAAAAAAAJ0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJZR2F0ZXEAAAADdgAAAAAAAAAnAAUAAAAAAAAAEAoJVCv5p0NUmQfZMI9dGqsAAAAAAAAAA3RoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUlpHYXRlcQAAAAB2AAAAAAAAACcABQAAAAAAAAAQCglUK/mnQ1SZB9kwj10arAAAAAAAAAAEdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWkdhdGVxAAAAAXYAAAAAAAAAJwAFAAAAAAAAABAKCVQr+adDVJkH2TCPXRqtAAAAAAAAAAV0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJaR2F0ZXEAAAACdgAAAAAAAAAnAAUAAAAAAAAAEAoJVCv5p0NUmQfZMI9dGq4AAAAAAAAABnRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUlpHYXRlcQAAAAN2AAAAAAAAACcABQAAAAAAAAAQCglUK/mnQ1SZB9kwj10arwAAAAAAAAAHdGhldGEABgAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAFDWEdhdGVxAAAAAHEAAAABAAYAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAEAAAABQ1hHYXRlcQAAAAFxAAAAAgAGAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAUNYR2F0ZXEAAAACcQAAAAMABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWUdhdGVxAAAAAHYAAAAAAAAAJwAFAAAAAAAAABAKCVQr+adDVJkH2TCPXRqwAAAAAAAAAAh0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJZR2F0ZXEAAAABdgAAAAAAAAAnAAUAAAAAAAAAEAoJVCv5p0NUmQfZMI9dGrEAAAAAAAAACXRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUllHYXRlcQAAAAJ2AAAAAAAAACcABQAAAAAAAAAQCglUK/mnQ1SZB9kwj10asgAAAAAAAAAKdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWUdhdGVxAAAAA3YAAAAAAAAAJwAFAAAAAAAAABAKCVQr+adDVJkH2TCPXRqzAAAAAAAAAAt0aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJaR2F0ZXEAAAAAdgAAAAAAAAAnAAUAAAAAAAAAEAoJVCv5p0NUmQfZMI9dGrQAAAAAAAAADHRoZXRhAAYAAAABAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUlpHYXRlcQAAAAF2AAAAAAAAACcABQAAAAAAAAAQCglUK/mnQ1SZB9kwj10atQAAAAAAAAANdGhldGEABgAAAAEAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABSWkdhdGVxAAAAAnYAAAAAAAAAJwAFAAAAAAAAABAKCVQr+adDVJkH2TCPXRq2AAAAAAAAAA50aGV0YQAGAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFJaR2F0ZXEAAAADdgAAAAAAAAAnAAUAAAAAAAAAEAoJVCv5p0NUmQfZMI9dGrcAAAAAAAAAD3RoZXRhAAYAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAEAAAABQ1hHYXRlcQAAAABxAAAAAQAGAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAUNYR2F0ZXEAAAABcQAAAAIABgAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAFDWEdhdGVxAAAAAnEAAAADAAAA////////////////AAAAAAAAAAA=",
+      "ansatz_param_names": [
+        "theta[0]",
+        "theta[1]",
+        "theta[2]",
+        "theta[3]",
+        "theta[4]",
+        "theta[5]",
+        "theta[6]",
+        "theta[7]",
+        "theta[8]",
+        "theta[9]",
+        "theta[10]",
+        "theta[11]",
+        "theta[12]",
+        "theta[13]",
+        "theta[14]",
+        "theta[15]"
+      ],
+      "ansatz_recipe": {
+        "type": "hardware_efficient",
+        "reps": 2,
+        "mapping": "jordan_wigner",
+        "num_qubits": 4,
+        "layout": "ry_rz_linear_cx"
+      },
+      "notes": "HF stored as QASM2; ansatz stored as QPY (base64) when possible, otherwise stored as ansatz_recipe only. For UCCSD, HF is composed at runtime."
+    },
+    "resources": {}
+  },
+  "validation": {
+    "exact_qubit_ground_energy": {
+      "energy": -1.8572750302023797,
+      "units": "hartree_like",
+      "computed_utc": "2026-01-13T15:08:12Z",
+      "note": "Exact min eigenvalue of stored qubit Hamiltonian (not necessarily physical electron-number sector)."
+    },
+    "hf_energy_statevector": {
+      "energy": -1.2563390730032498,
+      "units": "hartree",
+      "computed_utc": "2026-01-02T23:33:23Z"
+    },
+    "vqe": {
+      "method": "scipy_cobyla",
+      "best_energy": -1.8563173079393922,
+      "units": "hartree",
+      "improvement_vs_hf": 0.5999782349361424,
+      "settings": {
+        "seed": 123,
+        "maxiter": 400,
+        "num_params": 16,
+        "status": 3,
+        "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times.",
+        "nfev": 400
+      },
+      "best_theta": [
+        -0.0030327837947061475,
+        0.0027518687329771596,
+        0.0035396039320229576,
+        0.0008372529756924839,
+        0.11308522653059896,
+        0.1434292940733917,
+        -0.09128998863367084,
+        1.1607299340274129,
+        -0.2161506948050283,
+        0.0031472207173696286,
+        -0.0012418990167231544,
+        0.0005693946563596537,
+        2.9232423270266503,
+        -0.10256233136443045,
+        0.5086774680461831,
+        -0.1286211813698169
+      ],
+      "example_trace": [],
+      "computed_utc": "2026-01-02T23:33:25Z"
+    },
+    "classical_reference": {
+      "hf_energy_hartree": -1.2445845498133266,
+      "hf_energy_units": "hartree_like",
+      "hf_rebuilt": false
+    },
+    "legacy": {
+      "vqe_run": {
+        "method": "statevector_expectation",
+        "optimizer": "scipy_cobyla",
+        "best_energy_hartree_like": -1.857275025697786,
+        "best_parameters": [
+          3.141566881635551,
+          1.86670677247228e-05,
+          1.317074522723894,
+          1.5707886276963976,
+          1.4308776270292907,
+          0.4679619756101099,
+          -2.504843560580954e-05,
+          -3.2132279095560454e-05,
+          0.2235178582552292,
+          -1.4400773559079366e-05,
+          1.8245069533904388,
+          -1.5707984395602075,
+          -0.0004421278766324311,
+          -0.3336523534443768,
+          -0.29759317669654983,
+          0.7508984291920494
+        ],
+        "n_params": 16,
+        "nfev": 805,
+        "nit": 0,
+        "success": true,
+        "message": "Return from COBYLA because the trust region radius reaches its lower bound.",
+        "init": "random",
+        "seed": 123,
+        "maxiter": 1200,
+        "ran_utc": "2026-01-13T10:52:40Z",
+        "multistart": 25,
+        "init_sigma": 0.4
+      }
+    }
+  },
+  "provenance": {
+    "input_fingerprint": {
+      "sha256": "07ddc3bb339b983699f69b1c936057a944744c069d19c842f02d53215e450e44"
+    },
+    "notes": [
+      "generated by batch_generate.py"
+    ],
+    "migrations": [
+      {
+        "id": "v1_clean_validation_2026-01-15",
+        "script": "scripts/migrate_v1_clean_validation.py",
+        "ran_utc": "2026-01-15T08:22:25Z",
+        "before_sha256": "5c154ce63555bd3902ea852afde0e8454d97982f32a47b942031a3200f03ed0a",
+        "after_sha256": "48b5194b0be90ee7a4f7fb6191c9a4c969668c16194e1451637bc7bdfc027055",
+        "reasons": [
+          "normalized problem.basis",
+          "normalized problem.mapping",
+          "aligned settings.ansatz_reps",
+          "aligned settings.ansatz_type",
+          "moved validation.vqe_run -> validation.legacy.vqe_run"
+        ]
+      }
+    ]
+  }
+}

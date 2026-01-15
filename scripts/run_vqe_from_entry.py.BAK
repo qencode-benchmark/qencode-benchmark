@@ -1,0 +1,201 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import base64
+import io
+import json
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
+import numpy as np
+from qiskit import qasm2, qpy
+from qiskit.circuit import QuantumCircuit
+from qiskit.quantum_info import SparsePauliOp, Statevector
+from scipy.optimize import minimize
+
+
+def _force_numeric_global_phase(c: QuantumCircuit) -> None:
+    """Statevector requires numeric global_phase. QPY sometimes stores it as parameterized."""
+    try:
+        c.global_phase = float(c.global_phase)
+    except Exception:
+        c.global_phase = 0.0
+
+
+def load_qubit_hamiltonian(data: Dict[str, Any]) -> SparsePauliOp:
+    terms = data["artifacts"]["qubit_hamiltonian"]["pauli_terms"]
+    paulis = [t["pauli"] for t in terms]
+    coeffs = [complex(t["coeff"]) for t in terms]
+    return SparsePauliOp(paulis, coeffs)
+
+
+def load_hf_circuit(data: Dict[str, Any]) -> QuantumCircuit:
+    hf_qasm = data["artifacts"]["circuits"]["hartree_fock_qasm"]
+    hf = qasm2.loads(hf_qasm)
+    _force_numeric_global_phase(hf)
+    return hf
+
+
+def load_ansatz_template(data: Dict[str, Any]) -> Tuple[QuantumCircuit, str]:
+    circs = data["artifacts"]["circuits"]
+
+    b64 = circs.get("ansatz_template_qpy_b64")
+    if b64:
+        buf = io.BytesIO(base64.b64decode(b64))
+        ansatz = qpy.load(buf)[0]
+        _force_numeric_global_phase(ansatz)
+        return ansatz, "qpy"
+
+    qasm = circs.get("ansatz_template_qasm")
+    if qasm:
+        ansatz = qasm2.loads(qasm)
+        _force_numeric_global_phase(ansatz)
+        return ansatz, "qasm2"
+
+    raise ValueError("No ansatz template found (expected ansatz_template_qpy_b64 or ansatz_template_qasm).")
+
+
+def expectation_energy(H: SparsePauliOp, circ_template: QuantumCircuit, theta: np.ndarray) -> float:
+    """
+    Bind parameters in circ_template to theta, then compute <psi(theta)|H|psi(theta)> with Statevector.
+    """
+    params = list(circ_template.parameters)
+    if len(theta) != len(params):
+        raise ValueError(f"theta length mismatch: got {len(theta)} values, circuit has {len(params)} params")
+
+    bind = {p: float(v) for p, v in zip(params, theta)}
+    c = circ_template.assign_parameters(bind, inplace=False)
+
+    # KEY FIX: global_phase must be numeric (QPY sometimes makes it parameterized)
+    _force_numeric_global_phase(c)
+
+    sv = Statevector.from_instruction(c)
+    val = np.real(sv.expectation_value(H))
+    return float(val)
+
+
+def load_entry_for_vqe(path: Path) -> Tuple[Dict[str, Any], SparsePauliOp, QuantumCircuit]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    H = load_qubit_hamiltonian(data)
+    hf = load_hf_circuit(data)
+    ansatz, _src = load_ansatz_template(data)
+
+    composed = hf.compose(ansatz, inplace=False)
+    _force_numeric_global_phase(composed)
+
+    return data, H, composed
+
+
+def run_vqe_statevector(
+    H: SparsePauliOp,
+    circ_template: QuantumCircuit,
+    seed: int,
+    maxiter: int,
+    multistart: int,
+    init: str,
+    init_sigma: float,
+    method: str,
+) -> Dict[str, Any]:
+    rng = np.random.default_rng(int(seed))
+    nparams = len(circ_template.parameters)
+
+    # Pre-check: energy at theta=zeros (sanity)
+    e0 = expectation_energy(H, circ_template, np.zeros(nparams, dtype=float))
+    if abs(e0) < 1e-9:
+        print("⚠️  SANITY WARNING: energy at theta=zeros is ~0. This can mean binding/evaluation is broken.")
+
+    best = {
+        "energy": float("inf"),
+        "theta": None,
+        "res": None,
+    }
+
+    for k in range(int(multistart)):
+        if init == "zeros":
+            x0 = np.zeros(nparams, dtype=float)
+        else:
+            x0 = rng.normal(0.0, float(init_sigma), size=nparams).astype(float)
+
+        def obj(x):
+            return expectation_energy(H, circ_template, np.asarray(x, dtype=float))
+
+        res = minimize(obj, x0, method=method, options={"maxiter": int(maxiter)})
+
+        e = float(res.fun)
+        if e < best["energy"]:
+            best["energy"] = e
+            best["theta"] = np.asarray(res.x, dtype=float)
+            best["res"] = res
+
+    res = best["res"]
+    out = {
+        "best_energy": float(best["energy"]),
+        "best_theta": [float(v) for v in best["theta"]] if best["theta"] is not None else None,
+        "nfev": int(getattr(res, "nfev", None)) if res is not None else None,
+        # Some scipy methods do NOT provide "nit"
+        "nit": int(getattr(res, "nit", None)) if getattr(res, "nit", None) is not None else None,
+        "success": bool(getattr(res, "success", False)) if res is not None else False,
+        "message": str(getattr(res, "message", "")) if res is not None else "",
+        "method": method,
+        "multistart": int(multistart),
+        "init": init,
+        "init_sigma": float(init_sigma),
+        "seed": int(seed),
+        "maxiter": int(maxiter),
+    }
+    return out
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--file", required=True, help="Entry JSON")
+    ap.add_argument("--seed", type=int, default=123)
+    ap.add_argument("--maxiter", type=int, default=800)
+    ap.add_argument("--multistart", type=int, default=20)
+    ap.add_argument("--init", choices=["random", "zeros"], default="random")
+    ap.add_argument("--init-sigma", type=float, default=0.35)
+    ap.add_argument("--method", default="COBYLA")
+    args = ap.parse_args()
+
+    entry_path = Path(args.file).resolve()
+    data, H, composed = load_entry_for_vqe(entry_path)
+
+    vqe = run_vqe_statevector(
+        H=H,
+        circ_template=composed,
+        seed=args.seed,
+        maxiter=args.maxiter,
+        multistart=args.multistart,
+        init=args.init,
+        init_sigma=args.init_sigma,
+        method=args.method,
+    )
+
+    # Write results back into JSON
+    data.setdefault("validation", {})
+    data["validation"]["vqe"] = {
+        "best_energy": vqe["best_energy"],
+        "method": vqe["method"].lower(),
+        "seed": vqe["seed"],
+        "maxiter": vqe["maxiter"],
+        "multistart": vqe["multistart"],
+        "init": vqe["init"],
+        "init_sigma": vqe["init_sigma"],
+        "nfev": vqe["nfev"],
+        "nit": vqe["nit"],
+        "success": vqe["success"],
+        "message": vqe["message"],
+    }
+
+    entry_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+    print(f"✅ VQE done: {entry_path.name}")
+    print(f"   best_energy = {vqe['best_energy']:.12f} (hartree-like)")
+    print(f"   params      = {len(composed.parameters)} | nfev={vqe['nfev']} nit={vqe['nit']} success={vqe['success']}")
+    print(f"✅ Saved into: {entry_path}")
+
+
+if __name__ == "__main__":
+    main()
+

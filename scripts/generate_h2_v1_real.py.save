@@ -1,0 +1,140 @@
+import json
+import hashlib
+from datetime import datetime, timezone
+from pathlib import Path
+
+def sha256_text(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+def main():
+    # --- Paths ---
+    project_root = Path(__file__).resolve().parents[1]
+    db_dir = project_root / "db"
+    db_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1) Define the molecule (H2)
+    molecule_name = "H2"
+    units = "angstrom"
+    atoms = [
+        {"element": "H", "xyz": [0.0, 0.0, 0.0]},
+        {"element": "H", "xyz": [0.0, 0.0, 0.735]},
+    ]
+    charge = 0
+    multiplicity = 1
+
+    # 2) Define settings (v1 locked)
+    settings = {
+        "chemistry": {"basis": "sto3g", "driver": "pyscf", "reference_method": "hf"},
+        "reduction": {"freeze_core": False, "active_space": None},
+        "mapping": {"type": "jordan_wigner", "two_qubit_reduction": False, "z2_symmetry_reduction": False},
+        "ansatz": {"type": "uccsd", "initial_state": "hartree_fock", "reps": 1},
+        "estimation": {"shots": 0, "backend": "statevector_simulator"},
+    }
+
+    # 3) Build an input fingerprint for reproducibility
+    input_obj = {
+        "problem": {
+            "name": molecule_name,
+            "units": units,
+            "atoms": atoms,
+            "charge": charge,
+            "multiplicity": multiplicity,
+        },
+        "settings": settings,
+    }
+    input_text = json.dumps(input_obj, sort_keys=True)
+    input_hash = sha256_text(input_text)
+
+    # 4) Build REAL qubit Hamiltonian using PySCF + Qiskit Nature (Jordan–Wigner)
+    from importlib.metadata import version as pkg_version
+
+    try:
+        from qiskit_nature.second_q.drivers import PySCFDriver
+        from qiskit_nature.second_q.mappers import JordanWignerMapper
+    except Exception as e:
+        raise RuntimeError(
+            "Qiskit Nature imports failed. Make sure you installed: qiskit-nature and pyscf.\n"
+            "Run: pip install qiskit qiskit-nature pyscf\n"
+            f"Original error: {e}"
+        )
+
+    # Build molecule string for PySCFDriver (same geometry as above)
+    atom_str = "H 0.0 0.0 0.0; H 0.0 0.0 0.735"
+
+    driver = PySCFDriver(
+        atom=atom_str,
+        basis=settings["chemistry"]["basis"],
+        charge=charge,
+        spin=multiplicity - 1,  # multiplicity = 2S+1 -> spin = 2S
+    )
+
+    problem = driver.run()
+    second_q_op = problem.hamiltonian.second_q_op()
+
+    mapper = JordanWignerMapper()
+    qubit_op = mapper.map(second_q_op)
+
+    pauli_terms = []
+    for pauli, coeff in zip(qubit_op.paulis, qubit_op.coeffs):
+        c = complex(coeff)
+        if abs(c.imag) > 1e-10:
+            raise ValueError(f"Found non-trivial imaginary coefficient {c}.")
+        pauli_terms.append({"pauli": pauli.to_label(), "coeff": float(c.real)})
+
+    qubit_hamiltonian = {
+        "num_qubits": qubit_op.num_qubits,
+        "format": "pauli_sum",
+        "pauli_terms": pauli_terms,
+        "energy_offset": 0.0
+    }
+
+    # Package versions for reproducibility
+    qiskit_version = pkg_version("qiskit")
+    qiskit_nature_version = pkg_version("qiskit-nature")
+    pyscf_version = pkg_version("pyscf")
+
+    # 5) Assemble the JSON entry
+    entry = {
+        "schema_version": "1.0.0",
+        "entry_id": f"{molecule_name}_sto3g_JW_geom_v1__sha256_{input_hash[:16]}",
+        "created_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "source": {
+            "generator": {"name": "qencode-db", "version": "0.1.0", "git_commit": "local"},
+            "software": {"python": "local", "qiskit": qiskit_version, "qiskit_nature": qiskit_nature_version, "pyscf": pyscf_version},
+        },
+        "problem": {
+            "type": "molecule",
+            "name": molecule_name,
+            "geometry": {"units": units, "atoms": atoms},
+            "charge": charge,
+            "multiplicity": multiplicity
+        },
+        "settings": settings,
+        "artifacts": {
+            "qubit_hamiltonian": qubit_hamiltonian,
+            "circuits": {
+                "hartree_fock_qasm": "",
+                "ansatz_template_qasm": "",
+                "notes": "circuits will be added in next step"
+            },
+            "resources": {}
+        },
+        "validation": {
+            "classical_reference": {"method": "FCI", "energy": None, "units": "hartree"},
+            "vqe_run": {"optimizer": None, "maxiter": None, "estimated_ground_energy": None, "units": "hartree"},
+            "tolerance": {"abs_energy_error": None}
+        },
+        "provenance": {
+            "input_fingerprint": {"sha256": input_hash},
+            "notes": ["Real qubit Hamiltonian generated with PySCF + Qiskit Nature + Jordan-Wigner"]
+        }
+    }
+
+    # 6) Write JSON file to db/
+    out_path = db_dir / f"{entry['entry_id']}.json"
+    out_path.write_text(json.dumps(entry, indent=2), encoding="utf-8")
+    print(f"✅ Wrote: {out_path}")
+    print(f"✅ num_qubits: {qubit_hamiltonian['num_qubits']}, pauli_terms: {len(pauli_terms)}")
+
+if __name__ == "__main__":
+    main()

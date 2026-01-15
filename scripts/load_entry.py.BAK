@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import base64
+import io
+import json
+from pathlib import Path
+from typing import Any, Dict, Tuple
+
+import numpy as np
+from qiskit import qasm2, qpy
+from qiskit.circuit import QuantumCircuit
+from qiskit.quantum_info import SparsePauliOp, Statevector
+
+
+def _force_numeric_global_phase(c: QuantumCircuit) -> None:
+    """Statevector requires numeric global_phase. QPY sometimes stores it as parameterized."""
+    try:
+        # If it's already numeric, float(...) works.
+        c.global_phase = float(c.global_phase)
+    except Exception:
+        c.global_phase = 0.0
+
+
+def load_qubit_hamiltonian(data: Dict[str, Any]) -> SparsePauliOp:
+    terms = data["artifacts"]["qubit_hamiltonian"]["pauli_terms"]
+    paulis = [t["pauli"] for t in terms]
+    coeffs = [complex(t["coeff"]) for t in terms]
+    return SparsePauliOp(paulis, coeffs)
+
+
+def load_hf_circuit(data: Dict[str, Any]) -> QuantumCircuit:
+    hf_qasm = data["artifacts"]["circuits"]["hartree_fock_qasm"]
+    hf = qasm2.loads(hf_qasm)
+    _force_numeric_global_phase(hf)
+    return hf
+
+
+def load_ansatz_template(data: Dict[str, Any]) -> Tuple[QuantumCircuit, str]:
+    circs = data["artifacts"]["circuits"]
+
+    # Prefer QPY base64 (works for parameterized circuits)
+    b64 = circs.get("ansatz_template_qpy_b64")
+    if b64:
+        buf = io.BytesIO(base64.b64decode(b64))
+        ansatz = qpy.load(buf)[0]
+        _force_numeric_global_phase(ansatz)
+        return ansatz, "qpy"
+
+    # Fallback: QASM2 if present (usually only works if circuit is NOT parameterized)
+    qasm = circs.get("ansatz_template_qasm")
+    if qasm:
+        ansatz = qasm2.loads(qasm)
+        _force_numeric_global_phase(ansatz)
+        return ansatz, "qasm2"
+
+    raise ValueError("No ansatz template found (expected ansatz_template_qpy_b64 or ansatz_template_qasm).")
+
+
+def expectation_energy(H: SparsePauliOp, circ: QuantumCircuit) -> float:
+    _force_numeric_global_phase(circ)
+    sv = Statevector.from_instruction(circ)
+    val = np.real(sv.expectation_value(H))
+    return float(val)
+
+
+def load_entry(path: Path) -> Tuple[Dict[str, Any], SparsePauliOp, QuantumCircuit, QuantumCircuit, QuantumCircuit, str]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    H = load_qubit_hamiltonian(data)
+    hf = load_hf_circuit(data)
+    ansatz, source = load_ansatz_template(data)
+
+    # Compose: |psi(theta)> = HF followed by ansatz template
+    composed = hf.compose(ansatz, inplace=False)
+    _force_numeric_global_phase(composed)
+
+    return data, H, hf, ansatz, composed, source
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--file", required=True, help="Path to entry JSON")
+    ap.add_argument("--summary", action="store_true", help="Print summary info + sanity energies")
+    args = ap.parse_args()
+
+    path = Path(args.file).resolve()
+    data, H, hf, ansatz, composed, ans_source = load_entry(path)
+
+    print(f"✅ Loaded: {path}")
+
+    if not args.summary:
+        return
+
+    problem = data.get("problem", {}) or {}
+    molecule = problem.get("molecule", data.get("entry_id", "UNKNOWN"))
+    basis = problem.get("basis", "UNKNOWN")
+    ansatz_type = problem.get("ansatz_type", "UNKNOWN")
+
+    print(f"   molecule={molecule} basis={basis} ansatz={ansatz_type} source={ans_source}")
+    print(f"   H:  num_qubits={H.num_qubits} terms={len(H.coeffs)}")
+    print(f"   HF: num_qubits={hf.num_qubits} depth={hf.depth()} ops={len(hf.data)}")
+    print(f"   Ansatz:   num_qubits={ansatz.num_qubits} depth={ansatz.depth()} params={len(ansatz.parameters)}")
+    print(f"   Composed: num_qubits={composed.num_qubits} depth={composed.depth()} params={len(composed.parameters)}")
+
+    e_hf = expectation_energy(H, hf)
+    print(f"   Energy <HF|H|HF> = {e_hf:.12f}")
+
+    # theta=zeros energy
+    params = list(composed.parameters)
+    bind0 = {p: 0.0 for p in params}
+    c0 = composed.assign_parameters(bind0, inplace=False)
+    _force_numeric_global_phase(c0)
+    e0 = expectation_energy(H, c0)
+    print(f"   Energy <psi(theta=0)|H|psi(theta=0)> = {e0:.12f}")
+
+    # theta=random energy
+    rng = np.random.default_rng(123)
+    x = rng.normal(0, 0.3, size=len(params))
+    bindr = {p: float(v) for p, v in zip(params, x)}
+    cr = composed.assign_parameters(bindr, inplace=False)
+    _force_numeric_global_phase(cr)
+    er = expectation_energy(H, cr)
+    print(f"   Energy <psi(theta=random)|H|psi(theta=random)> = {er:.12f}")
+
+    # Sanity warning
+    if abs(e0) < 1e-9 and abs(e_hf) > 1e-3:
+        print("⚠️  SANITY WARNING: theta=zeros energy is ~0. This is almost certainly a binding/evaluation bug.")
+        print("   It should not be ~0 if your Hamiltonian has a big constant term (it does for BeH2).")
+
+
+if __name__ == "__main__":
+    main()
+

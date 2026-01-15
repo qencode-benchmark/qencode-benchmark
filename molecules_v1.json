@@ -1,0 +1,40 @@
+{
+  "defaults": {
+    "basis": "sto3g",
+    "driver": "pyscf",
+    "mapping": "jordan_wigner",
+    "ansatz": { "type": "uccsd", "reps": 1 },
+    "active_space": { "enabled": false }
+  },
+  "molecules": [
+    {
+      "name": "H2",
+      "units": "angstrom",
+      "charge": 0,
+      "multiplicity": 1,
+      "atoms": [
+        { "element": "H", "xyz": [0.0, 0.0, 0.0] },
+        { "element": "H", "xyz": [0.0, 0.0, 0.735] }
+      ],
+      "variants": [
+        { "ansatz": { "type": "hardware_efficient", "reps": 2 } },
+        { "ansatz": { "type": "uccsd", "reps": 1 } }
+      ]
+    },
+    {
+      "name": "LiH",
+      "units": "angstrom",
+      "charge": 0,
+      "multiplicity": 1,
+      "atoms": [
+        { "element": "Li", "xyz": [0.0, 0.0, 0.0] },
+        { "element": "H",  "xyz": [0.0, 0.0, 1.6] }
+      ],
+      "variants": [
+        { "active_space": { "enabled": true, "num_electrons": 2, "num_spatial_orbitals": 2 } },
+        { "active_space": { "enabled": false } }
+      ]
+    }
+  ]
+}
+

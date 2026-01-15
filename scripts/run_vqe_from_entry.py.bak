@@ -1,0 +1,234 @@
+import argparse
+import base64
+import json
+from datetime import datetime, timezone
+from io import BytesIO
+from pathlib import Path
+from qiskit import qasm2
+from typing import Any, Dict, Tuple, Optional
+
+import numpy as np
+from scipy.optimize import minimize
+
+from qiskit.qasm2 import loads as qasm2_loads
+from qiskit.quantum_info import SparsePauliOp, Statevector
+from qiskit import qpy
+from qiskit.circuit import QuantumCircuit
+
+from qiskit_nature.second_q.mappers import JordanWignerMapper
+from qiskit_nature.second_q.circuit.library import HartreeFock, UCCSD
+
+
+def safe_get(d: Dict[str, Any], path: list, default=None):
+    cur = d
+    for p in path:
+        if not isinstance(cur, dict) or p not in cur:
+            return default
+        cur = cur[p]
+    return cur
+
+
+def safe_set(d: Dict[str, Any], path: list, value):
+    cur = d
+    for p in path[:-1]:
+        if p not in cur or not isinstance(cur[p], dict):
+            cur[p] = {}
+        cur = cur[p]
+    cur[path[-1]] = value
+
+
+def pauli_sum_to_sparse_pauli_op(qubit_h: Dict[str, Any]) -> SparsePauliOp:
+    terms = qubit_h["pauli_terms"]
+    paulis = [t["pauli"] for t in terms]
+    coeffs = [complex(t["coeff"]) for t in terms]
+    return SparsePauliOp(paulis, coeffs)
+
+
+def expectation_energy(H: SparsePauliOp, circ: QuantumCircuit) -> float:
+    sv = Statevector.from_instruction(circ)
+    val = np.real(sv.expectation_value(H))
+    return float(val)
+
+
+def rebuild_hf(num_qubits: int, ansatz_recipe: Dict[str, Any]) -> QuantumCircuit:
+    """
+    For JW mapping: num_qubits = 2 * num_spatial_orbitals.
+    We need num_particles in recipe.
+    """
+    if num_qubits % 2 != 0:
+        raise ValueError("Expected even num_qubits for electronic structure (2 * spatial orbitals).")
+
+    nso = num_qubits // 2
+    num_particles = ansatz_recipe.get("num_particles", None)
+    if num_particles is None:
+        raise ValueError("Cannot rebuild HF: ansatz_recipe.num_particles missing.")
+    mapper = JordanWignerMapper()
+    return HartreeFock(nso, tuple(num_particles), mapper)
+
+
+def load_ansatz_from_recipe(num_qubits: int, ansatz_recipe: Dict[str, Any], hf: QuantumCircuit) -> QuantumCircuit:
+    """
+    Currently supports UCCSD recipe for JW (works with your v1 entries).
+    """
+    typ = ansatz_recipe.get("type")
+    if typ != "uccsd":
+        raise ValueError(f"Recipe ansatz type not supported yet: {typ}")
+
+    nso = num_qubits // 2
+    num_particles = ansatz_recipe.get("num_particles", None)
+    if num_particles is None:
+        raise ValueError("Recipe missing num_particles")
+
+    mapper = JordanWignerMapper()
+    # Qiskit Nature 0.7.x signature expects: (num_spatial_orbitals, num_particles, qubit_mapper)
+    ans = UCCSD(nso, tuple(num_particles), mapper)
+    ans.initial_state = hf
+    # Build to a concrete circuit (not blueprint)
+    return ans.decompose(reps=10)
+
+
+def load_ansatz_qpy_b64(qpy_b64: str) -> QuantumCircuit:
+    raw = base64.b64decode(qpy_b64.encode("ascii"))
+    buf = BytesIO(raw)
+    circ = qpy.load(buf)[0]
+    return circ
+
+
+def load_entry_for_vqe(entry_path: Path) -> Tuple[Dict[str, Any], SparsePauliOp, QuantumCircuit]:
+    data = json.loads(entry_path.read_text(encoding="utf-8"))
+
+    qubit_h = safe_get(data, ["artifacts", "qubit_hamiltonian"])
+    if qubit_h is None:
+        raise ValueError("Missing artifacts.qubit_hamiltonian")
+    H = pauli_sum_to_sparse_pauli_op(qubit_h)
+    nq = int(qubit_h["num_qubits"])
+
+    # HF circuit (QASM2)
+    hf_qasm = safe_get(data, ["artifacts", "circuits", "hartree_fock_qasm"], "")
+    if not hf_qasm:
+        raise ValueError("Missing artifacts.circuits.hartree_fock_qasm")
+    hf = qasm2_loads(hf_qasm)
+
+    ansatz_recipe = safe_get(data, ["artifacts", "circuits", "ansatz_recipe"], {}) or {}
+
+    # Fix HF mismatch if needed
+    if hf.num_qubits != nq:
+        raise ValueError(f"HF circuit qubits mismatch: hf={hf.num_qubits} vs H={nq}. Check hartree_fock_qasm in the JSON.")
+
+# Only rebuild HF for recipe-based chemistry ansatz (UCC-style),
+# where ansatz_recipe includes num_particles etc.
+    if hf is None:
+        hf = rebuild_hf(nq, ansatz_recipe)
+
+
+    # Ansatz: QPY preferred, else recipe
+    ansatz_qpy_b64 = safe_get(data, ["artifacts", "circuits", "ansatz_template_qpy_b64"], None)
+    if ansatz_qpy_b64:
+        ansatz = load_ansatz_qpy_b64(ansatz_qpy_b64)
+    else:
+        ansatz = load_ansatz_from_recipe(nq, ansatz_recipe, hf)
+
+    if ansatz.num_qubits != nq:
+        raise ValueError(f"Ansatz qubits ({ansatz.num_qubits}) != Hamiltonian qubits ({nq})")
+
+    composed = hf.compose(ansatz, inplace=False)
+
+    return data, H, composed
+
+
+def run_vqe_statevector(
+    H: SparsePauliOp,
+    circ: QuantumCircuit,
+    init: str = "zeros",
+    seed: int = 123,
+    maxiter: int = 300,
+) -> Dict[str, Any]:
+    params = list(circ.parameters)
+    n = len(params)
+    if n == 0:
+        e = expectation_energy(H, circ)
+        return {"best_energy": e, "best_x": [], "n_params": 0, "nfev": 1, "nit": 0}
+
+    rng = np.random.default_rng(seed)
+    if init == "zeros":
+        x0 = np.zeros(n, dtype=float)
+    elif init == "random":
+        x0 = rng.uniform(low=-0.5, high=0.5, size=n).astype(float)
+    else:
+        raise ValueError("init must be 'zeros' or 'random'")
+
+    def obj(x):
+        bind = {p: float(v) for p, v in zip(params, x)}
+        c = circ.assign_parameters(bind, inplace=False)
+        return expectation_energy(H, c)
+
+    res = minimize(obj, x0, method="COBYLA", options={"maxiter": int(maxiter)})
+
+    best_x = [float(v) for v in res.x]
+    best_e = float(res.fun)
+
+    return {
+        "best_energy": best_e,
+        "best_x": best_x,
+        "n_params": n,
+        "nfev": int(getattr(res, "nfev", 0) or 0),
+        "nit": int(getattr(res, "nit", 0) or 0),
+        "success": bool(res.success),
+        "message": str(res.message),
+        "init": init,
+        "seed": int(seed),
+        "maxiter": int(maxiter),
+    }
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--file", required=True, help="Path to entry JSON")
+    ap.add_argument("--init", choices=["zeros", "random"], default="zeros")
+    ap.add_argument("--seed", type=int, default=123)
+    ap.add_argument("--maxiter", type=int, default=300)
+    ap.add_argument("--write-mode", choices=["inplace", "copy"], default="inplace")
+    ap.add_argument("--out", default=None, help="Output file if --write-mode copy")
+    args = ap.parse_args()
+
+    entry_path = Path(args.file).expanduser().resolve()
+    data, H, composed = load_entry_for_vqe(entry_path)
+
+    # Run VQE
+    vqe = run_vqe_statevector(H, composed, init=args.init, seed=args.seed, maxiter=args.maxiter)
+
+    # Save results into JSON
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    safe_set(data, ["validation", "vqe_run", "method"], "statevector_expectation")
+    safe_set(data, ["validation", "vqe_run", "optimizer"], "scipy_cobyla")
+    safe_set(data, ["validation", "vqe_run", "best_energy_hartree_like"], vqe["best_energy"])
+    safe_set(data, ["validation", "vqe_run", "best_parameters"], vqe["best_x"])
+    safe_set(data, ["validation", "vqe_run", "n_params"], vqe["n_params"])
+    safe_set(data, ["validation", "vqe_run", "nfev"], vqe.get("nfev"))
+    safe_set(data, ["validation", "vqe_run", "nit"], vqe.get("nit"))
+    safe_set(data, ["validation", "vqe_run", "success"], vqe.get("success"))
+    safe_set(data, ["validation", "vqe_run", "message"], vqe.get("message"))
+    safe_set(data, ["validation", "vqe_run", "init"], vqe.get("init"))
+    safe_set(data, ["validation", "vqe_run", "seed"], vqe.get("seed"))
+    safe_set(data, ["validation", "vqe_run", "maxiter"], vqe.get("maxiter"))
+    safe_set(data, ["validation", "vqe_run", "ran_utc"], now)
+
+    # Write file
+    if args.write_mode == "inplace":
+        out_path = entry_path
+    else:
+        if not args.out:
+            raise SystemExit("--write-mode copy requires --out <path>")
+        out_path = Path(args.out).expanduser().resolve()
+
+    out_path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+
+    print(f"✅ VQE done: {entry_path.name}")
+    print(f"   best_energy = {vqe['best_energy']:.12f} (hartree-like)")
+    print(f"   params      = {vqe['n_params']} | nfev={vqe.get('nfev')} nit={vqe.get('nit')} success={vqe.get('success')}")
+    print(f"✅ Saved into: {out_path}")
+
+
+if __name__ == "__main__":
+    main()
+

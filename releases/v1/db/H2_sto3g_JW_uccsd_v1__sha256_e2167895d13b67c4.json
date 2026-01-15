@@ -1,0 +1,241 @@
+{
+  "schema_version": "1.0.0",
+  "entry_id": "H2_sto3g_JW_uccsd_v1__sha256_e2167895d13b67c4",
+  "created_utc": "2026-01-02T12:09:23Z",
+  "source": {
+    "generator": {
+      "name": "qencode-db",
+      "version": "0.1.0",
+      "git_commit": "local"
+    },
+    "software": {
+      "python": "local",
+      "qiskit": "2.2.3",
+      "qiskit_nature": "0.7.2",
+      "pyscf": "2.11.0"
+    }
+  },
+  "problem": {
+    "type": "molecule",
+    "name": "H2",
+    "geometry": {
+      "units": "angstrom",
+      "atoms": [
+        {
+          "element": "H",
+          "xyz": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "element": "H",
+          "xyz": [
+            0.0,
+            0.0,
+            0.735
+          ]
+        }
+      ]
+    },
+    "charge": 0,
+    "multiplicity": 1,
+    "basis": "sto3g",
+    "mapping": "jordan_wigner"
+  },
+  "settings": {
+    "chemistry": {
+      "basis": "sto3g",
+      "driver": "pyscf",
+      "reference_method": "hf"
+    },
+    "reduction": {
+      "freeze_core": false,
+      "active_space": null
+    },
+    "mapping": {
+      "type": "jordan_wigner",
+      "two_qubit_reduction": false,
+      "z2_symmetry_reduction": false
+    },
+    "ansatz": {
+      "type": "uccsd",
+      "initial_state": "hartree_fock",
+      "reps": 1
+    },
+    "estimation": {
+      "shots": 0,
+      "backend": "statevector_simulator"
+    },
+    "ansatz_reps": 1,
+    "ansatz_type": "uccsd"
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 4,
+      "format": "pauli_sum",
+      "pauli_terms": [
+        {
+          "pauli": "IIII",
+          "coeff": -0.8105479805373275
+        },
+        {
+          "pauli": "IIIZ",
+          "coeff": 0.1721839326191556
+        },
+        {
+          "pauli": "IIZI",
+          "coeff": -0.22575349222402394
+        },
+        {
+          "pauli": "IIZZ",
+          "coeff": 0.12091263261776623
+        },
+        {
+          "pauli": "IZII",
+          "coeff": 0.17218393261915566
+        },
+        {
+          "pauli": "IZIZ",
+          "coeff": 0.16892753870087907
+        },
+        {
+          "pauli": "ZIII",
+          "coeff": -0.22575349222402394
+        },
+        {
+          "pauli": "ZIIZ",
+          "coeff": 0.16614543256382408
+        },
+        {
+          "pauli": "YYYY",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "XXYY",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "YYXX",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "XXXX",
+          "coeff": 0.04523279994605784
+        },
+        {
+          "pauli": "IZZI",
+          "coeff": 0.16614543256382408
+        },
+        {
+          "pauli": "ZIZI",
+          "coeff": 0.17464343068300453
+        },
+        {
+          "pauli": "ZZII",
+          "coeff": 0.12091263261776623
+        }
+      ],
+      "energy_offset": 0.0
+    },
+    "circuits": {
+      "hartree_fock_qasm": "OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[8];\nx q[0];\nx q[4];",
+      "ansatz_template_qasm": "",
+      "ansatz_template_qpy_b64": "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",
+      "ansatz_param_names": [
+        "t[0]",
+        "t[1]",
+        "t[2]"
+      ],
+      "notes": "HF stored as QASM2; UCCSD ansatz stored as QPY (base64). HF is NOT embedded in the ansatz to avoid blueprint compose issues; compose HF+ansatz at runtime."
+    },
+    "resources": {}
+  },
+  "validation": {
+    "hf_energy_statevector": {
+      "energy": -1.2563390730032498,
+      "units": "hartree",
+      "computed_utc": "2026-01-02T13:57:50Z"
+    },
+    "exact_qubit_ground_energy": {
+      "energy": -1.8572750302023797,
+      "units": "hartree_like",
+      "computed_utc": "2026-01-13T15:08:13Z",
+      "note": "Exact min eigenvalue of stored qubit Hamiltonian (not necessarily physical electron-number sector)."
+    },
+    "vqe": {
+      "method": "scipy_cobyla",
+      "best_energy": -1.2563390726017516,
+      "units": "hartree",
+      "improvement_vs_hf": -4.014981680455776e-10,
+      "settings": {
+        "seed": 123,
+        "maxiter": 400,
+        "num_params": 3,
+        "status": 0,
+        "message": "Return from COBYLA because the trust region radius reaches its lower bound.",
+        "nfev": 34
+      },
+      "best_theta": [
+        2.2623568028479847e-05,
+        -0.11033599544036496,
+        0.26057665720745704
+      ],
+      "example_trace": [],
+      "computed_utc": "2026-01-02T13:57:53Z"
+    },
+    "classical_reference": {
+      "hf_energy_hartree": -1.2563390730032498,
+      "hf_energy_units": "hartree_like",
+      "hf_rebuilt": false
+    },
+    "legacy": {
+      "vqe_run": {
+        "best_energy_hartree_like": -1.2563390730032498,
+        "optimizer": null,
+        "method": "legacy_import",
+        "imported_from": "vqe_simple_search",
+        "imported_utc": "2026-01-13T10:41:42Z"
+      },
+      "vqe_simple_search": {
+        "best_energy": -1.2563390730032498,
+        "units": "hartree",
+        "improvement_vs_hf": 0.0,
+        "settings": {
+          "steps": 1200,
+          "sigma": 0.1,
+          "seed": 123,
+          "num_params": 3
+        },
+        "example_improvements": [],
+        "computed_utc": "2026-01-02T12:17:21Z"
+      }
+    }
+  },
+  "provenance": {
+    "input_fingerprint": {
+      "sha256": "e2167895d13b67c4e6d30018efd5456bb7015138f6a4a733db053ceb1cffb5a6"
+    },
+    "notes": [
+      "H2 with UCCSD ansatz (particle-number conserving)"
+    ],
+    "migrations": [
+      {
+        "id": "v1_clean_validation_2026-01-15",
+        "script": "scripts/migrate_v1_clean_validation.py",
+        "ran_utc": "2026-01-15T08:22:25Z",
+        "before_sha256": "58edf55748f1ca94b6409e9dc13d3d396570715cf64b5604d9c86fd5e9e965de",
+        "after_sha256": "dda664e0efaab75359293999f445335e0f9f6c67aab9273db9730e5785ba22bd",
+        "reasons": [
+          "normalized problem.basis",
+          "normalized problem.mapping",
+          "aligned settings.ansatz_reps",
+          "aligned settings.ansatz_type",
+          "moved validation.vqe_run -> validation.legacy.vqe_run",
+          "moved validation.vqe_simple_search -> validation.legacy.vqe_simple_search"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "qencode-db entry schema v1",
+  "type": "object",
+  "required": ["schema_version", "entry_id", "created_utc", "source", "problem", "settings", "artifacts", "validation", "provenance"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "entry_id": { "type": "string" },
+    "created_utc": { "type": "string" },
+
+    "source": {
+      "type": "object",
+      "required": ["generator", "software"],
+      "properties": {
+        "generator": {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "git_commit": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "software": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "problem": {
+      "type": "object",
+      "required": ["type", "name", "geometry", "charge", "multiplicity"],
+      "properties": {
+        "type": { "type": "string" },
+        "name": { "type": "string" },
+        "geometry": {
+          "type": "object",
+          "required": ["units", "atoms"],
+          "properties": {
+            "units": { "type": "string" },
+            "atoms": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["element", "xyz"],
+                "properties": {
+                  "element": { "type": "string" },
+                  "xyz": {
+                    "type": "array",
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "items": { "type": "number" }
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "charge": { "type": "integer" },
+        "multiplicity": { "type": "integer" }
+      },
+      "additionalProperties": true
+    },
+
+    "settings": {
+      "type": "object",
+      "required": ["chemistry", "reduction", "mapping", "ansatz", "estimation"],
+      "properties": {
+        "chemistry": { "type": "object", "additionalProperties": true },
+        "reduction": { "type": "object", "additionalProperties": true },
+        "mapping": { "type": "object", "additionalProperties": true },
+        "ansatz": { "type": "object", "additionalProperties": true },
+        "estimation": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": true
+    },
+
+    "artifacts": {
+      "type": "object",
+      "required": ["qubit_hamiltonian", "circuits"],
+      "properties": {
+        "qubit_hamiltonian": {
+          "type": "object",
+          "required": ["num_qubits", "format", "pauli_terms", "energy_offset"],
+          "properties": {
+            "num_qubits": { "type": "integer", "minimum": 1 },
+            "format": { "type": "string" },
+            "pauli_terms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["pauli", "coeff"],
+                "properties": {
+                  "pauli": { "type": "string" },
+                  "coeff": { "type": "number" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "energy_offset": { "type": "number" }
+          },
+          "additionalProperties": true
+        },
+        "circuits": {
+          "type": "object",
+          "required": ["hartree_fock_qasm"],
+          "properties": {
+            "hartree_fock_qasm": { "type": "string" },
+            "ansatz_template_qpy_b64": { "type": "string" },
+            "ansatz_param_names": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "notes": { "type": "string" }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "validation": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "provenance": {
+      "type": "object",
+      "required": ["input_fingerprint"],
+      "properties": {
+        "input_fingerprint": {
+          "type": "object",
+          "required": ["sha256"],
+          "properties": {
+            "sha256": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
+

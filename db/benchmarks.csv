@@ -1,0 +1,10 @@
+molecule,basis,mapping,ansatz_type,ansatz_reps,ansatz_storage,active_space_enabled,num_qubits,num_pauli_terms,hf_energy_hartree,vqe_best_energy_hartree,vqe_method,exact_qubit_min_eig_hartree_like,file
+H2,sto3g,jordan_wigner,hardware_efficient,2,qpy,False,4,15,-1.2563390730032498,-1.8563173079393922,scipy_cobyla,-1.8572750302023797,H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836.json
+H2,sto3g,jordan_wigner,hardware_efficient,2,qpy,,4,15,-1.2563390730032498,-1.8542574800152352,,-1.8572750302023797,H2_sto3g_JW_geom_v1__sha256_ab4e15697ba4058a.json
+H2,sto3g,jordan_wigner,uccsd,1,qpy,,4,15,-1.2563390730032498,-1.2563390726017516,scipy_cobyla,-1.8572750302023797,H2_sto3g_JW_uccsd_v1__sha256_e2167895d13b67c4.json
+H2,sto3g,jordan_wigner,uccsd,1,qpy,False,4,15,-1.2563390730032498,-1.256339071267529,scipy_cobyla,-1.8572750302023797,H2_sto3g_JW_uccsd_v1__sha256_35b2b9a55f67ff1e.json
+H2,sto3g,jordan_wigner,uccsd,1,qpy,,4,15,-1.2563390730032498,-1.2554910759157107,,,H2_sto3g_JW_geom_v1__sha256_e2167895d13b67c4.json
+LiH,sto3g,jordan_wigner,uccsd,1,qpy,True,4,27,-0.7725817191195236,-1.0544460062207839,,,LiH_sto3g_JW_geom_v1__sha256_073949db597035cb.json
+LiH,sto3g,jordan_wigner,uccsd,1,qpy,True,4,27,-0.7725817191195103,-0.7781710182344281,scipy_cobyla,-1.058116535136538,LiH_sto3g_JW_uccsd_v1__sha256_073949db597035cb.json
+LiH,sto3g,jordan_wigner,uccsd,1,qpy,,12,631,,,,,LiH_sto3g_JW_geom_v1__sha256_c35fe44ce005413d.json
+LiH,sto3g,jordan_wigner,uccsd,1,recipe,False,12,631,-5.866675887459042,,,,LiH_sto3g_JW_uccsd_v1__sha256_34404f455aca04e5.json
