@@ -141,7 +141,6 @@
           "additionalProperties": {
             "type": ["string", "number", "boolean", "null", "object", "array"]
           }
-         },
         }
       }
     }
