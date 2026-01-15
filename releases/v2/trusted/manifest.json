@@ -1,8 +1,9 @@
 {
-  "manifest_version": "1.1.0",
-  "generated_utc": "2026-01-15T20:05:04Z",
+  "manifest_version": "1.2.0",
+  "generated_utc": "2026-01-15T20:08:24Z",
   "root_dir": "/home/jovan/qencode-db/releases/v2/trusted",
-  "entry_count": 5,
+  "only_json_entries": true,
+  "file_count": 3,
   "files": [
     {
       "path": "BeH2_sto3g_JW_uccsd_v1__sha256_587c317d327d8cd8.json",
@@ -52,17 +53,7 @@
         "exact_energy_hartree": null,
         "abs_gap": null
       }
-    },
-    {
-      "path": "trusted_benchmarks.csv",
-      "bytes": 987,
-      "sha256": "1ac057d7156603e6a905d8aeda5eaab7306b4e26535937d2833f8cc2512fc27f"
-    },
-    {
-      "path": "trusted_index.json",
-      "bytes": 2140,
-      "sha256": "48cb8d0cc64ffd6893faf6b71fa79a30b9fa91a90184deaa16b3b77b01d90afa"
     }
   ],
-  "overall_sha256": "044411ce791c6faf1484b1e5f34688b1301d62a48a3e4032923a438c6c904686"
+  "overall_sha256": "4df388c554eb3e3b2914213fa5a965896181ef2eac3cf7b04ed844bc58e93484"
 }

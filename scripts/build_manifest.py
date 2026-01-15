@@ -4,14 +4,14 @@ from __future__ import annotations
 """
 Build a reproducible manifest.json for a directory.
 
-The manifest includes:
+Includes:
 - per-file sha256 + size
-- overall sha256 fingerprint of the set
+- overall sha256 fingerprint of the selected file set
 - for JSON entry files: extra metadata (entry_id, trusted, flags, energies)
 
 Usage:
   python3 scripts/build_manifest.py --root releases/v2/trusted --out releases/v2/trusted/manifest.json
-  python3 scripts/build_manifest.py --root releases/v2/db --out releases/v2/db/manifest.json
+  python3 scripts/build_manifest.py --root releases/v2/trusted --out releases/v2/trusted/manifest.json --only-json-entries
 """
 import argparse
 import hashlib
@@ -33,13 +33,6 @@ def _sha256_file(path: Path) -> str:
         for chunk in iter(lambda: f.read(1024 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
-
-
-def _iter_files(root: Path) -> List[Path]:
-    files = [p for p in root.rglob("*") if p.is_file()]
-    # Ignore manifests themselves for stability
-    files = [p for p in files if p.name not in {"manifest.json"}]
-    return sorted(files, key=lambda p: p.as_posix().lower())
 
 
 def _overall_fingerprint(rows: List[Tuple[str, str]]) -> str:
@@ -73,20 +66,15 @@ def _as_float(x: Any) -> Optional[float]:
 def _is_entry_json(path: Path) -> bool:
     if path.suffix.lower() != ".json":
         return False
-    if path.name in {"index.json", "trusted_index.json"}:
+    if path.name in {"index.json", "trusted_index.json", "manifest.json"}:
         return False
     return True
 
 
 def _extract_v2_summary(d: Json) -> Json:
-    """
-    Best-effort extraction for v2 entries.
-    All fields are optional and will be None if missing.
-    """
     entry_id = d.get("entry_id") or d.get("id") or None
     schema_version = d.get("schema_version") or d.get("version") or None
 
-    # v2 preferred layout
     trusted = _get_nested(d, ["results", "quality", "trusted"])
     flags = _get_nested(d, ["results", "quality", "flags"])
     if flags is None:
@@ -96,7 +84,6 @@ def _extract_v2_summary(d: Json) -> Json:
     vqe = _as_float(_get_nested(d, ["results", "vqe", "best_energy_hartree"]))
     exact = _as_float(_get_nested(d, ["results", "reference", "exact_energy_hartree"]))
 
-    # abs gap: prefer stored, else compute if possible
     abs_gap = _as_float(_get_nested(d, ["results", "quality", "abs_gap"]))
     if abs_gap is None and vqe is not None and exact is not None:
         abs_gap = abs(vqe - exact)
@@ -114,9 +101,6 @@ def _extract_v2_summary(d: Json) -> Json:
 
 
 def _extract_v1_fallback_summary(d: Json) -> Json:
-    """
-    Fallback extraction for v1-like shapes (best effort).
-    """
     entry_id = d.get("entry_id") or d.get("id") or None
     schema_version = d.get("schema_version") or d.get("version") or None
 
@@ -141,16 +125,32 @@ def _extract_v1_fallback_summary(d: Json) -> Json:
 
 
 def _extract_entry_summary(d: Json) -> Json:
-    # Prefer v2 if it looks like v2
     if isinstance(_get_nested(d, ["results"]), dict):
         return _extract_v2_summary(d)
     return _extract_v1_fallback_summary(d)
+
+
+def _iter_files(root: Path, only_json_entries: bool) -> List[Path]:
+    files = [p for p in root.rglob("*") if p.is_file()]
+
+    # Always ignore manifest itself
+    files = [p for p in files if p.name != "manifest.json"]
+
+    if only_json_entries:
+        files = [p for p in files if _is_entry_json(p)]
+
+    return sorted(files, key=lambda p: p.as_posix().lower())
 
 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", required=True, help="Directory to fingerprint")
     ap.add_argument("--out", required=True, help="Output manifest.json path")
+    ap.add_argument(
+        "--only-json-entries",
+        action="store_true",
+        help="Only include JSON entry files (exclude csv/index/etc.)",
+    )
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
@@ -159,7 +159,7 @@ def main() -> None:
     if not root.exists() or not root.is_dir():
         raise SystemExit(f"--root must be an existing directory: {root}")
 
-    files = _iter_files(root)
+    files = _iter_files(root, only_json_entries=bool(args.only_json_entries))
 
     entries: List[Json] = []
     rows: List[Tuple[str, str]] = []
@@ -182,10 +182,11 @@ def main() -> None:
         entries.append(rec)
 
     manifest = {
-        "manifest_version": "1.1.0",
+        "manifest_version": "1.2.0",
         "generated_utc": _utc_now(),
         "root_dir": root.as_posix(),
-        "entry_count": len(entries),
+        "only_json_entries": bool(args.only_json_entries),
+        "file_count": len(entries),
         "files": entries,
         "overall_sha256": _overall_fingerprint(rows),
     }
