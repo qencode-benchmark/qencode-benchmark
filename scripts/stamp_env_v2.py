@@ -106,6 +106,8 @@ def iter_entry_files(db_dir: Path) -> List[Path]:
         "benchmarks.csv",
         "trusted_index.json",
         "trusted_benchmarks.csv",
+        "manifest.json",
+        "entry_content_hashes.json"
     }
     return sorted([p for p in db_dir.rglob("*.json") if p.name not in ignore])
 

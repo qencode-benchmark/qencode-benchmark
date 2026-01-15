@@ -44,7 +44,7 @@ def _as_str(x: Any) -> Optional[str]:
 
 
 def _iter_entry_files(db_dir: Path) -> List[Path]:
-    ignore = {"index.json", "benchmarks.csv"}
+    ignore = {"index.json", "benchmarks.csv", "manifest.json", "entry_content_hashes.json"}
     return sorted([p for p in db_dir.rglob("*.json") if p.name not in ignore])
 
 
