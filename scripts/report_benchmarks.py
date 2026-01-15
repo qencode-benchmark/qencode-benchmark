@@ -117,8 +117,26 @@ def _get_num_qubits_and_terms(d: Dict[str, Any]) -> Tuple[Optional[int], Optiona
 
 
 def _get_hf_energy(d: Dict[str, Any]) -> Optional[float]:
-    # written by refresh_hf_energy.py
-    return _as_float(_get_nested(d, ["validation", "classical_reference", "hf_energy_hartree_like"]))
+    # Prefer the canonical field used by current entries
+    v = _as_float(_get_nested(d, ["validation", "classical_reference", "hf_energy_hartree"]))
+    if v is not None:
+        return v
+
+    # Older / alternate naming used in some entries/scripts
+    v = _as_float(_get_nested(d, ["validation", "classical_reference", "hf_energy_hartree_like"]))
+    if v is not None:
+        return v
+
+    # Extra fallbacks (harmless)
+    v = _as_float(_get_nested(d, ["validation", "hf_energy_hartree"]))
+    if v is not None:
+        return v
+
+    v = _as_float(_get_nested(d, ["validation", "hartree_fock_energy_hartree"]))
+    if v is not None:
+        return v
+
+    return None
 
 
 def _get_exact_energy(d: Dict[str, Any]) -> Optional[float]:
