@@ -57,6 +57,27 @@ def _safe_pkg_version(name: str) -> Optional[str]:
 
 
 def environment_fingerprint() -> Json:
+    import hashlib
+
+    dep_lines: List[str] = []
+    source = "importlib.metadata.distributions"
+
+    try:
+        from importlib.metadata import distributions  # py3.8+
+
+        for dist in distributions():
+            name = (dist.metadata.get("Name") or "").strip()
+            ver = (dist.version or "").strip()
+            if name and ver:
+                dep_lines.append(f"{name}=={ver}")
+    except Exception:
+        source = "unavailable"
+        dep_lines = []
+
+    dep_lines_sorted = sorted(set(dep_lines), key=lambda s: s.lower())
+    joined = "\n".join(dep_lines_sorted).encode("utf-8")
+    dep_sha256 = hashlib.sha256(joined).hexdigest()
+
     return {
         "generated_utc": _utc_now(),
         "python_version": sys.version.replace("\n", " "),
@@ -70,6 +91,11 @@ def environment_fingerprint() -> Json:
             "qiskit": _safe_pkg_version("qiskit"),
             "qiskit-terra": _safe_pkg_version("qiskit-terra"),
             "jsonschema": _safe_pkg_version("jsonschema"),
+        },
+        "dependency_fingerprint": {
+            "source": source,
+            "count": len(dep_lines_sorted),
+            "sha256": dep_sha256,
         },
     }
 
