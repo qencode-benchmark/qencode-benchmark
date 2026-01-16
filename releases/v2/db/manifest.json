@@ -1,6 +1,6 @@
 {
   "manifest_version": "1.2.0",
-  "generated_utc": "2026-01-16T09:36:49Z",
+  "generated_utc": "2026-01-16T09:47:40Z",
   "root_dir": "/home/jovan/qencode-db/releases/v2/db",
   "only_json_entries": true,
   "file_count": 10,
@@ -8,7 +8,7 @@
     {
       "path": "BeH2_sto3g_JW_uccsd_v1__sha256_587c317d327d8cd8.json",
       "bytes": 489987,
-      "sha256": "0f2ba19378dcd9678e6d9a4932e7237c33f88d411e883033384d4948af0d5019",
+      "sha256": "12338de3ef44cda4a49140974168b81356c5841786e04ee4cdc776eb7fe880ab",
       "entry": {
         "entry_id": "BeH2_sto3g_JW_uccsd_v1__sha256_587c317d327d8cd8",
         "schema_version": "2.0.0",
@@ -23,7 +23,7 @@
     {
       "path": "entry_content_hashes.json",
       "bytes": 1277,
-      "sha256": "119d4557fd2620913d37176dd66e75f0c8d65463fe8e317e0409343c899a7c4b",
+      "sha256": "7f62878803a0384f3895edcbaa7152d265c1c3607a0943029d2ffa9ebcdff815",
       "entry": {
         "entry_id": null,
         "schema_version": null,
@@ -38,7 +38,7 @@
     {
       "path": "H2_sto3g_JW_geom_v1__sha256_ab4e15697ba4058a.json",
       "bytes": 8576,
-      "sha256": "13593bff8a2ef324c0b0b980809cb33b5c2f995a627686ddcf769b9297e20e00",
+      "sha256": "86ab3e518a11b9edbcc834cce3230354fa7e044f086f8129594b8a8cdeb71112",
       "entry": {
         "entry_id": "H2_sto3g_JW_geom_v1__sha256_ab4e15697ba4058a",
         "schema_version": "2.0.0",
@@ -57,7 +57,7 @@
     {
       "path": "H2_sto3g_JW_geom_v1__sha256_e2167895d13b67c4.json",
       "bytes": 7619,
-      "sha256": "eaabdc5c071f44eb2dc24dd275e40c9a462e3a7da372074e4eece51845c3854b",
+      "sha256": "0f5cc7a7eafb48a78763e84863eaefc0620fbc0bcbd8dfec84199ee77f6961d8",
       "entry": {
         "entry_id": "H2_sto3g_JW_geom_v1__sha256_e2167895d13b67c4",
         "schema_version": "2.0.0",
@@ -76,7 +76,7 @@
     {
       "path": "H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836.json",
       "bytes": 7340,
-      "sha256": "51957eb68a6949d4898a834772c0cb61670fcc4f31682ca8f1d0bdc646a714bb",
+      "sha256": "b7d2c0ce7186cbf6469bb0bbe7f82503f7bff7183ee6fd00edf494029810d5a4",
       "entry": {
         "entry_id": "H2_sto3g_JW_hardware_efficient_v1__sha256_07ddc3bb339b9836",
         "schema_version": "2.0.0",
@@ -93,7 +93,7 @@
     {
       "path": "H2_sto3g_JW_uccsd_v1__sha256_35b2b9a55f67ff1e.json",
       "bytes": 34687,
-      "sha256": "6951f7c6ba458d79c8f6df00dafe3cc3aef61acd39bf7b7d19055c031085057c",
+      "sha256": "dd827bb23567d79c3eda80a8da5b5d3efdea23e6168ea7de9c2c5b0b53a5bc20",
       "entry": {
         "entry_id": "H2_sto3g_JW_uccsd_v1__sha256_35b2b9a55f67ff1e",
         "schema_version": "2.0.0",
@@ -110,7 +110,7 @@
     {
       "path": "LiH_sto3g_JW_geom_v1__sha256_073949db597035cb.json",
       "bytes": 8557,
-      "sha256": "e1c7e9429134ca9118817829a5d09711b6f6bbd74a8df8b0c97e933878152d87",
+      "sha256": "d7fd2d4a0c823d6d47b95848e18a0a9ff1795aeef41ad543411434b77ff5dbbb",
       "entry": {
         "entry_id": "LiH_sto3g_JW_geom_v1__sha256_073949db597035cb",
         "schema_version": "2.0.0",
@@ -128,7 +128,7 @@
     {
       "path": "LiH_sto3g_JW_geom_v1__sha256_c35fe44ce005413d.json",
       "bytes": 68802,
-      "sha256": "c496eb4d9a46ce6783f915b5f2db6725b81caf3ca1079ec075e7254f5e989d06",
+      "sha256": "c133374bcb665690850cdf7e3cd8cd139eebebea345300709959fc85d6dae33d",
       "entry": {
         "entry_id": "LiH_sto3g_JW_geom_v1__sha256_c35fe44ce005413d",
         "schema_version": "2.0.0",
@@ -147,7 +147,7 @@
     {
       "path": "LiH_sto3g_JW_uccsd_v1__sha256_073949db597035cb.json",
       "bytes": 35219,
-      "sha256": "b072b0746e4ec342af260ef9d1f039c99f554f9b74709117c37b1b61c413f875",
+      "sha256": "1998eb3c132810f8f4f170dfc5c78495bfc73ed74ebd1ca0e42b4262c7274d02",
       "entry": {
         "entry_id": "LiH_sto3g_JW_uccsd_v1__sha256_073949db597035cb",
         "schema_version": "2.0.0",
@@ -165,7 +165,7 @@
     {
       "path": "LiH_sto3g_JW_uccsd_v1__sha256_34404f455aca04e5.json",
       "bytes": 63329,
-      "sha256": "cf81a3059fa008ab79fc3e0992a947f145e93d98e401ffd7595fddd375bd1026",
+      "sha256": "67e88e2c6e03eec64219df94a3a2abc93a199e74102eacba6dcc1a98b9914b20",
       "entry": {
         "entry_id": "LiH_sto3g_JW_uccsd_v1__sha256_34404f455aca04e5",
         "schema_version": "2.0.0",
@@ -182,5 +182,5 @@
       }
     }
   ],
-  "overall_sha256": "57bb9bf05dd40049a8729e439922215b6b470c2e216e487e8b45042cd412edce"
+  "overall_sha256": "2ef51417889c11c4e1e209da85439c41e99da2f274a30c44977f808e3a5cb0a9"
 }
