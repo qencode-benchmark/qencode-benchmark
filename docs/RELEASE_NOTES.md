@@ -1,3 +1,70 @@
+
+# Release Notes
+
+## Overview
+This release introduces the **v2 database format** and a **full, reproducible supply-chain verification pipeline** for the qencode-db release artifacts. It adds deterministic build steps for indexes, reporting, auditing, trusted exports, and integrity verification (manifest + per-entry content hashes).
+
+---
+
+## Highlights
+- **v2 schema + v2 DB artifacts**
+  - v2 entries validated against `schema/schema_v2.json`.
+  - Migration pipeline from v1 → v2 supported and automated.
+
+- **Environment stamping**
+  - v2 entries are stamped with environment metadata to make provenance clearer and builds easier to reproduce/inspect.
+
+- **Trusted set export**
+  - Automatically exports a **trusted subset** of v2 entries based on the configured gap threshold and required checks.
+  - Produces a trusted index + trusted benchmarks CSV.
+
+- **Supply-chain integrity**
+  - Generates `manifest.json` (optionally only JSON entries) and verifies it.
+  - Generates `entry_content_hashes.json` and verifies per-entry hashes.
+  - Ensures the pipeline runs in the correct order so manifests reflect the current content hashes.
+
+- **Makefile pipeline**
+  - Adds a `make check` end-to-end target to run the full pipeline consistently.
+
+---
+
+## What’s Included
+### v1
+- Schema validation
+- Index generation
+- Benchmark reporting (CSV)
+- Audit reporting (gap checks)
+
+### v2
+- Migration from v1 → v2
+- Environment stamping (`--write`)
+- Schema validation against `schema/schema_v2.json`
+- Index generation
+- Benchmark reporting (CSV)
+- Audit reporting (trusted flags + gap checks)
+
+### Trusted export (v2)
+- Exports the trusted subset into `releases/v2/trusted/`
+- Writes:
+  - `trusted_index.json`
+  - `trusted_benchmarks.csv`
+  - trusted JSON entries
+
+### Supply-chain outputs (v2)
+- `releases/v2/db/entry_content_hashes.json`
+- `releases/v2/db/manifest.json`
+- Verification steps for both.
+
+---
+
+## How to Run (Quick)
+From repo root:
+
+```bash
+make check
+
+
+
 # Release Notes
 
 This repository contains a small benchmark database for quantum encoding / VQE experiments, stored as JSON entries with validation tooling, indexes, CSV reports, and (v2) provenance + supply-chain artifacts.
