@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+title: "QEncode Benchmark Suite"
+message: "If you use this software, please cite it."
+authors:
+  - family-names: Ilov
+    given-names: Jovan
+date-released: 2026
+version: 1.0
