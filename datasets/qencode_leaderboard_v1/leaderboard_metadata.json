@@ -1,0 +1,15 @@
+{
+  "suite_version": "v1",
+  "leaderboard_rules": "v1",
+  "generation_date": "2026-03-17",
+  "entries_included": 11,
+  "trust_filter": "certified_only",
+  "min_trust_level": "certified",
+  "source_datasets": [
+    "C:\\Users\\jlaba\\OneDrive\\Documents\\qencode-db\\datasets\\leaderboard\\leaderboard_accuracy.csv",
+    "C:\\Users\\jlaba\\OneDrive\\Documents\\qencode-db\\datasets\\leaderboard\\leaderboard_hardware_cost.csv",
+    "C:\\Users\\jlaba\\OneDrive\\Documents\\qencode-db\\datasets\\leaderboard\\leaderboard_balanced.csv"
+  ],
+  "audit_report": "artifacts/leaderboard_audit_v1.md",
+  "generation_command": "python scripts/generate_leaderboard.py && python scripts/generate_leaderboard_report.py && python scripts/audit_leaderboard.py"
+}
