@@ -2,65 +2,71 @@
 
 QEncode is a reproducible benchmarking platform for evaluating quantum algorithms.
 
-The platform provides a standardized benchmark suite, automated execution pipelines, certified benchmark results, workflow evaluation, and interactive analysis tools for quantum computing research.
+It provides a standardized benchmark suite, certified benchmark results, leaderboard rankings, and workflow evaluation to enable fair and reproducible comparison of quantum algorithms.
 
-## Motivation
+---
 
-Quantum algorithm evaluation is often inconsistent across studies due to differences in:
+## Problem
 
+Quantum algorithm benchmarking today is inconsistent and difficult to reproduce.
+
+Different studies use different:
 - encodings
 - ansatz circuits
 - noise models
 - optimizers
-- measurement strategies
+- evaluation metrics
 
-QEncode addresses this by providing a **reproducible benchmarking framework** for evaluating algorithm configurations in a consistent way.
+This makes results hard to compare across experiments.
 
-## Core Features
+---
+
+## Solution
+
+QEncode provides a structured benchmarking framework with:
+
+- Standard Benchmark Suite (v1)
+- Automated execution pipeline
+- Certified benchmark results (trust levels)
+- Leaderboard ranking system
+- Workflow-based evaluation
+- Reproducible dataset release
+
+---
+
+## Key Features
 
 ### Standard Benchmark Suite
-A curated benchmark suite for quantum chemistry workloads.
-
-### Automated Execution
-Benchmark experiments run through a reproducible execution pipeline.
+A fixed and reproducible benchmark definition for quantum chemistry workloads.
 
 ### Certified Results
-Benchmark outputs are classified as:
-
+Benchmark entries are classified as:
 - Experimental
 - Validated
 - Certified
 
+Only certified results are used in official leaderboards.
+
+### Leaderboard
+Three ranking categories:
+- Best Accuracy (lowest energy gap)
+- Lowest Hardware Cost (fewest 2Q gates)
+- Best Balanced Score
+
 ### Workflow Evaluation
-Compare complete algorithm strategies rather than individual parameters.
+Compare complete algorithm configurations instead of individual parameters.
 
-### Interactive Analysis
-Explore benchmark results through comparison tools and dashboards.
+### Reproducibility
+All benchmark runs are:
+- versioned
+- traceable
+- reproducible
 
-## Benchmark Suite v1
+---
 
-The first benchmark suite evaluates small quantum chemistry systems.
+## Quick Start
 
-| Molecule | Basis | Active Space |
-|--------|--------|--------|
-| H2 | STO-3G | (2,2) |
-| BeH2 | STO-3G | (4,4) |
+Run the official QEncode benchmark:
 
-Supported encodings:
-
-- Jordan–Wigner
-- Bravyi–Kitaev
-- Parity
-
-Supported ansatz:
-
-- UCCSD
-- Hardware Efficient Ansatz
-
-Execution modes:
-
-- ideal simulation
-- shot-based simulation
-- noisy simulation
-
-## Repository Structure
+```bash
+python scripts/run_qencode_benchmark.py
