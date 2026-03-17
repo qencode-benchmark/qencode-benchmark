@@ -1,1 +1,63 @@
+# Standard Benchmark Suite v1 — frozen official benchmark definition
+# Small, stable, reproducible. Use with run_standard_suite.py and validate_standard_suite.py
+#
+# "Our Standard Benchmark Suite v1 contains 36 entry runs (54 cells) across H2 and BeH2,
+#  evaluated across JW, BK, and Parity with UCCSD and HEA under ideal, shot-based, and noisy settings."
 
+name: qencode_standard_suite_v1
+version: "1.0"
+description: Standard benchmark suite for reproducible quantum chemistry evaluation
+
+molecules:
+  - name: H2
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [2, 2]
+
+  - name: BeH2
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [4, 4]
+
+mappings:
+  - jordan_wigner
+  - bravyi_kitaev
+  - parity
+
+ansatzes:
+  - type: uccsd
+    reps: 1
+  - type: hardware_efficient
+    reps: 2
+
+execution:
+  # "ideal" -> statevector, "shots" -> shots, "noisy" -> noisy (run_benchmark --backend all)
+  backends:
+    - ideal
+    - shots
+    - noisy
+  shots: 8192
+
+optimizer:
+  type: cobyla
+  max_iter: 200
+
+measurement:
+  strategy: grouped
+
+mitigation:
+  type: none
+
+output:
+  require_metrics:
+    - vqe_energy
+    - exact_energy
+    - gap_ideal
+    - gap_shots
+    - gap_noisy
+    - depth
+    - num_2q_gates
+    - terms
+    - groups
