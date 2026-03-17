@@ -1,0 +1,12 @@
+rank,molecule,mapping,ansatz,gap,depth,2q_gates
+1,BeH2,parity,uccsd,0.003576921107370179,1,1
+2,BeH2,bravyi_kitaev,uccsd,0.003585485266018207,1,1
+3,BeH2,jordan_wigner,uccsd,0.0036115115698236444,1,1
+4,BeH2,jordan_wigner,hardware_efficient,0.006031971812028747,1,1
+5,BeH2,parity,hardware_efficient,0.005989918446579701,27,56
+6,BeH2,bravyi_kitaev,hardware_efficient,0.005997047929742205,27,56
+1,H2,parity,uccsd,7.665036605430942e-09,1,1
+2,H2,bravyi_kitaev,hardware_efficient,0.0022400566761366925,15,12
+3,H2,parity,hardware_efficient,0.007923135594276154,15,12
+4,H2,bravyi_kitaev,uccsd,1.4440519890968062e-08,70,38
+5,H2,jordan_wigner,uccsd,1.1501330998697767e-09,91,56
