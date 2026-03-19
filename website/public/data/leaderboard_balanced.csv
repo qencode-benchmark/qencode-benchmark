@@ -10,3 +10,9 @@ rank,molecule,mapping,ansatz,gap,depth,2q_gates,balanced_score,baseline
 3,H2,bravyi_kitaev,uccsd,1.4440519890968062e-08,70,38,1.0108363923677643e-06,False
 4,H2,bravyi_kitaev,hardware_efficient,0.0022400566761366925,15,12,0.03360085014205039,False
 5,H2,parity,hardware_efficient,0.007923135594276154,15,12,0.11884703391414231,False
+1,HF,parity,uccsd,2.436935764293935e-09,1,1,2.436935764293935e-09,False
+2,HF,jordan_wigner,uccsd,6.253122020183355e-09,1,1,6.253122020183355e-09,False
+3,HF,bravyi_kitaev,uccsd,6.253124240629404e-09,1,1,6.253124240629404e-09,False
+4,HF,jordan_wigner,hardware_efficient,0.0011536098977871223,15,12,0.017304148466806835,False
+5,HF,bravyi_kitaev,hardware_efficient,0.0017628835622087724,15,12,0.026443253433131586,False
+6,HF,parity,hardware_efficient,0.006177678051845659,15,12,0.09266517077768488,False

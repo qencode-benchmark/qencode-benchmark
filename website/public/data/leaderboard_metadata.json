@@ -1,16 +1,17 @@
 {
-  "suite_version": "v1",
+  "suite_version": "v2",
   "leaderboard_rules": "v1",
-  "generation_date": "2026-03-18",
-  "entries_included": 11,
+  "generation_date": "2026-03-19",
+  "entries_included": 17,
   "trust_filter": "certified_only",
   "min_trust_level": "certified",
   "source_datasets": [
-    "/mnt/c/Users/jlaba/OneDrive/Documents/qencode-db/datasets/leaderboard/leaderboard_accuracy.csv",
-    "/mnt/c/Users/jlaba/OneDrive/Documents/qencode-db/datasets/leaderboard/leaderboard_hardware_cost.csv",
-    "/mnt/c/Users/jlaba/OneDrive/Documents/qencode-db/datasets/leaderboard/leaderboard_balanced.csv"
+    "C:\\Users\\jlaba\\OneDrive\\Documents\\qencode-db\\datasets\\leaderboard\\leaderboard_accuracy.csv",
+    "C:\\Users\\jlaba\\OneDrive\\Documents\\qencode-db\\datasets\\leaderboard\\leaderboard_hardware_cost.csv",
+    "C:\\Users\\jlaba\\OneDrive\\Documents\\qencode-db\\datasets\\leaderboard\\leaderboard_balanced.csv"
   ],
   "audit_report": "artifacts/leaderboard_audit_v1.md",
-  "generation_command": "python scripts/generate_leaderboard.py && python scripts/generate_leaderboard_report.py && python scripts/audit_leaderboard.py"
+  "generation_command": "python scripts/generate_leaderboard.py && python scripts/generate_leaderboard_report.py && python scripts/audit_leaderboard.py",
+  "certified_receipts_file": "certified_receipts.json",
+  "certified_receipts_count": 62
 }
-

@@ -22,7 +22,7 @@ export default function MethodologyPage() {
         <h3>Data Provenance</h3>
         <p>
           Generated from the release dataset and metadata committed in this project under
-          <code> datasets/qencode_leaderboard_v1/</code>.
+          <code> datasets/qencode_leaderboard_v2/</code>.
         </p>
         <p className="muted">
           Canonical docs in repo: <code>docs/LEADERBOARD_RULES_V1.md</code> and
