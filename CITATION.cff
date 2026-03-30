@@ -1,8 +1,17 @@
 cff-version: 1.2.0
+message: "If you use QEncode in your research, please cite it as below."
 title: "QEncode Benchmark Suite"
-message: "If you use this software, please cite it."
-authors:
-  - family-names: Ilov
-    given-names: Jovan
-date-released: 2026
-version: 1.0
+abstract: "An open benchmarking standard for quantum chemistry algorithms, providing fixed and reproducible VQE benchmarks across multiple molecules, encodings, and ansatz types."
+version: "2.0.0"
+date-released: "2026-03-01"
+url: "https://qencode-benchmark.org"
+repository-code: "https://github.com/qencode-benchmark/qencode-benchmark-suite"
+license: MIT
+keywords:
+  - quantum computing
+  - benchmarking
+  - variational quantum eigensolver
+  - VQE
+  - quantum chemistry
+  - reproducibility
+  - quantum algorithms
