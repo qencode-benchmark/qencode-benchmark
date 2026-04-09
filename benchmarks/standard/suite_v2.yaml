@@ -1,0 +1,76 @@
+# Standard Benchmark Suite v2 — expanded workload
+
+name: qencode_standard_suite_v2
+version: "2.0"
+description: Expanded standard benchmark suite for reproducible quantum chemistry evaluation (H2, BeH2, HF, LiH, N2)
+
+molecules:
+  - name: H2
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [2, 2]
+
+  - name: LiH
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [2, 2]
+
+  - name: HF
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [2, 2]
+
+  - name: N2
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [6, 6]
+
+  - name: BeH2
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [4, 4]
+
+mappings:
+  - jordan_wigner
+  - bravyi_kitaev
+  - parity
+
+ansatzes:
+  - type: uccsd
+    reps: 1
+  - type: hardware_efficient
+    reps: 2
+
+execution:
+  backends:
+    - ideal
+    - shots
+    - noisy
+  shots: 8192
+
+optimizer:
+  type: cobyla
+  max_iter: 200
+
+measurement:
+  strategy: grouped
+
+mitigation:
+  type: none
+
+output:
+  require_metrics:
+    - vqe_energy
+    - exact_energy
+    - gap_ideal
+    - gap_shots
+    - gap_noisy
+    - depth
+    - num_2q_gates
+    - terms
+    - groups

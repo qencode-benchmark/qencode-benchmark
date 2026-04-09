@@ -8,7 +8,7 @@ Commercial/onboarding links:
 
 - Pricing / certification: https://www.qencode-benchmark.org/pricing
 - Apply for access: https://www.qencode-benchmark.org/apply
-- Contact: quencodebenchmark@gmail.com
+- Contact: support@qencode-benchmark.org
 
 ---
 

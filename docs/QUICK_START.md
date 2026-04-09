@@ -9,7 +9,7 @@ Official platform links:
 - Website: https://www.qencode-benchmark.org
 - Pricing / certification: https://www.qencode-benchmark.org/pricing
 - Apply for access: https://www.qencode-benchmark.org/apply
-- Contact: quencodebenchmark@gmail.com
+- Contact: support@qencode-benchmark.org
 
 At minimum, Standard Suite v1 requires **PyYAML**:
 

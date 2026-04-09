@@ -1,4 +1,4 @@
-# QEncode - Quantum Algorithm Benchmarking Standard
+# QEncode — The Standard for Quantum Algorithm Benchmarking
 
 QEncode is a benchmark standard and execution platform for reproducible quantum chemistry algorithm evaluation.
 
@@ -34,9 +34,13 @@ QEncode reduces this ambiguity with a fixed suite and reproducible outputs.
 - Documentation: https://www.qencode-benchmark.org/docs
 - Pricing / certification: https://www.qencode-benchmark.org/pricing
 - Apply for access: https://www.qencode-benchmark.org/apply
-- Contact: quencodebenchmark@gmail.com
+- Contact: support@qencode-benchmark.org
 
 ## Quick start (local technical run)
+
+> **Note:** Managed execution and official certification are delivered through
+> [qencode-benchmark.org/apply](https://www.qencode-benchmark.org/apply).
+> The commands below are for technical reference and local development only.
 
 Install dependencies:
 
