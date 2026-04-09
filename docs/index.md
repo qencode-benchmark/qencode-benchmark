@@ -1,37 +1,30 @@
-# QEncode Benchmark Platform
+# QEncode Documentation Index
 
-QEncode is a benchmarking framework for evaluating quantum algorithms in a reproducible and standardized way.
+QEncode provides a reproducible benchmark standard and execution workflow for quantum chemistry algorithms.
 
-The platform combines benchmark suite definitions, automated execution pipelines, trust-certified benchmark results, workflow evaluation, and interactive analysis tools.
+## Official platform links
 
-## Core Components
+- Website: https://www.qencode-benchmark.org
+- Leaderboard: https://www.qencode-benchmark.org/leaderboard
+- Benchmark spec page: https://www.qencode-benchmark.org/benchmark
+- Pricing / certification: https://www.qencode-benchmark.org/pricing
+- Apply for access: https://www.qencode-benchmark.org/apply
+- Contact: quencodebenchmark@gmail.com
 
-### Benchmark Suite
-Defines standardized benchmark problems and configurations.
+## Core technical docs
 
-### Execution Pipeline
-Automates benchmark experiments and ensures reproducibility.
+- [Quick Start](QUICK_START.md)
+- [Getting Started](GETTING_STARTED.md)
+- [Standard Benchmark Suite v1](STANDARD_SUITE_V1.md)
+- [Leaderboard rules](LEADERBOARD_RULES_V1.md)
+- [Leaderboard generation](leaderboard.md)
+- [Runtime and cache](RUNTIME_AND_CACHE.md)
+- [Trust levels](TRUST_LEVELS.md)
+- [Submissions](SUBMISSIONS.md)
+- [Product walkthrough](PRODUCT_WALKTHROUGH.md)
+- [Demo accelerator script](DEMO_ACCELERATOR.md)
 
-### Benchmark Database
-Stores structured benchmark results with configuration metadata.
+## Scope
 
-### Trust Certification
-Classifies benchmark results as Experimental, Validated, or Certified.
-
-### Workflow Evaluation
-Allows evaluation of algorithm strategies.
-
-### Visualization
-Provides dashboards and comparison tools.
-
-## Documentation
-
-- [Whitepaper](whitepaper/QEncode_Benchmark_Whitepaper.md)
-- [Benchmark Specification](benchmark_specification_v1.md)
-- [Standard Benchmark Suite](STANDARD_SUITE_V1.md)
-- [Runtime and Cache System](RUNTIME_AND_CACHE.md)
-- [Trust Levels](TRUST_LEVELS.md)
-
-## Benchmark Vision
-
-The goal of QEncode is to support reproducible benchmarking of quantum algorithms and contribute toward community benchmark standards.
+This repository contains benchmark definitions, execution scripts, and dataset tooling.  
+Commercial onboarding, managed execution, and official certification requests are handled via the website links above.

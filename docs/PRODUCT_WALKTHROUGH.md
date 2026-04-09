@@ -78,3 +78,12 @@ qencode-db is a **benchmarking platform** for quantum algorithms. It lets you co
 2. **Standard Suite** → Pick H2 or BeH2 → Look at certified table and best mapping/ansatz
 3. **Workflows** → Compare vqe_standard vs vqe_fast (after running them)
 4. **Explore** → Use filters and charts for deeper analysis
+
+---
+
+## Public platform and onboarding
+
+- Website: https://www.qencode-benchmark.org
+- Leaderboard: https://www.qencode-benchmark.org/leaderboard
+- Pricing / certification: https://www.qencode-benchmark.org/pricing
+- Apply for access: https://www.qencode-benchmark.org/apply

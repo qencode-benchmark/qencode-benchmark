@@ -77,3 +77,12 @@ If `releases/v2/db` is empty:
 2. Assign trust levels: `python scripts/assign_trust_levels.py --db-dir releases/v2/db`
 3. Sync: `python scripts/compare.py --molecule H2 --sync`
 4. Then run the dashboard demo
+
+---
+
+## Commercial CTA (for live demos)
+
+After the technical demo, point users to:
+
+- Pricing / certification: https://www.qencode-benchmark.org/pricing
+- Apply for access: https://www.qencode-benchmark.org/apply

@@ -87,6 +87,11 @@ Checks:
 - **Easier certification** — Phase 9 certified suite can align with this grid.
 - **Easier caching and demos** — deterministic, reproducible.
 
+For managed execution and official certification intake, use:
+
+- https://www.qencode-benchmark.org/pricing
+- https://www.qencode-benchmark.org/apply
+
 ---
 
 ## Customizing the suite
