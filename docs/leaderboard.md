@@ -2,6 +2,12 @@
 
 The QEncode leaderboard summarizes **certified** benchmark results across three categories. Official ranking rules and eligibility criteria are defined in **`docs/LEADERBOARD_RULES_V1.md`**.
 
+Public leaderboard and onboarding:
+
+- Leaderboard: https://www.qencode-benchmark.org/leaderboard
+- Pricing / certification: https://www.qencode-benchmark.org/pricing
+- Apply for access: https://www.qencode-benchmark.org/apply
+
 Benchmark methodology (fixed suite, fixed constraints, required metrics, reproducibility) is defined in `docs/BENCHMARK_SPECIFICATION_V1.md`.
 
 - **Best Accuracy** — lowest energy gap.

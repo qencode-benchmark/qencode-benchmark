@@ -1,139 +1,103 @@
-# QEncode — Quantum Algorithm Benchmarking Standard
+# QEncode - Quantum Algorithm Benchmarking Standard
 
-QEncode is an open benchmarking standard for quantum chemistry algorithms. It provides fixed, reproducible VQE benchmarks across H₂, BeH₂, and HF — with LiH coming in Suite v2 — enabling fair comparison of encodings, ansatz types, and algorithm implementations.
+QEncode is a benchmark standard and execution platform for reproducible quantum chemistry algorithm evaluation.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Suite Version](https://img.shields.io/badge/Suite-v2-green.svg)](https://qencode-benchmark.org/benchmark)
-[![Leaderboard](https://img.shields.io/badge/Leaderboard-Live-brightgreen.svg)](https://qencode-benchmark.org/leaderboard)
+It combines:
 
----
+- fixed benchmark definitions (molecules, basis, mappings, ansatz settings),
+- managed execution and verification workflows,
+- signed certification artifacts, and
+- a public leaderboard filtered to certified entries.
 
-## Problem
+## Why QEncode exists
 
-Quantum algorithm benchmarking today is inconsistent and difficult to reproduce.
+Quantum benchmarking is often not directly comparable across teams because setups differ:
 
-Different studies use different:
+- molecule set and geometry choices,
+- encoding and ansatz assumptions,
+- optimizer and stopping conditions,
+- hardware/noise and shot settings.
 
-- Encodings (Jordan-Wigner, Bravyi-Kitaev, Parity)
-- Ansatz circuits (UCCSD, HEA, custom)
-- Noise models and hardware backends
-- Optimizers and convergence criteria
-- Evaluation metrics
+QEncode reduces this ambiguity with a fixed suite and reproducible outputs.
 
-This makes results impossible to compare across experiments, slowing meaningful progress in the field.
+## Platform model
 
----
+- Benchmark methodology is public.
+- Managed execution, private benchmarking, and official certification are delivered through the website funnel.
+- Official public leaderboard inclusion is tied to certified outputs and trust filtering.
 
-## Solution
+## Official links
 
-QEncode provides a structured benchmarking framework with:
+- Website: https://www.qencode-benchmark.org
+- Leaderboard: https://www.qencode-benchmark.org/leaderboard
+- Benchmark spec: https://www.qencode-benchmark.org/benchmark
+- Documentation: https://www.qencode-benchmark.org/docs
+- Pricing / certification: https://www.qencode-benchmark.org/pricing
+- Apply for access: https://www.qencode-benchmark.org/apply
+- Contact: quencodebenchmark@gmail.com
 
-- **Standard Benchmark Suite (v2)** — fixed molecule geometry, basis set, encoding, and ansatz
-- **Certified Results** — verified outputs with reproducibility guarantees and signed receipts
-- **Public Leaderboard** — compare algorithms across accuracy, hardware cost, and balanced score
-- **Reproducible Datasets** — open data for every benchmark run, versioned and traceable
-- **Workflow Evaluation** — compare complete algorithm configurations, not just individual parameters
+## Quick start (local technical run)
 
----
-
-## Molecules (Suite v2)
-
-| Molecule | Status | Qubits |
-|---|---|---|
-| H₂ (Hydrogen) | ✅ Active | 4 |
-| BeH₂ (Beryllium Hydride) | ✅ Active | 14 |
-| HF (Hydrogen Fluoride) | ✅ Active | 12 |
-| LiH (Lithium Hydride) | 🔜 Suite v2 | 12 |
-
----
-
-## Quick Start
+Install dependencies:
 
 ```bash
-git clone https://github.com/qencode-benchmark/qencode-benchmark-suite.git
-cd qencode-benchmark-suite
-pip install pyyaml pyscf qiskit qiskit-nature
+pip install -r requirements.txt
+```
+
+Run the official suite pipeline:
+
+```bash
 python scripts/run_qencode_benchmark.py
 ```
 
-Run a single molecule:
+Run one molecule:
 
 ```bash
 python scripts/run_qencode_benchmark.py --molecule H2
 ```
 
-See [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) for full setup instructions and platform notes.
+For full environment setup and troubleshooting, see `docs/GETTING_STARTED.md`.
 
----
+## Core CLI examples
 
-## Certification
+Single benchmark:
 
-Anyone can run the benchmark suite locally. **Official certification** — with a signed receipt and eligibility for public leaderboard inclusion — is available at [qencode-benchmark.org/certify](https://qencode-benchmark.org/certify).
-
-| Tier | Price | Scope |
-|---|---|---|
-| Single-Molecule | $1,500 | One molecule, signed receipt + benchmark report |
-| Full Suite v2 | $4,000 | All molecules, signed receipt + audit-ready artifacts |
-
-Certified results are the only entries accepted on the official public leaderboard.
-
----
-
-## Leaderboard
-
-View live rankings at [qencode-benchmark.org/leaderboard](https://qencode-benchmark.org/leaderboard).
-
-Rankings are available in three categories:
-
-- **Best Accuracy** — lowest energy error gap vs. exact classical reference
-- **Lowest Hardware Cost** — fewest two-qubit gates
-- **Best Balanced Score** — combined accuracy and cost metric
-
----
-
-## Repository Structure
-
-```
-qencode-benchmark-suite/
-├── benchmarks/standard/      # Fixed benchmark definitions (Suite v1, v2)
-├── datasets/                 # Reference datasets and leaderboard snapshots
-├── artifacts/                # Generated leaderboard reports and audit logs
-├── docs/
-│   ├── GETTING_STARTED.md    # Environment setup and installation
-│   ├── QUICK_START.md        # One-command benchmark execution
-│   ├── LEADERBOARD_RULES_V1.md
-│   ├── whitepaper/           # Full technical specification (PDF)
-│   └── Benchmark specification v1.pdf
-├── CITATION.cff              # Citation metadata for academic use
-└── LICENSE
+```bash
+python scripts/run_benchmark.py --molecule H2 --mapping JW --ansatz UCCSD --backend all
 ```
 
----
+Matrix benchmark:
 
-## Citing QEncode
-
-If you use QEncode in your research, please cite it using the metadata in [CITATION.cff](CITATION.cff):
-
-```bibtex
-@software{qencode2026,
-  title  = {QEncode Benchmark Suite},
-  url    = {https://qencode-benchmark.org},
-  year   = {2026}
-}
+```bash
+python scripts/run_matrix.py --matrix benchmarks/matrix_mvp.json
 ```
 
----
+Comparison and ranking:
 
-## Contributing
+```bash
+python scripts/compare.py --molecule H2
+python scripts/rank.py --molecule H2
+```
 
-QEncode is open source. We welcome issues, discussions, and pull requests. If you have suggestions for additional molecules, encodings, or scoring metrics, please open an issue.
+## Repository structure
 
----
+- `benchmarks/standard/` - fixed suite definitions
+- `datasets/` - leaderboard CSVs and release snapshots
+- `releases/v2/db/` - generated benchmark entries
+- `scripts/` - benchmark, comparison, leaderboard, and release tooling
+- `docs/` - technical docs and project phases
+- `website/` - Next.js marketing site and public leaderboard UI
 
-## Links
+## Notes for website alignment
 
-- 🌐 Website: [qencode-benchmark.org](https://qencode-benchmark.org)
-- 📊 Leaderboard: [qencode-benchmark.org/leaderboard](https://qencode-benchmark.org/leaderboard)
-- 📄 Docs: [qencode-benchmark.org/docs](https://qencode-benchmark.org/docs)
-- 🏅 Get Certified: [qencode-benchmark.org/certify](https://qencode-benchmark.org/certify)
-- 📧 Contact: [jlabquantumc@gmail.com](mailto:jlabquantumc@gmail.com)
+- Public website CTAs prioritize `Apply for Access` and `Pricing`.
+- `pricing` is the commercial entrypoint for certification services.
+- Docs and repository links should target `qencode-benchmark/qencode-benchmark`.
+
+## Additional docs
+
+- Quick start: `docs/QUICK_START.md`
+- Standard Suite v2: `docs/STANDARD_SUITE_V2.md`
+- Leaderboard rules: `docs/LEADERBOARD_RULES_V1.md`
+- Runtime/cache operations: `docs/RUNTIME_AND_CACHE.md`
+- Phases overview: `docs/PHASES_OVERVIEW.md`

@@ -1,8 +1,15 @@
 # Quick Start — Run the official QEncode benchmark
 
-This quick start runs the **official Standard Benchmark Suite v1** and produces the **official leaderboard dataset** in one command.
+This quick start runs the **official Standard Benchmark Suite v1** and produces the leaderboard datasets in one command.
 
 If you haven't installed dependencies yet, see `docs/GETTING_STARTED.md` first.
+
+Official platform links:
+
+- Website: https://www.qencode-benchmark.org
+- Pricing / certification: https://www.qencode-benchmark.org/pricing
+- Apply for access: https://www.qencode-benchmark.org/apply
+- Contact: quencodebenchmark@gmail.com
 
 At minimum, Standard Suite v1 requires **PyYAML**:
 
