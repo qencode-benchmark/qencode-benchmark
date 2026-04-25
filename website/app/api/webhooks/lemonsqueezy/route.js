@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import { sendCustomerConfirmation, sendAdminNotification } from "@/lib/email";
+import { ensureSchema, insertOrder } from "@/lib/db";
 
 /**
  * POST /api/webhooks/lemonsqueezy
@@ -20,18 +21,17 @@ import { sendCustomerConfirmation, sendAdminNotification } from "@/lib/email";
 
 // Map Lemon Squeezy product names / price thresholds to human-readable labels.
 // We use price (in cents) as the primary key because product names can change.
-function resolveProductLabel(attrs) {
+function resolveProduct(attrs) {
   const total = attrs.total ?? 0;
   const productName = attrs.first_order_item?.product_name ?? "";
 
   if (total >= 390000 || /full suite/i.test(productName)) {
-    return "Full Suite v2 Certification";
+    return { label: "Full Suite v2 Certification", type: "full_suite" };
   }
   if (total >= 140000 || /single.?molecule/i.test(productName)) {
-    return "Single-Molecule Certification";
+    return { label: "Single-Molecule Certification", type: "single_molecule" };
   }
-  // Fallback — use whatever LS reports
-  return productName || `Order ($${(total / 100).toFixed(2)})`;
+  return { label: productName || `Order ($${(total / 100).toFixed(2)})`, type: "unknown" };
 }
 
 /** Verify the X-Signature header using HMAC-SHA256 */
@@ -104,7 +104,7 @@ export async function POST(request) {
     const customerName = attrs.user_name;
     const orderNumber = attrs.order_number;
     const totalFormatted = attrs.total_formatted ?? `$${(attrs.total / 100).toFixed(2)}`;
-    const productLabel = resolveProductLabel(attrs);
+    const { label: productLabel, type: productType } = resolveProduct(attrs);
 
     if (!customerEmail) {
       console.error("[lemonsqueezy] Order has no customer email — cannot send confirmation");
@@ -113,8 +113,21 @@ export async function POST(request) {
 
     console.log(`[lemonsqueezy] Processing paid order #${orderNumber} for ${customerEmail} — ${productLabel}`);
 
-    // ── 5. Send emails (in parallel, don't fail the webhook if email fails) ─
-    const emailResults = await Promise.allSettled([
+    // ── 5. Log order to DB + send emails in parallel ─────────────────────────
+    const [dbResult, ...emailResults] = await Promise.allSettled([
+      (async () => {
+        await ensureSchema();
+        await insertOrder({
+          lsOrderId:      String(orderId),
+          lsOrderNumber:  orderNumber,
+          customerEmail,
+          customerName,
+          productLabel,
+          productType,
+          totalFormatted,
+        });
+        console.log(`[lemonsqueezy] Order #${orderNumber} saved to DB — status: pending`);
+      })(),
       sendCustomerConfirmation({
         customerEmail,
         customerName,
@@ -134,8 +147,12 @@ export async function POST(request) {
       }),
     ]);
 
+    if (dbResult.status === "rejected") {
+      console.error("[lemonsqueezy] Failed to save order to DB:", dbResult.reason);
+    }
+
     emailResults.forEach((result, i) => {
-      const label = i === 0 ? "customer confirmation" : "admin notification";
+      const label = i === 0 ? "customer confirmation" : "admin notification";  // emailResults[0] is confirm, [1] is admin
       if (result.status === "rejected") {
         console.error(`[lemonsqueezy] Failed to send ${label}:`, result.reason);
       } else if (result.value?.error) {

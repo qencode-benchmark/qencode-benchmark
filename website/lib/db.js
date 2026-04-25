@@ -13,9 +13,7 @@ function getDb() {
 // ─── Schema ──────────────────────────────────────────────────────────────────
 
 /**
- * Create tables if they don't exist yet.
- * Safe to call multiple times (idempotent).
- * Call this once from the admin setup route or seed script.
+ * Create leaderboard + orders tables if they don't exist yet. Idempotent.
  */
 export async function ensureSchema() {
   const sql = getDb();
@@ -44,6 +42,83 @@ export async function ensureSchema() {
       value      TEXT         NOT NULL,
       updated_at TIMESTAMPTZ  NOT NULL DEFAULT NOW()
     )
+  `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS orders (
+      id              SERIAL PRIMARY KEY,
+      ls_order_id     VARCHAR(50)  UNIQUE NOT NULL,
+      ls_order_number INTEGER      NOT NULL,
+      customer_email  VARCHAR(255) NOT NULL,
+      customer_name   VARCHAR(255),
+      product_label   VARCHAR(100) NOT NULL,
+      product_type    VARCHAR(20)  NOT NULL,
+      total_formatted VARCHAR(20),
+      status          VARCHAR(20)  NOT NULL DEFAULT 'pending',
+      created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+      started_at      TIMESTAMPTZ,
+      completed_at    TIMESTAMPTZ,
+      error_message   TEXT,
+      notes           TEXT
+    )
+  `;
+}
+
+// ─── Orders ───────────────────────────────────────────────────────────────────
+
+/** Insert a new order row when a payment is confirmed. Ignores duplicates. */
+export async function insertOrder({ lsOrderId, lsOrderNumber, customerEmail, customerName, productLabel, productType, totalFormatted }) {
+  const sql = getDb();
+  await sql`
+    INSERT INTO orders
+      (ls_order_id, ls_order_number, customer_email, customer_name,
+       product_label, product_type, total_formatted, status, created_at)
+    VALUES
+      (${String(lsOrderId)}, ${Number(lsOrderNumber)}, ${customerEmail},
+       ${customerName || null}, ${productLabel}, ${productType},
+       ${totalFormatted || null}, 'pending', NOW())
+    ON CONFLICT (ls_order_id) DO NOTHING
+  `;
+}
+
+/** Claim the oldest pending order — mark it running and return it. Returns null if queue is empty. */
+export async function claimNextJob() {
+  const sql = getDb();
+  const rows = await sql`
+    UPDATE orders
+    SET    status = 'running', started_at = NOW()
+    WHERE  id = (
+      SELECT id FROM orders
+      WHERE  status = 'pending'
+      ORDER  BY created_at ASC
+      LIMIT  1
+    )
+    RETURNING *
+  `;
+  return rows[0] ?? null;
+}
+
+/** Mark a job as completed or failed. */
+export async function finishJob(id, { success, errorMessage, notes }) {
+  const sql = getDb();
+  await sql`
+    UPDATE orders
+    SET
+      status        = ${success ? "completed" : "failed"},
+      completed_at  = NOW(),
+      error_message = ${errorMessage || null},
+      notes         = ${notes || null}
+    WHERE id = ${Number(id)}
+  `;
+}
+
+/** List all non-completed jobs (for the admin API). */
+export async function listActiveJobs() {
+  const sql = getDb();
+  return sql`
+    SELECT * FROM orders
+    WHERE  status IN ('pending', 'running')
+    ORDER  BY created_at ASC
   `;
 }
 
