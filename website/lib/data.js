@@ -1,4 +1,4 @@
-import { getEntries, getMetadata } from "./db";
+import { ensureSchema, getEntries, getMetadata } from "./db";
 
 // ─── Shared helpers ───────────────────────────────────────────────────────────
 
@@ -27,12 +27,21 @@ function applySymbolicMetrics(row) {
 // ─── DB loader (production) ───────────────────────────────────────────────────
 
 async function loadFromDatabase() {
+  // Auto-create tables on first run — safe to call repeatedly (idempotent).
+  await ensureSchema();
+
   const [accRows, costRows, balancedRows, metadata] = await Promise.all([
     getEntries("accuracy"),
     getEntries("cost"),
     getEntries("balanced"),
     getMetadata(),
   ]);
+
+  // DB exists but hasn't been seeded yet — fall back to CSV so the page renders.
+  if (accRows.length === 0 && costRows.length === 0) {
+    console.warn("[data] DB is empty — falling back to CSV files");
+    return loadFromCsv();
+  }
 
   const normalize = (rows) =>
     rows.map((r) => ({

@@ -3,9 +3,9 @@ import LeaderboardClient from "./LeaderboardClient";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-// Statically cached — revalidated on-demand when admin publishes new entries.
-// Falls back to 1-hour background revalidation as a safety net.
-export const revalidate = 3600;
+// Always server-render at request time — never prerender at build.
+// This avoids build failures when the DB is empty and allows live updates.
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Quantum Algorithm Leaderboard",
