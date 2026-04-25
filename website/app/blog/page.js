@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "jordan-wigner-vs-parity-vs-bravyi-kitaev",
+    date: "2026-04-25",
+    readingTime: "9 min read",
+    title: "Jordan-Wigner vs Parity vs Bravyi-Kitaev: A Practical Comparison for VQE",
+    excerpt:
+      "Before you run a single VQE circuit you have to pick a qubit encoding. We compared JW, parity, and Bravyi-Kitaev across five molecules with real benchmark data — circuit depth, gate count, and accuracy all measured under identical conditions.",
+    tags: ["encoding", "Jordan-Wigner", "parity", "Bravyi-Kitaev", "VQE"],
+  },
+  {
     slug: "uccsd-vs-hardware-efficient-ansatz",
     date: "2026-04-25",
     readingTime: "8 min read",

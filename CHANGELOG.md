@@ -15,7 +15,8 @@ All notable changes to QEncode are recorded here.
 
 ## 2026-04-25 — Blog + SEO
 
-- Added `/blog` with two technical posts:
+- Added `/blog` with three technical posts:
+  - *Jordan-Wigner vs Parity vs Bravyi-Kitaev: A Practical Comparison for VQE*
   - *UCCSD vs Hardware-Efficient Ansatz: What the Benchmark Data Actually Shows*
   - *Why VQE Benchmarks Are So Hard to Reproduce — and How QEncode Fixes It*
 - Blog added to Navbar and footer
