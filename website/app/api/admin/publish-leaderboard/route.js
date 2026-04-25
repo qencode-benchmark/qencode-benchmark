@@ -32,7 +32,7 @@ import { ensureSchema, replaceEntries, upsertMetadata } from "@/lib/db";
  */
 export async function POST(request) {
   // ── 1. Auth ────────────────────────────────────────────────────────────────
-  const secret = process.env.LEADERBOARD_PUBLISH_SECRET;
+  const secret = (process.env.LEADERBOARD_PUBLISH_SECRET ?? "").trim();
   if (!secret) {
     console.error("[publish-leaderboard] LEADERBOARD_PUBLISH_SECRET is not configured");
     return Response.json({ error: "Server misconfiguration" }, { status: 500 });

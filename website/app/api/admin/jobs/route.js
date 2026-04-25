@@ -9,7 +9,7 @@ import { ensureSchema, listActiveJobs, claimNextJob } from "@/lib/db";
  */
 
 function authorized(request) {
-  const secret = process.env.LEADERBOARD_PUBLISH_SECRET;
+  const secret = (process.env.LEADERBOARD_PUBLISH_SECRET ?? "").trim();
   if (!secret) return false;
   const header = request.headers.get("authorization") ?? "";
   return header === `Bearer ${secret}`;
