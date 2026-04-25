@@ -112,6 +112,16 @@ export async function finishJob(id, { success, errorMessage, notes }) {
   `;
 }
 
+/** Fetch all orders for a given customer email, newest first. */
+export async function getOrdersByEmail(email) {
+  const sql = getDb();
+  return sql`
+    SELECT * FROM orders
+    WHERE  customer_email = ${email}
+    ORDER  BY created_at DESC
+  `;
+}
+
 /** List all non-completed jobs (for the admin API). */
 export async function listActiveJobs() {
   const sql = getDb();

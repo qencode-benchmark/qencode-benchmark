@@ -77,7 +77,20 @@ export async function sendCustomerConfirmation({ customerEmail, customerName, or
             </tr>
           </table>
 
-          <p style="margin:28px 0 0;font-size:13px;color:#6b7280;">
+          <!-- Dashboard CTA -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;">
+            <tr><td align="center">
+              <a href="https://www.qencode-benchmark.org/dashboard"
+                 style="display:inline-block;background:#185FA5;color:#ffffff;font-size:14px;font-weight:500;padding:12px 28px;border-radius:6px;text-decoration:none;">
+                View order status →
+              </a>
+            </td></tr>
+          </table>
+          <p style="margin:12px 0 0;text-align:center;font-size:12px;color:#9ca3af;">
+            Sign in with this email address to access your dashboard.
+          </p>
+
+          <p style="margin:24px 0 0;font-size:13px;color:#6b7280;">
             Questions? Reply to this email or contact
             <a href="mailto:support@qencode-benchmark.org" style="color:#030712;font-weight:500;">support@qencode-benchmark.org</a>.
           </p>

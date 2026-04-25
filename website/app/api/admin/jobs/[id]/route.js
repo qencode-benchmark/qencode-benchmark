@@ -21,7 +21,8 @@ export async function POST(request, { params }) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const id = Number(params.id);
+  const { id: rawId } = await params;
+  const id = Number(rawId);
   if (!id || isNaN(id)) {
     return Response.json({ error: "Invalid job id" }, { status: 400 });
   }
