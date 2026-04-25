@@ -79,6 +79,7 @@ export default function RootLayout({ children }) {
                 <Link href="/leaderboard">Leaderboard</Link>
                 <Link href="/benchmark">Benchmark Spec</Link>
                 <Link href="/pricing">Pricing</Link>
+                <Link href="/blog">Blog</Link>
                 <Link href="/apply">Apply for Access</Link>
                 <Link href="/docs">Docs</Link>
               </div>
