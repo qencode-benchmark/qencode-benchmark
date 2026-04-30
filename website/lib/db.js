@@ -46,21 +46,28 @@ export async function ensureSchema() {
 
   await sql`
     CREATE TABLE IF NOT EXISTS orders (
-      id              SERIAL PRIMARY KEY,
-      ls_order_id     VARCHAR(50)  UNIQUE NOT NULL,
-      ls_order_number INTEGER      NOT NULL,
-      customer_email  VARCHAR(255) NOT NULL,
-      customer_name   VARCHAR(255),
-      product_label   VARCHAR(100) NOT NULL,
-      product_type    VARCHAR(20)  NOT NULL,
-      total_formatted VARCHAR(20),
-      status          VARCHAR(20)  NOT NULL DEFAULT 'pending',
-      created_at      TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-      started_at      TIMESTAMPTZ,
-      completed_at    TIMESTAMPTZ,
-      error_message   TEXT,
-      notes           TEXT
+      id                  SERIAL PRIMARY KEY,
+      ls_order_id         VARCHAR(50)  UNIQUE NOT NULL,
+      ls_order_number     INTEGER      NOT NULL,
+      customer_email      VARCHAR(255) NOT NULL,
+      customer_name       VARCHAR(255),
+      product_label       VARCHAR(100) NOT NULL,
+      product_type        VARCHAR(20)  NOT NULL,
+      total_formatted     VARCHAR(20),
+      status              VARCHAR(20)  NOT NULL DEFAULT 'pending',
+      created_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+      started_at          TIMESTAMPTZ,
+      completed_at        TIMESTAMPTZ,
+      error_message       TEXT,
+      notes               TEXT,
+      certification_token UUID         UNIQUE
     )
+  `;
+
+  // Add certification_token column if upgrading from older schema
+  await sql`
+    ALTER TABLE orders
+    ADD COLUMN IF NOT EXISTS certification_token UUID UNIQUE
   `;
 }
 
@@ -98,18 +105,49 @@ export async function claimNextJob() {
   return rows[0] ?? null;
 }
 
-/** Mark a job as completed or failed. */
+/** Mark a job as completed or failed. Returns the updated row (includes certification_token). */
 export async function finishJob(id, { success, errorMessage, notes }) {
   const sql = getDb();
-  await sql`
+  const rows = await sql`
     UPDATE orders
     SET
-      status        = ${success ? "completed" : "failed"},
-      completed_at  = NOW(),
-      error_message = ${errorMessage || null},
-      notes         = ${notes || null}
+      status              = ${success ? "completed" : "failed"},
+      completed_at        = NOW(),
+      error_message       = ${errorMessage || null},
+      notes               = ${notes || null},
+      certification_token = CASE
+        WHEN ${success} = true AND certification_token IS NULL
+        THEN gen_random_uuid()
+        ELSE certification_token
+      END
     WHERE id = ${Number(id)}
+    RETURNING *
   `;
+  return rows[0] ?? null;
+}
+
+/**
+ * Look up a certification by its public token.
+ * Returns only public-safe fields — no customer email exposed.
+ */
+export async function getCertificationByToken(token) {
+  const sql = getDb();
+  const rows = await sql`
+    SELECT
+      certification_token,
+      ls_order_number,
+      product_label,
+      product_type,
+      status,
+      created_at,
+      completed_at,
+      notes,
+      customer_name
+    FROM orders
+    WHERE certification_token = ${token}
+      AND status = 'completed'
+  `;
+  return rows[0] ?? null;
 }
 
 /** Fetch all orders for a given customer email, newest first. */

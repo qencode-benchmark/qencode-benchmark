@@ -35,9 +35,18 @@ export async function POST(request, { params }) {
   const notes        = body.notes ?? null;
 
   try {
-    await finishJob(id, { success, errorMessage, notes });
-    console.log(`[jobs] Job #${id} marked as ${success ? "completed" : "failed"}`);
-    return Response.json({ ok: true, id, status: success ? "completed" : "failed" });
+    const order = await finishJob(id, { success, errorMessage, notes });
+    const certToken = order?.certification_token ?? null;
+    console.log(`[jobs] Job #${id} marked as ${success ? "completed" : "failed"}${certToken ? ` — cert token: ${certToken}` : ""}`);
+    return Response.json({
+      ok: true,
+      id,
+      status: success ? "completed" : "failed",
+      certification_token: certToken,
+      verify_url: certToken
+        ? `https://www.qencode-benchmark.org/verify/${certToken}`
+        : null,
+    });
   } catch (err) {
     console.error(`[jobs] finishJob #${id} failed:`, err);
     return Response.json({ error: err.message }, { status: 500 });

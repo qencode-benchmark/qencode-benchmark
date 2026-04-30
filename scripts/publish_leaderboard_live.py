@@ -23,10 +23,11 @@ Environment:
 """
 
 import csv
+import hashlib
 import json
 import os
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 try:
@@ -48,6 +49,8 @@ API_URL = os.environ.get(
 ENDPOINT = f"{API_URL}/api/admin/publish-leaderboard"
 
 SECRET = os.environ.get("LEADERBOARD_PUBLISH_SECRET", "")
+
+CHAIN_FILE = REPO_ROOT / "LEADERBOARD_CHAIN.jsonl"
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -82,6 +85,51 @@ def normalize_entry(row: dict, category: str) -> dict:
         "balanced_score": to_num(row.get("balanced_score")) if category == "balanced" else None,
         "baseline":      str(row.get("baseline", "false")).strip().lower() == "true",
     }
+
+
+def compute_payload_hash(payload: dict) -> str:
+    """SHA-256 hash of the canonical JSON representation of the payload."""
+    canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def append_chain_block(payload: dict, entries_count: dict) -> str:
+    """
+    Append a new block to the Merkle-style audit chain.
+    Each block contains:
+      - block: sequential block number
+      - timestamp: ISO 8601 UTC
+      - prev_hash: hash of the previous block (or "genesis" for block 0)
+      - hash: SHA-256 of (prev_hash + canonical payload JSON)
+      - entries: count per category
+    Returns the hash of the new block.
+    """
+    # Read previous block
+    prev_hash = "genesis"
+    block_num = 0
+    if CHAIN_FILE.exists():
+        lines = CHAIN_FILE.read_text(encoding="utf-8").strip().splitlines()
+        if lines:
+            last = json.loads(lines[-1])
+            prev_hash = last["hash"]
+            block_num = last["block"] + 1
+
+    # Compute hash: SHA-256(prev_hash + canonical payload)
+    combined = prev_hash + json.dumps(payload, sort_keys=True, ensure_ascii=False)
+    block_hash = hashlib.sha256(combined.encode("utf-8")).hexdigest()
+
+    block = {
+        "block":     block_num,
+        "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "prev_hash": prev_hash,
+        "hash":      block_hash,
+        "entries":   entries_count,
+    }
+
+    with open(CHAIN_FILE, "a", encoding="utf-8") as f:
+        f.write(json.dumps(block) + "\n")
+
+    return block_hash
 
 
 def load_metadata() -> dict:
@@ -153,6 +201,21 @@ def main():
         print(f"  accuracy: {data['published']['accuracy']} entries")
         print(f"  cost:     {data['published']['cost']} entries")
         print(f"  balanced: {data['published']['balanced']} entries")
+
+        # Append audit chain block
+        block_hash = append_chain_block(
+            payload,
+            entries_count={
+                "accuracy": data["published"]["accuracy"],
+                "cost":     data["published"]["cost"],
+                "balanced": data["published"]["balanced"],
+            }
+        )
+        print(f"\n🔗 Audit chain updated")
+        print(f"  Block hash: {block_hash[:16]}...{block_hash[-8:]}")
+        print(f"  Chain file: {CHAIN_FILE}")
+        print(f"\n  Commit the chain file to make the audit trail public:")
+        print(f"  git add LEADERBOARD_CHAIN.jsonl && git commit -m 'audit: leaderboard block {block_hash[:8]}'")
         print(f"\nThe /leaderboard page will reflect the new data on next visit.")
     else:
         print(f"\n✗ Publish failed (HTTP {resp.status_code})")

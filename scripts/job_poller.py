@@ -92,8 +92,8 @@ def claim_job() -> dict | None:
         return None
 
 
-def finish_job(job_id: int, success: bool, error_message: str = "", notes: str = ""):
-    """Mark the job as completed or failed in the API."""
+def finish_job(job_id: int, success: bool, error_message: str = "", notes: str = "") -> dict | None:
+    """Mark the job as completed or failed in the API. Returns response data including certification_token."""
     try:
         r = requests.post(
             f"{API_URL}/api/admin/jobs/{job_id}",
@@ -102,9 +102,16 @@ def finish_job(job_id: int, success: bool, error_message: str = "", notes: str =
             timeout=15,
         )
         r.raise_for_status()
+        data = r.json()
+        cert_token = data.get("certification_token")
         log.info(f"Job #{job_id} marked {'completed' if success else 'failed'}")
+        if cert_token:
+            log.info(f"  Certification token : {cert_token}")
+            log.info(f"  Verify URL          : {data.get('verify_url', '')}")
+        return data
     except Exception as e:
         log.error(f"finish_job error: {e}")
+        return None
 
 
 def extract_molecule(product_label: str) -> str | None:
@@ -218,10 +225,15 @@ def main():
             if job:
                 log.info(f"Found job #{job['id']} — starting ...")
                 success, notes = run_job(job)
-                finish_job(job["id"], success=success, notes=notes)
+                result = finish_job(job["id"], success=success, notes=notes)
 
                 if success:
                     log.info(f"✓ Job #{job['id']} complete. Notes: {notes}")
+                    if result and result.get("verify_url"):
+                        log.info(f"━━━ CERTIFICATION ISSUED ━━━━━━━━━━━━━━━━━━━━━━━━━")
+                        log.info(f"  Verify : {result['verify_url']}")
+                        log.info(f"  Badge  : {API_URL}/api/badge/{result['certification_token']}")
+                        log.info(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                 else:
                     log.error(f"✗ Job #{job['id']} failed. Notes: {notes}")
 

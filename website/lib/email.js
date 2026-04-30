@@ -9,6 +9,84 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "support@qencode-benchmark.org";
  * Send a payment confirmation email to the customer.
  * Called immediately after a verified order_created webhook event.
  */
+export async function sendCertificationComplete({ customerEmail, customerName, orderNumber, productLabel, certificationToken }) {
+  const verifyUrl = `https://www.qencode-benchmark.org/verify/${certificationToken}`;
+  const badgeUrl  = `https://www.qencode-benchmark.org/api/badge/${certificationToken}`;
+  const subject   = `QEncode certification #${orderNumber} complete`;
+
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:40px 16px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;max-width:600px;">
+
+        <tr><td style="background:#030712;padding:24px 32px;">
+          <p style="margin:0;color:#ffffff;font-size:18px;font-weight:600;letter-spacing:-0.3px;">QEncode</p>
+          <p style="margin:4px 0 0;color:#9ca3af;font-size:13px;">Quantum Benchmark Certification</p>
+        </td></tr>
+
+        <tr><td style="padding:32px;">
+          <p style="margin:0 0 8px;font-size:22px;font-weight:600;color:#030712;">Your certification is complete</p>
+          <p style="margin:0 0 24px;font-size:15px;color:#6b7280;">
+            Hi ${customerName ? customerName.split(" ")[0] : "there"}, your <strong style="color:#030712;">${productLabel}</strong> certification has been completed and verified.
+          </p>
+
+          <!-- Verify CTA -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+            <tr><td align="center">
+              <a href="${verifyUrl}" style="display:inline-block;background:#185FA5;color:#ffffff;font-size:14px;font-weight:500;padding:12px 28px;border-radius:6px;text-decoration:none;">
+                View certification receipt →
+              </a>
+            </td></tr>
+          </table>
+
+          <!-- Badge section -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:24px;">
+            <tr><td style="padding:20px;">
+              <p style="margin:0 0 12px;font-size:13px;font-weight:600;color:#030712;">Add the badge to your GitHub README</p>
+              <img src="${badgeUrl}" alt="QEncode Certified" style="display:block;margin-bottom:12px;" />
+              <p style="margin:0 0 8px;font-size:12px;color:#6b7280;">Copy and paste this into your README.md:</p>
+              <pre style="margin:0;background:#e5e7eb;padding:10px 12px;border-radius:4px;font-size:11px;overflow-x:auto;font-family:monospace;color:#030712;">[![QEncode Certified](${badgeUrl})](${verifyUrl})</pre>
+            </td></tr>
+          </table>
+
+          <!-- Token -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;margin-bottom:24px;">
+            <tr><td style="padding:16px 20px;">
+              <p style="margin:0 0 4px;font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;">Certification token</p>
+              <code style="font-size:11px;font-family:monospace;color:#374151;word-break:break-all;">${certificationToken}</code>
+            </td></tr>
+          </table>
+
+          <p style="margin:0;font-size:13px;color:#6b7280;">
+            Questions? Reply to this email or contact
+            <a href="mailto:support@qencode-benchmark.org" style="color:#030712;font-weight:500;">support@qencode-benchmark.org</a>.
+          </p>
+        </td></tr>
+
+        <tr><td style="background:#f9fafb;padding:16px 32px;border-top:1px solid #e5e7eb;">
+          <p style="margin:0;font-size:12px;color:#9ca3af;">
+            QEncode &nbsp;·&nbsp; <a href="https://www.qencode-benchmark.org" style="color:#9ca3af;">qencode-benchmark.org</a>
+          </p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  return resend.emails.send({
+    from: FROM_ADDRESS,
+    to: customerEmail,
+    subject,
+    html,
+  });
+}
+
 export async function sendCustomerConfirmation({ customerEmail, customerName, orderId, orderNumber, productLabel, totalFormatted }) {
   const subject = `QEncode certification order #${orderNumber} confirmed`;
 
