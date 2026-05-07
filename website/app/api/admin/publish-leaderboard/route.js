@@ -53,7 +53,7 @@ export async function POST(request) {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { accuracy, cost, balanced, metadata } = body ?? {};
+  const { accuracy, cost, balanced, research, metadata } = body ?? {};
 
   if (!Array.isArray(accuracy) || !Array.isArray(cost) || !Array.isArray(balanced)) {
     return Response.json(
@@ -61,6 +61,8 @@ export async function POST(request) {
       { status: 422 }
     );
   }
+  // research is optional — older clients may not send it
+  const researchEntries = Array.isArray(research) ? research : [];
 
   // ── 3. Validate entry shape ────────────────────────────────────────────────
   const requiredFields = ["rank", "molecule", "mapping", "ansatz"];
@@ -81,10 +83,11 @@ export async function POST(request) {
   try {
     await ensureSchema();
 
-    const [accCount, costCount, balancedCount] = await Promise.all([
+    const [accCount, costCount, balancedCount, researchCount] = await Promise.all([
       replaceEntries("accuracy", accuracy).then(() => accuracy.length),
       replaceEntries("cost",     cost).then(()     => cost.length),
       replaceEntries("balanced", balanced).then(() => balanced.length),
+      replaceEntries("research", researchEntries).then(() => researchEntries.length),
     ]);
 
     if (metadata && typeof metadata === "object") {
@@ -92,7 +95,7 @@ export async function POST(request) {
     }
 
     console.log(
-      `[publish-leaderboard] Published — accuracy:${accCount} cost:${costCount} balanced:${balancedCount}`
+      `[publish-leaderboard] Published — accuracy:${accCount} cost:${costCount} balanced:${balancedCount} research:${researchCount}`
     );
   } catch (err) {
     console.error("[publish-leaderboard] Database write failed:", err);
@@ -114,6 +117,7 @@ export async function POST(request) {
       accuracy: accuracy.length,
       cost:     cost.length,
       balanced: balanced.length,
+      research: researchEntries.length,
     },
   });
 }

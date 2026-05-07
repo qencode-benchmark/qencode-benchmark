@@ -1,3 +1,23 @@
+export const metadata = {
+  title: "Benchmark Methodology",
+  description:
+    "Understand QEncode benchmark methodology, leaderboard rules, scoring logic, and data provenance for certified quantum algorithm rankings.",
+  keywords: [
+    "quantum benchmark methodology",
+    "leaderboard scoring rules",
+    "quantum ranking criteria"
+  ],
+  alternates: {
+    canonical: "/methodology"
+  },
+  openGraph: {
+    title: "QEncode Methodology",
+    description:
+      "Fixed benchmark suite and transparent scoring framework for reproducible quantum leaderboard rankings.",
+    url: "/methodology"
+  }
+};
+
 export default function MethodologyPage() {
   return (
     <div>

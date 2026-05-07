@@ -24,7 +24,7 @@ import { ensureSchema, getEntries, getMetadata } from "@/lib/db";
  * }
  */
 
-const VALID_CATEGORIES = ["accuracy", "cost", "balanced"];
+const VALID_CATEGORIES = ["accuracy", "cost", "balanced", "research"];
 
 function applyFilters(entries, { molecule, ansatz, mapping }) {
   return entries.filter((e) => {
