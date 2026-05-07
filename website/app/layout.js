@@ -1,5 +1,4 @@
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import AnalyticsClickTracker from "@/components/AnalyticsClickTracker";
 import { Analytics } from "@vercel/analytics/next";
@@ -60,7 +59,6 @@ export default function RootLayout({ children }) {
     sameAs: [REPO_URL]
   };
   return (
-    <ClerkProvider>
     <html lang="en">
       <body>
         <script
@@ -106,7 +104,6 @@ export default function RootLayout({ children }) {
         </footer>
       </body>
     </html>
-    </ClerkProvider>
   );
 }
 

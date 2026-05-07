@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const links = [
   { to: "/leaderboard", label: "Leaderboard" },
@@ -37,43 +36,15 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
-          <SignedIn>
-            <Link
-              href="/dashboard"
-              data-track="nav_dashboard"
-              className={cn("text-sm font-medium transition-colors hover:text-foreground text-muted-foreground")}
-            >
-              Dashboard
-            </Link>
-          </SignedIn>
         </nav>
         <div className="hidden md:flex items-center gap-3">
-          <SignedOut>
-            <Link
-              href="/sign-in"
-              data-track="nav_sign_in"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/apply"
-              data-track="nav_apply_for_access"
-              className="inline-flex items-center rounded-md bg-[#185FA5] px-4 py-2 text-sm font-medium text-white hover:opacity-95 transition-opacity"
-            >
-              Apply for Access
-            </Link>
-          </SignedOut>
-          <SignedIn>
-            <Link
-              href="/pricing"
-              data-track="nav_certify"
-              className="inline-flex items-center rounded-md bg-[#185FA5] px-4 py-2 text-sm font-medium text-white hover:opacity-95 transition-opacity"
-            >
-              Certify
-            </Link>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
+          <Link
+            href="/apply"
+            data-track="nav_apply_for_access"
+            className="inline-flex items-center rounded-md bg-[#185FA5] px-4 py-2 text-sm font-medium text-white hover:opacity-95 transition-opacity"
+          >
+            Apply for Access
+          </Link>
         </div>
 
         <button
@@ -104,30 +75,7 @@ export default function Navbar() {
                 {l.label}
               </Link>
             ))}
-            <SignedIn>
-              <Link
-                href="/dashboard"
-                onClick={() => setOpen(false)}
-                data-track="nav_mobile_dashboard"
-                className={cn(
-                  "px-2 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-foreground text-muted-foreground"
-                )}
-              >
-                Dashboard
-              </Link>
-            </SignedIn>
-            <SignedOut>
-              <Link
-                href="/sign-in"
-                onClick={() => setOpen(false)}
-                data-track="nav_mobile_sign_in"
-                className={cn(
-                  "px-2 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-foreground text-muted-foreground"
-                )}
-              >
-                Sign in
-              </Link>
-              <Link
+            <Link
                 href="/apply"
                 onClick={() => setOpen(false)}
                 data-track="nav_mobile_apply_for_access"
@@ -135,17 +83,6 @@ export default function Navbar() {
               >
                 Apply for Access
               </Link>
-            </SignedOut>
-            <SignedIn>
-              <Link
-                href="/pricing"
-                onClick={() => setOpen(false)}
-                data-track="nav_mobile_certify"
-                className="mt-2 inline-flex items-center justify-center rounded-md bg-[#185FA5] px-4 py-2 text-sm font-medium text-white hover:opacity-95 transition-opacity"
-              >
-                Certify
-              </Link>
-            </SignedIn>
           </nav>
         </div>
       )}
