@@ -54,14 +54,14 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      <section className="container py-24 lg:py-32">
-        <div className="mb-6 md:mb-8">
+      <section className="container pt-8 pb-16 sm:pt-16 sm:pb-20 lg:py-32">
+        <div className="hidden md:block mb-8">
           <Image
             src="/logo.png"
             alt="QEncode Benchmark"
             width={160}
             height={160}
-            className="h-24 md:h-40 w-auto"
+            className="h-40 w-auto"
             priority
           />
         </div>
