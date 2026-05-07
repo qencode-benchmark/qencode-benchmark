@@ -29,7 +29,7 @@ export const metadata = {
 };
 
 export default async function LeaderboardPage() {
-  const { acc, cost, balanced, metadata } = await loadLeaderboardData();
+  const { acc, cost, balanced, research = [], metadata } = await loadLeaderboardData();
   const suiteLabel = String(metadata.suite_version || "").replace(/^v/i, "");
   const rulesLabel = String(metadata.leaderboard_rules || "").replace(/^v/i, "");
 
@@ -65,7 +65,7 @@ export default async function LeaderboardPage() {
           <Button asChild size="sm" variant="outline"><Link href="/apply">Apply for Access</Link></Button>
         </div>
       </div>
-      <LeaderboardClient acc={acc} cost={cost} balanced={balanced} />
+      <LeaderboardClient acc={acc} cost={cost} balanced={balanced} research={research} />
     </div>
   );
 }

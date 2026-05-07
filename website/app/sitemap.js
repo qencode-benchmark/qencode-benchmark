@@ -1,6 +1,8 @@
 const BASE_URL = "https://www.qencode-benchmark.org";
 
 const blogPosts = [
+  { slug: "h2o-first-8-qubit-benchmark",              date: "2026-05-07" },
+  { slug: "chemical-accuracy-vs-certification",        date: "2026-05-07" },
   { slug: "jordan-wigner-vs-parity-vs-bravyi-kitaev", date: "2026-04-25" },
   { slug: "uccsd-vs-hardware-efficient-ansatz",        date: "2026-04-25" },
   { slug: "vqe-benchmarking-reproducibility",          date: "2026-04-18" },

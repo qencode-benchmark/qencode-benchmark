@@ -30,10 +30,11 @@ async function loadFromDatabase() {
   // Auto-create tables on first run — safe to call repeatedly (idempotent).
   await ensureSchema();
 
-  const [accRows, costRows, balancedRows, metadata] = await Promise.all([
+  const [accRows, costRows, balancedRows, researchRows, metadata] = await Promise.all([
     getEntries("accuracy"),
     getEntries("cost"),
     getEntries("balanced"),
+    getEntries("research"),
     getMetadata(),
   ]);
 
@@ -59,6 +60,7 @@ async function loadFromDatabase() {
     acc:      normalize(accRows),
     cost:     normalize(costRows),
     balanced: normalize(balancedRows),
+    research: normalize(researchRows),
     metadata,
   };
 }
@@ -101,7 +103,12 @@ function loadFromCsv() {
   const balanced = normalize(parseCsv(fs.readFileSync(path.join(base, "leaderboard_balanced.csv"),      "utf-8")), true);
   const metadata = JSON.parse(fs.readFileSync(path.join(base, "leaderboard_metadata.json"), "utf-8"));
 
-  return { acc, cost, balanced, metadata };
+  const researchCsvPath = path.join(base, "leaderboard_research.csv");
+  const research = fs.existsSync(researchCsvPath)
+    ? normalize(parseCsv(fs.readFileSync(researchCsvPath, "utf-8")))
+    : [];
+
+  return { acc, cost, balanced, research, metadata };
 }
 
 // ─── Public API ───────────────────────────────────────────────────────────────

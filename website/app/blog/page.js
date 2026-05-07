@@ -15,6 +15,24 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "h2o-first-8-qubit-benchmark",
+    date: "2026-05-07",
+    readingTime: "7 min read",
+    title: "H₂O Benchmarking: First 8-Qubit Results on the QEncode Leaderboard",
+    excerpt:
+      "We added water to the QEncode benchmark suite. Here's what it takes to simulate H₂O with a [4,4] active space — 8 qubits, 105 Pauli terms, and what the VQE results reveal about UCCSD's limits at this scale.",
+    tags: ["H₂O", "8-qubit", "UCCSD", "benchmark", "VQE"],
+  },
+  {
+    slug: "chemical-accuracy-vs-certification",
+    date: "2026-05-07",
+    readingTime: "6 min read",
+    title: "Chemical Accuracy vs. Certification: What the Gap Bars Mean",
+    excerpt:
+      "The leaderboard shows two thresholds: a 1.6 mHa chemical accuracy line and a 10 mHa certification threshold. Here's why they're different, what the colored bars measure, and how to read H₂O's red bars alongside H₂'s green ones.",
+    tags: ["chemical accuracy", "certification", "methodology", "leaderboard"],
+  },
+  {
     slug: "jordan-wigner-vs-parity-vs-bravyi-kitaev",
     date: "2026-04-25",
     readingTime: "9 min read",

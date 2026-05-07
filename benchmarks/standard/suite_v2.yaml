@@ -1,0 +1,103 @@
+# Standard Benchmark Suite v2 — expanded workload (not replacing v1)
+#
+# Suite v2 extends the frozen official set with additional chemistry problems.
+# Rule: v1 remains frozen; use v2 for new experiments and leaderboard v2 in the future.
+#
+# Certified tier (gap ≤ 0.01 Ha, in this suite): H2, LiH, HF, BeH2, H2O, NH3
+# Research tier (validated, harder systems):       N2 [6,6] — 12 qubits, multi-reference
+
+name: qencode_standard_suite_v2
+version: "2.0"
+description: Expanded standard benchmark suite for reproducible quantum chemistry evaluation (H2 + LiH + HF + BeH2 + H2O + NH3 + N2)
+
+molecules:
+  - name: H2
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [2, 2]
+
+  # LiH: conservative active space keeps runtime reasonable, 4 qubits.
+  - name: LiH
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [2, 2]
+
+  # HF: [2,2] avoids combinatorial blow-up, 4 qubits.
+  - name: HF
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [2, 2]
+
+  # BeH2: [4,4] active space, 8 qubits. Standard two-electron benchmark.
+  - name: BeH2
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [4, 4]
+
+  # H2O: [4,4] active space, 8 qubits. Captures lone-pair + bonding correlation.
+  - name: H2O
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [4, 4]
+
+  # NH3: [4,4] active space, 8 qubits. C3v symmetry, lone pair + N-H bond correlation.
+  - name: NH3
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [4, 4]
+
+  # N2: [6,6] active space, 12 qubits. Advanced / research tier.
+  # Triple bond requires beyond-UCCSD methods for chemical accuracy (gap < 0.01 Ha).
+  # Included as validated research entries; excluded from certified leaderboard.
+  - name: N2
+    geometry: default
+    variant: default
+    basis: sto3g
+    active_space: [6, 6]
+    tier: research
+
+mappings:
+  - jordan_wigner
+  - bravyi_kitaev
+  - parity
+
+ansatzes:
+  - type: uccsd
+    reps: 1
+  - type: hardware_efficient
+    reps: 2
+
+execution:
+  backends:
+    - ideal
+    - shots
+    - noisy
+  shots: 8192
+
+optimizer:
+  type: cobyla
+  max_iter: 200
+
+measurement:
+  strategy: grouped
+
+mitigation:
+  type: none
+
+output:
+  require_metrics:
+    - vqe_energy
+    - exact_energy
+    - gap_ideal
+    - gap_shots
+    - gap_noisy
+    - depth
+    - num_2q_gates
+    - terms
+    - groups

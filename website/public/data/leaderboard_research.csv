@@ -1,0 +1,7 @@
+rank,molecule,mapping,ansatz,gap,depth,2q_gates,baseline
+1,N2,jordan_wigner,uccsd,0.04381492288383093,15963,10344,False
+2,N2,parity,uccsd,0.0904001147096789,15668,9938,False
+3,N2,bravyi_kitaev,uccsd,0.09480800427944658,16266,10228,False
+4,N2,jordan_wigner,hardware_efficient,0.1250502257819459,39,132,False
+5,N2,parity,hardware_efficient,0.4104162541969796,39,132,False
+6,N2,bravyi_kitaev,hardware_efficient,0.4443091796345229,39,132,False

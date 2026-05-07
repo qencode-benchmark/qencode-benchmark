@@ -1,0 +1,72 @@
+{
+  "catalog_version": "2.0",
+  "description": "Source of truth for generate_entry_v2. MVP: H2 (default, geom), LiH (default), HF (default), BeH2 (default). Geometry: PySCF format. Units: angstrom. make list-catalog / --list-molecules must match this set.",
+  "units": "angstrom",
+  "mvp": ["H2/default", "H2/geom", "LiH/default", "HF/default", "BeH2/default"],
+  "entries": [
+    {
+      "molecule": "H2",
+      "variant": "default",
+      "geometry": "H 0.0 0.0 0.0; H 0.0 0.0 0.735",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom"
+    },
+    {
+      "molecule": "H2",
+      "variant": "geom",
+      "geometry": "H 0.0 0.0 0.0; H 0.0 0.0 0.74",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom"
+    },
+    {
+      "molecule": "LiH",
+      "variant": "default",
+      "geometry": "Li 0.0 0.0 0.0; H 0.0 0.0 1.6",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom"
+    },
+    {
+      "molecule": "HF",
+      "variant": "default",
+      "geometry": "H 0.0 0.0 0.0; F 0.0 0.0 0.917",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom"
+    },
+    {
+      "molecule": "BeH2",
+      "variant": "default",
+      "geometry": "H 0.0 0.0 -1.30; Be 0.0 0.0 0.0; H 0.0 0.0 1.30",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom"
+    },
+    {
+      "molecule": "N2",
+      "variant": "default",
+      "geometry": "N 0.0 0.0 0.0; N 0.0 0.0 1.097",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom"
+    },
+    {
+      "molecule": "H2O",
+      "variant": "default",
+      "geometry": "O 0.0 0.0 0.0; H 0.0 0.757 0.586; H 0.0 -0.757 0.586",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom"
+    },
+    {
+      "molecule": "NH3",
+      "variant": "default",
+      "geometry": "N 0.0 0.0 0.1173; H 0.0 0.9289 -0.2737; H 0.8045 -0.4645 -0.2737; H -0.8045 -0.4645 -0.2737",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom"
+    }
+  ]
+}

@@ -48,7 +48,7 @@ API_URL = os.environ.get(
 
 ENDPOINT = f"{API_URL}/api/admin/publish-leaderboard"
 
-SECRET = os.environ.get("LEADERBOARD_PUBLISH_SECRET", "")
+SECRET = os.environ.get("LEADERBOARD_PUBLISH_SECRET", "").strip().lstrip("﻿")
 
 CHAIN_FILE = REPO_ROOT / "LEADERBOARD_CHAIN.jsonl"
 
@@ -169,13 +169,19 @@ def main():
     metadata.pop("generation_command",   None)
     metadata.pop("certified_receipts_file", None)
 
+    # Research tier: validated entries not in the certified leaderboard (e.g. N2 [6,6]).
+    research_csv = DATASET_DIR / "leaderboard_research.csv"
+    research = [normalize_entry(r, "research") for r in read_csv(research_csv)] if research_csv.exists() else []
+
     # Derive entry count from the accuracy table (most complete)
     metadata["entries_included"] = str(len(accuracy))
+    metadata["research_entries_included"] = str(len(research))
 
     payload = {
         "accuracy": accuracy,
         "cost":     cost,
         "balanced": balanced,
+        "research": research,
         "metadata": metadata,
     }
 
@@ -201,6 +207,7 @@ def main():
         print(f"  accuracy: {data['published']['accuracy']} entries")
         print(f"  cost:     {data['published']['cost']} entries")
         print(f"  balanced: {data['published']['balanced']} entries")
+        print(f"  research: {data['published'].get('research', 0)} entries")
 
         # Append audit chain block
         block_hash = append_chain_block(
@@ -209,6 +216,7 @@ def main():
                 "accuracy": data["published"]["accuracy"],
                 "cost":     data["published"]["cost"],
                 "balanced": data["published"]["balanced"],
+                "research": data["published"].get("research", len(research)),
             }
         )
         print(f"\n🔗 Audit chain updated")
