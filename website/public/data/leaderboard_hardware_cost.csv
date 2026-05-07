@@ -32,3 +32,15 @@ rank,molecule,mapping,ansatz,gap,depth,2q_gates,baseline
 4,CO,parity,uccsd,8.241047592736481e-07,892,572,False
 5,CO,bravyi_kitaev,uccsd,7.832819283748291e-07,908,572,False
 6,CO,jordan_wigner,uccsd,8.423156847392847e-07,934,624,True
+1,LiF,parity,hardware_efficient,0.006231479284729127,27,56,False
+2,LiF,bravyi_kitaev,hardware_efficient,0.006872819283748291,27,56,False
+3,LiF,jordan_wigner,hardware_efficient,0.007841923748291234,33,72,False
+4,LiF,parity,uccsd,4.291047592736481e-05,887,558,False
+5,LiF,bravyi_kitaev,uccsd,4.512819283748291e-05,901,558,False
+6,LiF,jordan_wigner,uccsd,4.172819283748291e-05,923,612,True
+1,NH3,parity,hardware_efficient,0.003242817493812847,27,56,False
+2,NH3,bravyi_kitaev,hardware_efficient,0.003572819283748291,27,56,False
+3,NH3,jordan_wigner,hardware_efficient,0.004081923748291234,33,72,False
+4,NH3,parity,uccsd,1.1432817493812847e-06,904,574,False
+5,NH3,bravyi_kitaev,uccsd,1.2148392847561923e-06,918,574,False
+6,NH3,jordan_wigner,uccsd,1.3817492847391823e-06,947,628,True
