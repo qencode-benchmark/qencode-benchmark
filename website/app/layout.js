@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import AnalyticsClickTracker from "@/components/AnalyticsClickTracker";
 import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
+import Image from "next/image";
 
 const SITE_URL = "https://www.qencode-benchmark.org";
 const SITE_NAME = "QEncode";
@@ -33,18 +34,25 @@ export const metadata = {
     index: true,
     follow: true
   },
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png"
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: SITE_URL,
     siteName: SITE_NAME,
     title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION
+    description: DEFAULT_DESCRIPTION,
+    images: [{ url: "/logo.png", width: 512, height: 512, alt: "QEncode Benchmark" }]
   },
   twitter: {
     card: "summary_large_image",
     title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION
+    description: DEFAULT_DESCRIPTION,
+    images: ["/logo.png"]
   }
 };
 
@@ -98,6 +106,9 @@ export default function RootLayout({ children }) {
                 <a href="mailto:support@qencode-benchmark.org">support@qencode-benchmark.org</a>
                 <span>Citation: CITATION.cff</span>
                 <span>&copy; 2026 QEncode. Suite v2.</span>
+              </div>
+              <div className="pt-2">
+                <Image src="/logo.png" alt="QEncode Benchmark" width={80} height={80} className="opacity-60" />
               </div>
             </div>
           </div>

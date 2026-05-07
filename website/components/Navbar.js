@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 
@@ -19,11 +20,15 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between">
-        <Link href="/" className="flex flex-col leading-tight">
-          <span className="flex items-center gap-2 font-semibold text-lg tracking-tight">
-            <span className="font-mono text-primary">Q</span>Encode
-          </span>
-          <span className="text-[12px] text-muted-foreground">Benchmark Standard</span>
+        <Link href="/" className="flex items-center shrink-0">
+          <Image
+            src="/logo.png"
+            alt="QEncode Benchmark"
+            width={44}
+            height={44}
+            className="h-11 w-auto"
+            priority
+          />
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           {links.map((l) => (

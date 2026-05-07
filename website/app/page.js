@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, BarChart3, Shield, Trophy, Database, CheckCircle, Clock3, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -54,6 +55,16 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <section className="container py-24 lg:py-32">
+        <div className="mb-8">
+          <Image
+            src="/logo.png"
+            alt="QEncode Benchmark"
+            width={160}
+            height={160}
+            className="h-40 w-auto"
+            priority
+          />
+        </div>
         <p className="text-sm font-medium text-primary mb-4 tracking-wide uppercase">Quantum Algorithm Benchmarking Standard</p>
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
           The Standard for Quantum Algorithm Benchmarking.
