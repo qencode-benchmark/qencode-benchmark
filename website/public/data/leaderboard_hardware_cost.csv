@@ -26,9 +26,3 @@ rank,molecule,mapping,ansatz,gap,depth,2q_gates,baseline
 4,LiH,bravyi_kitaev,uccsd,1.145905592636609e-09,113,38,False
 5,LiH,parity,uccsd,1.3696155320985781e-09,122,38,False
 6,LiH,jordan_wigner,uccsd,9.06643204956481e-10,136,56,False
-1,CO,parity,hardware_efficient,0.002813479284729127,27,56,False
-2,CO,bravyi_kitaev,hardware_efficient,0.0029518237491823845,27,56,False
-3,CO,jordan_wigner,hardware_efficient,0.003538472918374391,33,72,False
-4,CO,parity,uccsd,8.241047592736481e-07,892,572,False
-5,CO,bravyi_kitaev,uccsd,7.832819283748291e-07,908,572,False
-6,CO,jordan_wigner,uccsd,8.423156847392847e-07,934,624,True
