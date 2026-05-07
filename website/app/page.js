@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 export const metadata = {
   title: "Quantum Algorithm Benchmarking Platform",
   description:
-    "Benchmark quantum algorithms with QEncode's reproducible VQE suite, certification workflows, and public leaderboard for H2, BeH2, HF, LiH, and N2.",
+    "Benchmark quantum algorithms with QEncode's reproducible VQE suite, certification workflows, and public leaderboard for H2, LiH, HF, BeH2, CO, H2O, and N2.",
   keywords: [
     "quantum algorithm benchmarking platform",
     "VQE leaderboard",

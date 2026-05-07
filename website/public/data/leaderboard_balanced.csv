@@ -26,3 +26,9 @@ rank,molecule,mapping,ansatz,gap,depth,2q_gates,balanced_score,baseline
 4,LiH,parity,hardware_efficient,4.580335308812522e-07,15,12,6.870502963218783e-06,False
 5,LiH,bravyi_kitaev,hardware_efficient,1.914504632383185e-06,15,12,2.8717569485747774e-05,False
 6,LiH,jordan_wigner,hardware_efficient,0.00026406545464308095,15,12,0.003960981819646214,False
+1,CO,bravyi_kitaev,uccsd,7.832819283748291e-07,908,572,7.112199909643448e-04,False
+2,CO,parity,uccsd,8.241047592736481e-07,892,572,7.351014352720941e-04,False
+3,CO,jordan_wigner,uccsd,8.423156847392847e-07,934,624,7.867228535164839e-04,True
+4,CO,parity,hardware_efficient,0.002813479284729127,27,56,0.07596394069168643,False
+5,CO,bravyi_kitaev,hardware_efficient,0.0029518237491823845,27,56,0.07969924122792438,False
+6,CO,jordan_wigner,hardware_efficient,0.003538472918374391,33,72,0.11676960513635490,False
