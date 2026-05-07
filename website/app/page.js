@@ -55,13 +55,13 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <section className="container py-24 lg:py-32">
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <Image
             src="/logo.png"
             alt="QEncode Benchmark"
             width={160}
             height={160}
-            className="h-40 w-auto"
+            className="h-24 md:h-40 w-auto"
             priority
           />
         </div>
@@ -196,7 +196,7 @@ export default function HomePage() {
             Start with a scoped access application. We align workload, timeline, and certification path with your
             target molecule set.
           </p>
-          <div className="flex justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-3">
             <Button asChild size="lg"><Link href="/apply" data-track="home_bottom_apply">Apply for Access</Link></Button>
             <Button asChild variant="secondary" size="lg"><Link href="/pricing" data-track="home_bottom_pricing">Pricing</Link></Button>
             <Button asChild variant="outline" size="lg">

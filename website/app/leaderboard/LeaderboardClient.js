@@ -443,7 +443,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [] }
 
       {/* ── Category tabs ──────────────────────────────────────────────────── */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="w-full sm:w-auto">
+        <TabsList className="w-full sm:w-auto h-auto flex-wrap gap-1">
           <TabsTrigger value="accuracy" className="flex items-center gap-1.5">
             <TrendingDown className="h-3.5 w-3.5" />
             Best Accuracy
