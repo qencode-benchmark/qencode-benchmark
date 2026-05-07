@@ -194,8 +194,36 @@ def circuit_metrics(name, mol_kwargs):
 
 
 # ── Step 3: VQE energies (statevector, exact) ─────────────────────────────────
-def vqe_energies(name, mol_kwargs):
-    """Run exact statevector VQE for gap computation."""
+# UCCSD 2Q gate threshold above which we skip VQE (too slow on a laptop)
+UCCSD_VQE_MAX_2Q = 3000
+
+def exact_ground_state(qubit_op, nuclear_repulsion):
+    """
+    Compute exact ground-state energy.
+    Uses sparse Lanczos (eigsh) for large systems to avoid the 64 GB dense matrix.
+    Dense limit: ≤14 qubits (2^14 x 2^14 ≈ 2 GB).
+    Sparse Lanczos: works up to ~20 qubits on 16 GB RAM.
+    """
+    n_q = qubit_op.num_qubits
+    if n_q <= 14:
+        mat = qubit_op.to_matrix()          # dense, fine up to 14 qubits
+        eigvals = np.linalg.eigvalsh(mat)
+        return eigvals[0] + nuclear_repulsion
+    else:
+        from scipy.sparse.linalg import eigsh
+        sparse_mat = qubit_op.to_matrix(sparse=True)  # CSR sparse, ~few MB
+        print(f"      (sparse Lanczos eigsh for {n_q}-qubit op)", flush=True)
+        eigvals, _ = eigsh(sparse_mat, k=1, which="SA", tol=1e-10, maxiter=10000)
+        return float(eigvals[0]) + nuclear_repulsion
+
+
+def vqe_energies(name, mol_kwargs, circuit_metrics_result):
+    """
+    Run exact statevector VQE for gap computation.
+    UCCSD VQE is skipped when the circuit has > UCCSD_VQE_MAX_2Q gates
+    (would take hours on a laptop); CCSD energy is used as proxy instead.
+    HEA VQE always runs (small circuit).
+    """
     try:
         from qiskit_algorithms import VQE
         from qiskit_algorithms.optimizers import SLSQP
@@ -219,52 +247,60 @@ def vqe_energies(name, mol_kwargs):
         "bravyi_kitaev": BravyiKitaevMapper(),
     }
 
-    # Exact reference via sparse diag (avoid scipy .H issue)
+    # ── Exact reference (sparse Lanczos, handles 16-qubit systems) ────────────
     exact_energies = {}
+    print("    Computing exact ground states...", flush=True)
     for mname, mapper in mappers.items():
         qubit_op = mapper.map(problem.second_q_ops()[0])
         try:
-            from qiskit.quantum_info import SparsePauliOp
-            mat = qubit_op.to_matrix()
-            eigvals = np.linalg.eigvalsh(mat)
-            exact_e = eigvals[0] + problem.nuclear_repulsion_energy
+            exact_e = exact_ground_state(qubit_op, problem.nuclear_repulsion_energy)
             exact_energies[mname] = exact_e
+            print(f"      {mname:20s}  exact E = {exact_e:.8f} Ha")
         except Exception as e:
-            print(f"    Exact diag failed for {mname}: {e}")
+            print(f"      {mname}: exact diag failed ({e})")
             exact_energies[mname] = None
 
     results = {}
     for mname, mapper in mappers.items():
         qubit_op = mapper.map(problem.second_q_ops()[0])
         hf_state = HartreeFock(n_orb, n_elec, mapper)
+        circ_m   = circuit_metrics_result.get(mname, {})
 
-        # UCCSD VQE
-        print(f"    VQE UCCSD [{mname}]...", flush=True)
-        uccsd = UCCSD(n_orb, n_elec, mapper, initial_state=hf_state, reps=1)
-        try:
-            vqe = VQE(Estimator(), uccsd, SLSQP(maxiter=500))
-            res = vqe.compute_minimum_eigenvalue(qubit_op)
-            e_vqe = res.eigenvalue.real + problem.nuclear_repulsion_energy
-            gap_u = abs(e_vqe - exact_energies[mname]) if exact_energies[mname] else None
-        except Exception as e:
-            print(f"      VQE failed: {e}")
-            gap_u = None
+        # ── UCCSD VQE — skip if circuit too large ─────────────────────────
+        uccsd_2q = circ_m.get("uccsd_2q", 0)
+        if uccsd_2q > UCCSD_VQE_MAX_2Q:
+            print(f"    UCCSD VQE [{mname}]  SKIPPED  "
+                  f"(circuit has {uccsd_2q} 2Q gates > {UCCSD_VQE_MAX_2Q} limit, use CCSD proxy)")
+            gap_u = None   # caller substitutes chem["ccsd_gap"]
+        else:
+            print(f"    VQE UCCSD [{mname}]...", flush=True)
+            uccsd = UCCSD(n_orb, n_elec, mapper, initial_state=hf_state, reps=1)
+            try:
+                vqe = VQE(Estimator(), uccsd, SLSQP(maxiter=500))
+                res = vqe.compute_minimum_eigenvalue(qubit_op)
+                e_vqe = res.eigenvalue.real + problem.nuclear_repulsion_energy
+                gap_u = abs(e_vqe - exact_energies[mname]) if exact_energies[mname] else None
+                print(f"      gap = {gap_u:.4e} Ha")
+            except Exception as e:
+                print(f"      VQE failed: {e}")
+                gap_u = None
 
-        # HEA VQE
-        print(f"    VQE HEA   [{mname}]...", flush=True)
+        # ── HEA VQE — always run (small circuit) ──────────────────────────
         n_q = qubit_op.num_qubits
         hea = TwoLocal(n_q, ["ry","rz"], "cx", entanglement="linear", reps=2)
+        print(f"    VQE HEA   [{mname}]...", flush=True)
         try:
             vqe_h = VQE(Estimator(), hea, SLSQP(maxiter=1000))
             res_h = vqe_h.compute_minimum_eigenvalue(qubit_op)
             e_hea = res_h.eigenvalue.real + problem.nuclear_repulsion_energy
             gap_h = abs(e_hea - exact_energies[mname]) if exact_energies[mname] else None
+            print(f"      gap = {gap_h:.4e} Ha")
         except Exception as e:
             print(f"      HEA VQE failed: {e}")
             gap_h = None
 
-        results[mname] = dict(uccsd_gap=gap_u, hea_gap=gap_h)
-        if gap_u: print(f"      UCCSD gap={gap_u:.4e}  HEA gap={gap_h:.4e}")
+        results[mname] = dict(uccsd_gap=gap_u, hea_gap=gap_h,
+                              exact_e=exact_energies.get(mname))
 
     return results
 
@@ -289,8 +325,16 @@ for mol_name, mol_kwargs in MOLECULES.items():
     circ, n_orb, n_elec = circuit_metrics(mol_name, mol_kwargs)
 
     print("  [3/3] VQE energies (statevector simulation)...")
-    gaps = vqe_energies(mol_name, mol_kwargs)
+    gaps = vqe_energies(mol_name, mol_kwargs, circ)
 
+    # Fill in CCSD proxy for UCCSD rows where VQE was skipped
+    if gaps:
+        for mname, g in gaps.items():
+            if g["uccsd_gap"] is None:
+                g["uccsd_gap_is_proxy"] = True
+                g["uccsd_gap"] = chem["ccsd_gap"]  # classical proxy
+            else:
+                g["uccsd_gap_is_proxy"] = False
     all_real[mol_name] = dict(chem=chem, circuits=circ, gaps=gaps)
 
 
@@ -323,19 +367,26 @@ for mol_name in ["CO","LiF","NH3"]:
 
             if ansatz_key == "uccsd":
                 rd = c["uccsd_depth"]; rq = c["uccsd_2q"]
-                rg = gaps[mname]["uccsd_gap"] if gaps and gaps[mname] else None
+                if gaps and gaps.get(mname):
+                    rg       = gaps[mname]["uccsd_gap"]
+                    is_proxy = gaps[mname].get("uccsd_gap_is_proxy", False)
+                else:
+                    rg, is_proxy = None, False
             else:
                 rd = c["hea_depth"];   rq = c["hea_2q"]
-                rg = gaps[mname]["hea_gap"] if gaps and gaps[mname] else None
+                rg       = gaps[mname]["hea_gap"] if gaps and gaps.get(mname) else None
+                is_proxy = False
 
             rs = (rg * rd) if rg and rd else None
             es = (eg * ed) if eg and ed else None
+            proxy_tag = " [CCSD~]" if is_proxy else ""
 
+            rg_str = (f"{rg:.3e}{proxy_tag}" if rg else "  PENDING")
             print(f"  {mol_name:<5} {mname:<22} {ansatz_key:<20} "
                   f"{eg:>11.3e} "
-                  f"{(f'{rg:.3e}' if rg else '  PENDING'):>11} {pct(eg,rg):>6}  "
-                  f"{ed:>5} {rd:>5} {pct(ed,rd):>6}  "
-                  f"{eq:>5} {rq:>5} {pct(eq,rq):>6}")
+                  f"{rg_str:>18} {pct(eg,rg):>6}  "
+                  f"{ed:>5} {rd:>7} {pct(ed,rd):>6}  "
+                  f"{eq:>5} {rq:>7} {pct(eq,rq):>6}")
 
             leaderboard_rows.append(dict(
                 molecule=mol_name, mapping=mname, ansatz=ansatz_key,
