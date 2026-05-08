@@ -11,10 +11,6 @@ rank,molecule,mapping,ansatz,gap,depth,2q_gates,baseline
 4,H2,bravyi_kitaev,uccsd,7.665035717252522e-09,,,False
 5,H2,bravyi_kitaev,hardware_efficient,0.00026389341639077024,16,12,False
 6,H2,jordan_wigner,hardware_efficient,0.0009577222629875148,,,False
-1,H2O,jordan_wigner,uccsd,0.003540561539391973,2512,1440,False
-2,H2O,parity,uccsd,0.0035448549131134044,2426,1316,False
-3,H2O,bravyi_kitaev,uccsd,0.003547719193046639,2458,1316,False
-4,H2O,jordan_wigner,hardware_efficient,0.0074505036035050765,40,56,False
 1,HF,parity,uccsd,6.253124240629404e-09,122,38,False
 2,HF,bravyi_kitaev,uccsd,6.253126683120058e-09,113,38,False
 3,HF,jordan_wigner,uccsd,1.0031205199823034e-08,136,56,False
@@ -27,6 +23,3 @@ rank,molecule,mapping,ansatz,gap,depth,2q_gates,baseline
 4,LiH,parity,hardware_efficient,4.580335308812522e-07,28,12,False
 5,LiH,bravyi_kitaev,hardware_efficient,1.914504632383185e-06,28,12,False
 6,LiH,jordan_wigner,hardware_efficient,0.00026406545464308095,28,12,False
-1,NH3,parity,uccsd,1.6486130274273592e-06,2426,1316,False
-2,NH3,jordan_wigner,uccsd,1.6486130727244586e-06,2512,1440,False
-3,NH3,bravyi_kitaev,uccsd,1.6486130745008154e-06,2458,1316,False

@@ -21,6 +21,7 @@ DB_DIR  = REPO / "releases" / "v2" / "db"
 OUT_DIR = REPO / "website" / "public" / "data"
 
 RESEARCH_MOLECULES  = {"N2"}
+V3_MOLECULES        = {"H2O", "NH3"}   # excluded until Suite v3 launches
 CERTIFIED_THRESHOLD = 0.01   # 10 mHa
 
 
@@ -143,6 +144,7 @@ def main():
 
     certified_entries = [e for e in entries
                          if e["molecule"] not in RESEARCH_MOLECULES
+                         and e["molecule"] not in V3_MOLECULES
                          and e["trust"] == "certified"
                          and e["gap"] < CERTIFIED_THRESHOLD]
     research_entries  = [e for e in entries
