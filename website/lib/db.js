@@ -20,20 +20,27 @@ export async function ensureSchema() {
 
   await sql`
     CREATE TABLE IF NOT EXISTS leaderboard_entries (
-      id             SERIAL PRIMARY KEY,
-      category       VARCHAR(20)       NOT NULL,
-      rank           INTEGER           NOT NULL,
-      molecule       VARCHAR(50)       NOT NULL,
-      mapping        VARCHAR(50)       NOT NULL,
-      ansatz         VARCHAR(50)       NOT NULL,
-      gap            DOUBLE PRECISION,
-      depth          INTEGER,
-      two_q_gates    INTEGER,
-      balanced_score DOUBLE PRECISION,
-      baseline       BOOLEAN           NOT NULL DEFAULT false,
-      updated_at     TIMESTAMPTZ       NOT NULL DEFAULT NOW(),
+      id               SERIAL PRIMARY KEY,
+      category         VARCHAR(20)       NOT NULL,
+      rank             INTEGER           NOT NULL,
+      molecule         VARCHAR(50)       NOT NULL,
+      mapping          VARCHAR(50)       NOT NULL,
+      ansatz           VARCHAR(50)       NOT NULL,
+      gap              DOUBLE PRECISION,
+      depth            INTEGER,
+      two_q_gates      INTEGER,
+      balanced_score   DOUBLE PRECISION,
+      baseline         BOOLEAN           NOT NULL DEFAULT false,
+      beats_classical  BOOLEAN,
+      updated_at       TIMESTAMPTZ       NOT NULL DEFAULT NOW(),
       UNIQUE (category, molecule, mapping, ansatz)
     )
+  `;
+
+  // Migrate existing tables: add beats_classical if upgrading from older schema
+  await sql`
+    ALTER TABLE leaderboard_entries
+    ADD COLUMN IF NOT EXISTS beats_classical BOOLEAN
   `;
 
   await sql`
@@ -211,7 +218,7 @@ export async function replaceEntries(category, entries) {
   for (const e of entries) {
     await sql`
       INSERT INTO leaderboard_entries
-        (category, rank, molecule, mapping, ansatz, gap, depth, two_q_gates, balanced_score, baseline, updated_at)
+        (category, rank, molecule, mapping, ansatz, gap, depth, two_q_gates, balanced_score, baseline, beats_classical, updated_at)
       VALUES
         (
           ${category},
@@ -224,6 +231,7 @@ export async function replaceEntries(category, entries) {
           ${e.two_q_gates ?? null},
           ${e.balanced_score ?? null},
           ${Boolean(e.baseline)},
+          ${e.beats_classical ?? null},
           NOW()
         )
     `;

@@ -1,9 +1,9 @@
 {
-  "suite_version": "v2",
-  "leaderboard_rules": "v1",
-  "generation_date": "2026-05-08",
-  "entries_included": 24,
-  "research_entries_included": 6,
+  "suite_version": "3",
+  "leaderboard_rules": "1",
+  "generation_date": "2026-05-11",
+  "entries_included": 30,
   "trust_filter": "certified_only",
-  "min_trust_level": "certified"
+  "beats_classical_count": 30,
+  "validated_count": 6
 }

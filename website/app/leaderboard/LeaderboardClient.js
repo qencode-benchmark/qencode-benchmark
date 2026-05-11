@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import {
-  CheckCircle, Copy, Check, Crown, Info, TrendingDown, Cpu, BarChart2,
+  CheckCircle, Copy, Check, Crown, Info, TrendingDown, Cpu, BarChart2, Zap,
 } from "lucide-react";
 import {
   Tabs, TabsContent, TabsList, TabsTrigger,
@@ -255,25 +255,42 @@ function LeaderboardTable({ rows, category }) {
 
                 {/* Status */}
                 <TableCell className="text-right">
-                  {r.baseline ? (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Badge className="bg-[#185FA5] text-white text-xs gap-1 cursor-help">
-                            <CheckCircle className="h-3 w-3" /> Baseline
-                          </Badge>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs text-xs">
-                          Baseline entries are run by the QEncode team using standard reference
-                          implementations. They establish the floor for each configuration.
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ) : (
-                    <Badge variant="secondary" className="text-xs gap-1">
-                      <CheckCircle className="h-3 w-3 text-green-500" /> Verified
-                    </Badge>
-                  )}
+                  <div className="flex flex-col items-end gap-1">
+                    {r.baseline ? (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Badge className="bg-[#185FA5] text-white text-xs gap-1 cursor-help">
+                              <CheckCircle className="h-3 w-3" /> Baseline
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs text-xs">
+                            Baseline entries are run by the QEncode team using standard reference
+                            implementations. They establish the floor for each configuration.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    ) : (
+                      <Badge variant="secondary" className="text-xs gap-1">
+                        <CheckCircle className="h-3 w-3 text-green-500" /> Verified
+                      </Badge>
+                    )}
+                    {r.beatsClassical && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Badge className="bg-emerald-600 text-white text-xs gap-1 cursor-help">
+                              <Zap className="h-3 w-3" /> Beats Classical
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs text-xs">
+                            VQE error gap is smaller than the CCSD(T) correlation energy for this
+                            molecule — the quantum result surpasses the best classical perturbative method.
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             );
@@ -539,6 +556,12 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [] }
           <span className="flex items-center gap-1.5">
             <Badge variant="secondary" className="text-xs">Verified</Badge>
             Community submission
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Badge className="bg-emerald-600 text-white text-xs gap-1">
+              <Zap className="h-3 w-3" /> Beats Classical
+            </Badge>
+            VQE gap &lt; CCSD(T) correlation energy
           </span>
           <span className="flex items-center gap-1.5">
             <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">

@@ -1,7 +1,7 @@
-rank,molecule,mapping,ansatz,gap,depth,2q_gates,baseline
-1,N2,jordan_wigner,uccsd,0.04381492288383093,15963,10344,False
-2,N2,parity,uccsd,0.0904001147096789,15668,9938,False
-3,N2,bravyi_kitaev,uccsd,0.09480800427944658,16266,10228,False
-4,N2,jordan_wigner,hardware_efficient,0.1250502257819459,52,132,False
-5,N2,parity,hardware_efficient,0.4104162541969796,52,132,False
-6,N2,bravyi_kitaev,hardware_efficient,0.4443091796345229,52,132,False
+rank,molecule,mapping,ansatz,gap,baseline,beats_classical
+1,LiH,bravyi_kitaev,hardware_efficient,0.114880108942228,True,False
+2,LiH,bravyi_kitaev,UCCSD,0.1325071094955419,True,False
+3,H2O,bravyi_kitaev,UCCSD,0.5165189607128724,True,False
+4,H2O,parity,UCCSD,0.5165479760099032,True,False
+5,NH3,parity,UCCSD,0.7502997397162474,True,False
+6,LiH,parity,UCCSD,2.0484207665511036,True,False

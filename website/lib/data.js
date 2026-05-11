@@ -46,13 +46,14 @@ async function loadFromDatabase() {
 
   const normalize = (rows) =>
     rows.map((r) => ({
-      rank:           Number(r.rank),
-      molecule:       r.molecule,
-      mapping:        r.mapping,
-      ansatz:         r.ansatz,
-      gap:            num(r.gap),
-      balancedScore:  num(r.balanced_score),
-      baseline:       Boolean(r.baseline),
+      rank:            Number(r.rank),
+      molecule:        r.molecule,
+      mapping:         r.mapping,
+      ansatz:          r.ansatz,
+      gap:             num(r.gap),
+      balancedScore:   num(r.balanced_score),
+      baseline:        Boolean(r.baseline),
+      beatsClassical:  r.beats_classical === true || r.beats_classical === "true",
       ...applySymbolicMetrics(r),
     }));
 
@@ -88,13 +89,14 @@ function loadFromCsv() {
 
   const normalize = (rows, isBalanced = false) =>
     rows.map((r) => ({
-      rank:           num(r.rank),
-      molecule:       r.molecule,
-      mapping:        r.mapping,
-      ansatz:         r.ansatz,
-      gap:            num(r.gap),
-      balancedScore:  isBalanced ? num(r.balanced_score) : null,
-      baseline:       String(r.baseline).toLowerCase() === "true",
+      rank:            num(r.rank),
+      molecule:        r.molecule,
+      mapping:         r.mapping,
+      ansatz:          r.ansatz,
+      gap:             num(r.gap),
+      balancedScore:   isBalanced ? num(r.balanced_score) : null,
+      baseline:        String(r.baseline).toLowerCase() === "true",
+      beatsClassical:  String(r.beats_classical).toLowerCase() === "true",
       ...applySymbolicMetrics({ ...r, two_q_gates: r["2q_gates"] }),
     }));
 
