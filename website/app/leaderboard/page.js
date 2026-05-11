@@ -33,6 +33,11 @@ export default async function LeaderboardPage() {
   const suiteLabel = String(metadata.suite_version || "").replace(/^v/i, "");
   const rulesLabel = String(metadata.leaderboard_rules || "").replace(/^v/i, "");
 
+  // Map suite version to basis set for display
+  const basisLabel = metadata.basis_set
+    ? metadata.basis_set
+    : suiteLabel.startsWith("3.1") ? "6-31G" : suiteLabel.startsWith("3") ? "STO-3G" : null;
+
   return (
     <div className="container py-16">
       <h1 className="text-3xl sm:text-4xl font-bold mb-2">Leaderboard</h1>
@@ -41,6 +46,7 @@ export default async function LeaderboardPage() {
       </p>
       <p className="text-xs text-muted-foreground -mt-6 mb-6 max-w-2xl">
         Entry counts can differ by molecule when some configurations are not yet certified.
+        All runs use the <strong>{basisLabel ?? "specified"}</strong> basis set.
       </p>
       <div className="flex flex-wrap gap-2 mb-6">
         <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium">
@@ -49,6 +55,11 @@ export default async function LeaderboardPage() {
         <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium">
           Rules v{rulesLabel}
         </span>
+        {basisLabel && (
+          <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300 px-2.5 py-0.5 text-xs font-medium">
+            Basis: {basisLabel}
+          </span>
+        )}
         <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium">
           Trust: {metadata.trust_filter}
         </span>
@@ -65,7 +76,7 @@ export default async function LeaderboardPage() {
           <Button asChild size="sm" variant="outline"><Link href="/apply">Apply for Access</Link></Button>
         </div>
       </div>
-      <LeaderboardClient acc={acc} cost={cost} balanced={balanced} research={research} />
+      <LeaderboardClient acc={acc} cost={cost} balanced={balanced} research={research} basisLabel={basisLabel} />
     </div>
   );
 }

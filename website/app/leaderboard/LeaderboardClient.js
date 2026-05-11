@@ -140,7 +140,7 @@ function FilterChip({ label, active, onClick }) {
 
 // ── Main table renderer ────────────────────────────────────────────────────────
 
-function LeaderboardTable({ rows, category }) {
+function LeaderboardTable({ rows, category, basisLabel }) {
   const includeBalanced  = category === "balanced";
   const includeHardware  = category === "cost" || category === "balanced";
   const includeClassical = category === "accuracy" || category === "research";
@@ -177,7 +177,7 @@ function LeaderboardTable({ rows, category }) {
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs text-xs">
                       |E_vqe − E_fci| in Hartrees. Chemical accuracy = 1.6 × 10⁻³ Ha.
-                      Lower is better.
+                      Lower is better.{basisLabel ? ` Computed with ${basisLabel} basis set.` : ""}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -350,7 +350,7 @@ function LeaderboardTable({ rows, category }) {
 
 // ── Main export ────────────────────────────────────────────────────────────────
 
-export default function LeaderboardClient({ acc, cost, balanced, research = [] }) {
+export default function LeaderboardClient({ acc, cost, balanced, research = [], basisLabel = null }) {
   const all = useMemo(() => [...acc, ...cost, ...balanced], [acc, cost, balanced]);
 
   // Collect unique filter options
@@ -547,7 +547,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [] }
               Ranked by lowest |E<sub>VQE</sub> − E<sub>FCI</sub>| error gap. Chemical accuracy threshold: 1.6 × 10⁻³ Ha.
             </p>
           </div>
-          <LeaderboardTable rows={filteredAcc} category="accuracy" />
+          <LeaderboardTable rows={filteredAcc} category="accuracy" basisLabel={basisLabel} />
         </TabsContent>
 
         <TabsContent value="cost" className="mt-6">
@@ -557,7 +557,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [] }
               Ranked by fewest two-qubit gates (then circuit depth). Entries without transpiled metrics are excluded.
             </p>
           </div>
-          <LeaderboardTable rows={filteredCost} category="cost" />
+          <LeaderboardTable rows={filteredCost} category="cost" basisLabel={basisLabel} />
         </TabsContent>
 
         <TabsContent value="balanced" className="mt-6">
@@ -567,7 +567,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [] }
               Combined score weighting accuracy and hardware cost equally. Lower is better.
             </p>
           </div>
-          <LeaderboardTable rows={filteredBalanced} category="balanced" />
+          <LeaderboardTable rows={filteredBalanced} category="balanced" basisLabel={basisLabel} />
         </TabsContent>
 
         {filteredResearch.length > 0 && (
@@ -579,12 +579,12 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [] }
               </h3>
               <p className="text-xs text-amber-800 mt-1">
                 These entries are <strong>validated</strong> but do not meet the 0.01 Ha certification threshold.
-                They represent strongly-correlated systems (e.g. N₂ with a [6,6] active space) where
-                standard UCCSD-reps-1 reaches its physical limit. Results are reproducible and correct —
+                They represent strongly-correlated systems or mapping configurations where
+                standard UCCSD reaches its physical limit{basisLabel ? ` with the ${basisLabel} basis` : ""}. Results are reproducible and correct —
                 the gap reflects the method&apos;s limitation, not an implementation error.
               </p>
             </div>
-            <LeaderboardTable rows={filteredResearch} category="research" />
+            <LeaderboardTable rows={filteredResearch} category="research" basisLabel={basisLabel} />
           </TabsContent>
         )}
       </Tabs>
