@@ -102,6 +102,52 @@ _SYNTHESIS_EPS = 1e-3
 _T_PER_ROTATION = int(math.ceil(1.149 * math.log2(1.0 / _SYNTHESIS_EPS)))  # = 10
 
 
+def _extract_resources(raw_specs) -> tuple:
+    """
+    Extract (depth, gate_sizes_dict, gate_types_dict) from qml.specs() output.
+
+    PennyLane version matrix:
+      < 0.38  : plain dict with keys 'depth', 'gate_sizes', 'gate_types'
+      0.38-0.43: plain dict with same keys
+      0.44+   : CircuitSpecs object — supports key access raw_specs['key'].
+                 Keys: 'device_name', 'num_device_wires', 'shots', 'level', 'resources'
+                 raw_specs['resources'] → Resources object with .depth, .gate_types, .gate_sizes
+
+    Returns (depth: int, gate_sizes: dict, gate_types: dict).
+    All values default to 0/{} if extraction fails.
+    """
+    # ── PL 0.44 path: CircuitSpecs with 'resources' key ──────────────────────
+    try:
+        resources = raw_specs["resources"]          # works in PL 0.44
+        depth     = int(resources.depth)
+        g_sizes   = dict(resources.gate_sizes)      # Counter: num_wires → count
+        g_types   = dict(resources.gate_types)      # Counter: gate_name → count
+        return depth, g_sizes, g_types
+    except (KeyError, TypeError, AttributeError):
+        pass
+
+    # ── Older PL path: plain dict (or dict-like) ─────────────────────────────
+    # Try various normalisation strategies
+    specs: dict = {}
+    if isinstance(raw_specs, dict):
+        specs = raw_specs
+    elif hasattr(raw_specs, "_asdict"):         # NamedTuple
+        specs = dict(raw_specs._asdict())
+    elif hasattr(raw_specs, "__dict__"):        # class instance
+        specs = vars(raw_specs)
+    else:
+        # Extract known attributes individually as last resort
+        for attr in ("depth", "circuit_depth", "gate_sizes", "gate_types"):
+            val = getattr(raw_specs, attr, None)
+            if val is not None:
+                specs[attr] = val
+
+    depth   = int(specs.get("depth", specs.get("circuit_depth", 0)) or 0)
+    g_sizes = dict(specs.get("gate_sizes", {}) or {})
+    g_types = dict(specs.get("gate_types", {}) or {})
+    return depth, g_sizes, g_types
+
+
 def compute_circuit_metrics(circuit_fn, H_tapered, optimal_params: list) -> dict:
     """
     Evaluate qml.specs() at optimal_params and return Phase 3 circuit metrics.
@@ -121,20 +167,17 @@ def compute_circuit_metrics(circuit_fn, H_tapered, optimal_params: list) -> dict
         return qml.expval(H_tapered)
 
     try:
-        specs = qml.specs(_circuit)(np.array(optimal_params, dtype=float))
+        raw_specs = qml.specs(_circuit)(np.array(optimal_params, dtype=float))
     except Exception as ex:
         print(f"    [WARN] qml.specs failed: {ex}")
         return _fallback_metrics(len(optimal_params))
 
-    # PL 0.44 specs dict keys (may vary by version — use .get with defaults)
-    depth   = int(specs.get("depth", specs.get("circuit_depth", 0)))
-    g_sizes = specs.get("gate_sizes", {})
-    num_2q  = int(g_sizes.get(2, 0))
-    num_1q  = int(g_sizes.get(1, 0))
+    depth, g_sizes, gate_types = _extract_resources(raw_specs)
 
-    gate_types  = specs.get("gate_types", {})
-    n_rot       = sum(int(gate_types.get(g, 0)) for g in _ROTATION_GATES)
-    t_estimate  = n_rot * _T_PER_ROTATION
+    num_2q     = int(g_sizes.get(2, 0))
+    num_1q     = int(g_sizes.get(1, 0))
+    n_rot      = sum(int(gate_types.get(g, 0)) for g in _ROTATION_GATES)
+    t_estimate = n_rot * _T_PER_ROTATION
 
     return {
         "ansatz_depth":             depth,

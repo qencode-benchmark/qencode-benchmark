@@ -799,12 +799,31 @@ def _circuit_metrics_inline(circuit_fn, H_tapered, optimal_params: list) -> dict
         "t_gate_estimate": None, "t_gate_synthesis_epsilon": _SYNTHESIS_EPS_P3,
     }
     try:
-        specs  = qml.specs(_circ)(np.array(optimal_params, dtype=float))
-        depth  = int(specs.get("depth", specs.get("circuit_depth", 0)))
-        gsizes = specs.get("gate_sizes", {})
+        raw_specs = qml.specs(_circ)(np.array(optimal_params, dtype=float))
+
+        # PL 0.44: CircuitSpecs supports key access; 'resources' key holds a
+        # Resources object with .depth, .gate_sizes, .gate_types.
+        # Older PL: plain dict with those keys directly.
+        try:
+            resources = raw_specs["resources"]      # PL 0.44 path
+            depth  = int(resources.depth)
+            gsizes = dict(resources.gate_sizes)
+            gtypes = dict(resources.gate_types)
+        except (KeyError, TypeError, AttributeError):
+            # Older PL path: plain dict (or dict-like)
+            specs: dict = {}
+            if isinstance(raw_specs, dict):
+                specs = raw_specs
+            elif hasattr(raw_specs, "_asdict"):
+                specs = dict(raw_specs._asdict())
+            elif hasattr(raw_specs, "__dict__"):
+                specs = vars(raw_specs)
+            depth  = int(specs.get("depth", specs.get("circuit_depth", 0)) or 0)
+            gsizes = dict(specs.get("gate_sizes", {}) or {})
+            gtypes = dict(specs.get("gate_types", {}) or {})
+
         num_2q = int(gsizes.get(2, 0))
         num_1q = int(gsizes.get(1, 0))
-        gtypes = specs.get("gate_types", {})
         n_rot  = sum(int(gtypes.get(g, 0)) for g in _ROTATION_GATES_P3)
         return {
             "ansatz_depth":             depth,

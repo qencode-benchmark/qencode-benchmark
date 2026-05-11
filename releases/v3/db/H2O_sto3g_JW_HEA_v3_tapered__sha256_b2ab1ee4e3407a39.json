@@ -307,7 +307,7 @@
       "ansatz_pennylane": null,
       "ansatz_includes_hf": true
     },
-    "fcidump": null
+    "fcidump": "ICZGQ0kgTk9SQj0gICA0LE5FTEVDPSA0LE1TMj0wLAogIE9SQlNZTT0xLDEsMSwxLAogIElTWU09MSwKICZFTkQKIDAuNzgyOTI3MDkxNTMwNzA4NiAgICAxICAgIDEgICAgMSAgICAxCiAwLjA1NTkyODQ3NzI2MDA1MTUgICAgMiAgICAxICAgIDIgICAgMQogMC43MjkwMDY4MjE5MDA1MjczICAgIDIgICAgMiAgICAxICAgIDEKIDAuODgwMTU5MDkzMzc1MDQzNiAgICAyICAgIDIgICAgMiAgICAyCiAwLjEyMTMxMDE2MTMxODI2MDMgICAgMyAgICAxICAgIDEgICAgMQogMC4xMTYxODYxMjQzMTMzMjU3ICAgIDMgICAgMSAgICAyICAgIDIKIDAuMDY4NjM0OTgyOTEzMDMxNjMgICAgMyAgICAxICAgIDMgICAgMQogLTAuMDAxNzY0OTI2MjgxMzk2MjU1ICAgIDMgICAgMiAgICAyICAgIDEKIDAuMDM4NjA0OTM2MzMyNTMzODMgICAgMyAgICAyICAgIDMgICAgMgogMC41NDkwNjMzMzU4MDgwNDg4ICAgIDMgICAgMyAgICAxICAgIDEKIDAuNTg4OTU0NTAyNzc0ODI1NyAgICAzICAgIDMgICAgMiAgICAyCiAwLjA0NDU3MTc1MDA5MDg3NDk1ICAgIDMgICAgMyAgICAzICAgIDEKIDAuNTk3MTM4MjA0ODQxNjU0NyAgICAzICAgIDMgICAgMyAgICAzCiAwLjA2ODk1NzYyNzYxMjMwNjA2ICAgIDQgICAgMSAgICA0ICAgIDEKIDAuMDI0MzUwMTc3MjMzNjg4MzYgICAgNCAgICAyICAgIDQgICAgMgogLTAuMDU3OTA0NTQ0NjMxNjI3ICAgIDQgICAgMyAgICA0ICAgIDEKIDAuMTE1MzI4MDczMzA1OTY0MiAgICA0ICAgIDMgICAgNCAgICAzCiAwLjYwODMyMjk3MzYwMjIzNyAgICA0ICAgIDQgICAgMSAgICAxCiAwLjYyNTA1MzkzMjA3Mjk5NSAgICA0ICAgIDQgICAgMiAgICAyCiAwLjA0MTUxNzk2MDA5NTA4NzIgICAgNCAgICA0ICAgIDMgICAgMQogMC41NjYzNDQwNjI1MDY3MzAxICAgIDQgICAgNCAgICAzICAgIDMKIDAuNjE5NjAyNDU5MTE1MzI4MSAgICA0ICAgIDQgICAgNCAgICA0CiAtMi42MzgwMTE0NzQ1NDI2NjMgICAgMSAgICAxICAwICAwCiAtMi42NzM0ODcxMDg5NTU3NDUgICAgMiAgICAyICAwICAwCiAtMC4zNTU0NDY3MzU0NDY3NDkgICAgMyAgICAxICAwICAwCiAtMS41NjMyMTk1ODc0NTQwNzggICAgMyAgICAzICAwICAwCiAtMS42MzEyMDEwODgyMjk2MTkgICAgNCAgICA0ICAwICAwCiAtNjguODA3MjA2MDA3NTI5NzEgIDAgIDAgIDAgIDAK"
   },
   "results": {
     "reference": {
@@ -362,7 +362,7 @@
     }
   },
   "provenance": {
-    "entry_hash_sha256": "b2ab1ee4e3407a3911de9f5ccf17678b5f8ccb1594c8b4251c907fe7aa7159b7",
+    "entry_hash_sha256": "f9a1f7bb5eb78c625a6618a8ade03c2286354c1f0dbc536554c30b4691464f83",
     "source_schema_version": "3.0.0",
     "created_utc": "2026-05-11T09:09:27.141312+00:00",
     "tool_versions": {
@@ -376,7 +376,8 @@
     },
     "environment": {
       "platform": "linux"
-    }
+    },
+    "phase3_enriched_utc": "2026-05-11T15:44:02.929437+00:00"
   },
   "trust": {
     "level": "certified",
@@ -395,6 +396,12 @@
   "circuit_stats": {
     "num_qubits_original": 8,
     "num_qubits_tapered": 4,
-    "ansatz_num_parameters": 12
+    "ansatz_num_parameters": 12,
+    "ansatz_depth": 9,
+    "ansatz_num_2q_gates": 6,
+    "ansatz_num_1q_gates": 12,
+    "non_clifford_gate_count": 12,
+    "t_gate_estimate": 144,
+    "t_gate_synthesis_epsilon": 0.001
   }
 }

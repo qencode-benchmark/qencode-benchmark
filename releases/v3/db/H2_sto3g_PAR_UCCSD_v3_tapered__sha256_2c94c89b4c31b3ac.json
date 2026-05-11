@@ -65,7 +65,7 @@
       "ansatz_pennylane": null,
       "ansatz_includes_hf": true
     },
-    "fcidump": null
+    "fcidump": "ICZGQ0kgTk9SQj0gICAyLE5FTEVDPSAyLE1TMj0wLAogIE9SQlNZTT0xLDEsCiAgSVNZTT0xLAogJkVORAogMC42NzU3MTAxNTQ4MDM1MTYzICAgIDEgICAgMSAgICAxICAgIDEKIDAuMTgwOTMxMTk5Nzg0MjMxNCAgICAyICAgIDEgICAgMiAgICAxCiAwLjY2NDU4MTczMDI1NTI5NjUgICAgMiAgICAyICAgIDEgICAgMQogMC42OTg1NzM3MjI3MzIwMTc4ICAgIDIgICAgMiAgICAyICAgIDIKIC0xLjI1NjMzOTA3MzAwMzI1ICAgIDEgICAgMSAgMCAgMAogLTAuNDcxODk2MDA3MjgxMTQxOCAgICAyICAgIDIgIDAgIDAKIDAuNzE5OTY4OTk0NDQ4OTc5NyAgMCAgMCAgMCAgMAo="
   },
   "results": {
     "reference": {
@@ -109,7 +109,7 @@
     }
   },
   "provenance": {
-    "entry_hash_sha256": "2c94c89b4c31b3ac4e4d59fc87b356ddc00a1ccd965eb14da52719e30ade21e8",
+    "entry_hash_sha256": "72a18e26cad21a1dde8c11d4bdc40fbeac50b540a6c5c5d5d675d95a397313a7",
     "source_schema_version": "3.0.0",
     "created_utc": "2026-05-11T14:08:55.550140+00:00",
     "tool_versions": {
@@ -123,7 +123,8 @@
     },
     "environment": {
       "platform": "linux"
-    }
+    },
+    "phase3_enriched_utc": "2026-05-11T15:44:35.184391+00:00"
   },
   "trust": {
     "level": "certified",
@@ -142,6 +143,12 @@
   "circuit_stats": {
     "num_qubits_original": 4,
     "num_qubits_tapered": 1,
-    "ansatz_num_parameters": 1
+    "ansatz_num_parameters": 1,
+    "ansatz_depth": 2,
+    "ansatz_num_2q_gates": 0,
+    "ansatz_num_1q_gates": 2,
+    "non_clifford_gate_count": 1,
+    "t_gate_estimate": 12,
+    "t_gate_synthesis_epsilon": 0.001
   }
 }

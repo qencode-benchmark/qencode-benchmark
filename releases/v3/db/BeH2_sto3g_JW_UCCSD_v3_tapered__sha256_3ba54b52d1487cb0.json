@@ -138,7 +138,7 @@
       "ansatz_pennylane": null,
       "ansatz_includes_hf": true
     },
-    "fcidump": null
+    "fcidump": "ICZGQ0kgTk9SQj0gICA0LE5FTEVDPSA0LE1TMj0wLAogIE9SQlNZTT0xLDEsMSwxLAogIElTWU09MSwKICZFTkQKIDAuNDAxOTkzMjI5NDEzNTI0OCAgICAxICAgIDEgICAgMSAgICAxCiAwLjE2NTAyNTc4NjMyNTE3MDcgICAgMiAgICAxICAgIDIgICAgMQogMC40MTU0MTg0NzE1ODg1NTU1ICAgIDIgICAgMiAgICAxICAgIDEKIDAuNDM4NTIxMzI3Nzg5MzA2NyAgICAyICAgIDIgICAgMiAgICAyCiAwLjA0OTgwMTg2NTQ1ODA0NzM2ICAgIDMgICAgMSAgICAzICAgIDEKIDAuMDE0OTY4OTQ0MjA2MjQxOCAgICAzICAgIDIgICAgMyAgICAyCiAwLjM3MTQ5NDM5MjY0OTI1MTIgICAgMyAgICAzICAgIDEgICAgMQogMC4zNTkzOTYyMTYwOTYzNDY3ICAgIDMgICAgMyAgICAyICAgIDIKIDAuNDQ5ODU5MDQxMDg2NjcxMSAgICAzICAgIDMgICAgMyAgICAzCiAwLjA0OTgwMTg2NTQ1ODA0NzM0ICAgIDQgICAgMSAgICA0ICAgIDEKIDAuMDE0OTY4OTQ0MjA2MjQxOCAgICA0ICAgIDIgICAgNCAgICAyCiAwLjAyNDI0OTM3OTIyMTE3MTE2ICAgIDQgICAgMyAgICA0ICAgIDMKIDAuMzcxNDk0MzkyNjQ5MjUxMSAgICA0ICAgIDQgICAgMSAgICAxCiAwLjM1OTM5NjIxNjA5NjM0NjYgICAgNCAgICA0ICAgIDIgICAgMgogMC40MDEzNjAyODI2NDQzMjg3ICAgIDQgICAgNCAgICAzICAgIDMKIDAuNDQ5ODU5MDQxMDg2NjcwOSAgICA0ICAgIDQgICAgNCAgICA0CiAtMS41MzA3NDM3NDk3MTIyNSAgICAxICAgIDEgIDAgIDAKIC0xLjUzMjE1NTAwMzI5NzgzICAgIDIgICAgMiAgMCAgMAogLTEuMTg1OTYwMjMzOTg5OTAyICAgIDMgICAgMyAgMCAgMAogLTEuMTg1OTYwMjMzOTg5OTAxICAgIDQgICAgNCAgMCAgMAogLTExLjYwNzYxNzM5NzE5NDU0ICAwICAwICAwICAwCg=="
   },
   "results": {
     "reference": {
@@ -189,7 +189,7 @@
     }
   },
   "provenance": {
-    "entry_hash_sha256": "3ba54b52d1487cb06d3757da29566fc9c84f2c4f09d78bc24628aac98c65848e",
+    "entry_hash_sha256": "63dbc0b617a492eb9d476005df403004ef2c9b95e729bb0c1fd1a563e94068fe",
     "source_schema_version": "3.0.0",
     "created_utc": "2026-05-11T09:05:01.311734+00:00",
     "tool_versions": {
@@ -203,7 +203,8 @@
     },
     "environment": {
       "platform": "linux"
-    }
+    },
+    "phase3_enriched_utc": "2026-05-11T15:42:27.505921+00:00"
   },
   "trust": {
     "level": "certified",
@@ -222,6 +223,12 @@
   "circuit_stats": {
     "num_qubits_original": 8,
     "num_qubits_tapered": 3,
-    "ansatz_num_parameters": 8
+    "ansatz_num_parameters": 8,
+    "ansatz_depth": 14,
+    "ansatz_num_2q_gates": 8,
+    "ansatz_num_1q_gates": 2,
+    "non_clifford_gate_count": 14,
+    "t_gate_estimate": 168,
+    "t_gate_synthesis_epsilon": 0.001
   }
 }
