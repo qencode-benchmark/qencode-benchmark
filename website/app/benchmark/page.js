@@ -1,10 +1,10 @@
 export const metadata = {
   title: "Benchmark Specification",
   description:
-    "Review QEncode Standard Suite v2 benchmark specifications: molecules, qubit encodings, ansatz types, and reproducibility constraints for fair quantum algorithm comparison.",
+    "Review QEncode Standard Suite v3 benchmark specifications: 7 molecules, 3 qubit encodings, 2 ansatz types, and reproducibility constraints for fair quantum algorithm comparison.",
   keywords: [
     "quantum benchmark specification",
-    "suite v2",
+    "suite v3",
     "VQE molecules",
     "Jordan-Wigner Bravyi-Kitaev Parity",
     "UCCSD HEA"
@@ -13,7 +13,7 @@ export const metadata = {
     canonical: "/benchmark"
   },
   openGraph: {
-    title: "QEncode Benchmark Specification - Suite v2",
+    title: "QEncode Benchmark Specification - Suite v3",
     description:
       "Fixed benchmark definitions for molecules, encodings, ansatz settings, and reproducibility in quantum algorithm testing.",
     url: "/benchmark"
@@ -22,11 +22,13 @@ export const metadata = {
 
 export default function BenchmarkPage() {
   const molecules = [
-    { name: "H₂", status: "active", formula: "Hydrogen", qubits: 4 },
-    { name: "BeH₂", status: "active", formula: "Beryllium Hydride", qubits: 14 },
-    { name: "LiH", status: "active", formula: "Lithium Hydride", qubits: 12 },
-    { name: "HF", status: "active", formula: "Hydrogen Fluoride", qubits: 12 },
-    { name: "N₂", status: "expanded", formula: "Nitrogen", qubits: "active-space dependent" }
+    { name: "H₂",   status: "active",   formula: "Hydrogen",           qubits: "4 (tapered: 1)",  note: "[2,2] active space" },
+    { name: "HF",   status: "active",   formula: "Hydrogen Fluoride",   qubits: "4 (tapered: 2)",  note: "[2,2] active space" },
+    { name: "LiH",  status: "active",   formula: "Lithium Hydride",     qubits: "12 (tapered: 8)", note: "[4,4] active space" },
+    { name: "BeH₂", status: "active",   formula: "Beryllium Hydride",   qubits: "14 (tapered: 10)",note: "[4,4] active space" },
+    { name: "H₂O",  status: "active",   formula: "Water",               qubits: "14 (tapered: 10)",note: "[4,4] active space" },
+    { name: "NH₃",  status: "active",   formula: "Ammonia",             qubits: "14 (tapered: 10)",note: "[4,4] active space" },
+    { name: "N₂",   status: "research", formula: "Nitrogen",            qubits: "24 (tapered: 18)",note: "[6,6] active space — research tier" },
   ];
 
   const encodings = [
@@ -60,10 +62,14 @@ export default function BenchmarkPage() {
   return (
     <div className="container py-16 max-w-4xl">
       <h1 className="text-3xl sm:text-4xl font-bold mb-2">Benchmark Specification</h1>
-      <p className="text-muted-foreground mb-10">QEncode uses fixed suite definitions so every managed run is reproducible and directly comparable.</p>
+      <p className="text-muted-foreground mb-2">QEncode uses fixed suite definitions so every managed run is reproducible and directly comparable.</p>
+      <p className="text-xs text-muted-foreground mb-10">
+        <span className="font-medium">Suite v3 pipeline:</span> PySCF CASCI (active-space FCI reference) → PennyLane molecular Hamiltonian → Z2 symmetry tapering → COBYLA VQE
+      </p>
 
       <section className="mb-12">
-        <h2 className="text-xl font-semibold mb-4">Suite Molecules</h2>
+        <h2 className="text-xl font-semibold mb-1">Suite Molecules</h2>
+        <p className="text-sm text-muted-foreground mb-4">Suite v3 — 7 molecules (6 certified + 1 research tier)</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {molecules.map((m) => (
             <div key={m.name} className="rounded-lg border bg-card p-5">
@@ -73,6 +79,8 @@ export default function BenchmarkPage() {
                   className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                     m.status === "active"
                       ? "bg-primary text-primary-foreground"
+                      : m.status === "research"
+                      ? "bg-amber-100 text-amber-800"
                       : "bg-secondary text-secondary-foreground"
                   }`}
                 >
@@ -81,6 +89,7 @@ export default function BenchmarkPage() {
               </div>
               <p className="text-sm text-muted-foreground mt-2">{m.formula}</p>
               <p className="text-xs text-muted-foreground mt-1">{m.qubits} qubits</p>
+              {m.note && <p className="text-xs text-muted-foreground/70 mt-0.5">{m.note}</p>}
             </div>
           ))}
         </div>

@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 export const metadata = {
   title: "Quantum Algorithm Benchmarking Platform",
   description:
-    "Benchmark quantum algorithms with QEncode's reproducible VQE suite, certification workflows, and public leaderboard for H2, LiH, HF, BeH2, and H2O.",
+    "Benchmark quantum algorithms with QEncode's reproducible VQE suite, certification workflows, and public leaderboard for H2, LiH, HF, BeH2, H2O, and NH3.",
   keywords: [
     "quantum algorithm benchmarking platform",
     "VQE leaderboard",
@@ -86,7 +86,7 @@ export default function HomePage() {
           </Button>
         </div>
         <div className="mt-8 flex flex-wrap gap-2">
-          <Badge variant="secondary" className="text-xs">Suite v2</Badge>
+          <Badge variant="secondary" className="text-xs">Suite v3</Badge>
           <Badge variant="secondary" className="text-xs">Signed Receipts</Badge>
           <Badge variant="secondary" className="text-xs">Certified Public Dataset</Badge>
         </div>
@@ -139,15 +139,15 @@ export default function HomePage() {
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 mb-2"><Clock3 className="h-4 w-4 text-primary" /><h3 className="font-semibold">Single Molecule Certification</h3></div>
               <p className="text-3xl font-bold mb-2">$1,500</p>
-              <p className="text-sm text-muted-foreground mb-4">Managed execution and signed certification for one Suite v2 molecule.</p>
+              <p className="text-sm text-muted-foreground mb-4">Managed execution and signed certification for one Suite v3 molecule.</p>
               <Button asChild variant="outline"><Link href="/pricing" data-track="home_pricing_card_single">View details</Link></Button>
             </CardContent>
           </Card>
           <Card className="border">
             <CardContent className="pt-6">
-              <div className="flex items-center gap-2 mb-2"><Lock className="h-4 w-4 text-primary" /><h3 className="font-semibold">Full Suite v2 Certification</h3></div>
+              <div className="flex items-center gap-2 mb-2"><Lock className="h-4 w-4 text-primary" /><h3 className="font-semibold">Full Suite v3 Certification</h3></div>
               <p className="text-3xl font-bold mb-2">$4,000</p>
-              <p className="text-sm text-muted-foreground mb-4">Full managed benchmark run, signed receipts, and audit-ready report package.</p>
+              <p className="text-sm text-muted-foreground mb-4">Full managed benchmark run across all Suite v3 molecules, signed receipts, and audit-ready report package.</p>
               <Button asChild><Link href="/pricing" data-track="home_pricing_card_full">View details</Link></Button>
             </CardContent>
           </Card>

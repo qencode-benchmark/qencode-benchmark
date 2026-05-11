@@ -20,34 +20,59 @@ export const metadata = {
 
 export default function MethodologyPage() {
   return (
-    <div>
-      <h1>Methodology</h1>
-      <p className="muted">
-        This leaderboard follows a fixed benchmark suite, fixed algorithm constraints, certified-only eligibility,
-        transparent scoring, and public dataset release.
+    <div className="container py-16 max-w-4xl">
+      <h1 className="text-3xl sm:text-4xl font-bold mb-2">Benchmark Methodology</h1>
+      <p className="text-muted-foreground mb-10">
+        QEncode Suite v3 uses a fixed execution pipeline, certified-only eligibility, and transparent
+        rank-based scoring so every result is reproducible and directly comparable.
       </p>
 
-      <section className="card" style={{ marginTop: 12 }}>
-        <h3>Rules Snapshot (v1)</h3>
-        <ul>
-          <li>Eligibility: suite match + trust_level = certified + required metrics</li>
-          <li>Scope: rankings computed per molecule</li>
-          <li>Accuracy: sort by lowest gap</li>
-          <li>Hardware cost: sort by lowest two-qubit gates</li>
-          <li>Balanced score: gap × depth (lower is better)</li>
-        </ul>
+      <section className="mb-10">
+        <h2 className="text-xl font-semibold mb-4">Execution Pipeline</h2>
+        <div className="rounded-lg border bg-muted/30 p-6 space-y-3 text-sm text-muted-foreground leading-relaxed">
+          <p><span className="font-medium text-foreground">1. PySCF CASCI</span> — computes the active-space FCI reference energy using the exact CASCI Hamiltonian. This is the VQE target: all gaps are measured against E_CASCI, not full-system FCI.</p>
+          <p><span className="font-medium text-foreground">2. Classical comparison</span> — HF, MP2, CCSD, and CCSD(T) energies are computed for each molecule to establish the classical baseline. An entry is marked <em>Beats Classical</em> when its VQE gap is smaller than the CCSD(T) correlation energy.</p>
+          <p><span className="font-medium text-foreground">3. Qubit Hamiltonian</span> — PennyLane <code className="font-mono text-xs bg-muted px-1 rounded">qchem.molecular_hamiltonian</code> with Jordan-Wigner, Bravyi-Kitaev, or Parity mapping (via OpenFermion bridge for Parity).</p>
+          <p><span className="font-medium text-foreground">4. Z2 symmetry tapering</span> — reduces qubit count via <code className="font-mono text-xs bg-muted px-1 rounded">qchem.taper()</code>. The tapered HF state is computed with <code className="font-mono text-xs bg-muted px-1 rounded">qchem.taper_hf()</code>.</p>
+          <p><span className="font-medium text-foreground">5. VQE</span> — COBYLA optimizer, 500 iterations, 5 random multi-starts. Ansatz: UCCSD (tapered excitations) or Hardware-Efficient (HEA). Circuit metrics (depth, 2Q gates, T-gate estimate) are recorded post-VQE.</p>
+        </div>
       </section>
 
-      <section className="card" style={{ marginTop: 12 }}>
-        <h3>Data Provenance</h3>
-        <p>
-          Generated from the release dataset and metadata committed in this project under
-          <code> datasets/qencode_leaderboard_v2/</code>.
-        </p>
-        <p className="muted">
-          Canonical docs in repo: <code>docs/LEADERBOARD_RULES_V1.md</code> and
-          <code> docs/BENCHMARK_SPECIFICATION_V1.md</code>.
-        </p>
+      <section className="mb-10">
+        <h2 className="text-xl font-semibold mb-4">Leaderboard Rules</h2>
+        <div className="space-y-3">
+          <div className="rounded-lg border p-4">
+            <h3 className="font-semibold text-sm mb-1">Eligibility</h3>
+            <p className="text-sm text-muted-foreground">Suite v3 match + <code className="font-mono text-xs bg-muted px-1 rounded">trust_level = certified</code> (gap &lt; 0.01 Ha). Validated entries appear in the Research tab only.</p>
+          </div>
+          <div className="rounded-lg border p-4">
+            <h3 className="font-semibold text-sm mb-1">Accuracy ranking</h3>
+            <p className="text-sm text-muted-foreground">Sort by lowest |E_VQE − E_CASCI| (Hartrees). Lower is better. Chemical accuracy threshold: 1.6 × 10⁻³ Ha.</p>
+          </div>
+          <div className="rounded-lg border p-4">
+            <h3 className="font-semibold text-sm mb-1">Hardware cost ranking</h3>
+            <p className="text-sm text-muted-foreground">Sort by fewest two-qubit gates (tie-break: circuit depth). Requires transpiled circuit metrics.</p>
+          </div>
+          <div className="rounded-lg border p-4">
+            <h3 className="font-semibold text-sm mb-1">Balanced score</h3>
+            <p className="text-sm text-muted-foreground">
+              Rank-normalised combined score:{" "}
+              <code className="font-mono text-xs bg-muted px-1 rounded">
+                0.5 × (gap_rank / (N−1)) + 0.5 × (cost_rank / (N−1))
+              </code>{" "}
+              ∈ [0, 1]. Lower is better. Requires circuit metrics; N = certified entries with metrics.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="text-xl font-semibold mb-4">Data Provenance</h2>
+        <div className="rounded-lg border p-6 bg-muted/30 text-sm text-muted-foreground leading-relaxed space-y-2">
+          <p>All v3 entries are stored as signed JSON artifacts in <code className="font-mono text-xs bg-muted px-1 rounded">releases/v3/db/</code> in the public GitHub repository.</p>
+          <p>Leaderboard CSVs are generated by <code className="font-mono text-xs bg-muted px-1 rounded">scripts/export_leaderboard_v3.py</code> directly from those entry files — no manual editing.</p>
+          <p>Each entry includes PySCF energies, VQE trajectory, circuit metrics, FCIDUMP integrals (base64), and a Ed25519 signature for tamper-detection.</p>
+        </div>
       </section>
     </div>
   );
