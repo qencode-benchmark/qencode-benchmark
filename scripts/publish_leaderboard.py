@@ -180,7 +180,9 @@ def main():
         headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {args.secret}",
-            # Bypass Cloudflare/Vercel WAF (error 1010) on automated POST requests
+            # Bypass Cloudflare WAF (error 1010): spoof browser UA + Vercel bypass token
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                          "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             "x-vercel-protection-bypass": "4sSOP9JIfrN0ZfLfkex41oDGOZYfxSgZ",
         },
         method="POST",
