@@ -323,6 +323,26 @@ def _get_tapered_uccsd_ops(n_electrons: int, n_qubits_full: int,
     return tapered_ops
 
 
+def _apply_tapered_op(op, param: float) -> None:
+    """
+    Apply a tapered excitation operator with the given parameter value.
+
+    taper_operation may return either:
+      - A standard gate (e.g. SingleExcitation, RY): re-instantiate with
+        (param, wires=op.wires)
+      - A PennyLane Exp operator (exp(coeff * base)): re-instantiate with
+        qml.Exp(op.base, coeff=param).  Exp does not accept a 'wires' kwarg.
+    """
+    import pennylane as qml
+
+    # Exp / SProd / etc. are "composite" ops that carry a .base attribute.
+    # Standard parametric gates (RY, DoubleExcitation …) do not have .base.
+    if hasattr(op, "base"):
+        qml.apply(qml.Exp(op.base, coeff=param))
+    else:
+        qml.apply(op.__class__(param, wires=op.wires))
+
+
 def build_uccsd_circuit(H_tapered, hf_tapered: np.ndarray,
                         n_electrons: int, n_qubits_full: int,
                         generators, paulixops, sectors):
@@ -351,8 +371,7 @@ def build_uccsd_circuit(H_tapered, hf_tapered: np.ndarray,
         import pennylane as qml
         qml.BasisState(hf_tapered, wires=wires)
         for i, op in enumerate(tapered_ops):
-            # Re-instantiate with the current parameter value
-            qml.apply(op.__class__(params[i], wires=op.wires))
+            _apply_tapered_op(op, params[i])
 
     return circuit_fn, n_params, "uccsd_tapered"
 
