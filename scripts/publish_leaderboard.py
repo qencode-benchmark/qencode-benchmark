@@ -28,7 +28,7 @@ from pathlib import Path
 # ── Paths ─────────────────────────────────────────────────────────────────────
 REPO_ROOT  = Path(__file__).resolve().parent.parent
 DATA_DIR   = REPO_ROOT / "website" / "public" / "data"
-DEFAULT_URL = "https://qencode-benchmark.org"
+DEFAULT_URL = "https://www.qencode-benchmark.org"
 
 # ── CSV parsing ───────────────────────────────────────────────────────────────
 def num(v):
@@ -189,12 +189,28 @@ def main():
     )
 
     print(f"\nPOSTing to {endpoint} ...")
-    # Use an unverified SSL context to work around certificate chain issues on some systems
+    # Use an unverified SSL context to work around certificate chain issues on some systems.
+    # Build an opener that follows 307/308 redirects with POST (urllib default drops body).
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
+
+    class _PostRedirectHandler(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            if code in (307, 308):
+                new_req = urllib.request.Request(
+                    newurl, data=req.data, headers=dict(req.headers),
+                    method=req.get_method(),
+                )
+                return new_req
+            return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+    opener = urllib.request.build_opener(
+        urllib.request.HTTPSHandler(context=ctx),
+        _PostRedirectHandler(),
+    )
     try:
-        with urllib.request.urlopen(req, timeout=60, context=ctx) as resp:
+        with opener.open(req, timeout=60) as resp:
             data = json.loads(resp.read())
             print(f"[OK] Success: {data}")
     except urllib.error.HTTPError as e:
