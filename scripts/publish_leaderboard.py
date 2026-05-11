@@ -180,6 +180,8 @@ def main():
         headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {args.secret}",
+            # Bypass Cloudflare/Vercel WAF (error 1010) on automated POST requests
+            "x-vercel-protection-bypass": "4sSOP9JIfrN0ZfLfkex41oDGOZYfxSgZ",
         },
         method="POST",
     )
