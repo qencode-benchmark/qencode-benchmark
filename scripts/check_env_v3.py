@@ -196,8 +196,9 @@ def smoke_test_pennylane(casci_energy: Optional[float] = None) -> bool:
         import pennylane as qml  # type: ignore
         from pennylane import qchem  # type: ignore
 
+        import numpy as _np
         symbols = ["H", "H"]
-        coords_bohr = [0.0, 0.0, 0.0,   0.0, 0.0, 1.3889]  # ~0.735 Å in Bohr
+        coords_bohr = _np.array([0.0, 0.0, 0.0,   0.0, 0.0, 1.3889])  # ~0.735 A in Bohr
         H, n_qubits = qchem.molecular_hamiltonian(
             symbols,
             coords_bohr,
