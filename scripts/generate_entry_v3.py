@@ -327,22 +327,49 @@ def _apply_tapered_op(op, param: float) -> None:
     """
     Apply a tapered excitation operator with the given parameter value.
 
-    taper_operation may return either:
-      - A standard gate (e.g. SingleExcitation, RY): re-instantiate with
-        (param, wires=op.wires)
-      - A PennyLane Exp operator (exp(coeff * base)): re-instantiate with
-        qml.Exp(op.base, coeff=param).  Exp does not accept a 'wires' kwarg.
+    taper_operation returns one of:
+      (a) Standard gate (e.g. SingleExcitation): re-instantiate (param, wires=op.wires)
+      (b) Exp(base, coeff) -- a PennyLane composite op with a .base attribute
+
+    For case (b) the base is a Hermitian Pauli (or Pauli string).
+    Using a *real* coeff gives exp(real * H_hermitian) which is NOT unitary
+    (it is exp(X) for Hermitian X, producing cosh/sinh → overflow).
+    For unitarity we need exp(i * param * H_hermitian).
+
+    We avoid constructing Exp manually and instead map directly to the
+    standard rotation gates, which are always unitary and well-conditioned:
+      PauliX → RX,  PauliY → RY,  PauliZ → RZ
+    For multi-qubit Hermitian bases we fall back to qml.exp with coeff=1j*param.
     """
     import pennylane as qml
 
-    # Exp / SProd / etc. are "composite" ops that carry a .base attribute.
-    # Standard parametric gates (RY, DoubleExcitation …) do not have .base.
-    if hasattr(op, "base"):
-        # taper_operation returns Exp(base, coeff) -- use qml.exp (lowercase)
-        # to rebuild with the new parameter.  qml.Exp does not exist in PL 0.44.
-        qml.apply(qml.exp(op.base, coeff=param))
-    else:
+    if not hasattr(op, "base"):
+        # Standard parametric gate (DoubleExcitation, SingleExcitation, RY, …)
         qml.apply(op.__class__(param, wires=op.wires))
+        return
+
+    # --- Exp-like composite operator ---
+    base = op.base
+    base_cls = type(base).__name__
+    base_wires = list(base.wires)
+
+    # Single-qubit Pauli: map to the equivalent PL rotation gate.
+    # RX/RY/RZ are always unitary and the optimizer absorbs any scale factor.
+    if len(base_wires) == 1:
+        w = base_wires[0]
+        if base_cls == "PauliX":
+            qml.RX(param, wires=w)
+            return
+        if base_cls == "PauliY":
+            qml.RY(param, wires=w)
+            return
+        if base_cls == "PauliZ":
+            qml.RZ(param, wires=w)
+            return
+
+    # Multi-qubit or non-trivial base: exp(i * param * H_hermitian) is unitary
+    # when base is Hermitian.  Use 1j to ensure the exponential is bounded.
+    qml.apply(qml.exp(base, coeff=1j * param))
 
 
 def build_uccsd_circuit(H_tapered, hf_tapered: np.ndarray,
