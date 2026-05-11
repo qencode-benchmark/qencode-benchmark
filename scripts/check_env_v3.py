@@ -207,7 +207,9 @@ def smoke_test_pennylane(casci_energy: Optional[float] = None) -> bool:
             active_electrons=2,
             active_orbitals=2,
         )
-        print(ok(f"PL Hamiltonian built: {n_qubits} qubits, {len(H.ops)} terms"))
+        # PennyLane 0.36+ returns Sum; older versions return Hamiltonian with .ops
+        n_terms = len(getattr(H, "operands", None) or getattr(H, "ops", []))
+        print(ok(f"PL Hamiltonian built: {n_qubits} qubits, {n_terms} terms"))
 
         # Z2 symmetry tapering
         generators = qchem.symmetry_generators(H)
@@ -221,12 +223,12 @@ def smoke_test_pennylane(casci_energy: Optional[float] = None) -> bool:
         hf_tapered = qchem.taper_hf(generators, paulixops, sectors, num_electrons=2, num_wires=n_qubits)
         print(ok(f"Tapered HF state:    {hf_tapered.tolist()}"))
 
-        # Quick energy check: NumPy exact solver on tapered H
-        import pennylane.numpy as pnp  # type: ignore
-        from pennylane import matrix as qml_matrix  # type: ignore
-        H_mat = qml_matrix(H_tapered, wire_order=sorted(H_tapered.wires))
-        import numpy as np
-        eigvals = np.linalg.eigvalsh(H_mat)
+        # Quick energy check: exact diagonalization of tapered Hamiltonian
+        import numpy as _np2
+        import pennylane as _qml
+        wire_order = sorted(H_tapered.wires)
+        H_mat = _qml.matrix(H_tapered, wire_order=wire_order)
+        eigvals = _np2.linalg.eigvalsh(H_mat)
         e_exact_pl = float(eigvals[0])
         print(ok(f"PL exact ground energy: {e_exact_pl:.10f} Ha"))
 
