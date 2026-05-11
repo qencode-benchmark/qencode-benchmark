@@ -98,8 +98,8 @@ def _qubitop_to_pl(qubit_op) -> Tuple:
 
 def _pyscf_to_fermion_op(mf, n_electrons: int, n_orbitals: int):
     """
-    Extract CASCI active-space integrals from an already-run PySCF RHF object
-    and build an OpenFermion FermionOperator.
+    Extract CASCI active-space integrals from a PySCF RHF object and build an
+    OpenFermion FermionOperator by direct spin-orbital expansion.
 
     Parameters
     ----------
@@ -111,36 +111,71 @@ def _pyscf_to_fermion_op(mf, n_electrons: int, n_orbitals: int):
     -------
     fermion_op : OpenFermion FermionOperator
     n_modes    : number of spin orbitals (= 2 * n_orbitals)
+
+    Spin-orbital convention (interleaved):
+        spatial orbital p, spin σ ∈ {0(α), 1(β)}  →  spin-orbital index 2p+σ
+
+    Hamiltonian form:
+        H = e_core
+          + Σ_{p,q,σ}   h1eff[p,q]   a†_{2p+σ} a_{2q+σ}
+          + ½ Σ_{p,q,r,s,σ,τ}  h2e[p,q,r,s]  a†_{2p+σ} a†_{2r+τ} a_{2s+τ} a_{2q+σ}
+
+    where h2e[p,q,r,s] = (pq|rs) in chemist notation (= ⟨pq|rs⟩ in physicist).
+    The FermionOperator accumulates all terms explicitly; OpenFermion's JW/BK
+    transforms then impose the correct fermionic anticommutation relations.
+
+    Why not InteractionOperator?
+        InteractionOperator expects *spin-orbital* tensors (shape 2n×2n for 1e,
+        (2n)^4 for 2e).  Passing spatial-only tensors (n×n, n^4) silently builds
+        a Hamiltonian for half the modes, giving wrong ground-state energies.
+        Building FermionOperator directly avoids this pitfall entirely.
     """
     from pyscf import mcscf, ao2mo
-    from openfermion import InteractionOperator, get_fermion_operator
+    from openfermion import FermionOperator
 
-    ncas  = n_orbitals
-    nelec = n_electrons
+    ncas    = n_orbitals
+    nelec   = n_electrons
     n_modes = 2 * ncas
 
-    # ── Active-space integrals from CASCI ────────────────────────────────────
-    cas = mcscf.CASCI(mf, ncas, nelec)
-    # get_h1eff returns:
-    #   h1eff  : (ncas, ncas) effective 1e integral in active MO basis
-    #            (includes frozen-core and nuclear-repulsion contributions)
-    #   e_core : total constant energy (core electrons + nuclear repulsion)
-    h1eff, e_core = cas.get_h1eff()
+    # ── Active-space integrals ────────────────────────────────────────────────
+    cas            = mcscf.CASCI(mf, ncas, nelec)
+    h1eff, e_core  = cas.get_h1eff()                      # (ncas,ncas), scalar
+    h2e            = ao2mo.restore(1, cas.get_h2eff(), ncas)  # (ncas,)^4 chemist
 
-    # get_h2eff returns compressed 2e integrals in active MO basis
-    h2e = ao2mo.restore(1, cas.get_h2eff(), ncas)   # (ncas, ncas, ncas, ncas)
+    # ── Build FermionOperator by direct spin-orbital expansion ────────────────
+    fop = FermionOperator('', float(e_core))
 
-    # ── Convert 2e integrals: PySCF chemist (pq|rs) → OpenFermion physicist ──
-    # OpenFermion: H = const + Σ h1[p,q] a†p aq + ½ Σ h2[p,q,r,s] a†p a†q ar as
-    # h2[p,q,r,s] must equal <pq|rs>_phys = (pr|qs)_chem
-    # → h2_of[p,q,r,s] = h2e_pyscf[p,r,q,s]
-    h2_of = h2e.transpose(0, 2, 1, 3)
+    # — One-body terms —
+    for p in range(ncas):
+        for q in range(ncas):
+            coeff = float(h1eff[p, q])
+            if abs(coeff) < 1e-12:
+                continue
+            for sigma in (0, 1):
+                fop += FermionOperator(
+                    ((2*p + sigma, 1), (2*q + sigma, 0)), coeff
+                )
 
-    # ── Build InteractionOperator and convert to FermionOperator ─────────────
-    mol_ham    = InteractionOperator(float(e_core), h1eff, 0.5 * h2_of)
-    fermion_op = get_fermion_operator(mol_ham)
+    # — Two-body terms —
+    # ½ Σ_{pqrs,σ,τ} (pq|rs)_chem  a†_{2p+σ} a†_{2r+τ} a_{2s+τ} a_{2q+σ}
+    for p in range(ncas):
+        for q in range(ncas):
+            for r in range(ncas):
+                for s in range(ncas):
+                    coeff = 0.5 * float(h2e[p, q, r, s])
+                    if abs(coeff) < 1e-12:
+                        continue
+                    for sigma in (0, 1):
+                        for tau in (0, 1):
+                            fop += FermionOperator(
+                                ((2*p + sigma, 1),
+                                 (2*r + tau,   1),
+                                 (2*s + tau,   0),
+                                 (2*q + sigma, 0)),
+                                coeff,
+                            )
 
-    return fermion_op, n_modes
+    return fop, n_modes
 
 
 # ─── Qubit transforms ─────────────────────────────────────────────────────────
