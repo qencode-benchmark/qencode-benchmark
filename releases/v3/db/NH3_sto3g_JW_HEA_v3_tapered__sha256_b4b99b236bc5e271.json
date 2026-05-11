@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0.0",
-  "entry_id": "NH3_sto3g_JW_HEA_v3_tapered__sha256_64e2a8e9fc23aaad",
-  "created_utc": "2026-05-11T09:15:31.341520+00:00",
+  "entry_id": "NH3_sto3g_JW_HEA_v3_tapered__sha256_b4b99b236bc5e271",
+  "created_utc": "2026-05-11T11:15:39.840653+00:00",
   "problem": {
     "name": "NH3",
     "basis": "sto-3g",
@@ -19,7 +19,7 @@
   "encoding": {
     "mapping": "jordan_wigner",
     "ansatz_type": "hea",
-    "ansatz_reps": 2,
+    "ansatz_reps": 3,
     "tapering": {
       "enabled": true,
       "method": "z2_symmetry",
@@ -37,7 +37,8 @@
         1,
         1,
         0
-      ]
+      ],
+      "bk_constant_correction_ha": null
     }
   },
   "artifacts": {
@@ -592,62 +593,68 @@
   },
   "results": {
     "reference": {
-      "hf_energy_hartree": -55.45367642577185,
-      "casci_ground_energy_hartree": -55.4680995592644,
-      "casci_first_excited_hartree": -54.96737761503815,
+      "hf_energy_hartree": -55.45367642577194,
+      "casci_ground_energy_hartree": -55.46809955926443,
+      "casci_first_excited_hartree": -54.967377615038046,
       "exact_qubit_ground_energy_hartree_like": null
     },
     "classical_comparison": {
-      "hf_energy_hartree": -55.45367642577185,
-      "mp2_energy_hartree": -55.50069858369603,
-      "ccsd_energy_hartree": -55.518238117178164,
-      "ccsd_t_energy_hartree": -55.51835267452899,
-      "mp2_correlation": -0.04702215792417519,
-      "ccsd_t_correlation": -0.06467624875713796,
+      "hf_energy_hartree": -55.45367642577194,
+      "mp2_energy_hartree": -55.50069858369598,
+      "ccsd_energy_hartree": -55.51823811717825,
+      "ccsd_t_energy_hartree": -55.51835267452907,
+      "mp2_correlation": -0.04702215792404019,
+      "ccsd_t_correlation": -0.06467624875713085,
       "pyscf_version": "2.5.0",
-      "computed_utc": "2026-05-11T09:14:52.595144+00:00",
+      "computed_utc": "2026-05-11T11:13:30.746181+00:00",
       "basis": "sto-3g"
     },
     "vqe": {
-      "best_energy_hartree": -55.45386518751534,
+      "best_energy_hartree": -55.46568858480184,
       "optimal_params": [
-        -2.2420390377329658,
-        1.5442990064077002,
-        -0.10149816714265127,
-        1.582021269517974,
-        0.6015312926580776,
-        0.905821647089413,
-        -0.6467876705291316,
-        3.8320324286116603,
-        3.0972798762118456,
-        3.179023542076292,
-        -3.1611887771438933,
-        -1.4860975454445715,
-        -3.182363518710995,
-        -1.5885074579411416,
-        0.5985613707215365
+        3.1826239525958195,
+        -0.1630151394403821,
+        2.8474819989811406,
+        1.489865561016267,
+        -1.522435070951271,
+        3.8238888175152868,
+        3.197772985397772,
+        1.8541638087860317,
+        -3.0068750330600165,
+        -0.05994632913382846,
+        -0.04907427225609968,
+        2.962603635115886,
+        1.0395045282245854,
+        3.3596336454681506,
+        0.01242176624165312,
+        -0.6714120684561944,
+        -0.106393826337021,
+        -2.6173973912377284,
+        1.7783013681180235,
+        1.5194047174915886
       ],
-      "num_params": 15,
-      "nfev": 1500,
+      "num_params": 20,
+      "nfev": 5000,
       "optimizer": "COBYLA",
-      "multistart_runs": 3,
-      "computed_utc": "2026-05-11T09:15:31.340610+00:00"
+      "multistart_runs": 5,
+      "computed_utc": "2026-05-11T11:15:39.839806+00:00"
     },
     "quality": {
       "gap_threshold": 0.01,
-      "trusted": false,
-      "abs_vqe_exact_gap": 0.014234371749061836,
+      "trusted": true,
+      "abs_vqe_exact_gap": 0.002410974462591753,
       "beats_classical": true,
       "flags": [
+        "gap_certified",
         "beats_classical"
       ],
       "notes": null
     }
   },
   "provenance": {
-    "entry_hash_sha256": "64e2a8e9fc23aaad62ac3d1afa6af81233b2fb11075c0831444b41fc12d05668",
+    "entry_hash_sha256": "b4b99b236bc5e2713a26da2f26b305a875179d895e974b73994fcdb2c9cd9fc1",
     "source_schema_version": "3.0.0",
-    "created_utc": "2026-05-11T09:15:31.341520+00:00",
+    "created_utc": "2026-05-11T11:15:39.840653+00:00",
     "tool_versions": {
       "python": "3.11.14",
       "pyscf": "2.5.0",
@@ -655,22 +662,22 @@
       "openfermion": "1.7.1",
       "numpy": "1.26.4",
       "scipy": "1.17.0",
-      "git_commit": "1b8677c"
+      "git_commit": "dff47f8"
     },
     "environment": {
       "platform": "linux"
     }
   },
   "trust": {
-    "level": "validated",
-    "certified_utc": null,
+    "level": "certified",
+    "certified_utc": "2026-05-11T11:15:39.840653+00:00",
     "signature_b64": null,
     "signing_key_id": null
   },
   "run_config": {
     "optimizer": "COBYLA",
-    "max_iterations": 500,
-    "multistart": 3,
+    "max_iterations": 1000,
+    "multistart": 5,
     "seed": 42,
     "backend_type": "default.qubit",
     "shots": null
@@ -678,6 +685,6 @@
   "circuit_stats": {
     "num_qubits_original": 8,
     "num_qubits_tapered": 5,
-    "ansatz_num_parameters": 15
+    "ansatz_num_parameters": 20
   }
 }
