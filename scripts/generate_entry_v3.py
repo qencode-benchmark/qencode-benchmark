@@ -237,6 +237,48 @@ def build_pl_hamiltonian(symbols: list, coords_bohr: np.ndarray, basis: str,
     return H, n_qubits
 
 
+def _find_optimal_sector(H, generators, paulixops):
+    """
+    Find the Z2 symmetry sector that contains the true ground state.
+
+    Strategy: try all 2^n_sym sector combinations, taper the Hamiltonian in
+    each, diagonalise exactly, and return the sector with the lowest eigenvalue.
+
+    This replaces qchem.optimal_sector which internally assumes a JW-style
+    HF reference state (|1...10...0>) and therefore selects the wrong sector
+    when the Bravyi-Kitaev mapping is used.  The brute-force approach is
+    mapping-agnostic and always correct.
+
+    Overhead is negligible: for n_sym=3 we try 8 small matrices.
+    """
+    import itertools
+    import pennylane as qml
+    from pennylane import qchem
+
+    n_sym = len(generators)
+    best_energy = np.inf
+    best_sectors = None
+
+    for sectors in itertools.product([1, -1], repeat=n_sym):
+        try:
+            H_tap = qchem.taper(H, generators, paulixops, list(sectors))
+            wires  = sorted(H_tap.wires)
+            if not wires:
+                continue
+            H_mat  = qml.matrix(H_tap, wire_order=wires)
+            e      = float(np.linalg.eigvalsh(H_mat)[0])
+            if e < best_energy:
+                best_energy  = e
+                best_sectors = list(sectors)
+        except Exception:
+            pass
+
+    if best_sectors is None:
+        raise RuntimeError("_find_optimal_sector: no valid sector found")
+
+    return best_sectors, best_energy
+
+
 def apply_tapering(H, n_qubits: int, n_electrons: int):
     """
     Apply Z2 symmetry tapering to the qubit Hamiltonian.
@@ -247,17 +289,21 @@ def apply_tapering(H, n_qubits: int, n_electrons: int):
                     CRITICAL: must use qchem.taper_hf(), NOT standard |1..10..0>
       tap_meta    - dict with tapering metadata for schema
 
-    Reduces qubit count by 2 per symmetry (typically 2 symmetries -> 2 qubits saved).
+    Sector selection uses _find_optimal_sector (brute-force over all 2^n_sym
+    combinations) rather than qchem.optimal_sector, which fails for BK mapping.
     """
     from pennylane import qchem
 
-    generators  = qchem.symmetry_generators(H)
-    paulixops   = qchem.paulix_ops(generators, n_qubits)
-    sectors     = qchem.optimal_sector(H, generators, n_electrons)
-    H_tapered   = qchem.taper(H, generators, paulixops, sectors)
+    generators = qchem.symmetry_generators(H)
+    paulixops  = qchem.paulix_ops(generators, n_qubits)
+
+    # Brute-force sector selection -- correct for both JW and BK mappings
+    sectors, e_exact = _find_optimal_sector(H, generators, paulixops)
+
+    H_tapered  = qchem.taper(H, generators, paulixops, sectors)
     # CRITICAL: tapered HF state must be computed via taper_hf
-    hf_tapered  = qchem.taper_hf(generators, paulixops, sectors,
-                                  num_electrons=n_electrons, num_wires=n_qubits)
+    hf_tapered = qchem.taper_hf(generators, paulixops, sectors,
+                                 num_electrons=n_electrons, num_wires=n_qubits)
 
     n_tap = len(H_tapered.wires)
     n_sym = len(generators)
