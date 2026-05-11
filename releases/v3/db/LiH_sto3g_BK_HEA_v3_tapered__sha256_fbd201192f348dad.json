@@ -1,0 +1,1028 @@
+{
+  "schema_version": "3.0.0",
+  "entry_id": "LiH_sto3g_BK_HEA_v3_tapered__sha256_fbd201192f348dad",
+  "created_utc": "2026-05-11T14:17:24.030846+00:00",
+  "problem": {
+    "name": "LiH",
+    "basis": "sto-3g",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "Li 0.0 0.0 0.0; H 0.0 0.0 1.6",
+    "active_space": {
+      "num_electrons": 4,
+      "num_spatial_orbitals": 4,
+      "method": "casci",
+      "frozen_core": false
+    }
+  },
+  "encoding": {
+    "mapping": "bravyi_kitaev",
+    "ansatz_type": "hea",
+    "ansatz_reps": 2,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 3,
+      "original_num_qubits": 8,
+      "tapered_num_qubits": 5,
+      "sectors": [
+        -1,
+        -1,
+        1
+      ],
+      "hf_tapered_state": [
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "bk_constant_correction_ha": -7.338664343316075
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 5,
+      "num_pauli_terms": 218,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": 0.1409956724047831
+        },
+        {
+          "pauli_string": "Z0Z2",
+          "coefficient": 0.04715534739083953
+        },
+        {
+          "pauli_string": "Z0Z2Z4",
+          "coefficient": 0.04715534739083953
+        },
+        {
+          "pauli_string": "Z3Z4",
+          "coefficient": 0.1409956724047831
+        },
+        {
+          "pauli_string": "Z0Z2Z3",
+          "coefficient": 0.09384032501394356
+        },
+        {
+          "pauli_string": "Z0Z2Z3Z4",
+          "coefficient": 0.09384032501394356
+        },
+        {
+          "pauli_string": "Z0",
+          "coefficient": -0.023610477022545193
+        },
+        {
+          "pauli_string": "Z0Z4",
+          "coefficient": -0.025243474970144862
+        },
+        {
+          "pauli_string": "Z2",
+          "coefficient": -0.04511343632880001
+        },
+        {
+          "pauli_string": "Z2Z4",
+          "coefficient": -0.047821216957479554
+        },
+        {
+          "pauli_string": "Z0Z3",
+          "coefficient": 0.027951255598824512
+        },
+        {
+          "pauli_string": "Z0Z3Z4",
+          "coefficient": 0.026318257651224836
+        },
+        {
+          "pauli_string": "Z2Z3",
+          "coefficient": 0.04945421490507919
+        },
+        {
+          "pauli_string": "Z2Z3Z4",
+          "coefficient": 0.04674643427639966
+        },
+        {
+          "pauli_string": "Z0Z1",
+          "coefficient": 0.023610477022545304
+        },
+        {
+          "pauli_string": "Z0Z1Z4",
+          "coefficient": 0.025243474970144973
+        },
+        {
+          "pauli_string": "Z1Z2",
+          "coefficient": -0.04945421490507921
+        },
+        {
+          "pauli_string": "Z1Z2Z4",
+          "coefficient": -0.04674643427639967
+        },
+        {
+          "pauli_string": "Z0Z1Z3",
+          "coefficient": -0.027951255598824398
+        },
+        {
+          "pauli_string": "Z0Z1Z3Z4",
+          "coefficient": -0.026318257651224728
+        },
+        {
+          "pauli_string": "Z1Z2Z3",
+          "coefficient": 0.04511343632879999
+        },
+        {
+          "pauli_string": "Z1Z2Z3Z4",
+          "coefficient": 0.047821216957479526
+        },
+        {
+          "pauli_string": "X0Y1Y2",
+          "coefficient": 0.0013793825686674826
+        },
+        {
+          "pauli_string": "X0Y1Y2Z4",
+          "coefficient": 0.0013573478815359346
+        },
+        {
+          "pauli_string": "Y0Y1X2",
+          "coefficient": -0.0013793825686674826
+        },
+        {
+          "pauli_string": "Y0Y1X2Z4",
+          "coefficient": -0.0013573478815359346
+        },
+        {
+          "pauli_string": "X0Y1Y2Z3",
+          "coefficient": -0.0013793825686674826
+        },
+        {
+          "pauli_string": "X0Y1Y2Z3Z4",
+          "coefficient": -0.0014014172557990307
+        },
+        {
+          "pauli_string": "Y0Y1X2Z3",
+          "coefficient": 0.0013793825686674826
+        },
+        {
+          "pauli_string": "Y0Y1X2Z3Z4",
+          "coefficient": 0.0014014172557990307
+        },
+        {
+          "pauli_string": "Z0X1Z3",
+          "coefficient": 0.0013793825686674826
+        },
+        {
+          "pauli_string": "Z0X1Z3Z4",
+          "coefficient": 0.0013573478815359346
+        },
+        {
+          "pauli_string": "X1Z2Z3",
+          "coefficient": 0.0013793825686674826
+        },
+        {
+          "pauli_string": "X1Z2Z3Z4",
+          "coefficient": 0.0014014172557990307
+        },
+        {
+          "pauli_string": "Z0X1",
+          "coefficient": -0.0013793825686674826
+        },
+        {
+          "pauli_string": "Z0X1Z4",
+          "coefficient": -0.0014014172557990307
+        },
+        {
+          "pauli_string": "X1Z2",
+          "coefficient": -0.0013793825686674829
+        },
+        {
+          "pauli_string": "X1Z2Z4",
+          "coefficient": -0.0013573478815359346
+        },
+        {
+          "pauli_string": "X0X1Y3",
+          "coefficient": 0.018572217584272816
+        },
+        {
+          "pauli_string": "X0X1Y3Z4",
+          "coefficient": 0.018572217584272816
+        },
+        {
+          "pauli_string": "Y0X1Z2Y3",
+          "coefficient": -0.017328394516586684
+        },
+        {
+          "pauli_string": "Y0X1Z2Y3Z4",
+          "coefficient": 0.0012438230676861312
+        },
+        {
+          "pauli_string": "X0X1X3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X0X1X3Z4",
+          "coefficient": 2.168404344971009e-19
+        },
+        {
+          "pauli_string": "Y0X1Z2X3",
+          "coefficient": -1.0842021724855044e-19
+        },
+        {
+          "pauli_string": "Y0X1Z2X3Z4",
+          "coefficient": 0.018572217584272816
+        },
+        {
+          "pauli_string": "Y0X1Y3",
+          "coefficient": -0.0017929143678424358
+        },
+        {
+          "pauli_string": "Y0X1Y3Z4",
+          "coefficient": -0.00022807760573836532
+        },
+        {
+          "pauli_string": "X0X1Z2Y3",
+          "coefficient": 0.0015648367621040704
+        },
+        {
+          "pauli_string": "X0X1Z2Y3Z4",
+          "coefficient": 0.0026189720941612827
+        },
+        {
+          "pauli_string": "Y0X1X3",
+          "coefficient": -0.0012822129377955743
+        },
+        {
+          "pauli_string": "Y0X1X3Z4",
+          "coefficient": 0.0002826238243084961
+        },
+        {
+          "pauli_string": "X0X1Z2X3",
+          "coefficient": 0.0010541353320572128
+        },
+        {
+          "pauli_string": "X0X1Z2X3Z4",
+          "coefficient": 1.0842021724855044e-19
+        },
+        {
+          "pauli_string": "Z0X1Y3",
+          "coefficient": -0.00022807760573836347
+        },
+        {
+          "pauli_string": "Z0X1Y3Z4",
+          "coefficient": 0.0013367591563657071
+        },
+        {
+          "pauli_string": "X1Z2Y3",
+          "coefficient": 1.0842021724855044e-19
+        },
+        {
+          "pauli_string": "X1Z2Y3Z4",
+          "coefficient": 0.001054135332057211
+        },
+        {
+          "pauli_string": "Z0X1X3",
+          "coefficient": 0.002847049699899647
+        },
+        {
+          "pauli_string": "Z0X1X3Z4",
+          "coefficient": 0.001282212937795576
+        },
+        {
+          "pauli_string": "X1Z2X3",
+          "coefficient": 0.0026189720941612827
+        },
+        {
+          "pauli_string": "X1Z2X3Z4",
+          "coefficient": 0.0015648367621040687
+        },
+        {
+          "pauli_string": "Y1Y3",
+          "coefficient": -0.017328394516586684
+        },
+        {
+          "pauli_string": "Y1Y3Z4",
+          "coefficient": -0.018572217584272816
+        },
+        {
+          "pauli_string": "Z0Y1Z2Y3",
+          "coefficient": -0.017328394516586684
+        },
+        {
+          "pauli_string": "Z0Y1Z2Y3Z4",
+          "coefficient": 0.0012438230676861312
+        },
+        {
+          "pauli_string": "Y1X3",
+          "coefficient": -9.486769009248164e-20
+        },
+        {
+          "pauli_string": "Y1X3Z4",
+          "coefficient": -0.0012438230676861312
+        },
+        {
+          "pauli_string": "Z0Y1Z2X3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0Y1Z2X3Z4",
+          "coefficient": 0.018572217584272816
+        },
+        {
+          "pauli_string": "Z1X2Y3",
+          "coefficient": 0.004079390483660722
+        },
+        {
+          "pauli_string": "Z1X2Y3Z4",
+          "coefficient": 0.004079390483660721
+        },
+        {
+          "pauli_string": "Z0Z1Y2Y3",
+          "coefficient": -0.005521266044013672
+        },
+        {
+          "pauli_string": "Z0Z1Y2Y3Z4",
+          "coefficient": -0.0014418755603529511
+        },
+        {
+          "pauli_string": "Z1X2X3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z1X2X3Z4",
+          "coefficient": 9.75781955236954e-19
+        },
+        {
+          "pauli_string": "Z0Z1Y2X3",
+          "coefficient": -2.710505431213761e-20
+        },
+        {
+          "pauli_string": "Z0Z1Y2X3Z4",
+          "coefficient": 0.004079390483660721
+        },
+        {
+          "pauli_string": "Z1Y2Y3",
+          "coefficient": -0.0006560838183670627
+        },
+        {
+          "pauli_string": "Z1Y2Y3Z4",
+          "coefficient": -0.0009355215093770466
+        },
+        {
+          "pauli_string": "Z0Z1X2Y3",
+          "coefficient": -0.0002794376910099839
+        },
+        {
+          "pauli_string": "Z0Z1X2Y3Z4",
+          "coefficient": 0.0011946523888026707
+        },
+        {
+          "pauli_string": "Z1Y2X3",
+          "coefficient": -0.0024096115891897012
+        },
+        {
+          "pauli_string": "Z1Y2X3Z4",
+          "coefficient": -0.0026890492801996853
+        },
+        {
+          "pauli_string": "Z0Z1X2X3",
+          "coefficient": 0.0014740900798126547
+        },
+        {
+          "pauli_string": "Z0Z1X2X3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z1Z2Y3",
+          "coefficient": -0.0009355215093770466
+        },
+        {
+          "pauli_string": "Z1Z2Y3Z4",
+          "coefficient": -0.0012149592003870306
+        },
+        {
+          "pauli_string": "Z0Z1Y3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0Z1Y3Z4",
+          "coefficient": 0.0014740900798126547
+        },
+        {
+          "pauli_string": "Z1Z2X3",
+          "coefficient": 0.002130173898179717
+        },
+        {
+          "pauli_string": "Z1Z2X3Z4",
+          "coefficient": 0.0024096115891897012
+        },
+        {
+          "pauli_string": "Z0Z1X3",
+          "coefficient": 0.0011946523888026707
+        },
+        {
+          "pauli_string": "Z0Z1X3Z4",
+          "coefficient": -0.0002794376910099839
+        },
+        {
+          "pauli_string": "X3",
+          "coefficient": 0.005521266044013672
+        },
+        {
+          "pauli_string": "X3Z4",
+          "coefficient": 0.004079390483660721
+        },
+        {
+          "pauli_string": "Z0Z2X3",
+          "coefficient": 0.005521266044013672
+        },
+        {
+          "pauli_string": "Z0Z2X3Z4",
+          "coefficient": 0.0014418755603529511
+        },
+        {
+          "pauli_string": "Y3",
+          "coefficient": 5.421010862427522e-20
+        },
+        {
+          "pauli_string": "Y3Z4",
+          "coefficient": 0.0014418755603529513
+        },
+        {
+          "pauli_string": "Z0Z2Y3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0Z2Y3Z4",
+          "coefficient": 0.004079390483660721
+        },
+        {
+          "pauli_string": "Z0Y1Y3",
+          "coefficient": -0.01930533919019365
+        },
+        {
+          "pauli_string": "Z0Y1Y3Z4",
+          "coefficient": -0.017321828560410354
+        },
+        {
+          "pauli_string": "Y1Z2Y3",
+          "coefficient": -0.01930533919019365
+        },
+        {
+          "pauli_string": "Y1Z2Y3Z4",
+          "coefficient": -0.001983510629783295
+        },
+        {
+          "pauli_string": "Z0Y1X3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0Y1X3Z4",
+          "coefficient": 0.001983510629783295
+        },
+        {
+          "pauli_string": "Y1Z2X3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y1Z2X3Z4",
+          "coefficient": 0.017321828560410354
+        },
+        {
+          "pauli_string": "Y0Y1Y3",
+          "coefficient": -0.017321828560410354
+        },
+        {
+          "pauli_string": "Y0Y1Y3Z4",
+          "coefficient": -0.01930533919019365
+        },
+        {
+          "pauli_string": "X0Y1Z2Y3",
+          "coefficient": -0.017321828560410354
+        },
+        {
+          "pauli_string": "X0Y1Z2Y3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y0Y1X3",
+          "coefficient": -0.001983510629783295
+        },
+        {
+          "pauli_string": "Y0Y1X3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X0Y1Z2X3",
+          "coefficient": 0.001983510629783295
+        },
+        {
+          "pauli_string": "X0Y1Z2X3Z4",
+          "coefficient": 0.01930533919019365
+        },
+        {
+          "pauli_string": "Z0X3",
+          "coefficient": 0.004391039515550755
+        },
+        {
+          "pauli_string": "Z0X3Z4",
+          "coefficient": -0.001681409518352989
+        },
+        {
+          "pauli_string": "Z2X3",
+          "coefficient": 0.004391039515550755
+        },
+        {
+          "pauli_string": "Z2X3Z4",
+          "coefficient": 0.006072449033903744
+        },
+        {
+          "pauli_string": "Z0Y3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0Y3Z4",
+          "coefficient": 0.006072449033903744
+        },
+        {
+          "pauli_string": "Z2Y3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z2Y3Z4",
+          "coefficient": -0.001681409518352989
+        },
+        {
+          "pauli_string": "Z0X2Y3",
+          "coefficient": -0.001681409518352989
+        },
+        {
+          "pauli_string": "Z0X2Y3Z4",
+          "coefficient": 0.004391039515550755
+        },
+        {
+          "pauli_string": "Y2Y3",
+          "coefficient": 0.001681409518352989
+        },
+        {
+          "pauli_string": "Y2Y3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0X2X3",
+          "coefficient": 0.006072449033903744
+        },
+        {
+          "pauli_string": "Z0X2X3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y2X3",
+          "coefficient": 0.006072449033903744
+        },
+        {
+          "pauli_string": "Y2X3Z4",
+          "coefficient": 0.004391039515550755
+        },
+        {
+          "pauli_string": "X0Y2Y3Z4",
+          "coefficient": -0.001401971827343005
+        },
+        {
+          "pauli_string": "Y0X2Y3Z4",
+          "coefficient": 0.001401971827343005
+        },
+        {
+          "pauli_string": "X0Y2X3Z4",
+          "coefficient": -0.001401971827343005
+        },
+        {
+          "pauli_string": "Y0X2X3Z4",
+          "coefficient": 0.001401971827343005
+        },
+        {
+          "pauli_string": "Y0X3",
+          "coefficient": -0.001401971827343005
+        },
+        {
+          "pauli_string": "X0Z2X3",
+          "coefficient": -0.001401971827343005
+        },
+        {
+          "pauli_string": "X0Z2X3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y0Y3",
+          "coefficient": -0.001401971827343005
+        },
+        {
+          "pauli_string": "Y0Y3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X0Z2Y3",
+          "coefficient": 0.001401971827343005
+        },
+        {
+          "pauli_string": "X0Y1Y2X3Z4",
+          "coefficient": -0.000418673867679224
+        },
+        {
+          "pauli_string": "Y0Y1X2X3Z4",
+          "coefficient": 0.000418673867679224
+        },
+        {
+          "pauli_string": "X0Y1Y2Y3Z4",
+          "coefficient": 0.000418673867679224
+        },
+        {
+          "pauli_string": "Y0Y1X2Y3Z4",
+          "coefficient": -0.000418673867679224
+        },
+        {
+          "pauli_string": "Z0Y1X2X3",
+          "coefficient": -0.000418673867679224
+        },
+        {
+          "pauli_string": "Y1Y2X3",
+          "coefficient": 0.000418673867679224
+        },
+        {
+          "pauli_string": "Y1Y2X3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0Y1X2Y3",
+          "coefficient": -0.000418673867679224
+        },
+        {
+          "pauli_string": "Z0Y1X2Y3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y1Y2Y3",
+          "coefficient": -0.000418673867679224
+        },
+        {
+          "pauli_string": "Y0",
+          "coefficient": 0.002707780628679541
+        },
+        {
+          "pauli_string": "Y0Z4",
+          "coefficient": 0.002707780628679541
+        },
+        {
+          "pauli_string": "X0Z2",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X0Z2Z4",
+          "coefficient": -0.002707780628679541
+        },
+        {
+          "pauli_string": "Y0Z3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y0Z3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X0Z2Z3",
+          "coefficient": 0.002707780628679541
+        },
+        {
+          "pauli_string": "X0Z2Z3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y0Z1",
+          "coefficient": -0.002707780628679541
+        },
+        {
+          "pauli_string": "Y0Z1Z4",
+          "coefficient": -0.002707780628679541
+        },
+        {
+          "pauli_string": "X0Z1Z2",
+          "coefficient": -0.002707780628679541
+        },
+        {
+          "pauli_string": "X0Z1Z2Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y0Z1Z3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y0Z1Z3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X0Z1Z2Z3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X0Z1Z2Z3Z4",
+          "coefficient": 0.002707780628679541
+        },
+        {
+          "pauli_string": "X0Y1Z2",
+          "coefficient": 2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "X0Y1Z2Z4",
+          "coefficient": 2.2034687131548698e-05
+        },
+        {
+          "pauli_string": "Y0Y1",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y0Y1Z4",
+          "coefficient": 2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "X0Y1Z2Z3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X0Y1Z2Z3Z4",
+          "coefficient": -5.421010862427522e-20
+        },
+        {
+          "pauli_string": "Y0Y1Z3",
+          "coefficient": -2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "Y0Y1Z3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y0X1Z3",
+          "coefficient": -2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "Y0X1Z3Z4",
+          "coefficient": -2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "X0X1Z2Z3",
+          "coefficient": -2.2034687131548698e-05
+        },
+        {
+          "pauli_string": "X0X1Z2Z3Z4",
+          "coefficient": 5.421010862427522e-20
+        },
+        {
+          "pauli_string": "Y0X1",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y0X1Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X0X1Z2",
+          "coefficient": 5.421010862427522e-20
+        },
+        {
+          "pauli_string": "X0X1Z2Z4",
+          "coefficient": 2.2034687131548806e-05
+        },
+        {
+          "pauli_string": "Z0Y1X2",
+          "coefficient": -2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "Z0Y1X2Z4",
+          "coefficient": -2.2034687131548698e-05
+        },
+        {
+          "pauli_string": "Y1Y2",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y1Y2Z4",
+          "coefficient": -2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "Z0Y1X2Z3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0Y1X2Z3Z4",
+          "coefficient": 5.421010862427522e-20
+        },
+        {
+          "pauli_string": "Y1Y2Z3",
+          "coefficient": 2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "Y1Y2Z3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X1Y2",
+          "coefficient": 2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "X1Y2Z4",
+          "coefficient": 2.2034687131548752e-05
+        },
+        {
+          "pauli_string": "Z0X1X2",
+          "coefficient": 2.2034687131548698e-05
+        },
+        {
+          "pauli_string": "Z0X1X2Z4",
+          "coefficient": -5.421010862427522e-20
+        },
+        {
+          "pauli_string": "X1Y2Z3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "X1Y2Z3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0X1X2Z3",
+          "coefficient": -5.421010862427522e-20
+        },
+        {
+          "pauli_string": "Z0X1X2Z3Z4",
+          "coefficient": -2.2034687131548806e-05
+        },
+        {
+          "pauli_string": "Y2",
+          "coefficient": 0.001632997947599672
+        },
+        {
+          "pauli_string": "Y2Z4",
+          "coefficient": 0.0016329979475996723
+        },
+        {
+          "pauli_string": "Z0X2",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0X2Z4",
+          "coefficient": -0.001632997947599672
+        },
+        {
+          "pauli_string": "Y2Z3",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Y2Z3Z4",
+          "coefficient": 2.168404344971009e-19
+        },
+        {
+          "pauli_string": "Z0X2Z3",
+          "coefficient": 0.001632997947599672
+        },
+        {
+          "pauli_string": "Z0X2Z3Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z1Y2Z3",
+          "coefficient": -0.0016329979475996723
+        },
+        {
+          "pauli_string": "Z1Y2Z3Z4",
+          "coefficient": -0.0016329979475996723
+        },
+        {
+          "pauli_string": "Z0Z1X2Z3",
+          "coefficient": -0.0016329979475996723
+        },
+        {
+          "pauli_string": "Z0Z1X2Z3Z4",
+          "coefficient": -2.168404344971009e-19
+        },
+        {
+          "pauli_string": "Z1Y2",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z1Y2Z4",
+          "coefficient": 0.0
+        },
+        {
+          "pauli_string": "Z0Z1X2",
+          "coefficient": -2.168404344971009e-19
+        },
+        {
+          "pauli_string": "Z0Z1X2Z4",
+          "coefficient": 0.0016329979475996719
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    },
+    "fcidump": null
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -7.861864769808649,
+      "casci_ground_energy_hartree": -7.863061095507065,
+      "casci_first_excited_hartree": -7.722238670811069,
+      "exact_qubit_ground_energy_hartree_like": null
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -7.861864769808649,
+      "mp2_energy_hartree": -7.8747688662614115,
+      "ccsd_energy_hartree": -7.882313821664064,
+      "ccsd_t_energy_hartree": -7.882322258364068,
+      "mp2_correlation": -0.012904096452762914,
+      "ccsd_t_correlation": -0.020457488555419623,
+      "pyscf_version": "2.5.0",
+      "computed_utc": "2026-05-11T14:16:38.759666+00:00",
+      "basis": "sto-3g"
+    },
+    "vqe": {
+      "best_energy_hartree": -7.748180986564837,
+      "optimal_params": [
+        -2.1777094145859994,
+        -0.3522231379500916,
+        -1.5618922352415265,
+        2.4543251573417666,
+        1.5700611641832223,
+        2.8159202072350675,
+        0.12235706947776215,
+        3.4750905656259197,
+        3.389779430183479,
+        3.143481090847993,
+        -3.9226698651957843,
+        -0.05731580949478085,
+        -1.804664242355419,
+        -2.414842092400871,
+        1.5690597210864423
+      ],
+      "num_params": 15,
+      "nfev": 1500,
+      "optimizer": "COBYLA",
+      "multistart_runs": 3,
+      "computed_utc": "2026-05-11T14:17:24.029486+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": false,
+      "abs_vqe_exact_gap": 0.114880108942228,
+      "beats_classical": false,
+      "flags": [
+        "large_gap"
+      ],
+      "notes": null
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "fbd201192f348dad1441edaf6d53866e4e776927d2c04f7f447863fb3b69978a",
+    "source_schema_version": "3.0.0",
+    "created_utc": "2026-05-11T14:17:24.030846+00:00",
+    "tool_versions": {
+      "python": "3.11.14",
+      "pyscf": "2.5.0",
+      "pennylane": "0.44.1",
+      "openfermion": "1.7.1",
+      "numpy": "1.26.4",
+      "scipy": "1.17.0",
+      "git_commit": "dff47f8"
+    },
+    "environment": {
+      "platform": "linux"
+    }
+  },
+  "trust": {
+    "level": "validated",
+    "certified_utc": null,
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 500,
+    "multistart": 3,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 8,
+    "num_qubits_tapered": 5,
+    "ansatz_num_parameters": 15
+  }
+}
