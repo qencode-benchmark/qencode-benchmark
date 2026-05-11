@@ -731,12 +731,100 @@ def try_sign_hash(entry_hash: str):
         return None, None
 
 
+# ─── Phase 3: FCIDUMP + circuit metrics ──────────────────────────────────────
+
+def _generate_fcidump_inline(pyscf_res: dict, n_electrons: int, n_orbitals: int):
+    """
+    Generate base64-encoded FCIDUMP for the active space.
+    Returns None gracefully if generation fails (never crashes entry assembly).
+    """
+    import base64, os, tempfile
+    mf = pyscf_res.get("_mf")
+    if mf is None:
+        return None
+    try:
+        from pyscf import mcscf, ao2mo, tools
+        cas = mcscf.CASCI(mf, n_orbitals, n_electrons)
+        h1eff, e_core = cas.get_h1eff()
+        h2e = ao2mo.restore(1, cas.get_h2eff(), n_orbitals)
+        with tempfile.NamedTemporaryFile(suffix=".fcidump", delete=False, mode="w") as tmp:
+            tmpname = tmp.name
+        try:
+            tools.fcidump.from_integrals(
+                tmpname, h1eff, h2e, n_orbitals, n_electrons,
+                nuc=float(e_core), ms=0,
+            )
+            with open(tmpname, "rb") as f:
+                raw = f.read()
+        finally:
+            if os.path.exists(tmpname):
+                os.unlink(tmpname)
+        return base64.b64encode(raw).decode("ascii")
+    except Exception as ex:
+        print(_warn(f"FCIDUMP generation skipped: {ex}"))
+        return None
+
+_ROTATION_GATES_P3 = {
+    "RX", "RY", "RZ", "Rot", "PhaseShift",
+    "CRX", "CRY", "CRZ", "U1", "U2", "U3",
+    "SingleExcitation", "DoubleExcitation",
+    "Exp", "exp",
+}
+_SYNTHESIS_EPS_P3  = 1e-3
+_T_PER_ROTATION_P3 = int(__import__("math").ceil(
+    1.149 * __import__("math").log2(1.0 / _SYNTHESIS_EPS_P3)  # = 10
+))
+
+
+def _circuit_metrics_inline(circuit_fn, H_tapered, optimal_params: list) -> dict:
+    """
+    Compute Phase 3 circuit metrics inline at VQE optimal params.
+    Called from assemble_entry so new entries include metrics from day one.
+    Returns a dict with keys: ansatz_depth, ansatz_num_2q_gates, ...
+    Falls back to None values if qml.specs raises (never crashes generation).
+    """
+    import pennylane as qml
+
+    wires = sorted(H_tapered.wires)
+    dev   = qml.device("default.qubit", wires=wires)
+
+    @qml.qnode(dev)
+    def _circ(params):
+        circuit_fn(params, wires=wires)
+        return qml.expval(H_tapered)
+
+    _NULL = {
+        "ansatz_depth": None, "ansatz_num_2q_gates": None,
+        "ansatz_num_1q_gates": None, "non_clifford_gate_count": None,
+        "t_gate_estimate": None, "t_gate_synthesis_epsilon": _SYNTHESIS_EPS_P3,
+    }
+    try:
+        specs  = qml.specs(_circ)(np.array(optimal_params, dtype=float))
+        depth  = int(specs.get("depth", specs.get("circuit_depth", 0)))
+        gsizes = specs.get("gate_sizes", {})
+        num_2q = int(gsizes.get(2, 0))
+        num_1q = int(gsizes.get(1, 0))
+        gtypes = specs.get("gate_types", {})
+        n_rot  = sum(int(gtypes.get(g, 0)) for g in _ROTATION_GATES_P3)
+        return {
+            "ansatz_depth":             depth,
+            "ansatz_num_2q_gates":      num_2q,
+            "ansatz_num_1q_gates":      num_1q,
+            "non_clifford_gate_count":  n_rot,
+            "t_gate_estimate":          n_rot * _T_PER_ROTATION_P3,
+            "t_gate_synthesis_epsilon": _SYNTHESIS_EPS_P3,
+        }
+    except Exception:
+        return _NULL
+
+
 def assemble_entry(mol_config: dict, basis: str, mapping: str,
                    ansatz_type: str, ansatz_reps: int,
                    pyscf_res: dict, tap_meta: dict,
                    vqe_res: dict, pauli_terms: list,
                    hf_tapered: np.ndarray,
-                   max_iter: int, multistart: int, seed: int) -> tuple:
+                   max_iter: int, multistart: int, seed: int,
+                   circuit_fn=None, H_tapered=None) -> tuple:
     """
     Assemble the full v3 JSON entry dict and compute its SHA-256 hash.
     Returns (entry_dict, entry_id, filename).
@@ -816,7 +904,7 @@ def assemble_entry(mol_config: dict, basis: str, mapping: str,
                 "ansatz_pennylane":   None,   # future: serialize QNode
                 "ansatz_includes_hf": True,
             },
-            "fcidump": None,               # future Phase 3
+            "fcidump": _generate_fcidump_inline(pyscf_res, n_e, n_o),
         },
 
         "results": {
@@ -894,6 +982,13 @@ def assemble_entry(mol_config: dict, basis: str, mapping: str,
             "num_qubits_original":   tap_meta["n_qubits_full"],
             "num_qubits_tapered":    tap_meta["n_qubits_tap"],
             "ansatz_num_parameters": vqe_res["num_params"],
+            # Phase 3: compute inline if circuit objects are available;
+            # falls back to all-None for entries enriched via enrich_entries.py later.
+            **(
+                _circuit_metrics_inline(circuit_fn, H_tapered, vqe_res["optimal_params"])
+                if circuit_fn is not None and H_tapered is not None
+                else {}
+            ),
         },
     }
 
@@ -1120,6 +1215,7 @@ def main() -> None:
             mol_config, args.basis, args.mapping, method_label, args.ansatz_reps,
             pyscf_res, tap_meta, vqe_res, pauli_terms, hf_tapered,
             args.max_iter, args.multistart, args.seed,
+            circuit_fn=circuit_fn, H_tapered=H_vqe,
         )
 
         # ── Summary ───────────────────────────────────────────────────────────

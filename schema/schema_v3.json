@@ -254,13 +254,23 @@
       "type": ["object", "null"],
       "additionalProperties": true,
       "properties": {
-        "num_qubits_original":      { "type": ["integer", "number", "null"] },
-        "num_qubits_tapered":       { "type": ["integer", "number", "null"] },
-        "ansatz_depth":             { "type": ["integer", "number", "null"] },
-        "ansatz_depth_transpiled":  { "type": ["integer", "number", "null"] },
-        "ansatz_num_2q_gates":          { "type": ["integer", "number", "null"] },
+        "num_qubits_original":           { "type": ["integer", "number", "null"] },
+        "num_qubits_tapered":            { "type": ["integer", "number", "null"] },
+        "ansatz_num_parameters":         { "type": ["integer", "number", "null"] },
+        "ansatz_depth":                  { "type": ["integer", "number", "null"],
+                                           "description": "Logical circuit depth (gate layers). Computed via qml.specs() at optimal VQE params." },
+        "ansatz_depth_transpiled":       { "type": ["integer", "number", "null"] },
+        "ansatz_num_2q_gates":           { "type": ["integer", "number", "null"],
+                                           "description": "Number of 2-qubit gates (CNOTs) in the logical circuit." },
         "ansatz_num_2q_gates_transpiled":{ "type": ["integer", "number", "null"] },
-        "ansatz_num_parameters":    { "type": ["integer", "number", "null"] }
+        "ansatz_num_1q_gates":           { "type": ["integer", "number", "null"],
+                                           "description": "Number of single-qubit gates in the logical circuit." },
+        "non_clifford_gate_count":       { "type": ["integer", "number", "null"],
+                                           "description": "Number of non-Clifford rotation gates (RX/RY/RZ and equivalents). Lower bound on T-gate resources." },
+        "t_gate_estimate":               { "type": ["integer", "number", "null"],
+                                           "description": "Approximate T-gate count for fault-tolerant synthesis. Formula: non_clifford_gate_count × ceil(1.149 × log2(1/eps)). At eps=1e-3: ~10 T-gates per rotation." },
+        "t_gate_synthesis_epsilon":      { "type": ["number", "null"],
+                                           "description": "Synthesis precision used for t_gate_estimate (default 1e-3)." }
       }
     }
   }
