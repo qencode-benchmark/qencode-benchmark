@@ -1,0 +1,79 @@
+{
+  "catalog_version": "3.0",
+  "description": "Molecule catalog for QEncode Suite v3. Extends v2 with H2O, NH3, and LiH upgraded to 4e,4o active space. Geometry in Angstrom, PySCF format.",
+  "units": "angstrom",
+  "suite": "v3",
+  "entries": [
+    {
+      "molecule": "H2",
+      "variant": "default",
+      "geometry": "H 0.0 0.0 0.0; H 0.0 0.0 0.735",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v3_active_space": [2, 2],
+      "notes": "Full active space for STO-3G. 2 electrons, 2 spatial orbitals → 4 qubits (JW)."
+    },
+    {
+      "molecule": "LiH",
+      "variant": "default",
+      "geometry": "Li 0.0 0.0 0.0; H 0.0 0.0 1.6",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v3_active_space": [4, 4],
+      "notes": "Upgraded from [2,2] in Suite v2. [4,4] captures Li 2s + H 1s + polarization orbitals. 8 qubits (JW). CASCI reference is active-space FCI, not full-system FCI."
+    },
+    {
+      "molecule": "HF",
+      "variant": "default",
+      "geometry": "H 0.0 0.0 0.0; F 0.0 0.0 0.917",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v3_active_space": [2, 2],
+      "notes": "[2,2] active space: HOMO (F 2p) + LUMO. 4 qubits (JW). Retained from Suite v2."
+    },
+    {
+      "molecule": "BeH2",
+      "variant": "default",
+      "geometry": "H 0.0 0.0 -1.30; Be 0.0 0.0 0.0; H 0.0 0.0 1.30",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v3_active_space": [4, 4],
+      "notes": "[4,4] active space: Be 2s + 2p + H 1s. 8 qubits (JW). Same as Suite v2 canonical."
+    },
+    {
+      "molecule": "H2O",
+      "variant": "default",
+      "geometry": "O 0.0 0.0 0.0; H 0.0 0.757 0.586; H 0.0 -0.757 0.586",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v3_active_space": [4, 4],
+      "notes": "NEW in Suite v3. [4,4] captures lone-pair + bonding correlation. 8 qubits (JW). Certified tier target."
+    },
+    {
+      "molecule": "NH3",
+      "variant": "default",
+      "geometry": "N 0.0 0.0 0.1173; H 0.0 0.9289 -0.2737; H 0.8045 -0.4645 -0.2737; H -0.8045 -0.4645 -0.2737",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v3_active_space": [4, 4],
+      "notes": "NEW in Suite v3. [4,4] captures N lone pair + N-H bond correlation. C3v symmetry. 8 qubits (JW). Certified tier target."
+    },
+    {
+      "molecule": "N2",
+      "variant": "default",
+      "geometry": "N 0.0 0.0 0.0; N 0.0 0.0 1.097",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v3_active_space": [6, 6],
+      "tier": "research",
+      "notes": "Research tier. Triple bond requires beyond-UCCSD for chemical accuracy. [6,6] → 12 qubits (JW). Validated, not certified. Key DARPA QB-GSEE candidate."
+    }
+  ]
+}

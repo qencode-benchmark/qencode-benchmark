@@ -1,0 +1,158 @@
+# QEncode Benchmark Suite v3
+# ──────────────────────────────────────────────────────────────────────────────
+# Defines the canonical v3 molecule × encoding × ansatz matrix.
+#
+# Key changes from Suite v2:
+#   - H2O and NH3 added as certified-tier molecules
+#   - LiH upgraded to [4,4] active space (was [2,2])
+#   - Classical comparison required: HF, MP2, CCSD, CCSD(T) via PySCF
+#   - Reference energy is CASCI active-space FCI (not full-system FCI)
+#   - Z2 symmetry tapering enabled (reduces qubit count by 2 per molecule)
+#   - Pipeline: PySCF CASCI → PennyLane qchem → tapered VQE
+#   - FCIDUMP export supported for DARPA QB-GSEE compatibility
+#
+# Certified tier:  gap < 0.01 Ha vs CASCI reference (H2, LiH, HF, BeH2, H2O, NH3)
+# Research tier:   gap allowed > 0.01 Ha — validated only (N2)
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: "QEncode Benchmark Suite v3"
+version: "3.0"
+description: >
+  Expanded benchmark suite for reproducible VQE evaluation with classical comparison.
+  Includes H2O and NH3 (new), upgraded LiH active space, and full classical baseline
+  (HF → MP2 → CCSD → CCSD(T)) for every molecule. Designed for DARPA QB-GSEE alignment.
+
+schema_version: "3.0.0"
+pipeline: "pennylane_casci"     # PySCF CASCI reference + PennyLane VQE
+
+# ── Molecules ─────────────────────────────────────────────────────────────────
+molecules:
+  - name: H2
+    variant: default
+    basis: sto3g
+    active_space: [2, 2]        # electrons, spatial orbitals
+    qubits_jw: 4                # qubits before tapering
+    qubits_tapered: 2           # qubits after Z2 tapering
+    tier: certified
+
+  - name: LiH
+    variant: default
+    basis: sto3g
+    active_space: [4, 4]        # UPGRADED from [2,2] in v2
+    qubits_jw: 8
+    qubits_tapered: 6
+    tier: certified
+    note: "Active space covers Li 2s, 2p + H 1s + polarization"
+
+  - name: HF
+    variant: default
+    basis: sto3g
+    active_space: [2, 2]        # HOMO (F 2p) + LUMO
+    qubits_jw: 4
+    qubits_tapered: 2
+    tier: certified
+
+  - name: BeH2
+    variant: default
+    basis: sto3g
+    active_space: [4, 4]        # Be 2s, 2p + H 1s orbitals
+    qubits_jw: 8
+    qubits_tapered: 6
+    tier: certified
+
+  - name: H2O
+    variant: default
+    basis: sto3g
+    active_space: [4, 4]        # lone pair + bonding correlation
+    qubits_jw: 8
+    qubits_tapered: 6
+    tier: certified
+    note: "NEW in Suite v3"
+
+  - name: NH3
+    variant: default
+    basis: sto3g
+    active_space: [4, 4]        # N lone pair + N-H bond correlation
+    qubits_jw: 8
+    qubits_tapered: 6
+    tier: certified
+    note: "NEW in Suite v3"
+
+  - name: N2
+    variant: default
+    basis: sto3g
+    active_space: [6, 6]        # triple bond — π, σ, anti-bonding
+    qubits_jw: 12
+    qubits_tapered: 10
+    tier: research
+    note: "Multi-reference. UCCSD insufficient for chemical accuracy. Validated, not certified."
+
+# ── Encodings ─────────────────────────────────────────────────────────────────
+mappings:
+  - jordan_wigner
+  - parity
+  - bravyi_kitaev
+
+# ── Ansatz ────────────────────────────────────────────────────────────────────
+ansatz:
+  - type: uccsd
+    reps: 1
+    note: "Chemically motivated. CASCI reference + HF initial state (tapered). COBYLA optimizer."
+
+  - type: hardware_efficient
+    reps: 2
+    note: "Device-agnostic. RY+RZ rotations, CX entanglement, full connectivity."
+
+# ── Classical Comparison (REQUIRED for every v3 entry) ───────────────────────
+classical_comparison:
+  required: true
+  methods:
+    - hf           # Hartree-Fock (via PySCF RHF)
+    - mp2          # 2nd-order Møller-Plesset
+    - ccsd         # Coupled-cluster singles and doubles
+    - ccsd_t       # CCSD with perturbative triples (chemical accuracy reference)
+  note: >
+    All methods computed on the FULL molecular system (not active space) via PySCF.
+    CCSD(T) is the classical gold standard for comparison — if VQE gap < CCSD(T) gap,
+    the entry earns the "Beats Classical" badge.
+
+# ── Reference Energy (CRITICAL: use CASCI, not full-system FCI) ──────────────
+reference_energy:
+  method: casci                 # PySCF CASCI in the active space
+  scope: active_space           # NOT full-system FCI
+  note: >
+    The VQE gap is computed as |E_VQE − E_CASCI|. CASCI is the exact diagonalization
+    within the active space, which is the correct comparison point for VQE targeting
+    that same active space. Full-system FCI would include frozen-orbital correlation
+    that VQE cannot see, giving artificially large (and wrong) gaps.
+
+# ── Tapering ─────────────────────────────────────────────────────────────────
+tapering:
+  enabled: true
+  method: z2_symmetry           # PennyLane qchem Z2 symmetry reduction
+  note: >
+    Reduces qubit count by 2 per molecule using Z2 symmetry generators.
+    After tapering, the HF reference state must be recomputed via qchem.taper_hf().
+    The standard |1...1,0...0⟩ HF state is INVALID after tapering.
+
+# ── Optimizer ─────────────────────────────────────────────────────────────────
+optimizer:
+  type: cobyla
+  max_iterations: 500
+  multistart: 3                 # 3 random restarts for robustness
+  seed: 42
+  note: >
+    COBYLA is gradient-free and works well for < 100 parameters.
+    Multistart mitigates local minima. For UCCSD (few parameters), 500 iters is ample.
+
+# ── Quality Gate ──────────────────────────────────────────────────────────────
+quality:
+  certified_threshold: 0.01     # 10 mHa — same as v2
+  trust_levels:
+    - certified                 # gap < 0.01 Ha vs CASCI reference
+    - validated                 # gap > 0.01 Ha, but run completed correctly
+  beats_classical_threshold: null  # if VQE gap < CCSD(T) gap → "Beats Classical" badge
+
+# ── Output Schema ─────────────────────────────────────────────────────────────
+output_schema: "3.0.0"          # references schema/schema_v3.json
+db_dir: "releases/v3/db"        # output location for completed entries

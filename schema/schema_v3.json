@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qencode.example/schema_v3.json",
+  "title": "qencode-db entry schema v3",
+  "description": "Extends v2 schema with classical_comparison, active_space_reference, and tapering metadata. Pipeline: PySCF CASCI reference + PennyLane VQE.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "entry_id", "created_utc", "problem", "encoding", "artifacts", "results", "provenance"],
+
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^3\\.",
+      "description": "Must start with '3.' for v3 entries."
+    },
+    "entry_id": { "type": "string", "minLength": 1 },
+    "created_utc": { "type": "string", "minLength": 1 },
+
+    "problem": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name", "basis"],
+      "properties": {
+        "name":   { "type": "string", "minLength": 1 },
+        "basis":  { "type": "string", "minLength": 1 },
+        "variant": { "type": ["string", "null"] },
+        "charge": { "type": ["integer", "number", "null"] },
+        "spin":   { "type": ["integer", "number", "null"] },
+        "geometry": {
+          "description": "Molecular geometry. PySCF string format or structured object.",
+          "type": ["object", "array", "string", "null"]
+        },
+        "active_space": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "required": ["num_electrons", "num_spatial_orbitals"],
+          "properties": {
+            "num_electrons":        { "type": ["integer", "number"] },
+            "num_spatial_orbitals": { "type": ["integer", "number"] },
+            "method":               { "type": ["string", "null"], "description": "e.g. 'casci', 'casscf'" },
+            "frozen_core":          { "type": ["boolean", "null"] }
+          }
+        }
+      }
+    },
+
+    "encoding": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["mapping", "ansatz_type"],
+      "properties": {
+        "mapping":       { "type": "string", "minLength": 1 },
+        "ansatz_type":   { "type": "string", "minLength": 1 },
+        "ansatz_reps":   { "type": ["integer", "number", "null"] },
+        "tapering": {
+          "description": "Z2 symmetry tapering details. Present when tapering was applied.",
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "enabled":             { "type": "boolean" },
+            "method":              { "type": ["string", "null"], "description": "e.g. 'z2_symmetry'" },
+            "num_symmetries":      { "type": ["integer", "number", "null"] },
+            "tapered_num_qubits":  { "type": ["integer", "number", "null"] },
+            "original_num_qubits": { "type": ["integer", "number", "null"] },
+            "sectors":             { "type": ["array", "null"], "items": { "type": ["integer", "number"] } },
+            "hf_tapered_state":    {
+              "type": ["array", "null"],
+              "description": "Tapered HF reference state computed via qchem.taper_hf(). Do NOT use standard |1..10..0> after tapering.",
+              "items": { "type": ["integer", "number"] }
+            }
+          }
+        }
+      }
+    },
+
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["qubit_hamiltonian"],
+      "properties": {
+        "qubit_hamiltonian": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["num_qubits", "pauli_terms"],
+          "properties": {
+            "num_qubits":      { "type": ["integer", "number"] },
+            "num_pauli_terms": { "type": ["integer", "number", "null"] },
+            "pauli_terms": {
+              "type": "array",
+              "items": { "type": "object" }
+            },
+            "is_tapered":      { "type": ["boolean", "null"] },
+            "framework":       {
+              "type": ["string", "null"],
+              "description": "e.g. 'pennylane', 'qiskit'"
+            }
+          }
+        },
+        "circuits": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "hf_state":           { "type": ["array", "null"], "items": { "type": ["integer", "number"] } },
+            "ansatz_pennylane":   { "type": ["string", "null"], "description": "Serialized PennyLane circuit (JSON or QNode repr)" },
+            "ansatz_qpy_b64":     { "type": ["string", "null"], "description": "Legacy: Qiskit QPY base64" },
+            "ansatz_includes_hf": { "type": ["boolean", "null"] }
+          }
+        },
+        "fcidump": {
+          "description": "FCIDUMP file content (base64) for DARPA QB-GSEE compatibility.",
+          "type": ["string", "null"]
+        }
+      }
+    },
+
+    "results": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["quality"],
+      "properties": {
+
+        "reference": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "description": "Reference energies for the active space.",
+          "properties": {
+            "hf_energy_hartree":              { "type": ["number", "null"], "description": "Full-system HF energy (Ha)" },
+            "casci_ground_energy_hartree":    { "type": ["number", "null"], "description": "CASCI active-space FCI energy (Ha). THIS is the VQE comparison point." },
+            "casci_first_excited_hartree":    { "type": ["number", "null"], "description": "CASCI first excited state energy (Ha), if computed." },
+            "exact_qubit_ground_energy_hartree_like": { "type": ["number", "null"], "description": "Exact diagonalization of the qubit Hamiltonian (should match CASCI within rounding)." }
+          }
+        },
+
+        "classical_comparison": {
+          "description": "Classical electronic structure methods on the FULL molecular system. Required for v3 entries. Used for 'Beats Classical' badge.",
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "required": ["hf_energy_hartree", "computed_utc"],
+          "properties": {
+            "hf_energy_hartree":    { "type": ["number", "null"] },
+            "mp2_energy_hartree":   { "type": ["number", "null"] },
+            "ccsd_energy_hartree":  { "type": ["number", "null"] },
+            "ccsd_t_energy_hartree":{ "type": ["number", "null"], "description": "CCSD(T) — the classical gold standard. VQE beating this earns 'Beats Classical' badge." },
+            "mp2_correlation":      { "type": ["number", "null"], "description": "MP2 correlation energy = MP2 - HF" },
+            "ccsd_t_correlation":   { "type": ["number", "null"], "description": "CCSD(T) correlation energy = CCSD(T) - HF" },
+            "pyscf_version":        { "type": ["string", "null"] },
+            "computed_utc":         { "type": ["string", "null"] },
+            "basis":                { "type": ["string", "null"], "description": "Basis set used for classical methods (matches problem.basis)" }
+          }
+        },
+
+        "vqe": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "best_energy_hartree":      { "type": ["number", "null"] },
+            "best_energy_hartree_like": { "type": ["number", "null"], "description": "Alias for backward compat" },
+            "optimal_params":           { "type": ["array", "null"] },
+            "num_params":               { "type": ["integer", "number", "null"] },
+            "nfev":                     { "type": ["integer", "number", "null"] },
+            "optimizer":                { "type": ["string", "null"] },
+            "multistart_runs":          { "type": ["integer", "number", "null"] },
+            "computed_utc":             { "type": ["string", "null"] },
+            "circuit_metrics": {
+              "type": ["object", "null"],
+              "additionalProperties": true,
+              "description": "Transpiled circuit metrics from the actual run.",
+              "properties": {
+                "ansatz_depth":          { "type": ["integer", "number", "null"] },
+                "ansatz_num_2q_gates":   { "type": ["integer", "number", "null"] },
+                "ansatz_num_parameters": { "type": ["integer", "number", "null"] }
+              }
+            }
+          }
+        },
+
+        "quality": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["gap_threshold", "trusted", "flags"],
+          "properties": {
+            "gap_threshold":         { "type": "number" },
+            "trusted":               { "type": "boolean" },
+            "abs_vqe_exact_gap":     { "type": ["number", "null"], "description": "|E_VQE - E_CASCI| in Hartree" },
+            "beats_classical":       { "type": ["boolean", "null"], "description": "True if VQE gap < CCSD(T) correlation energy correction" },
+            "flags": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "notes": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["entry_hash_sha256"],
+      "properties": {
+        "entry_hash_sha256":    { "type": "string", "minLength": 1 },
+        "source_schema_version":{ "type": "string" },
+        "created_utc":          { "type": "string" },
+        "tool_versions": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "python":       { "type": ["string", "null"] },
+            "pyscf":        { "type": ["string", "null"] },
+            "pennylane":    { "type": ["string", "null"] },
+            "openfermion":  { "type": ["string", "null"] },
+            "numpy":        { "type": ["string", "null"] },
+            "scipy":        { "type": ["string", "null"] },
+            "git_commit":   { "type": ["string", "null"] }
+          }
+        },
+        "environment": {
+          "type": ["object", "null"],
+          "additionalProperties": true
+        }
+      }
+    },
+
+    "trust": {
+      "description": "v2-style trust object (backward compat + v3 certification).",
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["certified", "validated", "pending", "failed"],
+          "description": "certified = gap < 0.01 Ha vs CASCI, validated = run completed but gap > threshold, pending = not yet evaluated, failed = errors during run"
+        },
+        "certified_utc":    { "type": ["string", "null"] },
+        "signature_b64":    { "type": ["string", "null"], "description": "Ed25519 signature over entry_hash_sha256" },
+        "signing_key_id":   { "type": ["string", "null"] }
+      }
+    },
+
+    "run_config": {
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "properties": {
+        "optimizer":      { "type": ["string", "null"] },
+        "max_iterations": { "type": ["integer", "number", "null"] },
+        "multistart":     { "type": ["integer", "number", "null"] },
+        "seed":           { "type": ["integer", "number", "null"] },
+        "backend_type":   { "type": ["string", "null"] },
+        "shots":          { "type": ["integer", "number", "null"] }
+      }
+    },
+
+    "circuit_stats": {
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "properties": {
+        "num_qubits_original":      { "type": ["integer", "number", "null"] },
+        "num_qubits_tapered":       { "type": ["integer", "number", "null"] },
+        "ansatz_depth":             { "type": ["integer", "number", "null"] },
+        "ansatz_depth_transpiled":  { "type": ["integer", "number", "null"] },
+        "ansatz_num_2q_gates":          { "type": ["integer", "number", "null"] },
+        "ansatz_num_2q_gates_transpiled":{ "type": ["integer", "number", "null"] },
+        "ansatz_num_parameters":    { "type": ["integer", "number", "null"] }
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+# Phase 1: keep repo clean — do not track artifacts or generated outputs
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg
+
+# Artifacts (do not commit)
+miniconda.exe
+Miniconda*.sh
+*.tar.gz
+*.zip
+SHA256SUMS*.txt
+0.01
+artifacts/
+
+# v3 large data dirs — ignore generated DB entries and circuits, track config/schema
+releases/v3/artifacts/
+releases/v3/results/
+releases/v3/db/*.json
+
+# Allow v3 configuration and README
+!releases/v3/db/README.md
+!benchmarks/v3/
+
+# Generated outputs (optional: remove *.csv if you need to track some CSVs)
+h2_results.csv
+workflows/results/
+out.csv
+releases/*_local/
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Phase 2 benchmark cache
+.benchmark_cache/
+releases/v2/cache/
+
+# Phase 3 comparison SQLite (optional: regenerate with compare.py --sync)
+# benchmarks.db
