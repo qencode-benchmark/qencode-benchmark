@@ -1,0 +1,146 @@
+{
+  "schema_version": "3.0.0",
+  "entry_id": "H2_sto3g_JW_UCCSD_v3_tapered__sha256_e758d8fe81f010a7",
+  "created_utc": "2026-05-11T08:54:39.411818+00:00",
+  "problem": {
+    "name": "H2",
+    "basis": "sto-3g",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "H 0.0 0.0 0.0; H 0.0 0.0 0.735",
+    "active_space": {
+      "num_electrons": 2,
+      "num_spatial_orbitals": 2,
+      "method": "casci",
+      "frozen_core": false
+    }
+  },
+  "encoding": {
+    "mapping": "jordan_wigner",
+    "ansatz_type": "uccsd_tapered",
+    "ansatz_reps": 1,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 3,
+      "original_num_qubits": 4,
+      "tapered_num_qubits": 1,
+      "sectors": [
+        1,
+        -1,
+        -1
+      ],
+      "hf_tapered_state": [
+        1
+      ]
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 1,
+      "num_pauli_terms": 3,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": -0.321124091602532
+        },
+        {
+          "pauli_string": "Z0",
+          "coefficient": 0.7958749076006677
+        },
+        {
+          "pauli_string": "X0",
+          "coefficient": 0.18093119623066475
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    },
+    "fcidump": null
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -1.116998996754004,
+      "casci_ground_energy_hartree": -1.1373060357534004,
+      "casci_first_excited_hartree": -0.5246155553643467,
+      "exact_qubit_ground_energy_hartree_like": null
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -1.116998996754004,
+      "mp2_energy_hartree": -1.1300208766731272,
+      "ccsd_energy_hartree": -1.1373061933919706,
+      "ccsd_t_energy_hartree": -1.1373061933919706,
+      "mp2_correlation": -0.013021879919123291,
+      "ccsd_t_correlation": -0.02030719663796665,
+      "pyscf_version": "2.5.0",
+      "computed_utc": "2026-05-11T08:54:36.726766+00:00",
+      "basis": "sto-3g"
+    },
+    "vqe": {
+      "best_energy_hartree": -1.1373060359014895,
+      "optimal_params": [
+        0.22355029904585139
+      ],
+      "num_params": 1,
+      "nfev": 66,
+      "optimizer": "COBYLA",
+      "multistart_runs": 3,
+      "computed_utc": "2026-05-11T08:54:39.411642+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 1.4808909654107083e-10,
+      "beats_classical": true,
+      "flags": [
+        "gap_certified",
+        "beats_classical"
+      ],
+      "notes": null
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "e758d8fe81f010a7e4dcaab9aab61f8e8e22b8fd2852e9cd7ef7b0da7db5b288",
+    "source_schema_version": "3.0.0",
+    "created_utc": "2026-05-11T08:54:39.411818+00:00",
+    "tool_versions": {
+      "python": "3.11.14",
+      "pyscf": "2.5.0",
+      "pennylane": "0.44.1",
+      "openfermion": "1.7.1",
+      "numpy": "1.26.4",
+      "scipy": "1.17.0",
+      "git_commit": "1b8677c"
+    },
+    "environment": {
+      "platform": "linux"
+    }
+  },
+  "trust": {
+    "level": "certified",
+    "certified_utc": "2026-05-11T08:54:39.411818+00:00",
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 500,
+    "multistart": 3,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 4,
+    "num_qubits_tapered": 1,
+    "ansatz_num_parameters": 1
+  }
+}
