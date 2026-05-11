@@ -56,13 +56,28 @@ def _step(msg): return f"{BOLD}--- {msg}{RESET}"
 # ─── Molecule catalog ─────────────────────────────────────────────────────────
 
 def load_molecule(name: str) -> dict:
-    """Load molecule config from molecules_v3.json."""
+    """
+    Load molecule config from molecules_v3.json and normalise key names.
+
+    The catalog uses 'v3_active_space' and 'geometry'; this function adds
+    the aliases 'active_space' and 'geometry_pyscf' so the rest of the
+    pipeline can use consistent names regardless of catalog version.
+    """
     catalog_path = REPO / "molecules_v3.json"
     if not catalog_path.exists():
         raise FileNotFoundError(f"Molecule catalog not found: {catalog_path}")
     catalog = json.loads(catalog_path.read_text())
-    for entry in catalog.get("entries", []):
-        if entry["molecule"].upper() == name.upper():
+    for raw in catalog.get("entries", []):
+        if raw["molecule"].upper() == name.upper():
+            entry = dict(raw)
+            # Normalise active space key
+            if "active_space" not in entry:
+                entry["active_space"] = entry.get("v3_active_space",
+                                                   entry.get("active_electrons_orbitals"))
+            # Normalise geometry key
+            if "geometry_pyscf" not in entry:
+                entry["geometry_pyscf"] = entry.get("geometry",
+                                                     entry.get("geometry_angstrom"))
             return entry
     available = [e["molecule"] for e in catalog.get("entries", [])]
     raise KeyError(f"Molecule '{name}' not found. Available: {available}")
