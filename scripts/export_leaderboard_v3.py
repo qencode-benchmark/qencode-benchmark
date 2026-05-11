@@ -33,13 +33,14 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
-REPO        = Path(__file__).resolve().parent.parent
-DB_DIR      = REPO / "releases" / "v3" / "db"
-OUTPUT_DIR  = REPO / "website" / "public" / "data"
+REPO            = Path(__file__).resolve().parent.parent
+DEFAULT_DB_DIR  = REPO / "releases" / "v3" / "db"
+OUTPUT_DIR      = REPO / "website" / "public" / "data"
 
-SUITE_VERSION      = "3"
-LEADERBOARD_RULES  = "1"
-GAP_THRESHOLD      = 0.01   # Hartree — certified threshold
+# Overridden by --suite-version CLI arg
+DEFAULT_SUITE_VERSION  = "3"
+LEADERBOARD_RULES      = "1"
+GAP_THRESHOLD          = 0.01   # Hartree — certified threshold
 
 
 # ── Mapping / ansatz normalisation (entry values → website keys) ──────────────
@@ -60,10 +61,10 @@ ANSATZ_MAP = {
 
 # ── Load entries ──────────────────────────────────────────────────────────────
 
-def load_entries() -> list[dict]:
-    """Load all v3 JSON entries from DB_DIR."""
+def load_entries(db_dir: Path) -> list[dict]:
+    """Load all v3/v3.1 JSON entries from db_dir."""
     entries = []
-    for p in sorted(DB_DIR.glob("*.json")):
+    for p in sorted(db_dir.glob("*.json")):
         with open(p, encoding="utf-8") as f:
             try:
                 entries.append(json.load(f))
@@ -169,7 +170,7 @@ def _balanced_score(row, gap_rank_norm, cost_rank_norm) -> float:
 
 def _write_csv(path: Path, fieldnames: list[str], rows: list[dict], dry_run: bool):
     if dry_run:
-        print(f"  [DRY-RUN] Would write {len(rows)} rows → {path.name}")
+        print(f"  [DRY-RUN] Would write {len(rows)} rows -> {path.name}")
         for r in rows[:3]:
             print(f"    {r}")
         return
@@ -185,23 +186,32 @@ def _write_csv(path: Path, fieldnames: list[str], rows: list[dict], dry_run: boo
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Build leaderboard CSVs from v3 entry db"
+        description="Build leaderboard CSVs from v3/v3.1 entry db"
     )
     parser.add_argument("--dry-run", action="store_true",
                         help="Print what would be written, don't write files")
+    parser.add_argument("--db-dir", default=str(DEFAULT_DB_DIR),
+                        help="Path to db directory containing JSON entry files "
+                             "(default: releases/v3/db). "
+                             "For v3.1 use: releases/v3.1/db")
+    parser.add_argument("--suite-version", default=DEFAULT_SUITE_VERSION,
+                        help="Suite version string to embed in metadata (e.g. '3', '3.1')")
     args = parser.parse_args()
 
+    db_dir = Path(args.db_dir)
+    suite_version = args.suite_version
+
     print(f"\n{'='*65}")
-    print(f"  QEncode v3 Leaderboard Export")
-    print(f"  DB:     {DB_DIR}")
+    print(f"  QEncode Leaderboard Export  (Suite v{suite_version})")
+    print(f"  DB:     {db_dir}")
     print(f"  Output: {OUTPUT_DIR}")
     if args.dry_run:
         print("  MODE: DRY-RUN")
     print(f"{'='*65}\n")
 
     # ── 1. Load all entries ───────────────────────────────────────────────────
-    entries = load_entries()
-    print(f"  Loaded {len(entries)} entries from db/\n")
+    entries = load_entries(db_dir)
+    print(f"  Loaded {len(entries)} entries from {db_dir.name}/\n")
 
     rows = [r for e in entries if (r := entry_to_row(e)) is not None]
     print(f"  Valid rows: {len(rows)}")
@@ -317,7 +327,7 @@ def main():
     # ── 7. Metadata ───────────────────────────────────────────────────────────
     beats_count = sum(1 for r in certified if r["beats_classical"] is True)
     metadata = {
-        "suite_version":      SUITE_VERSION,
+        "suite_version":      suite_version,
         "leaderboard_rules":  LEADERBOARD_RULES,
         "generation_date":    datetime.now(timezone.utc).strftime("%Y-%m-%d"),
         "entries_included":   len(certified),
@@ -373,7 +383,7 @@ def main():
         print(f"  [DRY-RUN] Would write leaderboard_metadata.json: {metadata}")
 
     print(f"\n{'='*65}")
-    print(f"  DONE — leaderboard exported to {OUTPUT_DIR}")
+    print(f"  DONE - leaderboard exported to {OUTPUT_DIR}")
     print(f"{'='*65}\n")
 
 

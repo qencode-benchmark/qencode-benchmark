@@ -27,6 +27,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 LOG_PATH = REPO / "releases" / "v3" / "run_suite_v3.log"
+DEFAULT_OUT_DIR = str(REPO / "releases" / "v3" / "db")
 
 GREEN = "\033[92m"; YELLOW = "\033[93m"; RED = "\033[91m"; RESET = "\033[0m"; BOLD = "\033[1m"
 
@@ -63,7 +64,8 @@ def load_suite() -> dict:
 def run_entry(molecule: str, mapping: str, ansatz_type: str,
               basis: str = "sto-3g", max_iter: int = 500,
               multistart: int = 3, seed: int = 42,
-              dry_run: bool = False, no_classical: bool = False) -> int:
+              dry_run: bool = False, no_classical: bool = False,
+              out_dir: str = DEFAULT_OUT_DIR) -> int:
     """Run generate_entry_v3.py for one (molecule, mapping, ansatz) combination."""
     cmd = [
         sys.executable,
@@ -75,6 +77,7 @@ def run_entry(molecule: str, mapping: str, ansatz_type: str,
         "--max-iter",    str(max_iter),
         "--multistart",  str(multistart),
         "--seed",        str(seed),
+        "--out-dir",     out_dir,
         "--no-colour",   # log-friendly
     ]
     if dry_run:
@@ -94,14 +97,17 @@ def main() -> None:
     ap.add_argument("--molecules",     nargs="*", default=None,
                     help="Subset of molecules (e.g. H2 LiH). Default: all")
     ap.add_argument("--mappings",      nargs="*",
-                    default=["jordan_wigner", "bravyi_kitaev"],
-                    choices=["jordan_wigner", "bravyi_kitaev"],
+                    default=["jordan_wigner", "bravyi_kitaev", "parity"],
+                    choices=["jordan_wigner", "bravyi_kitaev", "parity"],
                     help="Qubit mappings to run")
     ap.add_argument("--ansatz",        nargs="*",
                     default=["uccsd", "hardware_efficient"],
                     choices=["uccsd", "hardware_efficient"],
                     help="Ansatz types to run")
-    ap.add_argument("--basis",         default="sto-3g")
+    ap.add_argument("--basis",         default="sto-3g",
+                    help="Basis set (sto-3g for v3, 6-31g for v3.1)")
+    ap.add_argument("--out-dir",       default=DEFAULT_OUT_DIR,
+                    help="Output directory for entry JSON files")
     ap.add_argument("--max-iter",      type=int, default=500)
     ap.add_argument("--multistart",    type=int, default=3)
     ap.add_argument("--seed",          type=int, default=42)
@@ -163,7 +169,8 @@ def main() -> None:
                        multistart=args.multistart,
                        seed=args.seed,
                        dry_run=args.dry_run,
-                       no_classical=args.no_classical)
+                       no_classical=args.no_classical,
+                       out_dir=args.out_dir)
         elapsed = time.time() - t0
 
         if rc == 0:

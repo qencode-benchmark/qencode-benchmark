@@ -20,6 +20,7 @@ import argparse
 import csv
 import json
 import os
+import ssl
 import sys
 import urllib.request
 from pathlib import Path
@@ -43,34 +44,62 @@ def parse_accuracy_csv(path):
     with open(path, newline="") as f:
         for r in csv.DictReader(f):
             rows.append({
-                "rank":      int(r["rank"]),
-                "molecule":  r["molecule"],
-                "mapping":   r["mapping"],
-                "ansatz":    r["ansatz"],
-                "gap":       num(r["gap"]),
-                "depth":     num(r.get("depth")),
-                "two_q_gates": num(r.get("2q_gates")),
-                "baseline":  bool_val(r.get("baseline", False)),
+                "rank":               int(r["rank"]),
+                "molecule":           r["molecule"],
+                "mapping":            r["mapping"],
+                "ansatz":             r["ansatz"],
+                "gap":                num(r["gap"]),
+                "depth":              num(r.get("depth")),
+                "two_q_gates":        num(r.get("2q_gates")),
+                "baseline":           bool_val(r.get("baseline", False)),
+                "beats_classical":    bool_val(r.get("beats_classical", False)) if r.get("beats_classical") not in (None, "", "None", "null") else None,
+                "ccsd_t_correlation": num(r.get("ccsd_t_correlation")),
+                "vqe_energy":         num(r.get("vqe_energy")),
+                "casci_energy":       num(r.get("casci_energy")),
+                "hf_energy":          num(r.get("hf_energy")),
             })
     return rows
 
 def parse_cost_csv(path):
-    return parse_accuracy_csv(path)  # same shape
+    rows = []
+    with open(path, newline="") as f:
+        for r in csv.DictReader(f):
+            rows.append({
+                "rank":               int(r["rank"]),
+                "molecule":           r["molecule"],
+                "mapping":            r["mapping"],
+                "ansatz":             r["ansatz"],
+                "gap":                num(r["gap"]),
+                "depth":              num(r.get("depth")),
+                "two_q_gates":        num(r.get("2q_gates")),
+                "baseline":           bool_val(r.get("baseline", False)),
+                "beats_classical":    bool_val(r.get("beats_classical", False)) if r.get("beats_classical") not in (None, "", "None", "null") else None,
+                "ccsd_t_correlation": num(r.get("ccsd_t_correlation")),
+                "vqe_energy":         num(r.get("vqe_energy")),
+                "casci_energy":       num(r.get("casci_energy")),
+                "hf_energy":          num(r.get("hf_energy")),
+            })
+    return rows
 
 def parse_balanced_csv(path):
     rows = []
     with open(path, newline="") as f:
         for r in csv.DictReader(f):
             rows.append({
-                "rank":           int(r["rank"]),
-                "molecule":       r["molecule"],
-                "mapping":        r["mapping"],
-                "ansatz":         r["ansatz"],
-                "gap":            num(r["gap"]),
-                "depth":          num(r.get("depth")),
-                "two_q_gates":    num(r.get("2q_gates")),
-                "balanced_score": num(r.get("balanced_score")),
-                "baseline":       bool_val(r.get("baseline", False)),
+                "rank":               int(r["rank"]),
+                "molecule":           r["molecule"],
+                "mapping":            r["mapping"],
+                "ansatz":             r["ansatz"],
+                "gap":                num(r["gap"]),
+                "depth":              num(r.get("depth")),
+                "two_q_gates":        num(r.get("2q_gates")),
+                "balanced_score":     num(r.get("balanced_score")),
+                "baseline":           bool_val(r.get("baseline", False)),
+                "beats_classical":    bool_val(r.get("beats_classical", False)) if r.get("beats_classical") not in (None, "", "None", "null") else None,
+                "ccsd_t_correlation": num(r.get("ccsd_t_correlation")),
+                "vqe_energy":         num(r.get("vqe_energy")),
+                "casci_energy":       num(r.get("casci_energy")),
+                "hf_energy":          num(r.get("hf_energy")),
             })
     return rows
 
@@ -134,7 +163,7 @@ def main():
     }
 
     if args.dry_run:
-        print("\n── DRY RUN — payload (first 2 rows each) ──")
+        print("\n-- DRY RUN -- payload (first 2 rows each) --")
         for k in ["accuracy","cost","balanced","research"]:
             print(f"\n  {k}:")
             for row in payload[k][:2]:
@@ -156,16 +185,20 @@ def main():
     )
 
     print(f"\nPOSTing to {endpoint} ...")
+    # Use an unverified SSL context to work around certificate chain issues on some systems
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        with urllib.request.urlopen(req, timeout=60, context=ctx) as resp:
             data = json.loads(resp.read())
-            print(f"✓ Success: {data}")
+            print(f"[OK] Success: {data}")
     except urllib.error.HTTPError as e:
         body = e.read().decode()
-        print(f"✗ HTTP {e.code}: {body}")
+        print(f"[FAIL] HTTP {e.code}: {body}")
         sys.exit(1)
     except Exception as e:
-        print(f"✗ Request failed: {e}")
+        print(f"[FAIL] Request failed: {e}")
         sys.exit(1)
 
     print("\nLeaderboard updated. The website will show the new data immediately.")
