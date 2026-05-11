@@ -338,7 +338,9 @@ def _apply_tapered_op(op, param: float) -> None:
     # Exp / SProd / etc. are "composite" ops that carry a .base attribute.
     # Standard parametric gates (RY, DoubleExcitation …) do not have .base.
     if hasattr(op, "base"):
-        qml.apply(qml.Exp(op.base, coeff=param))
+        # taper_operation returns Exp(base, coeff) -- use qml.exp (lowercase)
+        # to rebuild with the new parameter.  qml.Exp does not exist in PL 0.44.
+        qml.apply(qml.exp(op.base, coeff=param))
     else:
         qml.apply(op.__class__(param, wires=op.wires))
 
