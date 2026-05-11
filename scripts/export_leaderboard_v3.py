@@ -96,6 +96,13 @@ def entry_to_row(entry: dict) -> dict | None:
         gap     = _num(qual.get("abs_vqe_exact_gap"))
         beats   = qual.get("beats_classical")
 
+        # Classical comparison — DARPA Phase 7
+        cc           = entry.get("results", {}).get("classical_comparison", {})
+        ccsd_t_corr  = _num(cc.get("ccsd_t_correlation"))   # |CCSD(T) correlation energy| Ha
+        vqe_energy   = _num(entry.get("results", {}).get("vqe", {}).get("best_energy_hartree"))
+        casci_energy = _num(entry.get("results", {}).get("reference", {}).get("casci_ground_energy_hartree"))
+        hf_energy    = _num(cc.get("hf_energy_hartree"))
+
         cs      = entry.get("circuit_stats", {})
         depth   = cs.get("ansatz_depth")
         twoq    = cs.get("ansatz_num_2q_gates")
@@ -116,6 +123,11 @@ def entry_to_row(entry: dict) -> dict | None:
             "trust":            trust,
             "beats_classical":  beats,
             "baseline":         True,   # all v3 entries are QEncode baseline runs
+            # Classical comparison (Phase 7 — DARPA alignment)
+            "ccsd_t_correlation": ccsd_t_corr,
+            "vqe_energy":         vqe_energy,
+            "casci_energy":       casci_energy,
+            "hf_energy":          hf_energy,
         }
     except (KeyError, TypeError) as ex:
         print(f"  [WARN] Skipping entry {entry.get('entry_id','?')}: {ex}")
@@ -203,13 +215,17 @@ def main():
     acc_rows = _rank_rows(certified, key_fn=lambda r: r["gap"], ascending=True)
     acc_csv  = [
         {
-            "rank":            r["rank"],
-            "molecule":        r["molecule"],
-            "mapping":         r["mapping"],
-            "ansatz":          r["ansatz"],
-            "gap":             r["gap"],
-            "baseline":        r["baseline"],
-            "beats_classical": r["beats_classical"],
+            "rank":               r["rank"],
+            "molecule":           r["molecule"],
+            "mapping":            r["mapping"],
+            "ansatz":             r["ansatz"],
+            "gap":                r["gap"],
+            "ccsd_t_correlation": r["ccsd_t_correlation"],
+            "vqe_energy":         r["vqe_energy"],
+            "casci_energy":       r["casci_energy"],
+            "hf_energy":          r["hf_energy"],
+            "baseline":           r["baseline"],
+            "beats_classical":    r["beats_classical"],
         }
         for r in acc_rows
     ]
@@ -224,15 +240,16 @@ def main():
     )
     cost_csv = [
         {
-            "rank":            r["rank"],
-            "molecule":        r["molecule"],
-            "mapping":         r["mapping"],
-            "ansatz":          r["ansatz"],
-            "gap":             r["gap"],
-            "depth":           r["depth"],
-            "2q_gates":        r["twoq"],
-            "baseline":        r["baseline"],
-            "beats_classical": r["beats_classical"],
+            "rank":               r["rank"],
+            "molecule":           r["molecule"],
+            "mapping":            r["mapping"],
+            "ansatz":             r["ansatz"],
+            "gap":                r["gap"],
+            "depth":              r["depth"],
+            "2q_gates":           r["twoq"],
+            "ccsd_t_correlation": r["ccsd_t_correlation"],
+            "baseline":           r["baseline"],
+            "beats_classical":    r["beats_classical"],
         }
         for r in cost_rows
     ]
@@ -263,16 +280,17 @@ def main():
                                ascending=True)
     balanced_csv = [
         {
-            "rank":            r["rank"],
-            "molecule":        r["molecule"],
-            "mapping":         r["mapping"],
-            "ansatz":          r["ansatz"],
-            "gap":             r["gap"],
-            "depth":           r["depth"],
-            "2q_gates":        r["twoq"],
-            "balanced_score":  r["balanced_score"],
-            "baseline":        r["baseline"],
-            "beats_classical": r["beats_classical"],
+            "rank":               r["rank"],
+            "molecule":           r["molecule"],
+            "mapping":            r["mapping"],
+            "ansatz":             r["ansatz"],
+            "gap":                r["gap"],
+            "depth":              r["depth"],
+            "2q_gates":           r["twoq"],
+            "balanced_score":     r["balanced_score"],
+            "ccsd_t_correlation": r["ccsd_t_correlation"],
+            "baseline":           r["baseline"],
+            "beats_classical":    r["beats_classical"],
         }
         for r in balanced_rows
     ]
@@ -281,13 +299,17 @@ def main():
     res_rows = _rank_rows(validated, key_fn=lambda r: r["gap"], ascending=True)
     research_csv = [
         {
-            "rank":            r["rank"],
-            "molecule":        r["molecule"],
-            "mapping":         r["mapping"],
-            "ansatz":          r["ansatz"],
-            "gap":             r["gap"],
-            "baseline":        r["baseline"],
-            "beats_classical": r["beats_classical"],
+            "rank":               r["rank"],
+            "molecule":           r["molecule"],
+            "mapping":            r["mapping"],
+            "ansatz":             r["ansatz"],
+            "gap":                r["gap"],
+            "ccsd_t_correlation": r["ccsd_t_correlation"],
+            "vqe_energy":         r["vqe_energy"],
+            "casci_energy":       r["casci_energy"],
+            "hf_energy":          r["hf_energy"],
+            "baseline":           r["baseline"],
+            "beats_classical":    r["beats_classical"],
         }
         for r in res_rows
     ]
@@ -322,22 +344,22 @@ def main():
     # ── 9. Write files ────────────────────────────────────────────────────────
     _write_csv(
         OUTPUT_DIR / "leaderboard_accuracy.csv",
-        ["rank","molecule","mapping","ansatz","gap","baseline","beats_classical"],
+        ["rank","molecule","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","baseline","beats_classical"],
         acc_csv, args.dry_run,
     )
     _write_csv(
         OUTPUT_DIR / "leaderboard_hardware_cost.csv",
-        ["rank","molecule","mapping","ansatz","gap","depth","2q_gates","baseline","beats_classical"],
+        ["rank","molecule","mapping","ansatz","gap","depth","2q_gates","ccsd_t_correlation","baseline","beats_classical"],
         cost_csv, args.dry_run,
     )
     _write_csv(
         OUTPUT_DIR / "leaderboard_balanced.csv",
-        ["rank","molecule","mapping","ansatz","gap","depth","2q_gates","balanced_score","baseline","beats_classical"],
+        ["rank","molecule","mapping","ansatz","gap","depth","2q_gates","balanced_score","ccsd_t_correlation","baseline","beats_classical"],
         balanced_csv, args.dry_run,
     )
     _write_csv(
         OUTPUT_DIR / "leaderboard_research.csv",
-        ["rank","molecule","mapping","ansatz","gap","baseline","beats_classical"],
+        ["rank","molecule","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","baseline","beats_classical"],
         research_csv, args.dry_run,
     )
 

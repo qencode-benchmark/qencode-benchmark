@@ -29,10 +29,14 @@ export async function ensureSchema() {
       gap              DOUBLE PRECISION,
       depth            INTEGER,
       two_q_gates      INTEGER,
-      balanced_score   DOUBLE PRECISION,
-      baseline         BOOLEAN           NOT NULL DEFAULT false,
-      beats_classical  BOOLEAN,
-      updated_at       TIMESTAMPTZ       NOT NULL DEFAULT NOW(),
+      balanced_score      DOUBLE PRECISION,
+      baseline            BOOLEAN           NOT NULL DEFAULT false,
+      beats_classical     BOOLEAN,
+      ccsd_t_correlation  DOUBLE PRECISION,
+      vqe_energy          DOUBLE PRECISION,
+      casci_energy        DOUBLE PRECISION,
+      hf_energy           DOUBLE PRECISION,
+      updated_at          TIMESTAMPTZ       NOT NULL DEFAULT NOW(),
       UNIQUE (category, molecule, mapping, ansatz)
     )
   `;
@@ -42,6 +46,12 @@ export async function ensureSchema() {
     ALTER TABLE leaderboard_entries
     ADD COLUMN IF NOT EXISTS beats_classical BOOLEAN
   `;
+
+  // Phase 7: classical comparison columns
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS ccsd_t_correlation DOUBLE PRECISION`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS vqe_energy         DOUBLE PRECISION`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS casci_energy       DOUBLE PRECISION`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS hf_energy          DOUBLE PRECISION`;
 
   await sql`
     CREATE TABLE IF NOT EXISTS leaderboard_metadata (
@@ -218,7 +228,8 @@ export async function replaceEntries(category, entries) {
   for (const e of entries) {
     await sql`
       INSERT INTO leaderboard_entries
-        (category, rank, molecule, mapping, ansatz, gap, depth, two_q_gates, balanced_score, baseline, beats_classical, updated_at)
+        (category, rank, molecule, mapping, ansatz, gap, depth, two_q_gates, balanced_score,
+         baseline, beats_classical, ccsd_t_correlation, vqe_energy, casci_energy, hf_energy, updated_at)
       VALUES
         (
           ${category},
@@ -232,6 +243,10 @@ export async function replaceEntries(category, entries) {
           ${e.balanced_score ?? null},
           ${Boolean(e.baseline)},
           ${e.beats_classical ?? null},
+          ${e.ccsd_t_correlation ?? null},
+          ${e.vqe_energy         ?? null},
+          ${e.casci_energy       ?? null},
+          ${e.hf_energy          ?? null},
           NOW()
         )
     `;

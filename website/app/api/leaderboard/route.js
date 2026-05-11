@@ -70,7 +70,7 @@ export async function GET(request) {
 
     return Response.json(
       {
-        version:    metadata.suite_version ?? "v2",
+        version:    metadata.suite_version ?? "v3",
         rules:      metadata.leaderboard_rules ?? "v1",
         generated:  new Date().toISOString(),
         filters:    { category: categoryParam, molecule: molecule || null, ansatz: ansatz || null, mapping: mapping || null },

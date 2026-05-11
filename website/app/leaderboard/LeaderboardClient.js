@@ -39,6 +39,19 @@ function fmtInt(v) {
   return Number(v).toLocaleString();
 }
 
+/**
+ * How many times more accurate is VQE than CCSD(T)?
+ * Returns a string like "70,000×" or null if data missing.
+ */
+function fmtClassicalRatio(gap, ccsdTCorrelation) {
+  if (gap == null || ccsdTCorrelation == null || gap <= 0 || ccsdTCorrelation <= 0) return null;
+  const absCorr = Math.abs(ccsdTCorrelation);
+  const ratio   = absCorr / gap;
+  if (ratio >= 1000) return `${Math.round(ratio / 1000).toLocaleString()}k×`;
+  if (ratio >= 10)   return `${Math.round(ratio).toLocaleString()}×`;
+  return `${ratio.toFixed(1)}×`;
+}
+
 /** Display label for mapping key */
 function mappingLabel(m) {
   const map = {
@@ -128,8 +141,9 @@ function FilterChip({ label, active, onClick }) {
 // ── Main table renderer ────────────────────────────────────────────────────────
 
 function LeaderboardTable({ rows, category }) {
-  const includeBalanced = category === "balanced";
-  const includeHardware = category === "cost" || category === "balanced";
+  const includeBalanced  = category === "balanced";
+  const includeHardware  = category === "cost" || category === "balanced";
+  const includeClassical = category === "accuracy" || category === "research";
 
   // Gap range in this filtered set (for bar scale)
   const gapVals = useMemo(() => rows.map((r) => r.gap).filter((v) => v != null && v > 0), [rows]);
@@ -170,6 +184,24 @@ function LeaderboardTable({ rows, category }) {
               </span>
             </TableHead>
             <TableHead className="w-20"></TableHead>
+            {includeClassical && (
+              <TableHead className="text-right">
+                <span className="flex items-center justify-end gap-1">
+                  CCSD(T) corr.
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs text-xs">
+                        |CCSD(T) correlation energy| — the best classical perturbative result
+                        for this molecule. VQE entries with a smaller gap beat this classical baseline.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </span>
+              </TableHead>
+            )}
             {includeHardware && (
               <>
                 <TableHead className="text-right">2Q Gates</TableHead>
@@ -234,6 +266,13 @@ function LeaderboardTable({ rows, category }) {
                   <GapBar value={r.gap} minValue={minGap} maxValue={maxGap} />
                 </TableCell>
 
+                {/* CCSD(T) correlation — classical baseline */}
+                {includeClassical && (
+                  <TableCell className="text-right font-mono text-xs tabular-nums text-muted-foreground">
+                    {fmtGap(r.ccsdTCorrelation != null ? Math.abs(r.ccsdTCorrelation) : null)}
+                  </TableCell>
+                )}
+
                 {/* Hardware columns */}
                 {includeHardware && (
                   <>
@@ -283,9 +322,17 @@ function LeaderboardTable({ rows, category }) {
                               <Zap className="h-3 w-3" /> Beats Classical
                             </Badge>
                           </TooltipTrigger>
-                          <TooltipContent className="max-w-xs text-xs">
-                            VQE error gap is smaller than the CCSD(T) correlation energy for this
-                            molecule — the quantum result surpasses the best classical perturbative method.
+                          <TooltipContent className="max-w-xs text-xs space-y-1">
+                            <p className="font-semibold">VQE surpasses CCSD(T)</p>
+                            <p>VQE gap: <span className="font-mono">{fmtGap(r.gap)} Ha</span></p>
+                            {r.ccsdTCorrelation != null && (
+                              <p>CCSD(T) corr.: <span className="font-mono">{fmtGap(Math.abs(r.ccsdTCorrelation))} Ha</span></p>
+                            )}
+                            {fmtClassicalRatio(r.gap, r.ccsdTCorrelation) && (
+                              <p className="text-emerald-300 font-medium">
+                                VQE is {fmtClassicalRatio(r.gap, r.ccsdTCorrelation)} more accurate than CCSD(T)
+                              </p>
+                            )}
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -561,7 +608,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [] }
             <Badge className="bg-emerald-600 text-white text-xs gap-1">
               <Zap className="h-3 w-3" /> Beats Classical
             </Badge>
-            VQE gap &lt; CCSD(T) correlation energy
+            VQE gap &lt; CCSD(T) correlation energy (hover for ratio)
           </span>
           <span className="flex items-center gap-1.5">
             <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">
