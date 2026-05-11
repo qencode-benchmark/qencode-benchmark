@@ -27,12 +27,12 @@ SHA256SUMS*.txt
 0.01
 artifacts/
 
-# v3 large data dirs — ignore generated DB entries and circuits, track config/schema
+# v3 large data dirs — ignore transient artifacts, track certified entries and config
 releases/v3/artifacts/
 releases/v3/results/
-releases/v3/db/*.json
 
-# Allow v3 configuration and README
+# Track v3 db entries (certified benchmark artifacts)
+!releases/v3/db/*.json
 !releases/v3/db/README.md
 !benchmarks/v3/
 
