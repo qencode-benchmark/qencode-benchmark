@@ -1011,8 +1011,14 @@ def assemble_entry(mol_config: dict, basis: str, mapping: str,
         },
     }
 
-    # Hash the entry (without entry_id, signature, hash field itself)
+    # Hash the entry.
+    # git_commit is repo metadata (changes with every push) and is excluded
+    # from the hash so that results remain reproducible after new commits.
+    # All scientific fields (energies, geometry, circuit stats, tool versions)
+    # are included.
+    _git_commit_saved = entry["provenance"].pop("git_commit", None)
     h               = stable_hash(entry)
+    entry["provenance"]["git_commit"] = _git_commit_saved  # restore after hash
     sig_b64, key_id = try_sign_hash(h)
 
     entry["provenance"]["entry_hash_sha256"] = h
