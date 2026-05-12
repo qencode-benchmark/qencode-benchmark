@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
-  CheckCircle, Copy, Check, Crown, Info, TrendingDown, Cpu, BarChart2, Zap,
+  CheckCircle, Copy, Check, Crown, Info, TrendingDown, Cpu, BarChart2, Zap, ExternalLink,
 } from "lucide-react";
 import {
   Tabs, TabsContent, TabsList, TabsTrigger,
@@ -295,6 +296,15 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                 {/* Status */}
                 <TableCell className="text-right">
                   <div className="flex flex-col items-end gap-1">
+                    {r.entryId && (
+                      <Link
+                        href={`/entry/${r.entryId}`}
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                        title="View full benchmark artifact"
+                      >
+                        <ExternalLink className="h-3 w-3" /> Details
+                      </Link>
+                    )}
                     {r.baseline ? (
                       <TooltipProvider>
                         <Tooltip>

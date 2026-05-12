@@ -47,6 +47,7 @@ async function loadFromDatabase() {
   const normalize = (rows) =>
     rows.map((r) => ({
       rank:               Number(r.rank),
+      entryId:            r.entry_id ?? null,
       molecule:           r.molecule,
       mapping:            r.mapping,
       ansatz:             r.ansatz,
@@ -94,6 +95,7 @@ function loadFromCsv() {
   const normalize = (rows, isBalanced = false) =>
     rows.map((r) => ({
       rank:               num(r.rank),
+      entryId:            r.entry_id ?? null,
       molecule:           r.molecule,
       mapping:            r.mapping,
       ansatz:             r.ansatz,

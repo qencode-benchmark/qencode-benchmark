@@ -45,6 +45,7 @@ def parse_accuracy_csv(path):
         for r in csv.DictReader(f):
             rows.append({
                 "rank":               int(r["rank"]),
+                "entry_id":           r.get("entry_id", ""),
                 "molecule":           r["molecule"],
                 "mapping":            r["mapping"],
                 "ansatz":             r["ansatz"],
@@ -66,6 +67,7 @@ def parse_cost_csv(path):
         for r in csv.DictReader(f):
             rows.append({
                 "rank":               int(r["rank"]),
+                "entry_id":           r.get("entry_id", ""),
                 "molecule":           r["molecule"],
                 "mapping":            r["mapping"],
                 "ansatz":             r["ansatz"],
@@ -87,6 +89,7 @@ def parse_balanced_csv(path):
         for r in csv.DictReader(f):
             rows.append({
                 "rank":               int(r["rank"]),
+                "entry_id":           r.get("entry_id", ""),
                 "molecule":           r["molecule"],
                 "mapping":            r["mapping"],
                 "ansatz":             r["ansatz"],

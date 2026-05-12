@@ -114,6 +114,7 @@ def entry_to_row(entry: dict) -> dict | None:
             return None
 
         return {
+            "entry_id":         entry.get("entry_id", ""),
             "molecule":         mol,
             "mapping":          mapping,
             "ansatz":           ansatz,
@@ -226,6 +227,7 @@ def main():
     acc_csv  = [
         {
             "rank":               r["rank"],
+            "entry_id":           r["entry_id"],
             "molecule":           r["molecule"],
             "mapping":            r["mapping"],
             "ansatz":             r["ansatz"],
@@ -251,6 +253,7 @@ def main():
     cost_csv = [
         {
             "rank":               r["rank"],
+            "entry_id":           r["entry_id"],
             "molecule":           r["molecule"],
             "mapping":            r["mapping"],
             "ansatz":             r["ansatz"],
@@ -291,6 +294,7 @@ def main():
     balanced_csv = [
         {
             "rank":               r["rank"],
+            "entry_id":           r["entry_id"],
             "molecule":           r["molecule"],
             "mapping":            r["mapping"],
             "ansatz":             r["ansatz"],
@@ -310,6 +314,7 @@ def main():
     research_csv = [
         {
             "rank":               r["rank"],
+            "entry_id":           r["entry_id"],
             "molecule":           r["molecule"],
             "mapping":            r["mapping"],
             "ansatz":             r["ansatz"],
@@ -354,22 +359,22 @@ def main():
     # ── 9. Write files ────────────────────────────────────────────────────────
     _write_csv(
         OUTPUT_DIR / "leaderboard_accuracy.csv",
-        ["rank","molecule","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","baseline","beats_classical"],
+        ["rank","entry_id","molecule","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","baseline","beats_classical"],
         acc_csv, args.dry_run,
     )
     _write_csv(
         OUTPUT_DIR / "leaderboard_hardware_cost.csv",
-        ["rank","molecule","mapping","ansatz","gap","depth","2q_gates","ccsd_t_correlation","baseline","beats_classical"],
+        ["rank","entry_id","molecule","mapping","ansatz","gap","depth","2q_gates","ccsd_t_correlation","baseline","beats_classical"],
         cost_csv, args.dry_run,
     )
     _write_csv(
         OUTPUT_DIR / "leaderboard_balanced.csv",
-        ["rank","molecule","mapping","ansatz","gap","depth","2q_gates","balanced_score","ccsd_t_correlation","baseline","beats_classical"],
+        ["rank","entry_id","molecule","mapping","ansatz","gap","depth","2q_gates","balanced_score","ccsd_t_correlation","baseline","beats_classical"],
         balanced_csv, args.dry_run,
     )
     _write_csv(
         OUTPUT_DIR / "leaderboard_research.csv",
-        ["rank","molecule","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","baseline","beats_classical"],
+        ["rank","entry_id","molecule","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","baseline","beats_classical"],
         research_csv, args.dry_run,
     )
 

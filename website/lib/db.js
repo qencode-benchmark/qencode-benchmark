@@ -26,6 +26,7 @@ export async function ensureSchema() {
       molecule         VARCHAR(50)       NOT NULL,
       mapping          VARCHAR(50)       NOT NULL,
       ansatz           VARCHAR(50)       NOT NULL,
+      entry_id         VARCHAR(200),
       gap              DOUBLE PRECISION,
       depth            INTEGER,
       two_q_gates      INTEGER,
@@ -52,6 +53,7 @@ export async function ensureSchema() {
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS vqe_energy         DOUBLE PRECISION`;
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS casci_energy       DOUBLE PRECISION`;
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS hf_energy          DOUBLE PRECISION`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS entry_id           VARCHAR(200)`;
 
   await sql`
     CREATE TABLE IF NOT EXISTS leaderboard_metadata (
@@ -228,7 +230,7 @@ export async function replaceEntries(category, entries) {
   for (const e of entries) {
     await sql`
       INSERT INTO leaderboard_entries
-        (category, rank, molecule, mapping, ansatz, gap, depth, two_q_gates, balanced_score,
+        (category, rank, molecule, mapping, ansatz, entry_id, gap, depth, two_q_gates, balanced_score,
          baseline, beats_classical, ccsd_t_correlation, vqe_energy, casci_energy, hf_energy, updated_at)
       VALUES
         (
@@ -237,6 +239,7 @@ export async function replaceEntries(category, entries) {
           ${e.molecule},
           ${e.mapping},
           ${e.ansatz},
+          ${e.entry_id ?? null},
           ${e.gap   ?? null},
           ${e.depth ?? null},
           ${e.two_q_gates ?? null},
