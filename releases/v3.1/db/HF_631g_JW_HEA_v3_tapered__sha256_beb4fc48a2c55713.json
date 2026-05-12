@@ -1,0 +1,155 @@
+{
+  "schema_version": "3.0.0",
+  "entry_id": "HF_631g_JW_HEA_v3_tapered__sha256_beb4fc48a2c55713",
+  "created_utc": "2026-05-11T18:50:56.068553+00:00",
+  "problem": {
+    "name": "HF",
+    "basis": "6-31g",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "H 0.0 0.0 0.0; F 0.0 0.0 0.917",
+    "active_space": {
+      "num_electrons": 2,
+      "num_spatial_orbitals": 2,
+      "method": "casci",
+      "frozen_core": false
+    }
+  },
+  "encoding": {
+    "mapping": "jordan_wigner",
+    "ansatz_type": "hea",
+    "ansatz_reps": 2,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 3,
+      "original_num_qubits": 4,
+      "tapered_num_qubits": 1,
+      "sectors": [
+        1,
+        -1,
+        -1
+      ],
+      "hf_tapered_state": [
+        1
+      ],
+      "bk_constant_correction_ha": null
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 1,
+      "num_pauli_terms": 3,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": -99.27752119655872
+        },
+        {
+          "pauli_string": "Z0",
+          "coefficient": 0.7058877305068829
+        },
+        {
+          "pauli_string": "X0",
+          "coefficient": 0.011353561670860947
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    },
+    "fcidump": "ICZGQ0kgTk9SQj0gICAyLE5FTEVDPSAyLE1TMj0wLAogIE9SQlNZTT0xLDEsCiAgSVNZTT0xLAogJkVORAogMC45MDAxMjYxODM5MDIwMzE4ICAgIDEgICAgMSAgICAxICAgIDEKIDAuMDExMzUzNTU4MTE1NzE5MjYgICAgMiAgICAxICAgIDIgICAgMQogMC40MDQzODczNTMyNDU2MTYxICAgIDIgICAgMiAgICAxICAgIDEKIDAuNDI1MDQyMjQ5NDIzMDg4NCAgICAyICAgIDIgICAgMiAgICAyCiAtMS41MzExNTcyNDk5NzMxNjUgICAgMSAgICAxICAwICAwCiAtMC41ODc3Mjc1MDczMTUyNjQyICAgIDIgICAgMiAgMCAgMAogLTk3LjgyMTIyMDYxNzIzNzgxICAwICAwICAwICAwCg=="
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -99.98340893328209,
+      "casci_ground_energy_hartree": -99.98350023316766,
+      "casci_first_excited_hartree": -99.54707157939634,
+      "exact_qubit_ground_energy_hartree_like": null
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -99.98340893328209,
+      "mp2_energy_hartree": -100.11210314947006,
+      "ccsd_energy_hartree": -100.11465669609036,
+      "ccsd_t_energy_hartree": -100.11528384441579,
+      "mp2_correlation": -0.1286942161879665,
+      "ccsd_t_correlation": -0.13187491113369276,
+      "pyscf_version": "2.5.0",
+      "computed_utc": "2026-05-11T18:50:32.463975+00:00",
+      "basis": "6-31g"
+    },
+    "vqe": {
+      "best_energy_hartree": -99.98350022698283,
+      "optimal_params": [
+        0.006500503410565418,
+        0.004376416337742092,
+        0.005196358546903952
+      ],
+      "num_params": 3,
+      "nfev": 176,
+      "optimizer": "COBYLA",
+      "multistart_runs": 5,
+      "computed_utc": "2026-05-11T18:50:56.068300+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 6.184833978295501e-09,
+      "beats_classical": true,
+      "flags": [
+        "gap_certified",
+        "beats_classical"
+      ],
+      "notes": null
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "beb4fc48a2c557131458698cfed60e016b63168f8b110cfcecd60a1f8a532e89",
+    "source_schema_version": "3.0.0",
+    "created_utc": "2026-05-11T18:50:56.068553+00:00",
+    "tool_versions": {
+      "python": "3.11.14",
+      "pyscf": "2.5.0",
+      "pennylane": "0.44.1",
+      "openfermion": "1.7.1",
+      "numpy": "1.26.4",
+      "scipy": "1.17.0",
+      "git_commit": "dff47f8"
+    },
+    "environment": {
+      "platform": "linux"
+    }
+  },
+  "trust": {
+    "level": "certified",
+    "certified_utc": "2026-05-11T18:50:56.068553+00:00",
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 800,
+    "multistart": 5,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 4,
+    "num_qubits_tapered": 1,
+    "ansatz_num_parameters": 3,
+    "ansatz_depth": 4,
+    "ansatz_num_2q_gates": 0,
+    "ansatz_num_1q_gates": 4,
+    "non_clifford_gate_count": 3,
+    "t_gate_estimate": 36,
+    "t_gate_synthesis_epsilon": 0.001
+  }
+}

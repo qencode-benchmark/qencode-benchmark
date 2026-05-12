@@ -1,0 +1,407 @@
+{
+  "schema_version": "3.0.0",
+  "entry_id": "H2O_631g_PAR_HEA_v3_tapered__sha256_3fc292b4ac5b1989",
+  "created_utc": "2026-05-11T19:12:31.033500+00:00",
+  "problem": {
+    "name": "H2O",
+    "basis": "6-31g",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "O 0.0 0.0 0.0; H 0.0 0.757 0.586; H 0.0 -0.757 0.586",
+    "active_space": {
+      "num_electrons": 4,
+      "num_spatial_orbitals": 4,
+      "method": "casci",
+      "frozen_core": false
+    }
+  },
+  "encoding": {
+    "mapping": "parity",
+    "ansatz_type": "hea",
+    "ansatz_reps": 2,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 4,
+      "original_num_qubits": 8,
+      "tapered_num_qubits": 4,
+      "sectors": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "hf_tapered_state": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "bk_constant_correction_ha": null
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 4,
+      "num_pauli_terms": 62,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": -74.11097301517425
+        },
+        {
+          "pauli_string": "Z0Z2Z3",
+          "coefficient": -0.025098881192592407
+        },
+        {
+          "pauli_string": "Z1",
+          "coefficient": 0.2683214771655295
+        },
+        {
+          "pauli_string": "Z0",
+          "coefficient": 0.4297638976247843
+        },
+        {
+          "pauli_string": "Z2Z3",
+          "coefficient": 0.3638755362986446
+        },
+        {
+          "pauli_string": "Z0Z1",
+          "coefficient": 0.4297638976247843
+        },
+        {
+          "pauli_string": "Z1Z2Z3",
+          "coefficient": 0.3638755362986446
+        },
+        {
+          "pauli_string": "Y0Y1X2",
+          "coefficient": 0.04416155321359839
+        },
+        {
+          "pauli_string": "X0Y1Y2Z3",
+          "coefficient": -0.026125399560973463
+        },
+        {
+          "pauli_string": "X0X1X2Z3",
+          "coefficient": 0.04416155321359839
+        },
+        {
+          "pauli_string": "Y0X1Y2",
+          "coefficient": 0.026125399560973463
+        },
+        {
+          "pauli_string": "Y1X2Y3",
+          "coefficient": 0.04416155321359839
+        },
+        {
+          "pauli_string": "Z0Y1Y2X3",
+          "coefficient": -0.026125399560973466
+        },
+        {
+          "pauli_string": "Z0X1X2X3",
+          "coefficient": 0.04416155321359839
+        },
+        {
+          "pauli_string": "X1Y2Y3",
+          "coefficient": 0.026125399560973466
+        },
+        {
+          "pauli_string": "Z1Z2",
+          "coefficient": 0.7902776353899168
+        },
+        {
+          "pauli_string": "Z0Z1Z3",
+          "coefficient": 0.5393905532919064
+        },
+        {
+          "pauli_string": "Z0Z3",
+          "coefficient": 0.1804354396891869
+        },
+        {
+          "pauli_string": "Z3",
+          "coefficient": 0.024643358256731585
+        },
+        {
+          "pauli_string": "Z0Z2",
+          "coefficient": 0.46592648535024966
+        },
+        {
+          "pauli_string": "Z1Z3",
+          "coefficient": 0.024643358256731585
+        },
+        {
+          "pauli_string": "Z0Z1Z2",
+          "coefficient": 0.46592648535024966
+        },
+        {
+          "pauli_string": "Z0Y1X2Y3",
+          "coefficient": 0.01803607283341827
+        },
+        {
+          "pauli_string": "X1X2X3",
+          "coefficient": 0.01803607283341827
+        },
+        {
+          "pauli_string": "X0X1X2",
+          "coefficient": -0.01803607283341827
+        },
+        {
+          "pauli_string": "Y0Y1X2Z3",
+          "coefficient": -0.01803607283341827
+        },
+        {
+          "pauli_string": "Y0Y2",
+          "coefficient": 0.01144506825613423
+        },
+        {
+          "pauli_string": "Y0Z1Y2",
+          "coefficient": 0.01144506825613423
+        },
+        {
+          "pauli_string": "X0Z1X2",
+          "coefficient": 0.01144506825613423
+        },
+        {
+          "pauli_string": "X0X2",
+          "coefficient": 0.01144506825613423
+        },
+        {
+          "pauli_string": "Y0X1Y3",
+          "coefficient": -8.640396535211759e-05
+        },
+        {
+          "pauli_string": "Y0Y1Z2X3",
+          "coefficient": 8.640396535211759e-05
+        },
+        {
+          "pauli_string": "X0Y1Z2Y3",
+          "coefficient": 8.640396535211759e-05
+        },
+        {
+          "pauli_string": "X0X1X3",
+          "coefficient": 8.640396535211759e-05
+        },
+        {
+          "pauli_string": "X1",
+          "coefficient": -8.640396535211759e-05
+        },
+        {
+          "pauli_string": "X1Z2Z3",
+          "coefficient": 8.640396535211759e-05
+        },
+        {
+          "pauli_string": "Z0X1Z2",
+          "coefficient": 8.640396535211759e-05
+        },
+        {
+          "pauli_string": "Z0X1Z3",
+          "coefficient": -8.640396535211759e-05
+        },
+        {
+          "pauli_string": "Y0Y3",
+          "coefficient": 0.013431421920752817
+        },
+        {
+          "pauli_string": "X0Z1X3",
+          "coefficient": 0.013431421920752817
+        },
+        {
+          "pauli_string": "X0Z1Z2Z3",
+          "coefficient": -0.005782565913818583
+        },
+        {
+          "pauli_string": "X0Z2Z3",
+          "coefficient": -0.005782565913818583
+        },
+        {
+          "pauli_string": "X0",
+          "coefficient": 0.005782565913818583
+        },
+        {
+          "pauli_string": "X0Z1",
+          "coefficient": 0.005782565913818583
+        },
+        {
+          "pauli_string": "X0X1Y2Y3",
+          "coefficient": -0.007051417834793365
+        },
+        {
+          "pauli_string": "Y0X1X2Y3",
+          "coefficient": 0.007051417834793365
+        },
+        {
+          "pauli_string": "X0X1X2X3",
+          "coefficient": -0.007051417834793365
+        },
+        {
+          "pauli_string": "Y0X1Y2X3",
+          "coefficient": -0.007051417834793365
+        },
+        {
+          "pauli_string": "Z0Y1Y2",
+          "coefficient": 0.007051417834793365
+        },
+        {
+          "pauli_string": "X1X2",
+          "coefficient": 0.007051417834793365
+        },
+        {
+          "pauli_string": "Z0X1X2Z3",
+          "coefficient": 0.007051417834793365
+        },
+        {
+          "pauli_string": "Y1Y2Z3",
+          "coefficient": 0.007051417834793365
+        },
+        {
+          "pauli_string": "Y2Y3",
+          "coefficient": 0.0031804884623381833
+        },
+        {
+          "pauli_string": "Z1Y2Y3",
+          "coefficient": 0.0031804884623381833
+        },
+        {
+          "pauli_string": "X2X3",
+          "coefficient": 0.0031804884623381833
+        },
+        {
+          "pauli_string": "Z1X2X3",
+          "coefficient": 0.0031804884623381833
+        },
+        {
+          "pauli_string": "Z0Z1X2Z3",
+          "coefficient": -0.004102057104415939
+        },
+        {
+          "pauli_string": "X2",
+          "coefficient": 0.004102057104415939
+        },
+        {
+          "pauli_string": "Z0Z2X3",
+          "coefficient": -0.022172337972901964
+        },
+        {
+          "pauli_string": "Z0Z1Z2X3",
+          "coefficient": -0.022172337972901964
+        },
+        {
+          "pauli_string": "X3",
+          "coefficient": 0.022172337972901964
+        },
+        {
+          "pauli_string": "Z1X3",
+          "coefficient": 0.022172337972901964
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    },
+    "fcidump": "ICZGQ0kgTk9SQj0gICA0LE5FTEVDPSA0LE1TMj0wLAogIE9SQlNZTT0xLDEsMSwxLAogIElTWU09MSwKICZFTkQKIDAuNzM1ODEwMjUyNDY0MTMwMyAgICAxICAgIDEgICAgMSAgICAxCiAwLjA0NTc4MDI3MzAyNDUzNjk1ICAgIDIgICAgMSAgICAyICAgIDEKIDAuNjY1NjQxMzU2ODIyNTI4OSAgICAyICAgIDIgICAgMSAgICAxCiAwLjc2Mzk1OTE1NzAzMjM2MDUgICAgMiAgICAyICAgIDIgICAgMgogMC4wNzM4MzI2NTk4OTkxODkzNCAgICAzICAgIDEgICAgMSAgICAxCiAwLjA2NjYwMjU5ODc1ODQ3NDYgICAgMyAgICAxICAgIDIgICAgMgogMC4wMjY4NjI4NDM4NDE1MDU2NiAgICAzICAgIDEgICAgMyAgICAxCiAwLjAwMDM0NTYxNTg2MTQwODQ2ODQgICAgMyAgICAyICAgIDIgICAgMQogMC4wMTI3MjE5NTM4NDkzNTI3NCAgICAzICAgIDIgICAgMyAgICAyCiAwLjM2MDg3MDg3OTM3ODM3NDEgICAgMyAgICAzICAgIDEgICAgMQogMC4zNjk4MDUxODQwMDk0MTc2ICAgIDMgICAgMyAgICAyICAgIDIKIDAuMDAxNjg4MzY4NTY1NTE2MTYgICAgMyAgICAzICAgIDMgICAgMQogMC4zMzc0NzU2NTYxOTc5OTUyICAgIDMgICAgMyAgICAzICAgIDMKIDAuMDIzMTMwMjYzNjU1Mjc0MzUgICAgNCAgICAxICAgIDQgICAgMQogMC4wMDgyMDQxMTQyMDg4MzE4ODMgICAgNCAgICAyICAgIDQgICAgMgogMi4zODQzODY2MDI0ODU1NzVlLTE1ICAgIDQgICAgMyAgICAzICAgIDMKIC0wLjAyODIwNTY3MTMzOTE3MzQ5ICAgIDQgICAgMyAgICA0ICAgIDEKIDAuMDg4Njg5MzUxODkxNjA3ODggICAgNCAgICAzICAgIDQgICAgMwogMC4zNzU4NzE5OTczNDAxODU3ICAgIDQgICAgNCAgICAxICAgIDEKIDAuMzc2NDg4NTkyNjI3ODg4NyAgICA0ICAgIDQgICAgMiAgICAyCiA3LjYxNTYwMzYyMzY2MTc5M2UtMDUgICAgNCAgICA0ICAgIDMgICAgMQogMC4zMzM0NDY0MjYzMzYwNDM0ICAgIDQgICAgNCAgICAzICAgIDMKIC0yLjE1NTA4MzM0OTI1NzAyOWUtMTUgICAgNCAgICA0ICAgIDQgICAgMwogMC4zNDU2NjQzMjIyMzI2NzE4ICAgIDQgICAgNCAgICA0ICAgIDQKIC0yLjU4MTkzMDQ2NDc2MjA2NSAgICAxICAgIDEgIDAgIDAKIC0yLjU1MDgzOTE3NjgyNDU3MyAgICAyICAgIDIgIDAgIDAKIC0wLjIwNjY5MjQwMzE5MzE0MzUgICAgMyAgICAxICAwICAwCiAtMS4yMTgwMDk5NTk1NDUwNjQgICAgMyAgICAzICAwICAwCiAtMS4xNzM1Mjg0MzEzNTAwMDUgICAgNCAgICA0ICAwICAwCiAtNjkuNzg5MjI4MjM1NzY5NTMgIDAgIDAgIDAgIDAK"
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -75.98399322820515,
+      "casci_ground_energy_hartree": -75.98510468186078,
+      "casci_first_excited_hartree": -75.65561073458176,
+      "exact_qubit_ground_energy_hartree_like": null
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -75.98399322820515,
+      "mp2_energy_hartree": -76.11279946283415,
+      "ccsd_energy_hartree": -76.11932654520196,
+      "ccsd_t_energy_hartree": -76.12032087685596,
+      "mp2_correlation": -0.1288062346289962,
+      "ccsd_t_correlation": -0.1363276486508056,
+      "pyscf_version": "2.5.0",
+      "computed_utc": "2026-05-11T19:11:35.991849+00:00",
+      "basis": "6-31g"
+    },
+    "vqe": {
+      "best_energy_hartree": -75.98465795407311,
+      "optimal_params": [
+        0.07046519026777671,
+        0.009249620426364163,
+        0.00029881778077140906,
+        0.7963605581731945,
+        -1.830973527293571,
+        1.5706670604666262,
+        1.5705148145920758,
+        -0.7528741287994434,
+        1.8646732080136692,
+        1.5707639891412877,
+        -1.5095046651930648,
+        -1.6185051800227248
+      ],
+      "num_params": 12,
+      "nfev": 3759,
+      "optimizer": "COBYLA",
+      "multistart_runs": 5,
+      "computed_utc": "2026-05-11T19:12:31.033014+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 0.0004467277876614162,
+      "beats_classical": true,
+      "flags": [
+        "gap_certified",
+        "beats_classical"
+      ],
+      "notes": null
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "3fc292b4ac5b1989a213788b3cc6eb9644b5fa9b23f18d60f6690349969002e8",
+    "source_schema_version": "3.0.0",
+    "created_utc": "2026-05-11T19:12:31.033500+00:00",
+    "tool_versions": {
+      "python": "3.11.14",
+      "pyscf": "2.5.0",
+      "pennylane": "0.44.1",
+      "openfermion": "1.7.1",
+      "numpy": "1.26.4",
+      "scipy": "1.17.0",
+      "git_commit": "dff47f8"
+    },
+    "environment": {
+      "platform": "linux"
+    }
+  },
+  "trust": {
+    "level": "certified",
+    "certified_utc": "2026-05-11T19:12:31.033500+00:00",
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 800,
+    "multistart": 5,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 8,
+    "num_qubits_tapered": 4,
+    "ansatz_num_parameters": 12,
+    "ansatz_depth": 9,
+    "ansatz_num_2q_gates": 6,
+    "ansatz_num_1q_gates": 12,
+    "non_clifford_gate_count": 12,
+    "t_gate_estimate": 144,
+    "t_gate_synthesis_epsilon": 0.001
+  }
+}

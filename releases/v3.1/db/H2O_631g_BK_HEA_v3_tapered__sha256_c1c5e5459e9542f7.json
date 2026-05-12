@@ -1,0 +1,407 @@
+{
+  "schema_version": "3.0.0",
+  "entry_id": "H2O_631g_BK_HEA_v3_tapered__sha256_c1c5e5459e9542f7",
+  "created_utc": "2026-05-11T19:10:01.650164+00:00",
+  "problem": {
+    "name": "H2O",
+    "basis": "6-31g",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "O 0.0 0.0 0.0; H 0.0 0.757 0.586; H 0.0 -0.757 0.586",
+    "active_space": {
+      "num_electrons": 4,
+      "num_spatial_orbitals": 4,
+      "method": "casci",
+      "frozen_core": false
+    }
+  },
+  "encoding": {
+    "mapping": "bravyi_kitaev",
+    "ansatz_type": "hea",
+    "ansatz_reps": 2,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 4,
+      "original_num_qubits": 8,
+      "tapered_num_qubits": 4,
+      "sectors": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "hf_tapered_state": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "bk_constant_correction_ha": null
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 4,
+      "num_pauli_terms": 62,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": -74.1109727201606
+        },
+        {
+          "pauli_string": "Z0Z2Z3",
+          "coefficient": -0.025098826969761675
+        },
+        {
+          "pauli_string": "Z1",
+          "coefficient": 0.2683215410220881
+        },
+        {
+          "pauli_string": "Z0",
+          "coefficient": 0.4297641064322209
+        },
+        {
+          "pauli_string": "Z2Z3",
+          "coefficient": 0.36387548742814413
+        },
+        {
+          "pauli_string": "Z0Z1",
+          "coefficient": 0.4297641064322208
+        },
+        {
+          "pauli_string": "Z1Z2Z3",
+          "coefficient": 0.36387548742814413
+        },
+        {
+          "pauli_string": "Z2",
+          "coefficient": 0.7902778114118396
+        },
+        {
+          "pauli_string": "Z0Z3",
+          "coefficient": 0.5393905070397927
+        },
+        {
+          "pauli_string": "Z0Z1Z3",
+          "coefficient": 0.18043539050386537
+        },
+        {
+          "pauli_string": "Z0Z2",
+          "coefficient": 0.4659264979044298
+        },
+        {
+          "pauli_string": "Z3",
+          "coefficient": 0.02464334133392032
+        },
+        {
+          "pauli_string": "Z0Z1Z2",
+          "coefficient": 0.4659264979044298
+        },
+        {
+          "pauli_string": "Z1Z3",
+          "coefficient": 0.024643341333920425
+        },
+        {
+          "pauli_string": "X0Z1X2",
+          "coefficient": 0.011445071529675695
+        },
+        {
+          "pauli_string": "X0X2",
+          "coefficient": 0.011445071529675695
+        },
+        {
+          "pauli_string": "Y0Z1Y2",
+          "coefficient": 0.011445071529675695
+        },
+        {
+          "pauli_string": "Y0Y2",
+          "coefficient": 0.011445071529675695
+        },
+        {
+          "pauli_string": "X0Z1X3",
+          "coefficient": 0.013431384465734135
+        },
+        {
+          "pauli_string": "Y0Z1Y3",
+          "coefficient": 0.013431384465734135
+        },
+        {
+          "pauli_string": "Z1X2X3",
+          "coefficient": 0.003180487156282739
+        },
+        {
+          "pauli_string": "X2X3",
+          "coefficient": 0.003180487156282739
+        },
+        {
+          "pauli_string": "Z1Y2Y3",
+          "coefficient": 0.003180487156282739
+        },
+        {
+          "pauli_string": "Y2Y3",
+          "coefficient": 0.003180487156282739
+        },
+        {
+          "pauli_string": "X0Y1Y3",
+          "coefficient": 0.04416139498650403
+        },
+        {
+          "pauli_string": "Y0Y1Z2X3",
+          "coefficient": -0.026125346913793843
+        },
+        {
+          "pauli_string": "Y0Y1X3",
+          "coefficient": -0.04416139498650403
+        },
+        {
+          "pauli_string": "X0Y1Z2Y3",
+          "coefficient": 0.026125346913793843
+        },
+        {
+          "pauli_string": "Y0X1Y3",
+          "coefficient": 0.018036048417015085
+        },
+        {
+          "pauli_string": "X0X1X3",
+          "coefficient": 0.018036048417015085
+        },
+        {
+          "pauli_string": "Z0X1",
+          "coefficient": -0.04416139498650403
+        },
+        {
+          "pauli_string": "X1Z2Z3",
+          "coefficient": 0.026125346913793843
+        },
+        {
+          "pauli_string": "X1",
+          "coefficient": -0.018036048417015085
+        },
+        {
+          "pauli_string": "X1Z3",
+          "coefficient": 0.04416139498650403
+        },
+        {
+          "pauli_string": "Z0X1Z2",
+          "coefficient": -0.026125346913793843
+        },
+        {
+          "pauli_string": "Z0X1Z3",
+          "coefficient": 0.018036048417015085
+        },
+        {
+          "pauli_string": "X0X1X2",
+          "coefficient": -8.639998294981987e-05
+        },
+        {
+          "pauli_string": "X0Y1Y2Z3",
+          "coefficient": -8.639998294981987e-05
+        },
+        {
+          "pauli_string": "Y0X1Y2",
+          "coefficient": -8.639998294981987e-05
+        },
+        {
+          "pauli_string": "Y0Y1X2Z3",
+          "coefficient": 8.639998294981987e-05
+        },
+        {
+          "pauli_string": "Z0Y1X2Y3",
+          "coefficient": -8.639998294981987e-05
+        },
+        {
+          "pauli_string": "Z0Y1Y2X3",
+          "coefficient": 8.639998294981987e-05
+        },
+        {
+          "pauli_string": "X1Y2Y3",
+          "coefficient": 8.639998294981987e-05
+        },
+        {
+          "pauli_string": "X1X2X3",
+          "coefficient": 8.639998294981987e-05
+        },
+        {
+          "pauli_string": "X0Z1",
+          "coefficient": 0.005782556633688272
+        },
+        {
+          "pauli_string": "X0",
+          "coefficient": 0.005782556633688272
+        },
+        {
+          "pauli_string": "X0Z1Z2Z3",
+          "coefficient": -0.005782556633688272
+        },
+        {
+          "pauli_string": "X0Z2Z3",
+          "coefficient": -0.005782556633688272
+        },
+        {
+          "pauli_string": "X0X1",
+          "coefficient": 0.00705140479119357
+        },
+        {
+          "pauli_string": "X0X1Z2Z3",
+          "coefficient": -0.00705140479119357
+        },
+        {
+          "pauli_string": "X1X3",
+          "coefficient": -0.007051404791193577
+        },
+        {
+          "pauli_string": "Z0X1Z2X3",
+          "coefficient": 0.007051404791193577
+        },
+        {
+          "pauli_string": "X2",
+          "coefficient": 0.00410205713273186
+        },
+        {
+          "pauli_string": "Z0X2Z3",
+          "coefficient": -0.00410205713273186
+        },
+        {
+          "pauli_string": "X3",
+          "coefficient": 0.02217233805116172
+        },
+        {
+          "pauli_string": "Z1X3",
+          "coefficient": 0.02217233805116172
+        },
+        {
+          "pauli_string": "Z0Z2X3",
+          "coefficient": -0.02217233805116172
+        },
+        {
+          "pauli_string": "Z0Z1Z2X3",
+          "coefficient": -0.02217233805116172
+        },
+        {
+          "pauli_string": "Y0Y1Z2",
+          "coefficient": 0.00705140479119357
+        },
+        {
+          "pauli_string": "Y0Y1Z3",
+          "coefficient": -0.00705140479119357
+        },
+        {
+          "pauli_string": "Y1Z2Y3",
+          "coefficient": -0.007051404791193577
+        },
+        {
+          "pauli_string": "Z0Y1Y3",
+          "coefficient": 0.007051404791193577
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    },
+    "fcidump": "ICZGQ0kgTk9SQj0gICA0LE5FTEVDPSA0LE1TMj0wLAogIE9SQlNZTT0xLDEsMSwxLAogIElTWU09MSwKICZFTkQKIDAuNzM1ODEwMjUyNDY0MTM1OSAgICAxICAgIDEgICAgMSAgICAxCiAwLjA0NTc4MDI3MzAyNDUzNzA0ICAgIDIgICAgMSAgICAyICAgIDEKIDAuNjY1NjQxMzU2ODIyNTMwMSAgICAyICAgIDIgICAgMSAgICAxCiAwLjc2Mzk1OTE1NzAzMjM1NzkgICAgMiAgICAyICAgIDIgICAgMgogMC4wNzM4MzI2NTk4OTkxODgwNyAgICAzICAgIDEgICAgMSAgICAxCiAwLjA2NjYwMjU5ODc1ODQ3MzA5ICAgIDMgICAgMSAgICAyICAgIDIKIDAuMDI2ODYyODQzODQxNTA0OTkgICAgMyAgICAxICAgIDMgICAgMQogMC4wMDAzNDU2MTU4NjE0MDgyNzkxICAgIDMgICAgMiAgICAyICAgIDEKIDAuMDEyNzIxOTUzODQ5MzUyOTEgICAgMyAgICAyICAgIDMgICAgMgogMC4zNjA4NzA4NzkzNzgzNzU1ICAgIDMgICAgMyAgICAxICAgIDEKIDAuMzY5ODA1MTg0MDA5NDE4MyAgICAzICAgIDMgICAgMiAgICAyCiAwLjAwMTY4ODM2ODU2NTUxNjQ1NiAgICAzICAgIDMgICAgMyAgICAxCiAwLjMzNzQ3NTY1NjE5Nzk5NjEgICAgMyAgICAzICAgIDMgICAgMwogLTMuMTgzMTE0NzcwNzA5NzExZS0xNSAgICA0ICAgIDEgICAgMSAgICAxCiAtMi45MjgyOTk5NjI3OTgxNTllLTE1ICAgIDQgICAgMSAgICAyICAgIDIKIC0zLjE1NDY2NzMyMTY1NzA5NmUtMTUgICAgNCAgICAxICAgIDMgICAgMwogMC4wMjMxMzAyNjM2NTUyNzQwNyAgICA0ICAgIDEgICAgNCAgICAxCiAwLjAwODIwNDExNDIwODgzMTg0OCAgICA0ICAgIDIgICAgNCAgICAyCiAtMS4zMDU4NDc0NzQ3OTUxMjFlLTE1ICAgIDQgICAgMyAgICAyICAgIDIKIC0xLjk4OTgxNjY5MDA2NjU1MmUtMTUgICAgNCAgICAzICAgIDMgICAgMQogOS4yMzY3MjQyODIwODYyNDRlLTE1ICAgIDQgICAgMyAgICAzICAgIDMKIC0wLjAyODIwNTY3MTMzOTE3MzExICAgIDQgICAgMyAgICA0ICAgIDEKIDAuMDg4Njg5MzUxODkxNjA3ODEgICAgNCAgICAzICAgIDQgICAgMwogMC4zNzU4NzE5OTczNDAxODYgICAgNCAgICA0ICAgIDEgICAgMQogMC4zNzY0ODg1OTI2Mjc4ODggICAgNCAgICA0ICAgIDIgICAgMgogNy42MTU2MDM2MjM2NzA4NjdlLTA1ICAgIDQgICAgNCAgICAzICAgIDEKIDAuMzMzNDQ2NDI2MzM2MDQzNCAgICA0ICAgIDQgICAgMyAgICAzCiAzLjI4NzQwNDEzNjQ5NTM1OWUtMTUgICAgNCAgICA0ICAgIDQgICAgMQogLTkuNzAxNzMxNzEwODA1Mzk4ZS0xNSAgICA0ICAgIDQgICAgNCAgICAzCiAwLjM0NTY2NDMyMjIzMjY3MDkgICAgNCAgICA0ICAgIDQgICAgNAogLTIuNTgxOTMwNDY0NzYyMDc0ICAgIDEgICAgMSAgMCAgMAogLTIuNTUwODM5MTc2ODI0NTcyICAgIDIgICAgMiAgMCAgMAogLTAuMjA2NjkyNDAzMTkzMTM2NCAgICAzICAgIDEgIDAgIDAKIC0xLjIxODAwOTk1OTU0NTA3NCAgICAzICAgIDMgIDAgIDAKIDguNzU1NzQxOTU1MzEyNjcyZS0xNSAgICA0ICAgIDEgIDAgIDAKIDYuNDExNDU3MjgyMjg1ODM5ZS0xNSAgICA0ICAgIDMgIDAgIDAKIC0xLjE3MzUyODQzMTM1MDAwNiAgICA0ICAgIDQgIDAgIDAKIC02OS43ODkyMjgyMzU3Njk0MyAgMCAgMCAgMCAgMAo="
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -75.98399322820508,
+      "casci_ground_energy_hartree": -75.98510468186068,
+      "casci_first_excited_hartree": -75.65561073458167,
+      "exact_qubit_ground_energy_hartree_like": null
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -75.98399322820508,
+      "mp2_energy_hartree": -76.11279946283408,
+      "ccsd_energy_hartree": -76.1193265452019,
+      "ccsd_t_energy_hartree": -76.1203208768559,
+      "mp2_correlation": -0.1288062346289962,
+      "ccsd_t_correlation": -0.1363276486508198,
+      "pyscf_version": "2.5.0",
+      "computed_utc": "2026-05-11T19:08:20.406973+00:00",
+      "basis": "6-31g"
+    },
+    "vqe": {
+      "best_energy_hartree": -75.98495092773908,
+      "optimal_params": [
+        -1.4990513482758039,
+        -0.35443850377480496,
+        -1.695250692000562,
+        -0.06678392922146927,
+        -1.7708436655487525,
+        1.7591110312759706,
+        1.6146854853398043,
+        -1.5019609861314198,
+        1.9648989728539383,
+        3.265703297350358,
+        -1.4944891447763997,
+        0.01259513448579295
+      ],
+      "num_params": 12,
+      "nfev": 4000,
+      "optimizer": "COBYLA",
+      "multistart_runs": 5,
+      "computed_utc": "2026-05-11T19:10:01.649632+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 0.0001537541215981264,
+      "beats_classical": true,
+      "flags": [
+        "gap_certified",
+        "beats_classical"
+      ],
+      "notes": null
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "c1c5e5459e9542f78520499d61e40ffe27b68dbeb19de5628c3899d2c2bdca4f",
+    "source_schema_version": "3.0.0",
+    "created_utc": "2026-05-11T19:10:01.650164+00:00",
+    "tool_versions": {
+      "python": "3.11.14",
+      "pyscf": "2.5.0",
+      "pennylane": "0.44.1",
+      "openfermion": "1.7.1",
+      "numpy": "1.26.4",
+      "scipy": "1.17.0",
+      "git_commit": "dff47f8"
+    },
+    "environment": {
+      "platform": "linux"
+    }
+  },
+  "trust": {
+    "level": "certified",
+    "certified_utc": "2026-05-11T19:10:01.650164+00:00",
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 800,
+    "multistart": 5,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 8,
+    "num_qubits_tapered": 4,
+    "ansatz_num_parameters": 12,
+    "ansatz_depth": 9,
+    "ansatz_num_2q_gates": 6,
+    "ansatz_num_1q_gates": 12,
+    "non_clifford_gate_count": 12,
+    "t_gate_estimate": 144,
+    "t_gate_synthesis_epsilon": 0.001
+  }
+}

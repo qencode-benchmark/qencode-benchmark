@@ -1,0 +1,407 @@
+{
+  "schema_version": "3.0.0",
+  "entry_id": "H2O_631g_JW_HEA_v3_tapered__sha256_0038ed5da775f9e3",
+  "created_utc": "2026-05-11T19:06:34.724583+00:00",
+  "problem": {
+    "name": "H2O",
+    "basis": "6-31g",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "O 0.0 0.0 0.0; H 0.0 0.757 0.586; H 0.0 -0.757 0.586",
+    "active_space": {
+      "num_electrons": 4,
+      "num_spatial_orbitals": 4,
+      "method": "casci",
+      "frozen_core": false
+    }
+  },
+  "encoding": {
+    "mapping": "jordan_wigner",
+    "ansatz_type": "hea",
+    "ansatz_reps": 2,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 4,
+      "original_num_qubits": 8,
+      "tapered_num_qubits": 4,
+      "sectors": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "hf_tapered_state": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "bk_constant_correction_ha": null
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 4,
+      "num_pauli_terms": 62,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": -74.1109727201606
+        },
+        {
+          "pauli_string": "Z0Z2Z3",
+          "coefficient": -0.02509882696976167
+        },
+        {
+          "pauli_string": "Z0Z1Z3",
+          "coefficient": 0.024643341333920432
+        },
+        {
+          "pauli_string": "Z1Z2",
+          "coefficient": 0.4659264979044298
+        },
+        {
+          "pauli_string": "Z2",
+          "coefficient": 0.7902778114118396
+        },
+        {
+          "pauli_string": "Z0Z3",
+          "coefficient": 0.5393905070397927
+        },
+        {
+          "pauli_string": "Z0Z1Z2Z3",
+          "coefficient": 0.36387548742814413
+        },
+        {
+          "pauli_string": "Z1",
+          "coefficient": 0.4297641064322208
+        },
+        {
+          "pauli_string": "Z0",
+          "coefficient": 0.4297641064322209
+        },
+        {
+          "pauli_string": "Z2Z3",
+          "coefficient": 0.36387548742814413
+        },
+        {
+          "pauli_string": "Z1Z3",
+          "coefficient": 0.18043539050386537
+        },
+        {
+          "pauli_string": "Z0Z2",
+          "coefficient": 0.4659264979044298
+        },
+        {
+          "pauli_string": "Z3",
+          "coefficient": 0.02464334133392032
+        },
+        {
+          "pauli_string": "Z0Z1",
+          "coefficient": 0.2683215410220881
+        },
+        {
+          "pauli_string": "Y0X1Y2",
+          "coefficient": 0.011445071529675695
+        },
+        {
+          "pauli_string": "Y0Y1X2",
+          "coefficient": -0.011445071529675695
+        },
+        {
+          "pauli_string": "X0X1X2",
+          "coefficient": 0.011445071529675695
+        },
+        {
+          "pauli_string": "X0Y1Y2",
+          "coefficient": 0.011445071529675695
+        },
+        {
+          "pauli_string": "Y0Z1Z2Y3",
+          "coefficient": 0.02612534691379385
+        },
+        {
+          "pauli_string": "X0Z1X3",
+          "coefficient": 0.04416139498650403
+        },
+        {
+          "pauli_string": "Y0Y3",
+          "coefficient": 0.018036048417015085
+        },
+        {
+          "pauli_string": "Y0Z1Y3",
+          "coefficient": 0.04416139498650403
+        },
+        {
+          "pauli_string": "X0Z1Z2X3",
+          "coefficient": 0.02612534691379385
+        },
+        {
+          "pauli_string": "X0X3",
+          "coefficient": 0.018036048417015085
+        },
+        {
+          "pauli_string": "Y1X2Y3",
+          "coefficient": -8.639998294981987e-05
+        },
+        {
+          "pauli_string": "X1Y2Y3",
+          "coefficient": 8.639998294981987e-05
+        },
+        {
+          "pauli_string": "Y1Y2X3",
+          "coefficient": 8.639998294981987e-05
+        },
+        {
+          "pauli_string": "X1X2X3",
+          "coefficient": 8.639998294981987e-05
+        },
+        {
+          "pauli_string": "Z0X1Z2",
+          "coefficient": -0.02612534691379385
+        },
+        {
+          "pauli_string": "X1Z3",
+          "coefficient": 0.04416139498650403
+        },
+        {
+          "pauli_string": "Z0X1",
+          "coefficient": -0.04416139498650403
+        },
+        {
+          "pauli_string": "X1Z2Z3",
+          "coefficient": 0.02612534691379385
+        },
+        {
+          "pauli_string": "Z0X1Z3",
+          "coefficient": 0.018036048417015085
+        },
+        {
+          "pauli_string": "X1",
+          "coefficient": -0.018036048417015085
+        },
+        {
+          "pauli_string": "X0Y1Y3",
+          "coefficient": 0.013431384465734135
+        },
+        {
+          "pauli_string": "Y0Y1X3",
+          "coefficient": -0.013431384465734135
+        },
+        {
+          "pauli_string": "Y0Z1Y2Z3",
+          "coefficient": -8.639998294981987e-05
+        },
+        {
+          "pauli_string": "X0X2",
+          "coefficient": -8.639998294981987e-05
+        },
+        {
+          "pauli_string": "X0Z1X2Z3",
+          "coefficient": -8.639998294981987e-05
+        },
+        {
+          "pauli_string": "Y0Y2",
+          "coefficient": -8.639998294981987e-05
+        },
+        {
+          "pauli_string": "Z0Z1Y2Y3",
+          "coefficient": 0.003180487156282739
+        },
+        {
+          "pauli_string": "X2X3",
+          "coefficient": 0.003180487156282739
+        },
+        {
+          "pauli_string": "Z0Z1X2X3",
+          "coefficient": 0.003180487156282739
+        },
+        {
+          "pauli_string": "Y2Y3",
+          "coefficient": 0.003180487156282739
+        },
+        {
+          "pauli_string": "X0X1Z2Z3",
+          "coefficient": -0.005782556633688272
+        },
+        {
+          "pauli_string": "Y0Y1",
+          "coefficient": -0.005782556633688272
+        },
+        {
+          "pauli_string": "X0X1",
+          "coefficient": 0.005782556633688272
+        },
+        {
+          "pauli_string": "Y0Y1Z2Z3",
+          "coefficient": 0.005782556633688272
+        },
+        {
+          "pauli_string": "X0Z1Z2",
+          "coefficient": -0.00705140479119357
+        },
+        {
+          "pauli_string": "X0",
+          "coefficient": 0.00705140479119357
+        },
+        {
+          "pauli_string": "X0Z1Z3",
+          "coefficient": 0.00705140479119357
+        },
+        {
+          "pauli_string": "X0Z2Z3",
+          "coefficient": -0.00705140479119357
+        },
+        {
+          "pauli_string": "X1X3",
+          "coefficient": -0.007051404791193577
+        },
+        {
+          "pauli_string": "Z0Y1Z2Y3",
+          "coefficient": -0.007051404791193577
+        },
+        {
+          "pauli_string": "Z0X1Z2X3",
+          "coefficient": 0.007051404791193577
+        },
+        {
+          "pauli_string": "Y1Y3",
+          "coefficient": 0.007051404791193577
+        },
+        {
+          "pauli_string": "Z0X2Z3",
+          "coefficient": -0.00410205713273186
+        },
+        {
+          "pauli_string": "X2",
+          "coefficient": 0.00410205713273186
+        },
+        {
+          "pauli_string": "Z0Z2X3",
+          "coefficient": -0.02217233805116172
+        },
+        {
+          "pauli_string": "Z0Z1X3",
+          "coefficient": 0.02217233805116172
+        },
+        {
+          "pauli_string": "X3",
+          "coefficient": 0.02217233805116172
+        },
+        {
+          "pauli_string": "Z1Z2X3",
+          "coefficient": -0.02217233805116172
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    },
+    "fcidump": "ICZGQ0kgTk9SQj0gICA0LE5FTEVDPSA0LE1TMj0wLAogIE9SQlNZTT0xLDEsMSwxLAogIElTWU09MSwKICZFTkQKIDAuNzM1ODEwMjUyNDY0MTUzNCAgICAxICAgIDEgICAgMSAgICAxCiAwLjA0NTc4MDI3MzAyNDUzNzU0ICAgIDIgICAgMSAgICAyICAgIDEKIDAuNjY1NjQxMzU2ODIyNTM1OSAgICAyICAgIDIgICAgMSAgICAxCiAwLjc2Mzk1OTE1NzAzMjM1MyAgICAyICAgIDIgICAgMiAgICAyCiAwLjA3MzgzMjY1OTg5OTE4MDkyICAgIDMgICAgMSAgICAxICAgIDEKIDAuMDY2NjAyNTk4NzU4NDY1MjMgICAgMyAgICAxICAgIDIgICAgMgogMC4wMjY4NjI4NDM4NDE1MDExICAgIDMgICAgMSAgICAzICAgIDEKIDAuMDAwMzQ1NjE1ODYxNDA3MzEwOSAgICAzICAgIDIgICAgMiAgICAxCiAwLjAxMjcyMTk1Mzg0OTM1MjczICAgIDMgICAgMiAgICAzICAgIDIKIDAuMzYwODcwODc5Mzc4MzcwNCAgICAzICAgIDMgICAgMSAgICAxCiAwLjM2OTgwNTE4NDAwOTQxMzEgICAgMyAgICAzICAgIDIgICAgMgogMC4wMDE2ODgzNjg1NjU1MTQwOSAgICAzICAgIDMgICAgMyAgICAxCiAwLjMzNzQ3NTY1NjE5Nzk5NjIgICAgMyAgICAzICAgIDMgICAgMwogLTUuNTQzMjc1Nzc0OTIyNzQ3ZS0xNSAgICA0ICAgIDEgICAgMSAgICAxCiAtNS4xMDU4NTU1OTY5NjkzMjllLTE1ICAgIDQgICAgMSAgICAyICAgIDIKIC01LjA0MjUxNzk3OTAxMzI2ZS0xNSAgICA0ICAgIDEgICAgMyAgICAzCiAwLjAyMzEzMDI2MzY1NTI3MjM5ICAgIDQgICAgMSAgICA0ICAgIDEKIDAuMDA4MjA0MTE0MjA4ODMxOTE0ICAgIDQgICAgMiAgICA0ICAgIDIKIC0xLjIxMTI4NTIzMDcxMTgxZS0xNSAgICA0ICAgIDMgICAgMiAgICAyCiAtMi45MzQ4OTQwMTQwMDU0MThlLTE1ICAgIDQgICAgMyAgICAzICAgIDEKIDEuNDYzNDI4NTExODIzODk2ZS0xNCAgICA0ICAgIDMgICAgMyAgICAzCiAtMC4wMjgyMDU2NzEzMzkxNzA4NyAgICA0ICAgIDMgICAgNCAgICAxCiAwLjA4ODY4OTM1MTg5MTYwOTYyICAgIDQgICAgMyAgICA0ICAgIDMKIDAuMzc1ODcxOTk3MzQwMTg3NyAgICA0ICAgIDQgICAgMSAgICAxCiAwLjM3NjQ4ODU5MjYyNzg4ODYgICAgNCAgICA0ICAgIDIgICAgMgogNy42MTU2MDM2MjM2MTM0OTVlLTA1ICAgIDQgICAgNCAgICAzICAgIDEKIDAuMzMzNDQ2NDI2MzM2MDQzOSAgICA0ICAgIDQgICAgMyAgICAzCiA1LjE0NjAwMTA5OTYwOTM4OWUtMTUgICAgNCAgICA0ICAgIDQgICAgMQogLTEuNTE4MTMxNzA3Njk0MDUyZS0xNCAgICA0ICAgIDQgICAgNCAgICAzCiAwLjM0NTY2NDMyMjIzMjY3MTYgICAgNCAgICA0ICAgIDQgICAgNAogLTIuNTgxOTMwNDY0NzYyMTA2ICAgIDEgICAgMSAgMCAgMAogLTIuNTUwODM5MTc2ODI0NTczICAgIDIgICAgMiAgMCAgMAogLTAuMjA2NjkyNDAzMTkzMTAyNCAgICAzICAgIDEgIDAgIDAKIC0xLjIxODAwOTk1OTU0NTA1OSAgICAzICAgIDMgIDAgIDAKIDEuNTAzMDIxNTg5ODY3MjAxZS0xNCAgICA0ICAgIDEgIDAgIDAKIDEuMTE5NjUyNzIzMTg2Mzg1ZS0xNCAgICA0ICAgIDMgIDAgIDAKIC0xLjE3MzUyODQzMTM1MDAxMyAgICA0ICAgIDQgIDAgIDAKIC02OS43ODkyMjgyMzU3Njk0NCAgMCAgMCAgMCAgMAo="
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -75.9839932282052,
+      "casci_ground_energy_hartree": -75.98510468186072,
+      "casci_first_excited_hartree": -75.65561073458171,
+      "exact_qubit_ground_energy_hartree_like": null
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -75.9839932282052,
+      "mp2_energy_hartree": -76.11279946283419,
+      "ccsd_energy_hartree": -76.119326545202,
+      "ccsd_t_energy_hartree": -76.120320876856,
+      "mp2_correlation": -0.1288062346289962,
+      "ccsd_t_correlation": -0.1363276486508056,
+      "pyscf_version": "2.5.0",
+      "computed_utc": "2026-05-11T19:04:51.894334+00:00",
+      "basis": "6-31g"
+    },
+    "vqe": {
+      "best_energy_hartree": -75.98447272863308,
+      "optimal_params": [
+        0.0005905597643150643,
+        3.1431735673614,
+        -0.845175103884191,
+        -2.0460336746337004,
+        0.021120270194068647,
+        -3.1410742305183112,
+        2.9382586798825088,
+        0.13420996847089586,
+        0.0006216209294974362,
+        -0.0034559533608084403,
+        4.181183521281734,
+        1.9683902879481054
+      ],
+      "num_params": 12,
+      "nfev": 4000,
+      "optimizer": "COBYLA",
+      "multistart_runs": 5,
+      "computed_utc": "2026-05-11T19:06:34.724069+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 0.0006319532276393147,
+      "beats_classical": true,
+      "flags": [
+        "gap_certified",
+        "beats_classical"
+      ],
+      "notes": null
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "0038ed5da775f9e30ed7374ff0e473152956b2e8f43a0af3b27189dba91be0a9",
+    "source_schema_version": "3.0.0",
+    "created_utc": "2026-05-11T19:06:34.724583+00:00",
+    "tool_versions": {
+      "python": "3.11.14",
+      "pyscf": "2.5.0",
+      "pennylane": "0.44.1",
+      "openfermion": "1.7.1",
+      "numpy": "1.26.4",
+      "scipy": "1.17.0",
+      "git_commit": "dff47f8"
+    },
+    "environment": {
+      "platform": "linux"
+    }
+  },
+  "trust": {
+    "level": "certified",
+    "certified_utc": "2026-05-11T19:06:34.724583+00:00",
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 800,
+    "multistart": 5,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 8,
+    "num_qubits_tapered": 4,
+    "ansatz_num_parameters": 12,
+    "ansatz_depth": 9,
+    "ansatz_num_2q_gates": 6,
+    "ansatz_num_1q_gates": 12,
+    "non_clifford_gate_count": 12,
+    "t_gate_estimate": 144,
+    "t_gate_synthesis_epsilon": 0.001
+  }
+}
