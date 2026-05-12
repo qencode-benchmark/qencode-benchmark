@@ -1,0 +1,49 @@
+name: Reproducibility CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  verify:
+    name: Verify 2 benchmark entries (H2 + HF, 6-31G)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-v3-${{ hashFiles('requirements-v3.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-v3-
+
+      - name: Install dependencies
+        run: pip install -r requirements-v3.txt
+
+      # --tolerance 1e-8 Ha is 7 orders of magnitude stricter than the 0.01 Ha
+      # certification threshold. We use it (rather than exact SHA-256) because
+      # GitHub's python-version: "3.11" may resolve to a different 3.11.x patch
+      # than the one used at certification (3.11.14). Exact hash verification
+      # can be run locally with matching tool versions (see docs/VERIFY.md).
+      - name: Verify H2 (JW / UCCSD / 6-31G)
+        run: |
+          python scripts/verify_entry.py \
+            releases/v3.1/db/H2_631g_JW_UCCSD_v3_tapered__sha256_c311a3dfdda0df10.json \
+            --tolerance 1e-8
+
+      - name: Verify HF (JW / UCCSD / 6-31G)
+        run: |
+          python scripts/verify_entry.py \
+            releases/v3.1/db/HF_631g_JW_UCCSD_v3_tapered__sha256_027087b777a912eb.json \
+            --tolerance 1e-8

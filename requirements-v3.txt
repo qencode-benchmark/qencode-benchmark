@@ -1,0 +1,16 @@
+# QEncode Suite v3 / v3.1 dependencies
+# Exact versions used to generate the certified Suite v3.1 (6-31G) entries.
+# Pinned for reproducibility — SHA-256 hash verification requires these exact versions.
+#
+# Install:
+#   conda create -n qencode python=3.11
+#   conda activate qencode
+#   pip install -r requirements-v3.txt
+#
+# Requires Python 3.11.x (entries generated with 3.11.14)
+
+pyscf==2.5.0
+pennylane==0.44.1
+openfermion==1.7.1
+numpy==1.26.4
+scipy==1.17.0
