@@ -2,10 +2,10 @@
 """
 One-time rehash script for Suite v3 / v3.1 entries.
 
-The original entries were hashed with git_commit included in provenance.
-After fixing generate_entry_v3.py to exclude git_commit from the hash
-(so hashes are stable across commits), this script recomputes entry_hash_sha256
-for all stored entries in-place.
+Recomputes entry_hash_sha256 for all stored entries using the same
+volatile-field exclusion as the fixed generate_entry_v3.py:
+  - timestamps (created_utc, computed_utc, certified_utc)
+  - git_commit, entry_id, signature fields
 
 entry_id and filenames are NOT changed — only entry_hash_sha256 is updated.
 
@@ -17,43 +17,44 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 
+# Must match _HASH_EXCLUDE in generate_entry_v3.py exactly
+_HASH_EXCLUDE = {
+    "created_utc", "entry_id", "entry_hash_sha256",
+    "git_commit",
+    "computed_utc", "certified_utc",
+    "signature_b64", "signing_key_id",
+}
+
+
+def _strip_volatile(obj):
+    if isinstance(obj, dict):
+        return {k: _strip_volatile(v) for k, v in obj.items() if k not in _HASH_EXCLUDE}
+    if isinstance(obj, list):
+        return [_strip_volatile(v) for v in obj]
+    return copy.deepcopy(obj)
+
 
 def stable_hash(d: dict) -> str:
-    """SHA-256 of canonical JSON (sorted keys, compact separators)."""
     canonical = json.dumps(d, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
     return hashlib.sha256(canonical.encode()).hexdigest()
 
 
 def rehash_entry(entry: dict) -> tuple[str, str]:
-    """
-    Recompute the entry hash excluding git_commit from provenance.
-    Returns (old_hash, new_hash).
-    """
+    """Returns (old_hash, new_hash)."""
     old_hash = entry.get("provenance", {}).get("entry_hash_sha256", "")
-
-    # Work on a copy of provenance without git_commit
-    import copy
-    work = copy.deepcopy(entry)
-    work["provenance"].pop("git_commit", None)
-    # Also clear the hash and entry_id fields (as the generator does before hashing)
-    work["provenance"]["entry_hash_sha256"] = ""
-    work["entry_id"] = None
-    if "trust" in work:
-        work["trust"]["signature_b64"] = None
-        work["trust"]["signing_key_id"] = None
-
-    new_hash = stable_hash(work)
+    new_hash = stable_hash(_strip_volatile(entry))
     return old_hash, new_hash
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Rehash v3 entries to exclude git_commit.")
+    ap = argparse.ArgumentParser(description="Rehash v3 entries excluding volatile fields.")
     ap.add_argument("--db-dir", default=None,
                     help="Path to db directory (default: both v3 and v3.1)")
     ap.add_argument("--write", action="store_true",
@@ -73,9 +74,7 @@ def main():
     for db_dir in db_dirs:
         if not db_dir.exists():
             continue
-        files = sorted(db_dir.glob("*.json"))
-        # Skip non-entry files
-        files = [f for f in files if "sha256" in f.name]
+        files = sorted(f for f in db_dir.glob("*.json") if "sha256" in f.name)
         print(f"\n{db_dir} — {len(files)} entries")
 
         for fpath in files:

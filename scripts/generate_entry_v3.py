@@ -689,6 +689,30 @@ def stable_hash(d: dict) -> str:
     return hashlib.sha256(canonical.encode()).hexdigest()
 
 
+# Fields excluded from the entry hash — these are run-time metadata that
+# change on every execution and must not affect reproducibility.
+_HASH_EXCLUDE = {
+    # top-level
+    "created_utc", "entry_id", "entry_hash_sha256",
+    # provenance
+    "git_commit",
+    # timestamps inside nested objects
+    "computed_utc", "certified_utc",
+    # signature (filled after hashing)
+    "signature_b64", "signing_key_id",
+}
+
+
+def _strip_volatile(obj):
+    """Return a deep copy of obj with all _HASH_EXCLUDE keys removed."""
+    import copy
+    if isinstance(obj, dict):
+        return {k: _strip_volatile(v) for k, v in obj.items() if k not in _HASH_EXCLUDE}
+    if isinstance(obj, list):
+        return [_strip_volatile(v) for v in obj]
+    return copy.deepcopy(obj)
+
+
 def try_sign_hash(entry_hash: str):
     """
     Optional Ed25519 signing. Returns (sig_b64, key_id) or (None, None).
@@ -1011,14 +1035,10 @@ def assemble_entry(mol_config: dict, basis: str, mapping: str,
         },
     }
 
-    # Hash the entry.
-    # git_commit is repo metadata (changes with every push) and is excluded
-    # from the hash so that results remain reproducible after new commits.
-    # All scientific fields (energies, geometry, circuit stats, tool versions)
-    # are included.
-    _git_commit_saved = entry["provenance"].pop("git_commit", None)
-    h               = stable_hash(entry)
-    entry["provenance"]["git_commit"] = _git_commit_saved  # restore after hash
+    # Hash the entry over scientific content only.
+    # Volatile metadata (timestamps, git_commit, entry_id, signature) are
+    # stripped before hashing so the hash is stable across runs and commits.
+    h               = stable_hash(_strip_volatile(entry))
     sig_b64, key_id = try_sign_hash(h)
 
     entry["provenance"]["entry_hash_sha256"] = h
