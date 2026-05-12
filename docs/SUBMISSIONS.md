@@ -1,64 +1,33 @@
-# Submissions (v1)
+# Benchmark Submissions
 
-This document defines how external users can submit benchmark results for validation and (optionally) inclusion in QEncode public datasets.
-
-Submissions are designed for **algorithm researchers**: simple to create, easy to validate, and reproducible.
-
-Commercial/onboarding links:
-
-- Pricing / certification: https://www.qencode-benchmark.org/pricing
-- Apply for access: https://www.qencode-benchmark.org/apply
-- Contact: quencodebenchmark@gmail.com
+QEncode uses a **managed certification model** — benchmarks are executed on QEncode
+infrastructure under controlled, reproducible conditions and independently signed.
 
 ---
 
-## Submission format
+## How to get your algorithm certified
 
-Submissions use the JSON schema:
-
-- `schema/submission_v1.json`
-
-At a high level, a submission includes:
-
-- **suite identity** (name + version)
-- **submitter metadata**
-- the **benchmark entry JSON** (schema v2)
-
----
-
-## Validate a submission (recommended first step)
-
-```bash
-python scripts/validate_submission.py submission.json
-```
-
-If validation succeeds, the script exits with code 0 and prints a short summary. If it fails, it prints a readable error list and exits non-zero.
+1. Visit **[qencode-benchmark.org/pricing](https://www.qencode-benchmark.org/pricing)**
+   to choose a certification plan.
+2. Submit your algorithm and configuration via the customer dashboard.
+3. QEncode runs your entry against the official Suite v3.1 benchmark definitions
+   (fixed molecules, active spaces, mappings, optimizer protocol).
+4. Results are signed with Ed25519, producing a verifiable certification receipt.
+5. Certified entries appear on the public leaderboard at
+   [qencode-benchmark.org/leaderboard](https://www.qencode-benchmark.org/leaderboard).
 
 ---
 
-## Submit a result
+## Self-reproduction
 
-```bash
-python scripts/submit_result.py submission.json
-```
+Anyone can reproduce any certified entry independently using this repository.
+Every leaderboard entry's Details page provides the exact reproduce command,
+tool versions, and SHA-256 provenance hash.
 
-This copies the validated submission into:
-
-- `datasets/submissions/v1/`
-
-It does not automatically publish anything; it just stages the submission in a canonical place so it can be reviewed or bundled into a dataset release later.
+See [QUICK_START.md](QUICK_START.md) to get started.
 
 ---
 
-## Notes on eligibility
+## Contact
 
-Passing submission validation does **not** automatically imply leaderboard eligibility.
-
-Leaderboard eligibility is defined in:
-
-- `docs/LEADERBOARD_RULES_V1.md`
-
-Benchmark methodology is defined in:
-
-- `docs/BENCHMARK_SPECIFICATION_V1.md`
-
+quencodebenchmark@gmail.com

@@ -1,87 +1,91 @@
-# Quick Start — Run the official QEncode benchmark
+# Quick Start — Run a QEncode Suite v3.1 Benchmark
 
-This quick start runs the **official Standard Benchmark Suite v1** and produces the leaderboard datasets in one command.
+Reproduce any certified entry from Suite v3.1 (6-31G basis) locally in a few commands.
 
-If you haven't installed dependencies yet, see `docs/GETTING_STARTED.md` first.
-
-Official platform links:
+Official platform:
 
 - Website: https://www.qencode-benchmark.org
-- Pricing / certification: https://www.qencode-benchmark.org/pricing
-- Apply for access: https://www.qencode-benchmark.org/apply
+- Live leaderboard: https://www.qencode-benchmark.org/leaderboard
+- Certification / pricing: https://www.qencode-benchmark.org/pricing
 - Contact: quencodebenchmark@gmail.com
 
-At minimum, Standard Suite v1 requires **PyYAML**:
+---
 
-```powershell
-python -m pip install pyyaml
+## 1. Install
+
+```bash
+git clone https://github.com/qencode-benchmark/qencode-benchmark.git
+cd qencode-benchmark
+conda create -n qencode python=3.11
+conda activate qencode
+pip install -r requirements.txt
+```
+
+> PySCF is required and installs cleanly on Linux/macOS via pip or conda-forge.
+> On Windows, use WSL + Conda (see [GETTING_STARTED.md](GETTING_STARTED.md)).
+
+---
+
+## 2. Reproduce a single entry
+
+```bash
+python scripts/generate_entry_v3.py \
+  --molecule HF \
+  --basis 6-31g \
+  --mapping parity \
+  --ansatz-type uccsd \
+  --multistart 10 \
+  --seed 42
+```
+
+The SHA-256 hash in the output should match `entry_hash_sha256` in the corresponding
+artifact JSON at `releases/v3.1/db/`.
+
+---
+
+## 3. Run the full certified suite
+
+```bash
+python scripts/run_suite_v3.py \
+  --basis 6-31g \
+  --out-dir releases/v3.1/db \
+  --skip-research
+```
+
+Omit `--skip-research` to also run N₂ (research tier).
+
+---
+
+## 4. Regenerate leaderboard CSVs
+
+```bash
+python scripts/export_leaderboard_v3.py \
+  --db-dir releases/v3.1/db \
+  --suite-version 3.1
 ```
 
 ---
 
-## One command (recommended)
+## Benchmark molecules (Suite v3.1)
 
-From the repo root:
-
-```powershell
-python scripts/run_qencode_benchmark.py
-```
-
-This runs:
-
-1. Standard Suite v1 (`scripts/run_standard_suite.py`)
-2. Leaderboard CSV generation (`scripts/generate_leaderboard.py`)
-3. Leaderboard Markdown report (`scripts/generate_leaderboard_report.py`)
-4. Leaderboard audit (`scripts/audit_leaderboard.py`)
-5. Public dataset release (`scripts/release_leaderboard_v1.py`)
-
-Outputs:
-
-- `datasets/leaderboard/` (internal CSVs)
-- `artifacts/benchmark_leaderboard.md`
-- `artifacts/leaderboard_audit_v1.md`
-- `datasets/qencode_leaderboard_v1/` (public release snapshot)
+| Molecule | Formula | Active Space | Qubits (tapered) | Tier |
+|----------|---------|-------------|-----------------|------|
+| Hydrogen | H₂ | [2e, 2o] | 1 | Certified |
+| Hydrogen Fluoride | HF | [2e, 2o] | 1 | Certified |
+| Lithium Hydride | LiH | [4e, 4o] | 4 | Certified |
+| Beryllium Hydride | BeH₂ | [4e, 4o] | 3 | Certified |
+| Water | H₂O | [4e, 4o] | 4–5 | Certified |
+| Ammonia | NH₃ | [4e, 4o] | 4–5 | Certified |
+| Nitrogen | N₂ | [6e, 6o] | 8 | Research |
 
 ---
 
-## Run a single molecule
+## Pipeline
 
-```powershell
-python scripts/run_qencode_benchmark.py --molecule H2
 ```
-
----
-
-## Run with workers (parallel suite execution)
-
-```powershell
-python scripts/run_qencode_benchmark.py --workers 8
+PySCF (CASCI reference, 6-31G basis)
+  → PennyLane (qubit Hamiltonian, JW / Parity / BK mapping)
+  → Z2 symmetry tapering
+  → COBYLA VQE (10 multistart runs, seed=42)
+  → SHA-256 provenance hash
 ```
-
----
-
-## Skip the audit
-
-```powershell
-python scripts/run_qencode_benchmark.py --skip-audit
-```
-
----
-
-## Don’t resume (force re-run suite jobs)
-
-```powershell
-python scripts/run_qencode_benchmark.py --no-resume
-```
-
----
-
-## Advanced (paths and scoring)
-
-```powershell
-python scripts/run_qencode_benchmark.py `
-  --db-dir releases/v2/db `
-  --leaderboard-dir datasets/leaderboard `
-  --gap-key gap_ideal
-```
-

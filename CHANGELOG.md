@@ -4,6 +4,19 @@ All notable changes to QEncode are recorded here.
 
 ---
 
+## 2026-05-12 — Suite v3.1 Release (6-31G basis)
+
+- Upgraded basis set from STO-3G to 6-31G (split-valence) — ~5× larger CCSD(T) correlation energies
+- 42 benchmark entries: 30 certified + 12 research (N₂) across 7 molecules and 3 mappings
+- All 30 certified entries satisfy `|E_VQE − E_CASCI| < |E_CCSD(T) − E_HF|`
+- Per-entry verification pages live at `/entry/<entry_id>`
+- GitHub Release v3.1.0 with `qencode-suite-v3.1-artifacts.zip` attached
+- Badge renamed "Beats CCSD(T)" with clarifying tooltip
+- UCCSD circuit metrics note added to entry pages explaining symbolic operators
+- Ansatz Guide panel added to leaderboard (UCCSD vs HEA comparison)
+
+---
+
 ## 2026-04-25 — Phase 5: Customer Dashboard + Auth
 
 - Added Clerk v6 authentication to the website

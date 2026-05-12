@@ -1,37 +1,40 @@
-# TRUST POLICY (qencode-db)
+# Trust Policy — QEncode Suite v3.1
 
-## Canonical data
-- **v1 canonical VQE:** `validation.vqe`
-- **v2 canonical VQE:** `results.vqe`
+## Certification criterion
 
-Legacy data is **non-canonical** and kept for traceability only:
-- **v1 legacy:** `validation.legacy.*`
-- **v2 legacy:** `results.legacy.*` (if present)
+A Suite v3.1 entry is **Certified** when:
 
-## Units
-All energies are **hartree_like**.
+```
+|E_VQE − E_CASCI| < |E_CCSD(T) − E_HF|
+```
 
-## References
-- **HF reference**
-  - v1: `validation.classical_reference.hf_energy_hartree_like`
-  - v2: `results.reference.hf_energy_hartree_like`
-- **Exact reference**
-  - v1: `validation.exact_qubit_ground_energy.energy`
-  - v2: `results.reference.exact_qubit_ground_energy_hartree_like`
+In plain terms: the VQE simulation error (gap between VQE energy and the exact CASCI
+ground state) must be smaller than the CCSD(T) correlation energy — the best
+single-reference perturbative classical result for that molecule and basis set.
 
-“Exact” means **exact diagonalization of the stored qubit Hamiltonian** (when feasible).
+This is a precision comparison within the same molecular system. It is not a claim that
+quantum computing beats classical computing overall.
 
-## Trusted benchmark rule (v2)
-An entry is **trusted** if:
-- `results.quality.trusted == true`
+All 30 certified Suite v3.1 entries satisfy this criterion.
 
-Default trust threshold:
-- `abs(vqe - exact) <= 0.01` when both are present
+---
 
-Entries may be **valid but incomplete**:
-- Missing VQE and/or exact values are allowed, but such entries are not trusted.
+## Research tier
 
-## Reproducibility
-- v2 entries are derived from v1 via: `scripts/migrate_v1_to_v2.py`
-- Repo-wide health check: `python3 scripts/check_all.py`
+Entries that do not meet the certification threshold are labelled **Validated (Research)**.
+They are correct and reproducible — the gap reflects a physical limitation of the method
+on that system (e.g. N₂'s strongly-correlated triple bond), not an implementation error.
 
+Suite v3.1 has 12 research-tier entries, all from N₂ with the 6-31G basis.
+
+---
+
+## Provenance
+
+Every entry includes:
+- `entry_hash_sha256` — SHA-256 hash of the canonical entry JSON
+- `provenance.tool_versions` — exact Python, PySCF, PennyLane, SciPy, NumPy versions
+- `created_utc` — UTC timestamp of generation
+
+The hash is reproducible: running `generate_entry_v3.py` with the same flags and seed
+must produce a matching hash.
