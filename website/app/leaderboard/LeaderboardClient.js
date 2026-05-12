@@ -329,11 +329,12 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Badge className="bg-emerald-600 text-white text-xs gap-1 cursor-help">
-                              <Zap className="h-3 w-3" /> Beats Classical
+                              <Zap className="h-3 w-3" /> Beats CCSD(T)
                             </Badge>
                           </TooltipTrigger>
                           <TooltipContent className="max-w-xs text-xs space-y-1">
-                            <p className="font-semibold">VQE surpasses CCSD(T)</p>
+                            <p className="font-semibold">VQE error gap &lt; CCSD(T) correlation energy</p>
+                            <p className="text-muted-foreground">This means the VQE simulation error is smaller than the best single-reference perturbative classical result — not that quantum beats classical computing overall.</p>
                             <p>VQE gap: <span className="font-mono">{fmtGap(r.gap)} Ha</span></p>
                             {r.ccsdTCorrelation != null && (
                               <p>CCSD(T) corr.: <span className="font-mono">{fmtGap(Math.abs(r.ccsdTCorrelation))} Ha</span></p>
@@ -592,6 +593,9 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
                 They represent strongly-correlated systems or mapping configurations where
                 standard UCCSD reaches its physical limit{basisLabel ? ` with the ${basisLabel} basis` : ""}. Results are reproducible and correct —
                 the gap reflects the method&apos;s limitation, not an implementation error.
+                Entries that do meet the CCSD(T) threshold carry the <strong>Beats CCSD(T)</strong> badge,
+                which means the VQE error is smaller than the best single-reference perturbative classical result
+                for that molecule — not that quantum beats classical computing overall.
               </p>
             </div>
             <LeaderboardTable rows={filteredResearch} category="research" basisLabel={basisLabel} />
@@ -616,9 +620,9 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
           </span>
           <span className="flex items-center gap-1.5">
             <Badge className="bg-emerald-600 text-white text-xs gap-1">
-              <Zap className="h-3 w-3" /> Beats Classical
+              <Zap className="h-3 w-3" /> Beats CCSD(T)
             </Badge>
-            VQE gap &lt; CCSD(T) correlation energy (hover for ratio)
+            VQE error &lt; CCSD(T) correlation energy — hover for details
           </span>
           <span className="flex items-center gap-1.5">
             <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">

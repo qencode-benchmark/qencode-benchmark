@@ -136,8 +136,8 @@ export default async function EntryPage({ params }) {
             <Badge variant="secondary" className="gap-1">Validated (Research)</Badge>
           )}
           {beatsClassical && (
-            <Badge className="bg-emerald-600 text-white gap-1">
-              <Zap className="h-3 w-3" /> Beats Classical
+            <Badge className="bg-emerald-600 text-white gap-1" title="VQE error gap is smaller than the CCSD(T) correlation energy for this molecule and basis set">
+              <Zap className="h-3 w-3" /> Beats CCSD(T)
             </Badge>
           )}
           <Badge variant="outline" className="font-mono text-xs">{prob.basis}</Badge>
