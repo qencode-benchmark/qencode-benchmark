@@ -108,7 +108,7 @@
     }
   },
   "provenance": {
-    "entry_hash_sha256": "ccf1b91d25f740c01810712cb97252e11ca5e8e2cc257c9d307eeff3705f934f",
+    "entry_hash_sha256": "0fa004f3a2987ad4704d99ab9bbfa23666f1d9fb8e1b4838a57b705e1235aec9",
     "source_schema_version": "3.0.0",
     "created_utc": "2026-05-11T09:03:56.639037+00:00",
     "tool_versions": {
