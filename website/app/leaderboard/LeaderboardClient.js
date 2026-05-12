@@ -628,6 +628,40 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
           </span>
         </div>
       </div>
+
+      {/* ── Ansatz guide ───────────────────────────────────────────────────── */}
+      <details className="group rounded-lg border bg-muted/10 text-xs">
+        <summary className="flex cursor-pointer select-none items-center gap-2 p-4 font-medium text-muted-foreground hover:text-foreground transition-colors list-none">
+          <Info className="h-3.5 w-3.5 shrink-0" />
+          Ansatz guide — UCCSD vs HEA, and why some circuit metrics show &ldquo;—&rdquo;
+          <span className="ml-auto text-muted-foreground/50 group-open:rotate-180 transition-transform">▾</span>
+        </summary>
+        <div className="border-t px-4 pb-4 pt-3 space-y-4 text-muted-foreground">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {/* UCCSD */}
+            <div className="rounded-md border bg-background p-3 space-y-1.5">
+              <p className="font-semibold text-foreground">UCCSD — Unitary Coupled Cluster</p>
+              <p>Chemistry-motivated ansatz that applies all single and double electronic excitations from the Hartree-Fock reference state. Produces the best energies because the circuit is designed around the molecule&apos;s physics.</p>
+              <p className="text-amber-700 dark:text-amber-400 font-medium">Why 2Q gates and depth show &ldquo;—&rdquo;:</p>
+              <p>UCCSD uses exponential Pauli operators (<span className="font-mono">exp(iθH)</span>) that are symbolic until compiled for a specific hardware target. The raw gate count before transpilation is not meaningful for hardware comparison, so these columns are intentionally left blank. On real superconducting hardware, a single UCCSD layer for LiH (4 qubits) typically expands to hundreds of CNOT gates after decomposition.</p>
+              <p className="text-amber-700 dark:text-amber-400 font-medium">N₂ convergence challenge:</p>
+              <p>N₂ with 6-31G has 404 UCCSD parameters and a strongly-correlated triple bond. Only 1 of 10 optimiser restarts converged to a minimum — the landscape is exceptionally rugged at this scale. This is why N₂ UCCSD entries sit in the Research tier rather than Certified.</p>
+            </div>
+            {/* HEA */}
+            <div className="rounded-md border bg-background p-3 space-y-1.5">
+              <p className="font-semibold text-foreground">HEA — Hardware-Efficient Ansatz</p>
+              <p>Brick-layer circuit of alternating single-qubit rotations (RY) and CNOT entanglers, repeated for a fixed number of layers. The structure is chosen to minimise gate count on near-term devices rather than to match any chemical property of the molecule.</p>
+              <p className="text-emerald-700 dark:text-emerald-400 font-medium">Why 2Q gates and depth are shown:</p>
+              <p>HEA uses only native hardware gates (RY, CNOT), so the circuit is already in a hardware-ready form. Gate counts reflect what would actually run on a device — making HEA entries directly comparable in the Lowest Cost and Balanced categories.</p>
+              <p className="text-emerald-700 dark:text-emerald-400 font-medium">Trade-off:</p>
+              <p>HEA achieves near-chemical-accuracy for small molecules but may plateau before reaching UCCSD accuracy on larger or strongly-correlated systems, since it has no built-in knowledge of the molecular Hamiltonian.</p>
+            </div>
+          </div>
+          <p className="text-muted-foreground/70 border-t pt-3">
+            All energies are computed on a classical simulator (PennyLane + NumPy backend) with exact statevector simulation — no shot noise. Circuit metrics refer to the pre-simulation ansatz structure.
+          </p>
+        </div>
+      </details>
     </div>
   );
 }

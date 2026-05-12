@@ -184,6 +184,24 @@ export default async function EntryPage({ params }) {
           <Row label="Num parameters"  value={cs.ansatz_num_parameters ?? vqe.num_params} />
           {cs.ansatz_depth   != null && <Row label="Circuit depth"     value={cs.ansatz_depth} />}
           {cs.ansatz_num_2q_gates != null && <Row label="2Q gates"       value={cs.ansatz_num_2q_gates} />}
+          {enc.ansatz_type?.toLowerCase().includes("uccsd") && (
+            <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 px-3 py-2.5 text-xs text-amber-800 dark:text-amber-300 space-y-1">
+              <p className="font-semibold">Note on UCCSD circuit metrics</p>
+              <p>
+                UCCSD uses exponential Pauli operators (<span className="font-mono">exp(iθH)</span>) that are symbolic
+                before compilation. Circuit depth and 2-qubit gate counts are not reported here because they depend
+                entirely on the target hardware and transpiler — a 4-qubit UCCSD circuit for LiH expands to
+                hundreds of CNOTs after decomposition on a superconducting device.
+              </p>
+              {(vqe.num_params ?? cs.ansatz_num_parameters) >= 100 && (
+                <p>
+                  This entry has <strong>{vqe.num_params ?? cs.ansatz_num_parameters} variational parameters</strong> — a
+                  large landscape that requires multistart optimisation to reliably find the global minimum.
+                  {(vqe.multistart_runs ?? 0) > 0 && ` ${vqe.multistart_runs} independent restarts were run.`}
+                </p>
+              )}
+            </div>
+          )}
         </Section>
 
         {/* Energies */}
