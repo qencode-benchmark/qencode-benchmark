@@ -4,6 +4,8 @@
 
 🌐 **[qencode-benchmark.org](https://www.qencode-benchmark.org)** &nbsp;·&nbsp; 📊 **[Live Leaderboard](https://www.qencode-benchmark.org/leaderboard)** &nbsp;·&nbsp; 📄 **[Benchmark Spec](https://www.qencode-benchmark.org/benchmark)** &nbsp;·&nbsp; 💰 **[Pricing](https://www.qencode-benchmark.org/pricing)**
 
+[![Reproducibility CI](https://github.com/qencode-benchmark/qencode-benchmark/actions/workflows/ci.yml/badge.svg)](https://github.com/qencode-benchmark/qencode-benchmark/actions/workflows/ci.yml)
+
 ---
 
 ## What QEncode does
@@ -16,7 +18,7 @@ Most published VQE results cannot be independently reproduced — different team
 - **Public leaderboard** — certified entries appear on the live leaderboard, ranked by accuracy gap, circuit cost, and a balanced score
 - **Per-entry artifact pages** — every leaderboard row links to `/entry/<id>` showing full geometry, energies, optimizer settings, tool versions, and a SHA-256 provenance hash
 
-## Suite v3.1 benchmark molecules (6-31G basis)
+## Suite v3.1 benchmark molecules (6-31G basis) — current
 
 | Molecule | Formula | Active Space | Qubits (JW, tapered) | Tier |
 |----------|---------|-------------|---------------------|------|
@@ -30,7 +32,17 @@ Most published VQE results cannot be independently reproduced — different team
 
 **Suite v3.1** uses the **6-31G split-valence basis** — an upgrade from Suite v3 (STO-3G) that produces physically realistic CCSD(T) correlation energies (~5× larger than STO-3G) and is standard for NISQ-era VQE demonstrations.
 
-All 30 certified entries in Suite v3.1 achieve `beats_classical = True`, meaning the VQE gap is smaller than the |CCSD(T) correlation energy| classical baseline.
+All 30 certified entries in Suite v3.1 achieve `beats_ccsd_t = True`, meaning the VQE gap is smaller than the |CCSD(T) correlation energy| classical baseline.
+
+## Suite v3.2 — Research+ tier (planned)
+
+Suite v3.2 will expand the molecule set with larger, strongly-correlated systems that sit beyond reliable UCCSD convergence — useful for hardware demonstrations and correlated-electron benchmarking.
+
+| Molecule | Formula | Active Space | Qubits (est.) | Tier |
+|----------|---------|-------------|--------------|------|
+| Ethylene | C₂H₄ | [4e, 4o] | 8–10 | Research+ |
+
+Same basis (6-31G), same pipeline, same certification rules. Research+ molecules are expected not to certify — the benchmark value is in demonstrating the circuit and tracking the gap as algorithms improve.
 
 ## Leaderboard categories
 
@@ -40,6 +52,18 @@ All 30 certified entries in Suite v3.1 achieve `beats_classical = True`, meaning
 | **Lowest Cost** | Fewest 2-qubit gates, then circuit depth |
 | **Balanced** | Equal-weight normalized rank score |
 | **Research** | Validated entries (gap ≥ 0.01 Ha or research-tier molecules) |
+
+## Reproducibility
+
+All certified entries are independently reproducible. The CI badge above runs on every commit — it re-generates H₂ and HF from scratch and verifies the VQE energy matches the stored artifact within 1×10⁻⁸ Ha (8 orders of magnitude below the certification threshold).
+
+To verify any entry locally:
+
+```bash
+python scripts/verify_entry.py releases/v3.1/db/H2_631g_JW_UCCSD_v3_tapered__sha256_c311a3dfdda0df10.json
+```
+
+See [docs/VERIFY.md](docs/VERIFY.md) for the full guide.
 
 ## Verifying an entry
 
