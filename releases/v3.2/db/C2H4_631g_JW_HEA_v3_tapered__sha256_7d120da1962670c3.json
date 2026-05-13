@@ -1,0 +1,235 @@
+{
+  "schema_version": "3.0.0",
+  "entry_id": "C2H4_631g_JW_HEA_v3_tapered__sha256_7d120da1962670c3",
+  "created_utc": "2026-05-13T07:31:36.245207+00:00",
+  "problem": {
+    "name": "C2H4",
+    "basis": "6-31g",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "C 0.6695 0.0 0.0; C -0.6695 0.0 0.0; H 1.2321 0.9289 0.0; H 1.2321 -0.9289 0.0; H -1.2321 0.9289 0.0; H -1.2321 -0.9289 0.0",
+    "active_space": {
+      "num_electrons": 4,
+      "num_spatial_orbitals": 4,
+      "method": "casci",
+      "frozen_core": false
+    }
+  },
+  "encoding": {
+    "mapping": "jordan_wigner",
+    "ansatz_type": "hea",
+    "ansatz_reps": 2,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 5,
+      "original_num_qubits": 8,
+      "tapered_num_qubits": 3,
+      "sectors": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "hf_tapered_state": [
+        1,
+        1,
+        0
+      ],
+      "bk_constant_correction_ha": null
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 3,
+      "num_pauli_terms": 20,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": -76.57529313699224
+        },
+        {
+          "pauli_string": "Z0Z1Z2",
+          "coefficient": -0.10717088745787154
+        },
+        {
+          "pauli_string": "Z2",
+          "coefficient": 0.05451983108998634
+        },
+        {
+          "pauli_string": "Z0Z1",
+          "coefficient": 0.6108786269652112
+        },
+        {
+          "pauli_string": "Z1",
+          "coefficient": 0.3309249123419038
+        },
+        {
+          "pauli_string": "Z0Z2",
+          "coefficient": 0.6011553157890133
+        },
+        {
+          "pauli_string": "Z1Z2",
+          "coefficient": 0.6186507822873313
+        },
+        {
+          "pauli_string": "Z0",
+          "coefficient": 0.43577788377361465
+        },
+        {
+          "pauli_string": "Y0Y1",
+          "coefficient": 0.004042877171795054
+        },
+        {
+          "pauli_string": "X0X1",
+          "coefficient": 0.004042877171795054
+        },
+        {
+          "pauli_string": "Y0Y2",
+          "coefficient": 0.005446682237698572
+        },
+        {
+          "pauli_string": "X0X2",
+          "coefficient": 0.005446682237698572
+        },
+        {
+          "pauli_string": "Y1Y2",
+          "coefficient": 0.055721031145658115
+        },
+        {
+          "pauli_string": "X1X2",
+          "coefficient": 0.055721031145658115
+        },
+        {
+          "pauli_string": "X0Z1Z2",
+          "coefficient": -0.007499049440430256
+        },
+        {
+          "pauli_string": "X0",
+          "coefficient": 0.007499049440430256
+        },
+        {
+          "pauli_string": "Z0X1Z2",
+          "coefficient": -0.004178102096925985
+        },
+        {
+          "pauli_string": "X1",
+          "coefficient": 0.004178102096925985
+        },
+        {
+          "pauli_string": "Z0Z1X2",
+          "coefficient": -0.004639591932351164
+        },
+        {
+          "pauli_string": "X2",
+          "coefficient": 0.004639591932351164
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1,
+        1,
+        0
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    },
+    "fcidump": "ICZGQ0kgTk9SQj0gICA0LE5FTEVDPSA0LE1TMj0wLAogIE9SQlNZTT0xLDEsMSwxLAogIElTWU09MSwKICZFTkQKIDAuMzgzMTMyNzcwNTA5MTIzOCAgICAxICAgIDEgICAgMSAgICAxCiAwLjAwODA4NTc1MzAwNTY4NTIzNiAgICAyICAgIDEgICAgMiAgICAxCiAwLjM1NDY1NzgyNDczODcxODMgICAgMiAgICAyICAgIDEgICAgMQogMC40NDQ3Nzc0MzkzOTg5ODQ5ICAgIDIgICAgMiAgICAyICAgIDIKIDAuMDEwODkzMzYxNjk2NTA5MjIgICAgMyAgICAxICAgIDMgICAgMQogLTEuNjMzMTEwMTMxMTk5NDMyZS0xNSAgICAzICAgIDIgICAgMSAgICAxCiAwLjExMTQ0MjA0ODY4Mzk2NCAgICAzICAgIDIgICAgMyAgICAyCiAwLjMzODUyOTY5OTExMTk1MyAgICAzICAgIDMgICAgMSAgICAxCiAwLjQwMDY2ODM3MzM0OTkyMDggICAgMyAgICAzICAgIDIgICAgMgogLTEuMjExMDg2MTYyNjY0NjkxZS0xNSAgICAzICAgIDMgICAgMyAgICAyCiAwLjM3OTg0OTUwMjEwMTYwNTggICAgMyAgICAzICAgIDMgICAgMwogMS40NTM5NTU0NjY4MDk5NzVlLTE1ICAgIDQgICAgMSAgICAxICAgIDEKIDEuODk3NDk0Mjc5ODEyODUxZS0xNSAgICA0ICAgIDEgICAgMiAgICAyCiAxLjUzODUyMjU4NzYxNzQyM2UtMTUgICAgNCAgICAxICAgIDMgICAgMwogMC4wMTQ5OTgxMTEyMzk0ODk3OSAgICA0ICAgIDEgICAgNCAgICAxCiAwLjAwODM1NjIxMjEwNTYzMjc4OSAgICA0ICAgIDIgICAgNCAgICAyCiAwLjAwOTI3OTE4OTI5OTI0NzM2NSAgICA0ICAgIDMgICAgNCAgICAzCiAwLjI4MTIwMjQ2MDc3OTIzNDkgICAgNCAgICA0ICAgIDEgICAgMQogMC4yNzIyNTAzNzYzNzY3MjgxICAgIDQgICAgNCAgICAyICAgIDIKIDEuNzc1NzA0NzMzMjU2NjM5ZS0xNSAgICA0ICAgIDQgICAgMyAgICAyCiAwLjI2NDkwMzI0OTk2MTMzOTIgICAgNCAgICA0ICAgIDMgICAgMwogMC4yNTQ4MzY5NTgzMTE5MTc1ICAgIDQgICAgNCAgICA0ICAgIDQKIC0xLjU4NDc0NTY1NzA5NzcxMyAgICAxICAgIDEgIDAgIDAKIC0xLjUxNjk0ODI0MDMwMDgyNiAgICAyICAgIDIgIDAgIDAKIDUuOTIzMDc5ODI4MDg3ODI5ZS0xNSAgICAzICAgIDIgIDAgIDAKIC0xLjE4MjczODY4MDc5MDkzNyAgICAzICAgIDMgIDAgIDAKIC01Ljc5MDY1MTIzNDI5MjI5NWUtMTUgICAgNCAgICAxICAwICAwCiAtMi4xMDkxMDg3MzMxNjU2MWUtMTUgICAgNCAgICAzICAwICAwCiAtMC44MjIyODY5MTk0Njg1NjcgICAgNCAgICA0ICAwICAwCiAtNzQuMDMwNTU2NjkzMzUxICAwICAwICAwICAwCg=="
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -78.00357448529655,
+      "casci_ground_energy_hartree": -78.0262776998886,
+      "casci_first_excited_hartree": -77.86018701064636,
+      "exact_qubit_ground_energy_hartree_like": null
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -78.00357448529655,
+      "mp2_energy_hartree": -78.18642623737708,
+      "ccsd_energy_hartree": -78.21367768170525,
+      "ccsd_t_energy_hartree": -78.21900712888414,
+      "mp2_correlation": -0.1828517520805235,
+      "ccsd_t_correlation": -0.21543264358759018,
+      "pyscf_version": "2.5.0",
+      "computed_utc": "2026-05-13T06:42:49.733598+00:00",
+      "basis": "6-31g"
+    },
+    "vqe": {
+      "best_energy_hartree": -78.02627742004712,
+      "optimal_params": [
+        -2.539399139080779,
+        -2.1010452842309104,
+        1.5421384480168494,
+        1.4843145577435186,
+        3.733425448764988,
+        0.43434921480956407,
+        -1.1141836138500116,
+        -1.205967414789399,
+        -1.412790133638928
+      ],
+      "num_params": 9,
+      "nfev": 4329,
+      "optimizer": "COBYLA",
+      "multistart_runs": 10,
+      "computed_utc": "2026-05-13T07:31:36.244664+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 2.7984147266124637e-07,
+      "beats_classical": true,
+      "flags": [
+        "gap_certified",
+        "beats_classical"
+      ],
+      "notes": null
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "7d120da1962670c396f12511273b7c88ad1758f04f7170d15e23340a950a4ff5",
+    "source_schema_version": "3.0.0",
+    "created_utc": "2026-05-13T07:31:36.245207+00:00",
+    "tool_versions": {
+      "python": "3.11.14",
+      "pyscf": "2.5.0",
+      "pennylane": "0.44.1",
+      "openfermion": "1.7.1",
+      "numpy": "1.26.4",
+      "scipy": "1.17.0",
+      "git_commit": "a8c6ebf"
+    },
+    "environment": {
+      "platform": "linux"
+    }
+  },
+  "trust": {
+    "level": "certified",
+    "certified_utc": "2026-05-13T07:31:36.245207+00:00",
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 500,
+    "multistart": 10,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 8,
+    "num_qubits_tapered": 3,
+    "ansatz_num_parameters": 9,
+    "ansatz_depth": 8,
+    "ansatz_num_2q_gates": 4,
+    "ansatz_num_1q_gates": 9,
+    "non_clifford_gate_count": 9,
+    "t_gate_estimate": 108,
+    "t_gate_synthesis_epsilon": 0.001
+  }
+}
