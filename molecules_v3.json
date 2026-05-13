@@ -84,8 +84,8 @@
       "units": "angstrom",
       "v3_active_space": [4, 4],
       "suite": "v3.2",
-      "tier": "research_plus",
-      "notes": "Suite v3.2 Research+ tier. Ethylene (ethene), D2h symmetry, equilibrium geometry. [4,4] active space covers π and π* orbitals plus adjacent σ/σ* — the chemically relevant correlation. 16 total electrons; active space isolates the most correlated valence shell. Expected ~8–10 qubits (JW, tapered). UCCSD will not converge to certification threshold due to strong π-bond correlation; Research+ by design. Basis: 6-31G."
+      "tier": "certified",
+      "notes": "Suite v3.2. Ethylene (ethene), D2h symmetry, equilibrium geometry. [4,4] active space covers π and π* orbitals plus adjacent σ/σ* — the chemically relevant correlation. 16 total electrons; active space isolates the most correlated valence shell. 8 qubits (JW) → 3 qubits after Z2 tapering. Both JW/UCCSD (gap 5.8e-6 Ha) and JW/HEA (gap 2.8e-7 Ha) certified and beat CCSD(T). Basis: 6-31G."
     }
   ]
 }

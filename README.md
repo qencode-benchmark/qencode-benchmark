@@ -34,15 +34,15 @@ Most published VQE results cannot be independently reproduced — different team
 
 All 30 certified entries in Suite v3.1 achieve `beats_ccsd_t = True`, meaning the VQE gap is smaller than the |CCSD(T) correlation energy| classical baseline.
 
-## Suite v3.2 — Research+ tier (planned)
+## Suite v3.2 — Ethylene (released)
 
-Suite v3.2 will expand the molecule set with larger, strongly-correlated systems that sit beyond reliable UCCSD convergence — useful for hardware demonstrations and correlated-electron benchmarking.
+Suite v3.2 adds ethylene (C₂H₄) — the first 8-qubit molecule in the benchmark set.
 
-| Molecule | Formula | Active Space | Qubits (est.) | Tier |
-|----------|---------|-------------|--------------|------|
-| Ethylene | C₂H₄ | [4e, 4o] | 8–10 | Research+ |
+| Molecule | Formula | Active Space | Qubits (JW, tapered) | VQE gap | Tier |
+|----------|---------|-------------|---------------------|---------|------|
+| Ethylene | C₂H₄ | [4e, 4o] | 3 | ≤ 5.8 × 10⁻⁶ Ha | Certified |
 
-Same basis (6-31G), same pipeline, same certification rules. Research+ molecules are expected not to certify — the benchmark value is in demonstrating the circuit and tracking the gap as algorithms improve.
+Same basis (6-31G), same pipeline, same certification rules. Both JW/UCCSD and JW/HEA entries certified and beat CCSD(T).
 
 ## Leaderboard categories
 
