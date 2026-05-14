@@ -191,28 +191,35 @@ def main():
     )
     parser.add_argument("--dry-run", action="store_true",
                         help="Print what would be written, don't write files")
-    parser.add_argument("--db-dir", default=str(DEFAULT_DB_DIR),
-                        help="Path to db directory containing JSON entry files "
-                             "(default: releases/v3/db). "
-                             "For v3.1 use: releases/v3.1/db")
+    parser.add_argument("--db-dir", action="append", default=None,
+                        dest="db_dirs",
+                        help="Path to db directory containing JSON entry files. "
+                             "Repeat to merge multiple directories. "
+                             "(default: releases/v3/db) "
+                             "Example: --db-dir releases/v3.1/db --db-dir releases/v3.2/db")
     parser.add_argument("--suite-version", default=DEFAULT_SUITE_VERSION,
                         help="Suite version string to embed in metadata (e.g. '3', '3.1')")
     args = parser.parse_args()
 
-    db_dir = Path(args.db_dir)
+    db_dirs = [Path(d) for d in (args.db_dirs or [str(DEFAULT_DB_DIR)])]
     suite_version = args.suite_version
 
     print(f"\n{'='*65}")
     print(f"  QEncode Leaderboard Export  (Suite v{suite_version})")
-    print(f"  DB:     {db_dir}")
+    for d in db_dirs:
+        print(f"  DB:     {d}")
     print(f"  Output: {OUTPUT_DIR}")
     if args.dry_run:
         print("  MODE: DRY-RUN")
     print(f"{'='*65}\n")
 
     # ── 1. Load all entries ───────────────────────────────────────────────────
-    entries = load_entries(db_dir)
-    print(f"  Loaded {len(entries)} entries from {db_dir.name}/\n")
+    entries = []
+    for db_dir in db_dirs:
+        batch = load_entries(db_dir)
+        print(f"  Loaded {len(batch)} entries from {db_dir}/")
+        entries.extend(batch)
+    print(f"  Total: {len(entries)} entries\n")
 
     rows = [r for e in entries if (r := entry_to_row(e)) is not None]
     print(f"  Valid rows: {len(rows)}")
