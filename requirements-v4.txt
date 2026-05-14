@@ -1,0 +1,18 @@
+# QEncode Suite v4 — pinned requirements
+# Generated 2026-05-13
+# Python 3.11
+#
+# Key changes from v3:
+#   pennylane 0.44.1 -> 0.45.0  (NumPy 2.0 support, API cleanups)
+#   numpy 1.26.4     -> 2.2.x   (required by PL 0.45)
+#   pyscf 2.5.0      -> 2.6.2   (latest stable)
+#   scipy 1.17.0     -> 1.13.1
+#
+# v3 entries remain reproducible with requirements-v3.txt.
+# Do NOT use this file for v3 entry reproduction.
+
+pennylane==0.45.0
+numpy==2.2.6
+pyscf==2.6.2
+scipy==1.13.1
+openfermion==1.6.1
