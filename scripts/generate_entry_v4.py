@@ -447,8 +447,10 @@ def apply_tapering(H, n_qubits: int, n_electrons: int, e_casci: float,
     is_bk = mapping.lower() in ("bravyi_kitaev", "bk")
 
     if is_bk:
-        # Adjust e_casci for the sector offset before verifying cleaned H
-        e_casci_for_verify = e_casci
+        # The tapered H lives in a shifted energy space: its ground eigenvalue
+        # is e_casci minus the constant correction that PL dropped.
+        # Pass the tapered-space reference so the verify check is correct.
+        e_casci_for_verify = e_tapered_gs  # already computed by _find_optimal_sector
         H_tapered, bk_imaginary_stripped, bk_max_imag_abs = \
             strip_imaginary_from_hamiltonian(
                 H_tapered, e_casci_for_verify,
