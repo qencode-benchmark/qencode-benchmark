@@ -1,9 +1,9 @@
 {
-  "suite_version": "3.1",
+  "suite_version": "3.2",
   "leaderboard_rules": "1",
-  "generation_date": "2026-05-12",
-  "entries_included": 30,
+  "generation_date": "2026-05-14",
+  "entries_included": 36,
   "trust_filter": "certified_only",
-  "beats_classical_count": 30,
+  "beats_classical_count": 36,
   "validated_count": 12
 }
