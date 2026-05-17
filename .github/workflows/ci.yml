@@ -7,7 +7,9 @@ on:
     branches: [master]
 
 jobs:
-  verify:
+
+  # ── v3 reproducibility: replay two committed entries ──────────────────────
+  verify-v3:
     name: Verify 2 benchmark entries (H2 + HF, 6-31G)
     runs-on: ubuntu-latest
 
@@ -20,7 +22,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Cache pip
+      - name: Cache pip (v3)
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -28,14 +30,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-v3-
 
-      - name: Install dependencies
+      - name: Install v3 dependencies
         run: pip install -r requirements-v3.txt
 
       # --tolerance 1e-8 Ha is 7 orders of magnitude stricter than the 0.01 Ha
       # certification threshold. We use it (rather than exact SHA-256) because
       # GitHub's python-version: "3.11" may resolve to a different 3.11.x patch
-      # than the one used at certification (3.11.14). Exact hash verification
-      # can be run locally with matching tool versions (see docs/VERIFY.md).
+      # than the one used at certification. Exact hash verification can be run
+      # locally with matching tool versions (see docs/VERIFY.md).
       - name: Verify H2 (JW / UCCSD / 6-31G)
         run: |
           python scripts/verify_entry.py \
@@ -47,3 +49,81 @@ jobs:
           python scripts/verify_entry.py \
             releases/v3.1/db/HF_631g_JW_UCCSD_v3_tapered__sha256_027087b777a912eb.json \
             --tolerance 1e-8
+
+  # ── v4 smoke test: generate H2 + HF entries fresh and certify ────────────
+  # Generates new entries from scratch (no committed v4 entries needed) to
+  # verify the full v4 pipeline: PySCF cc-pVDZ → PL 0.45 → JW tapering → VQE.
+  # H2 [2e,2o] and HF [2e,2o] are fast (< 5 min each); multistart=3 is enough
+  # to reach the 0.01 Ha certification threshold reliably.
+  smoke-v4:
+    name: Smoke test v4 generator (H2 + HF, cc-pVDZ)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip (v4)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-v4-${{ hashFiles('requirements-v4.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-v4-
+
+      - name: Install v4 dependencies
+        run: pip install -r requirements-v4.txt
+
+      - name: Generate and certify H2 (JW / UCCSD / cc-pVDZ)
+        run: |
+          mkdir -p /tmp/v4_ci
+          python scripts/generate_entry_v4.py \
+            --molecule H2 \
+            --mapping jordan_wigner \
+            --ansatz-type uccsd \
+            --basis cc-pvdz \
+            --multistart 3 \
+            --seed 42 \
+            --out-dir /tmp/v4_ci
+          python - <<'PYEOF'
+          import json, sys, pathlib
+          entries = list(pathlib.Path("/tmp/v4_ci").glob("H2_ccpvdz_JW_UCCSD_*.json"))
+          if not entries:
+              print("ERROR: no H2 entry generated"); sys.exit(1)
+          e = json.loads(entries[0].read_text())
+          gap = e["results"]["quality"]["abs_vqe_exact_gap"]
+          trusted = e["results"]["quality"]["trusted"]
+          print(f"H2 JW/UCCSD gap: {gap:.3e} Ha  certified={trusted}")
+          if not trusted:
+              print(f"FAIL: gap {gap:.3e} Ha exceeds 0.01 Ha threshold"); sys.exit(1)
+          print("PASS")
+          PYEOF
+
+      - name: Generate and certify HF (JW / UCCSD / cc-pVDZ)
+        run: |
+          python scripts/generate_entry_v4.py \
+            --molecule HF \
+            --mapping jordan_wigner \
+            --ansatz-type uccsd \
+            --basis cc-pvdz \
+            --multistart 3 \
+            --seed 42 \
+            --out-dir /tmp/v4_ci
+          python - <<'PYEOF'
+          import json, sys, pathlib
+          entries = list(pathlib.Path("/tmp/v4_ci").glob("HF_ccpvdz_JW_UCCSD_*.json"))
+          if not entries:
+              print("ERROR: no HF entry generated"); sys.exit(1)
+          e = json.loads(entries[0].read_text())
+          gap = e["results"]["quality"]["abs_vqe_exact_gap"]
+          trusted = e["results"]["quality"]["trusted"]
+          print(f"HF JW/UCCSD gap: {gap:.3e} Ha  certified={trusted}")
+          if not trusted:
+              print(f"FAIL: gap {gap:.3e} Ha exceeds 0.01 Ha threshold"); sys.exit(1)
+          print("PASS")
+          PYEOF

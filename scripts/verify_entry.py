@@ -140,10 +140,19 @@ def main():
     print()
 
     # ── Re-run the generator ──────────────────────────────────────────────────
-    generator = REPO / "scripts" / "generate_entry_v3.py"
+    schema_ver = stored.get("schema_version", "3.0.0")
+    if schema_ver.startswith("4."):
+        generator = REPO / "scripts" / "generate_entry_v4.py"
+    else:
+        generator = REPO / "scripts" / "generate_entry_v3.py"
     if not generator.exists():
         print(_fail(f"Generator not found: {generator}"))
         sys.exit(1)
+
+    print(_info(f"Schema version: {schema_ver} → using {generator.name}"))
+
+    # Build base command; add v4-only flags when applicable
+    orbital_opt = prob.get("orbital_optimization", "hf") if schema_ver.startswith("4.") else None
 
     with tempfile.TemporaryDirectory() as tmpdir:
         cmd = [
@@ -157,6 +166,8 @@ def main():
             "--out-dir",     tmpdir,
             "--no-colour",
         ]
+        if orbital_opt and orbital_opt != "hf":
+            cmd += ["--orbital-opt", orbital_opt]
         print(_info(f"Running: {' '.join(cmd[2:])}"))
         print()
 
