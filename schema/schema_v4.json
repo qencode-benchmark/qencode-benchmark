@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qencode-benchmark.org/schema/schema_v4.json",
+  "title": "QEncode Suite v4 entry schema",
+  "description": "Schema for QEncode Suite v4 benchmark entries. Extends v3 with: cc-pVDZ default basis, CASSCF orbital optimization, BK imaginary-strip transparency fields, and updated trust structure. Pipeline: PySCF (HF → CASSCF → CASCI) → PennyLane (JW/BK/Parity Hamiltonian) → Z2 tapering → COBYLA VQE → SHA-256 provenance hash.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version", "entry_id", "created_utc",
+    "problem", "encoding", "artifacts", "results",
+    "provenance", "trust", "run_config", "circuit_stats"
+  ],
+
+  "properties": {
+
+    "schema_version": {
+      "type": "string",
+      "const": "4.0.0",
+      "description": "Must be exactly '4.0.0' for v4 entries."
+    },
+
+    "entry_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique entry identifier. Format: {mol}_{basis}_{map}_{ans}_v4[_casscf]_tapered__sha256_{hash16}. Example: LiH_ccpvdz_JW_HEA_v4_tapered__sha256_94ee386adc535dd8"
+    },
+
+    "created_utc": {
+      "type": "string",
+      "description": "ISO 8601 UTC timestamp of entry creation."
+    },
+
+    "problem": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["name", "basis", "active_space", "orbital_optimization"],
+      "properties": {
+        "name":    { "type": "string", "minLength": 1, "description": "Molecule name, e.g. 'H2', 'LiH', 'N2'." },
+        "basis":   { "type": "string", "minLength": 1, "description": "Basis set. Default for v4: 'cc-pvdz'." },
+        "variant": { "type": ["string", "null"], "description": "Geometry variant. 'default' = equilibrium geometry." },
+        "charge":  { "type": ["integer", "null"], "description": "Molecular charge. 0 for neutral." },
+        "spin":    { "type": ["integer", "null"], "description": "Spin multiplicity − 1 (0 = singlet)." },
+        "geometry": {
+          "description": "Molecular geometry in PySCF atom-string format.",
+          "type": ["string", "array", "null"]
+        },
+        "active_space": {
+          "type": "object",
+          "required": ["num_electrons", "num_spatial_orbitals"],
+          "properties": {
+            "num_electrons":        { "type": "integer", "description": "Number of active electrons." },
+            "num_spatial_orbitals": { "type": "integer", "description": "Number of active spatial orbitals." },
+            "method":               { "type": "string",  "const": "casci", "description": "Active space method. Always 'casci' for v4." },
+            "frozen_core":          { "type": "boolean", "description": "Whether core electrons are frozen." }
+          }
+        },
+        "orbital_optimization": {
+          "type": "string",
+          "enum": ["hf", "casscf"],
+          "description": "v4 new field. 'hf' = Hartree-Fock canonical orbitals (default). 'casscf' = orbitals optimised by CASSCF before CASCI — improves VQE convergence for multireference molecules (e.g. N2). Entry ID includes '_casscf' suffix when this is 'casscf'."
+        }
+      }
+    },
+
+    "encoding": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["mapping", "ansatz_type", "tapering"],
+      "properties": {
+        "mapping": {
+          "type": "string",
+          "enum": ["jordan_wigner", "bravyi_kitaev", "parity"],
+          "description": "Qubit mapping. v4 default suite uses jordan_wigner and parity. bravyi_kitaev used only where imaginary-strip verification passes (H2, HF)."
+        },
+        "ansatz_type": {
+          "type": "string",
+          "enum": ["hardware_efficient", "uccsd"],
+          "description": "VQE ansatz. 'hardware_efficient' (HEA) = Ry rotations + CNOT entangler, depth scales with qubits. 'uccsd' = unitary coupled cluster singles and doubles."
+        },
+        "ansatz_reps": {
+          "type": ["integer", "null"],
+          "description": "Number of repetitions/layers for hardware_efficient ansatz. 3 for v4 suite. Null for uccsd."
+        },
+        "tapering": {
+          "type": "object",
+          "required": ["enabled", "method", "num_symmetries", "original_num_qubits", "tapered_num_qubits"],
+          "properties": {
+            "enabled":               { "type": "boolean", "const": true },
+            "method":                { "type": "string",  "const": "z2_symmetry", "description": "Z2 symmetry tapering via PennyLane qchem." },
+            "num_symmetries":        { "type": "integer", "description": "Number of Z2 symmetries found and removed." },
+            "original_num_qubits":   { "type": "integer", "description": "Qubit count before tapering." },
+            "tapered_num_qubits":    { "type": "integer", "description": "Qubit count after tapering." },
+            "sectors":               { "type": "array",   "items": { "type": "integer", "enum": [1, -1] }, "description": "Optimal symmetry sector eigenvalues." },
+            "hf_tapered_state":      { "type": "array",   "items": { "type": "integer", "enum": [0, 1] }, "description": "Hartree-Fock reference state in the tapered space." },
+            "bk_constant_correction_ha": {
+              "type": ["number", "null"],
+              "description": "v4 BK field. Energy correction (Ha) added post-VQE to account for the identity/constant term dropped by PennyLane's BK tapering. Non-null only for BK entries where |shift| > 0.1 Ha. Stored for full reproducibility."
+            },
+            "bk_imaginary_stripped": {
+              "type": "boolean",
+              "description": "v4 new field. True if imaginary Pauli coefficients introduced by PennyLane's BK tapering were detected and stripped. PL 0.45 has a known bug where BK tapering produces complex coefficients that should be real by symmetry. For small active spaces (H2, HF) these are below numerical noise threshold and stripped safely. For larger molecules the imaginary parts are significant — those entries are not generated with BK. Transparency flag: always stored so users know whether stripping occurred."
+            },
+            "bk_max_imaginary_abs_ha": {
+              "type": ["number", "null"],
+              "description": "v4 new field. Maximum absolute value of any imaginary Pauli coefficient found before stripping (Ha). Non-null only when bk_imaginary_stripped=true. Quantifies the magnitude of the PL 0.45 BK tapering artefact."
+            }
+          }
+        }
+      }
+    },
+
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "qubit_hamiltonian": {
+          "type": "object",
+          "properties": {
+            "num_qubits":      { "type": "integer" },
+            "num_pauli_terms": { "type": "integer" },
+            "pauli_terms":     { "type": "array",   "description": "Serialised Pauli operators and coefficients." },
+            "is_tapered":      { "type": "boolean", "const": true },
+            "framework":       { "type": "string",  "const": "pennylane" }
+          }
+        },
+        "circuits": {
+          "type": "object",
+          "properties": {
+            "hf_state":           { "type": "array" },
+            "ansatz_pennylane":   { "type": ["object", "null"] },
+            "ansatz_includes_hf": { "type": "boolean" }
+          }
+        }
+      }
+    },
+
+    "results": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["reference", "classical_comparison", "vqe", "quality"],
+      "properties": {
+
+        "reference": {
+          "type": "object",
+          "required": ["hf_energy_hartree", "casci_ground_energy_hartree"],
+          "properties": {
+            "hf_energy_hartree":           { "type": "number",         "description": "Hartree-Fock total energy (Ha)." },
+            "casci_ground_energy_hartree": { "type": "number",         "description": "CASCI ground state energy (Ha). VQE optimisation target." },
+            "casci_first_excited_hartree": { "type": ["number","null"], "description": "CASCI first excited state energy (Ha). Null in v4.0." },
+            "casscf_energy_hartree":       {
+              "type": ["number", "null"],
+              "description": "v4 new field. CASSCF total energy (Ha) when orbital_optimization='casscf'. Should equal casci_ground_energy_hartree to numerical precision (CASCI run on CASSCF orbitals). Null when orbital_optimization='hf'."
+            }
+          }
+        },
+
+        "classical_comparison": {
+          "type": "object",
+          "required": ["hf_energy_hartree", "ccsd_t_energy_hartree"],
+          "properties": {
+            "hf_energy_hartree":     { "type": "number",         "description": "HF total energy (Ha)." },
+            "mp2_energy_hartree":    { "type": ["number","null"], "description": "MP2 total energy (Ha)." },
+            "ccsd_energy_hartree":   { "type": ["number","null"], "description": "CCSD total energy (Ha)." },
+            "ccsd_t_energy_hartree": { "type": "number",         "description": "CCSD(T) total energy (Ha). Used for certification threshold." },
+            "mp2_correlation":       { "type": ["number","null"], "description": "MP2 correlation energy = E_MP2 − E_HF (Ha)." },
+            "ccsd_t_correlation":    { "type": ["number","null"], "description": "CCSD(T) correlation energy = E_CCSD(T) − E_HF (Ha). Certification threshold: |VQE − CASCI| < |ccsd_t_correlation|." },
+            "pyscf_version":         { "type": ["string","null"] },
+            "computed_utc":          { "type": ["string","null"] },
+            "basis":                 { "type": "string" }
+          }
+        },
+
+        "vqe": {
+          "type": "object",
+          "required": ["best_energy_hartree"],
+          "properties": {
+            "best_energy_hartree": { "type": "number",  "description": "Best VQE energy across all multistart runs (Ha)." },
+            "optimal_params":      { "type": ["array","null"], "description": "Optimal circuit parameters at best energy." },
+            "num_params":          { "type": ["integer","null"] },
+            "nfev":                { "type": ["integer","null"], "description": "Total function evaluations across all multistart runs." },
+            "optimizer":           { "type": ["string","null"],  "const": "COBYLA" },
+            "multistart_runs":     { "type": ["integer","null"], "description": "Number of independent VQE runs with random restarts." },
+            "computed_utc":        { "type": ["string","null"] }
+          }
+        },
+
+        "quality": {
+          "type": "object",
+          "required": ["trusted", "abs_vqe_exact_gap"],
+          "properties": {
+            "gap_threshold":     { "type": "number", "const": 0.01, "description": "Certification threshold (Ha). Entry is certified if abs_vqe_exact_gap < 0.01 Ha." },
+            "trusted":           { "type": "boolean", "description": "True if abs_vqe_exact_gap < gap_threshold. Equivalent to trust.level == 'certified'." },
+            "abs_vqe_exact_gap": { "type": "number",  "description": "|E_VQE − E_CASCI| (Ha). The primary quality metric." },
+            "beats_classical":   { "type": ["boolean","null"], "description": "True if abs_vqe_exact_gap < |E_CCSD(T) − E_HF|. Indicates VQE error is smaller than the full correlation energy." },
+            "flags":             { "type": "array",   "items": { "type": "string" }, "description": "Quality flags. 'gap_certified' = certified, 'beats_classical' = beats CCSD(T) correlation, 'bk_imaginary_stripped' = BK strip applied." },
+            "notes":             { "type": ["string","null"] }
+          }
+        }
+      }
+    },
+
+    "provenance": {
+      "type": "object",
+      "required": ["entry_hash_sha256", "source_schema_version"],
+      "properties": {
+        "entry_hash_sha256": {
+          "type": "string",
+          "description": "SHA-256 hash of the entry's scientific content (energies, geometry, encoding, circuit stats, tool versions). Timestamps and git_commit are excluded so the hash is reproducible. The first 16 hex chars appear in entry_id."
+        },
+        "source_schema_version": { "type": "string", "const": "4.0.0" },
+        "created_utc":           { "type": "string" },
+        "tool_versions": {
+          "type": "object",
+          "properties": {
+            "python":      { "type": ["string","null"] },
+            "pyscf":       { "type": ["string","null"] },
+            "pennylane":   { "type": ["string","null"] },
+            "openfermion": { "type": ["string","null"] },
+            "numpy":       { "type": ["string","null"] },
+            "scipy":       { "type": ["string","null"] },
+            "git_commit":  { "type": ["string","null"], "description": "Short git SHA of the generator at run time. Excluded from entry_hash_sha256." }
+          }
+        },
+        "environment": {
+          "type": "object",
+          "properties": {
+            "platform": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "trust": {
+      "type": "object",
+      "required": ["level"],
+      "properties": {
+        "level":          { "type": "string", "enum": ["certified", "validated"], "description": "'certified' if abs_vqe_exact_gap < 0.01 Ha. 'validated' otherwise (VQE ran but did not meet threshold)." },
+        "certified_utc":  { "type": ["string","null"], "description": "UTC timestamp of certification. Non-null only when level='certified'." },
+        "signature_b64":  { "type": ["string","null"], "description": "Base64-encoded Ed25519 signature over entry_hash_sha256. Non-null when signing key is present." },
+        "signing_key_id": { "type": ["string","null"], "description": "Key ID of the signing key." }
+      }
+    },
+
+    "run_config": {
+      "type": "object",
+      "properties": {
+        "optimizer":      { "type": "string",           "const": "COBYLA" },
+        "max_iterations": { "type": "integer",           "description": "Max COBYLA iterations per multistart run. Default 500." },
+        "multistart":     { "type": "integer",           "description": "Number of independent VQE runs. v4 default: 10 (production), 3-5 (testing)." },
+        "seed":           { "type": ["integer","null"],  "description": "Random seed for initial parameter sampling." },
+        "backend_type":   { "type": "string",           "const": "default.qubit", "description": "PennyLane device. 'default.qubit' for all v4.0 entries. Future: 'lightning.gpu' (v4.1), hardware backends (v4.4)." },
+        "shots":          { "type": ["integer","null"],  "description": "Number of shots. Null = exact statevector simulation." }
+      }
+    },
+
+    "circuit_stats": {
+      "type": "object",
+      "properties": {
+        "num_qubits_original":   { "type": "integer", "description": "Qubit count before tapering. Same as encoding.tapering.original_num_qubits." },
+        "num_qubits_tapered":    { "type": "integer", "description": "Qubit count after tapering. Same as encoding.tapering.tapered_num_qubits." },
+        "ansatz_num_parameters": { "type": "integer" },
+        "num_gates":             { "type": ["integer","null"] },
+        "num_2q_gates":          { "type": ["integer","null"], "description": "Two-qubit gate count. Key hardware cost metric." },
+        "circuit_depth":         { "type": ["integer","null"] }
+      }
+    }
+
+  },
+
+  "definitions": {
+    "certification_criterion": {
+      "description": "An entry is CERTIFIED when: |E_VQE − E_CASCI| < |E_CCSD(T) − E_HF|. This means the VQE error relative to the active-space exact solution is smaller than the full correlation energy captured by the gold-standard classical method.",
+      "type": "null"
+    },
+    "v4_vs_v3_differences": {
+      "description": "Key changes from schema 3.x to 4.0.0: (1) problem.orbital_optimization field added ('hf'|'casscf'); (2) results.reference.casscf_energy_hartree field added; (3) encoding.tapering.bk_imaginary_stripped and bk_max_imaginary_abs_ha fields added; (4) trust object restructured (level/certified_utc/signature_b64/signing_key_id replaces trust_level); (5) run_config and circuit_stats are now required top-level objects; (6) entry_id format changed to include _v4 and optional _casscf suffix; (7) default basis is cc-pvdz (was 6-31g in v3).",
+      "type": "null"
+    }
+  }
+}
