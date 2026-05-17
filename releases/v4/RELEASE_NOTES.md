@@ -3,7 +3,7 @@
 **Released:** 2026-05-17
 **Schema version:** 4.0.0
 **Basis:** cc-pVDZ (publication-grade, replaces 6-31G from v3)
-**Total certified entries:** 28
+**Certified entries:** 25  |  **Validated entries:** 1 (N2)  |  **Total:** 26
 
 ---
 
@@ -11,30 +11,45 @@
 
 Suite v4.0 upgrades the benchmark from the STO-3G/6-31G basis to **cc-pVDZ** — the standard
 publication-grade basis for correlated quantum chemistry. The same 7 molecules from v3 are
-retained; active spaces are unchanged (chemistry-driven, not basis-driven). All 28 entries
-meet the certification threshold: |E_VQE − E_CASCI| < 0.01 Ha.
+retained; active spaces are unchanged (chemistry-driven, not basis-driven). 25 entries meet
+the certification threshold: |E_VQE − E_CASCI| < 0.01 Ha.
 
 New in v4.0:
 - **cc-pVDZ basis** for all entries
-- **CASSCF orbital optimization** support (`--orbital-opt casscf`) — required for N2
+- **CASSCF orbital optimization** support (`--orbital-opt casscf`)
 - **BK tapering transparency** fields (`bk_imaginary_stripped`, `bk_max_imaginary_abs_ha`)
 - **Schema 4.0.0** — formally documented, stricter entry_id format, new provenance fields
-- **N2 certified** for the first time (CASSCF + 20 multistarts; was "research tier" in v3)
 
 ---
 
 ## Entry Counts by Molecule
 
-| Molecule | Active Space | Qubits (JW) | Entries | Mappings | Notes |
-|----------|-------------|-------------|---------|----------|-------|
-| H2       | [2e, 2o]    | 4 → 1       | 6       | JW, PAR, BK | All 6 certified (JW+PAR+BK × HEA+UCCSD) |
-| HF       | [2e, 2o]    | 4 → 1       | 6       | JW, PAR, BK | All 6 certified |
-| LiH      | [4e, 4o]    | 8 → 5       | 3       | JW, PAR  | JW/HEA, JW/UCCSD, PAR/HEA |
-| BeH2     | [4e, 4o]    | 8           | 4       | JW, PAR  | JW+PAR × HEA+UCCSD |
-| H2O      | [4e, 4o]    | 8           | 3       | JW, PAR  | JW/HEA, JW/UCCSD, PAR/HEA |
-| NH3      | [4e, 4o]    | 8           | 3       | JW, PAR  | JW/HEA, JW/UCCSD, PAR/HEA |
-| N2       | [6e, 6o]    | 12          | 3       | JW, PAR  | CASSCF orbitals; JW/HEA, JW/UCCSD, PAR/HEA |
-| **Total**| —           | —           | **28**  | —        | All certified |
+| Molecule | Active Space | Qubits (JW→tapered) | Certified | Mapping/Ansatz combinations | Notes |
+|----------|-------------|---------------------|-----------|----------------------------|-------|
+| H2       | [2e, 2o]    | 4 → 1               | 6         | JW+PAR+BK × HEA+UCCSD | All certified |
+| HF       | [2e, 2o]    | 4 → 1               | 6         | JW+PAR+BK × HEA+UCCSD | All certified |
+| LiH      | [4e, 4o]    | 8 → 5               | 3         | JW/HEA, JW/UCCSD, PAR/HEA | BK and PAR/UCCSD excluded |
+| BeH2     | [4e, 4o]    | 8 → null            | 4         | JW+PAR × HEA+UCCSD | BK excluded |
+| H2O      | [4e, 4o]    | 8 → null            | 3         | JW/HEA, JW/UCCSD, PAR/HEA | PAR/UCCSD excluded |
+| NH3      | [4e, 4o]    | 8 → null            | 3         | JW/HEA, JW/UCCSD, PAR/HEA | PAR/UCCSD excluded |
+| N2       | [6e, 6o]    | 12 → 8              | 0         | JW/HEA (CASSCF) | **Validated only** — see N2 note |
+| **Total**| —           | —                   | **25**    | —                          | + 1 validated |
+
+---
+
+## N2 Status: Validated, Not Certified
+
+N2 [6e, 6o] has 8 qubits after Z2 tapering (4 symmetries removed). CASSCF orbital
+optimization was applied (`--orbital-opt casscf`) with 20 multistarts. The best gap
+achieved was **0.112 Ha** — well above the 0.01 Ha certification threshold.
+
+Root cause: HEA with `reps=2` is not sufficiently expressive for the 8-qubit N2 active
+space. The triple-bond π/σ manifold requires either:
+- Deeper HEA (reps ≥ 4) to cover the full entanglement structure, or
+- UCCSD (which provides the correct excitation operators for this active space)
+
+N2 certification is the primary target for **v4.1**. The validated JW/HEA entry is
+included in the research leaderboard tier.
 
 ---
 
@@ -45,28 +60,21 @@ New in v4.0:
 PennyLane 0.45 has a known bug where BK tapering produces complex (imaginary) Pauli
 coefficients that should be real by symmetry. For [2e, 2o] molecules (H2, HF), the
 imaginary parts are below numerical noise (< 1e-6 × max_abs) and are safely stripped.
-For [4e, 4o]+ molecules (LiH, BeH2, H2O, NH3, N2), the imaginary parts are ~7 mHa —
-non-trivial physical artefacts — and BK entries are excluded.
+For [4e, 4o]+ molecules, the imaginary parts are ~7 mHa — non-trivial physical artefacts
+— and BK entries are excluded.
 
-The stripping decision is recorded transparently in every BK entry:
-- `encoding.tapering.bk_imaginary_stripped` — whether stripping occurred
-- `encoding.tapering.bk_max_imaginary_abs_ha` — magnitude before stripping
+Stripping decisions are recorded transparently in every BK entry:
+- `encoding.tapering.bk_imaginary_stripped`
+- `encoding.tapering.bk_max_imaginary_abs_ha`
 
 ### PAR/UCCSD: excluded for LiH, H2O, NH3, N2
 
 UCCSD excitation operators are generated in the Jordan-Wigner basis. When applied under
-Parity tapering for [4e, 4o]+ molecules, the operator basis mismatch causes catastrophic
-VQE convergence failures (gaps of 0.4–2.2 Ha). BeH2 (D∞h linear symmetry) is the
-exception — PAR/UCCSD converges reliably and is certified.
+Parity tapering for these molecules, the operator basis mismatch causes catastrophic VQE
+convergence failures (gaps of 0.4–2.2 Ha). BeH2 (D∞h linear symmetry) is the exception
+— PAR/UCCSD converges reliably and is certified.
 
 PAR/HEA is fully supported for all molecules. JW/UCCSD is unaffected.
-
-### N2: CASSCF orbital optimization required
-
-N2 [6e, 6o] has strong multireference character (σ, σ*, πx, πx*, πy, πy* — full triple-bond
-manifold). HF orbitals do not cleanly partition the π/σ manifold in cc-pVDZ, leading to slow
-VQE convergence. CASSCF pre-optimization (`--orbital-opt casscf`) is required for N2 entries
-and is the default when using `--molecule N2` in the v4 generator.
 
 ---
 
@@ -96,9 +104,9 @@ scripts/generate_entry_v4.py
 Key flags:
 ```
 --molecule N2 --mapping jordan_wigner --ansatz hardware_efficient
---orbital-opt casscf        # CASSCF orbital optimization (required for N2)
+--orbital-opt casscf        # CASSCF orbital optimization
 --multistart 20             # Recommended for N2; default 10
---basis cc-pvdz             # Default; can override for custom runs
+--basis cc-pvdz             # Default; can override
 ```
 
 Requirements: `requirements-v4.txt`
@@ -120,22 +128,14 @@ An entry is **CERTIFIED** when:
 |E_VQE − E_CASCI| < 0.01 Ha  (gap threshold)
 ```
 
-Optionally also tracked:
-```
-beats_classical = |E_VQE − E_CASCI| < |E_CCSD(T) − E_HF|
-```
-
-All 28 v4.0 entries meet the certification threshold.
+All 25 certified v4.0 entries meet this threshold.
 
 ---
 
 ## Reproducibility
 
-Each entry contains:
-- Full geometry (PySCF atom-string), basis, active space, orbital optimization method
-- All tool versions (PySCF, PennyLane, NumPy, SciPy, OpenFermion)
-- SHA-256 provenance hash over scientific content (timestamps and git SHA excluded)
-- Optimal VQE parameters for circuit reconstruction
+Each entry contains full geometry, basis, active space, orbital optimization method,
+all tool versions, SHA-256 provenance hash, and optimal VQE parameters.
 
 To regenerate any entry:
 ```bash
@@ -149,13 +149,13 @@ python scripts/generate_entry_v4.py \
 ## v3 Compatibility
 
 v3 entries in `releases/v3/db/` are unmodified and remain reproducible with
-`requirements-v3.txt`. The v4 generator (`generate_entry_v4.py`) is a separate file
-and does not modify v3 outputs.
+`requirements-v3.txt`. The v4 generator is a separate file.
 
 ---
 
 ## What's Next: v4.1
 
+- **N2 certification** — deeper HEA (reps=4) or UCCSD ansatz
 - ADAPT-VQE ansatz (`--ansatz-type adapt`)
 - New molecules: butadiene [4e, 4o], formaldehyde [4e, 4o]
 - GPU backend (`lightning.gpu`) for larger molecules
