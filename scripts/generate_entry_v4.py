@@ -73,8 +73,9 @@ def load_molecule(name: str) -> dict:
         if raw["molecule"].upper() == name.upper():
             entry = dict(raw)
             if "active_space" not in entry:
-                entry["active_space"] = entry.get("v3_active_space",
-                                                   entry.get("active_electrons_orbitals"))
+                entry["active_space"] = (entry.get("v4_active_space") or
+                                         entry.get("v3_active_space") or
+                                         entry.get("active_electrons_orbitals"))
             if "geometry_pyscf" not in entry:
                 entry["geometry_pyscf"] = entry.get("geometry",
                                                      entry.get("geometry_angstrom"))
