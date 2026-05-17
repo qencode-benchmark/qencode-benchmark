@@ -336,6 +336,19 @@ def build_pl_hamiltonian(symbols, coords_bohr, basis, mapping,
     if canon_mapping is None:
         raise ValueError(f"Unsupported mapping '{mapping}'.")
 
+    # When CASSCF MO coefficients are provided, update the PySCF mf object so
+    # that of_bridge reads integrals in the CASSCF orbital basis.  PL 0.45's
+    # molecular_hamiltonian does NOT accept a mo_coeff kwarg, so we always
+    # route through of_bridge whenever custom MOs are requested.
+    if mo_coeff is not None:
+        if mf is None:
+            raise ValueError("CASSCF orbital opt requires mf to be passed.")
+        import copy
+        mf = copy.copy(mf)          # don't mutate the caller's object
+        mf.mo_coeff = mo_coeff
+        use_of_bridge = True
+        print(_ok("CASSCF mo_coeff injected into mf — routing through OF-bridge"))
+
     if canon_mapping == "parity" or use_of_bridge:
         if mf is None or e_casci is None:
             raise ValueError("of_bridge requires mf and e_casci.")
@@ -361,11 +374,6 @@ def build_pl_hamiltonian(symbols, coords_bohr, basis, mapping,
         active_electrons=n_electrons,
         active_orbitals=n_orbitals,
     )
-    # Pass CASSCF MO coefficients if available
-    if mo_coeff is not None:
-        kwargs["mo_coeff"] = mo_coeff
-        print(_warn("CASSCF mo_coeff passed to molecular_hamiltonian "
-                    "(PL 0.45 may ignore this — verify via exact diag)"))
 
     H, n_qubits = qchem.molecular_hamiltonian(**kwargs)
     n_terms = len(getattr(H, "operands", None) or getattr(H, "ops", []))
