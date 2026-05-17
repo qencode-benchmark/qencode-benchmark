@@ -55,6 +55,10 @@ export async function ensureSchema() {
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS hf_energy          DOUBLE PRECISION`;
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS entry_id           VARCHAR(200)`;
 
+  // v4 migration: basis set and orbital optimisation method
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS basis       VARCHAR(50)`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS orbital_opt VARCHAR(20)`;
+
   await sql`
     CREATE TABLE IF NOT EXISTS leaderboard_metadata (
       key        VARCHAR(100) PRIMARY KEY,
@@ -231,7 +235,8 @@ export async function replaceEntries(category, entries) {
     await sql`
       INSERT INTO leaderboard_entries
         (category, rank, molecule, mapping, ansatz, entry_id, gap, depth, two_q_gates, balanced_score,
-         baseline, beats_classical, ccsd_t_correlation, vqe_energy, casci_energy, hf_energy, updated_at)
+         baseline, beats_classical, ccsd_t_correlation, vqe_energy, casci_energy, hf_energy,
+         basis, orbital_opt, updated_at)
       VALUES
         (
           ${category},
@@ -250,6 +255,8 @@ export async function replaceEntries(category, entries) {
           ${e.vqe_energy         ?? null},
           ${e.casci_energy       ?? null},
           ${e.hf_energy          ?? null},
+          ${e.basis              ?? null},
+          ${e.orbital_opt        ?? null},
           NOW()
         )
     `;

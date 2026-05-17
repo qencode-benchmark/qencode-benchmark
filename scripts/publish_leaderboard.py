@@ -39,71 +39,48 @@ def num(v):
 def bool_val(v):
     return str(v).strip().lower() in ("true", "1", "yes")
 
+def _base_row(r):
+    """Common fields for all leaderboard rows (v3 + v4)."""
+    return {
+        "rank":               int(r["rank"]),
+        "entry_id":           r.get("entry_id", ""),
+        "molecule":           r["molecule"],
+        "basis":              r.get("basis") or None,       # v4 new field
+        "orbital_opt":        r.get("orbital_opt") or None, # v4 new field
+        "mapping":            r["mapping"],
+        "ansatz":             r["ansatz"],
+        "gap":                num(r["gap"]),
+        "depth":              num(r.get("depth")),
+        "two_q_gates":        num(r.get("2q_gates")),
+        "baseline":           bool_val(r.get("baseline", False)),
+        "beats_classical":    bool_val(r.get("beats_classical", False)) if r.get("beats_classical") not in (None, "", "None", "null") else None,
+        "ccsd_t_correlation": num(r.get("ccsd_t_correlation")),
+        "vqe_energy":         num(r.get("vqe_energy")),
+        "casci_energy":       num(r.get("casci_energy")),
+        "hf_energy":          num(r.get("hf_energy")),
+    }
+
 def parse_accuracy_csv(path):
     rows = []
     with open(path, newline="") as f:
         for r in csv.DictReader(f):
-            rows.append({
-                "rank":               int(r["rank"]),
-                "entry_id":           r.get("entry_id", ""),
-                "molecule":           r["molecule"],
-                "mapping":            r["mapping"],
-                "ansatz":             r["ansatz"],
-                "gap":                num(r["gap"]),
-                "depth":              num(r.get("depth")),
-                "two_q_gates":        num(r.get("2q_gates")),
-                "baseline":           bool_val(r.get("baseline", False)),
-                "beats_classical":    bool_val(r.get("beats_classical", False)) if r.get("beats_classical") not in (None, "", "None", "null") else None,
-                "ccsd_t_correlation": num(r.get("ccsd_t_correlation")),
-                "vqe_energy":         num(r.get("vqe_energy")),
-                "casci_energy":       num(r.get("casci_energy")),
-                "hf_energy":          num(r.get("hf_energy")),
-            })
+            rows.append(_base_row(r))
     return rows
 
 def parse_cost_csv(path):
     rows = []
     with open(path, newline="") as f:
         for r in csv.DictReader(f):
-            rows.append({
-                "rank":               int(r["rank"]),
-                "entry_id":           r.get("entry_id", ""),
-                "molecule":           r["molecule"],
-                "mapping":            r["mapping"],
-                "ansatz":             r["ansatz"],
-                "gap":                num(r["gap"]),
-                "depth":              num(r.get("depth")),
-                "two_q_gates":        num(r.get("2q_gates")),
-                "baseline":           bool_val(r.get("baseline", False)),
-                "beats_classical":    bool_val(r.get("beats_classical", False)) if r.get("beats_classical") not in (None, "", "None", "null") else None,
-                "ccsd_t_correlation": num(r.get("ccsd_t_correlation")),
-                "vqe_energy":         num(r.get("vqe_energy")),
-                "casci_energy":       num(r.get("casci_energy")),
-                "hf_energy":          num(r.get("hf_energy")),
-            })
+            rows.append(_base_row(r))
     return rows
 
 def parse_balanced_csv(path):
     rows = []
     with open(path, newline="") as f:
         for r in csv.DictReader(f):
-            rows.append({
-                "rank":               int(r["rank"]),
-                "entry_id":           r.get("entry_id", ""),
-                "molecule":           r["molecule"],
-                "mapping":            r["mapping"],
-                "ansatz":             r["ansatz"],
-                "gap":                num(r["gap"]),
-                "depth":              num(r.get("depth")),
-                "two_q_gates":        num(r.get("2q_gates")),
-                "balanced_score":     num(r.get("balanced_score")),
-                "baseline":           bool_val(r.get("baseline", False)),
-                "beats_classical":    bool_val(r.get("beats_classical", False)) if r.get("beats_classical") not in (None, "", "None", "null") else None,
-                "ccsd_t_correlation": num(r.get("ccsd_t_correlation")),
-                "vqe_energy":         num(r.get("vqe_energy")),
-                "casci_energy":       num(r.get("casci_energy")),
-                "hf_energy":          num(r.get("hf_energy")),
-            })
+            row = _base_row(r)
+            row["balanced_score"] = num(r.get("balanced_score"))
+            rows.append(row)
     return rows
 
 def parse_research_csv(path):
