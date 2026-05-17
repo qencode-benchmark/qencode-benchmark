@@ -7,7 +7,7 @@
   "notes": [
     "Active spaces are identical to v3 — they reflect the chemically relevant orbital window, not the basis set.",
     "BK mapping with tapering is only supported for H2 and HF in PL 0.45 (imaginary-strip verification passes). Larger molecules use JW + Parity only.",
-    "PAR/UCCSD is excluded for [4e,4o]+ molecules due to a known issue: UCCSD excitation operators generated in the JW basis are not correctly adapted for Parity tapering. PAR/HEA and JW/both work correctly.",
+    "PAR/UCCSD is excluded for LiH, H2O, NH3, and N2 due to a known issue: UCCSD excitation operators generated in the JW basis are not correctly adapted for Parity tapering in these active spaces. BeH2 (D∞h linear symmetry) is the exception — PAR/UCCSD converges reliably. PAR/HEA and JW/both work correctly for all molecules.",
     "N2 requires CASSCF orbital optimization (--orbital-opt casscf) to reliably certify. HF orbitals do not partition the [6e,6o] active space well for the triple bond."
   ],
   "entries": [
@@ -77,7 +77,7 @@
       "casscf_recommended": false,
       "tier": "certified",
       "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "[4,4] active space: Be 2s + 2p + H 1s bonding/antibonding. Linear molecule (D∞h symmetry). BK excluded (same PL 0.45 imaginary artefact as LiH). JW and Parity entries certified. PAR/UCCSD excluded. All 4 supported entries (JW+PAR × HEA+UCCSD) certified in v4."
+      "notes": "[4,4] active space: Be 2s + 2p + H 1s bonding/antibonding. Linear molecule (D∞h symmetry). BK excluded (same PL 0.45 imaginary artefact as LiH). All 4 supported entries (JW+PAR × HEA+UCCSD) certified in v4. BeH2 is the only [4e,4o]+ molecule where PAR/UCCSD converges reliably — the D∞h linear symmetry keeps the Parity-basis UCCSD operator space well-conditioned."
     },
     {
       "molecule": "H2O",
