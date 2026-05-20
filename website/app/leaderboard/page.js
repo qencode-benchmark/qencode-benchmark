@@ -34,9 +34,15 @@ export default async function LeaderboardPage() {
   const rulesLabel = String(metadata.leaderboard_rules || "").replace(/^v/i, "");
 
   // Map suite version to basis set for display
-  const basisLabel = metadata.basis_set
+  // v4 exports default_basis in metadata; v3 is inferred from suite version
+  const basisLabel = metadata.default_basis
+    ? metadata.default_basis.toUpperCase().replace("CC-PVDZ", "cc-pVDZ")
+    : metadata.basis_set
     ? metadata.basis_set
-    : suiteLabel.startsWith("3.1") ? "6-31G" : suiteLabel.startsWith("3") ? "STO-3G" : null;
+    : suiteLabel.startsWith("4") ? "cc-pVDZ"
+    : suiteLabel.startsWith("3.1") || suiteLabel.startsWith("3.2") ? "6-31G"
+    : suiteLabel.startsWith("3") ? "STO-3G"
+    : null;
 
   return (
     <div className="container py-16">

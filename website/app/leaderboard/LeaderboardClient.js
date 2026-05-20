@@ -237,9 +237,31 @@ function LeaderboardTable({ rows, category, basisLabel }) {
 
                 {/* Molecule */}
                 <TableCell>
-                  <span className="font-mono text-sm font-medium">
-                    {r.molecule}
-                  </span>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-mono text-sm font-medium">{r.molecule}</span>
+                    <div className="flex items-center gap-1 flex-wrap">
+                      {r.basis && (
+                        <span className="text-[10px] font-mono px-1 py-0 rounded border border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300 leading-4">
+                          {r.basis}
+                        </span>
+                      )}
+                      {r.orbitalOpt === "casscf" && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="text-[10px] font-mono px-1 py-0 rounded border border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-300 leading-4 cursor-help">
+                                CASSCF
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs text-xs">
+                              Orbitals pre-optimised with CASSCF before VQE. Required for molecules
+                              with strong multireference character (e.g. N2 triple bond).
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                    </div>
+                  </div>
                 </TableCell>
 
                 {/* Mapping */}
