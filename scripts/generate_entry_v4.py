@@ -626,10 +626,11 @@ def run_vqe(H_tapered, circuit_fn, n_params, max_iter=500, multistart=3, seed=42
         improved = e_run < best_energy
         status = "[OK]" if improved else "    "
 
-        # Gap annotation when we have a target
+        # Gap annotation — show best gap so far (not just this run's gap)
         gap_str = ""
         if e_target is not None:
-            gap = abs(e_run - e_target)
+            best_so_far = min(e_run, best_energy)  # best_energy not updated yet if not improved
+            gap = abs(best_so_far - e_target)
             cert = "CERT" if gap < 0.01 else f"gap={gap:.3e}"
             gap_str = f"  [{cert}]"
 
@@ -966,12 +967,14 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
         },
 
         "run_config": {
-            "optimizer":      "COBYLA",
-            "max_iterations": max_iter,
-            "multistart":     multistart,
-            "seed":           seed,
-            "backend_type":   backend,
-            "shots":          None,
+            "optimizer":        "COBYLA",
+            "max_iterations":   max_iter,
+            "multistart":       vqe_res.get("multistart_runs", multistart),
+            "multistart_requested": multistart,
+            "early_stopped":    vqe_res.get("stopped_early", False),
+            "seed":             seed,
+            "backend_type":     backend,
+            "shots":            None,
         },
 
         "circuit_stats": {
