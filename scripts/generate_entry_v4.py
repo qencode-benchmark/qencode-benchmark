@@ -989,7 +989,10 @@ def main() -> None:
     ap.add_argument("--use-of-bridge", action="store_true")
     ap.add_argument("--ansatz-type",  default="uccsd",
                     choices=["uccsd","hardware_efficient"])
-    ap.add_argument("--ansatz-reps",  type=int, default=2)
+    ap.add_argument("--reps", "--ansatz-reps", dest="ansatz_reps", type=int, default=2,
+                    help="HEA depth: number of Ry+CNOT repetition blocks (default: 2). "
+                         "Higher values increase expressibility at the cost of more parameters. "
+                         "Ignored for UCCSD. Recommended: --reps 4 for N2 [6e,6o] 8-qubit.")
     ap.add_argument("--orbital-opt",  default="hf",
                     choices=["hf", "casscf"],
                     help="Orbital optimisation: hf (canonical) or casscf (v4 recommended)")
@@ -1016,7 +1019,9 @@ def main() -> None:
     print(f"  Molecule:    {args.molecule}")
     print(f"  Basis:       {args.basis}")
     print(f"  Mapping:     {args.mapping}")
-    print(f"  Ansatz:      {args.ansatz_type}")
+    print(f"  Ansatz:      {args.ansatz_type}"
+          + (f"  (reps={args.ansatz_reps}, {(args.ansatz_reps+1)} layers)"
+             if "hea" in args.ansatz_type.lower() else ""))
     print(f"  Orbital opt: {args.orbital_opt}")
     print(f"  Multistart:  {args.multistart} x {args.max_iter} iters")
     print(f"  Taper:       {'NO (--no-taper)' if args.no_taper else 'YES (Z2 symmetry)'}")
