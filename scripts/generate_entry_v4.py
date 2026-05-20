@@ -586,12 +586,13 @@ def build_hea_circuit(H_tapered, hf_tapered, reps=2):
 
 # ─── VQE (identical to v3) ────────────────────────────────────────────────────
 
-def run_vqe(H_tapered, circuit_fn, n_params, max_iter=500, multistart=3, seed=42):
+def run_vqe(H_tapered, circuit_fn, n_params, max_iter=500, multistart=3, seed=42,
+            backend="default.qubit"):
     import pennylane as qml
     from scipy.optimize import minimize
 
     wires = sorted(H_tapered.wires)
-    dev   = qml.device("default.qubit", wires=wires)
+    dev   = qml.device(backend, wires=wires)
 
     @qml.qnode(dev)
     def energy_fn(params):
@@ -666,11 +667,11 @@ _T_PER_ROTATION = int(__import__("math").ceil(
 ))
 
 
-def _circuit_metrics_inline(circuit_fn, H_tapered, optimal_params):
+def _circuit_metrics_inline(circuit_fn, H_tapered, optimal_params, backend="default.qubit"):
     import pennylane as qml
 
     wires = sorted(H_tapered.wires)
-    dev   = qml.device("default.qubit", wires=wires)
+    dev   = qml.device(backend, wires=wires)
 
     @qml.qnode(dev)
     def _circ(params):
@@ -772,7 +773,7 @@ def _safe_corr(e_method, e_hf):
 def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
                    pyscf_res, tap_meta, vqe_res, pauli_terms, hf_tapered,
                    max_iter, multistart, seed,
-                   circuit_fn=None, H_tapered=None) -> tuple:
+                   circuit_fn=None, H_tapered=None, backend="default.qubit") -> tuple:
 
     mol_name  = mol_config["molecule"]
     n_e, n_o  = mol_config["active_space"]
@@ -916,7 +917,7 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
             "max_iterations": max_iter,
             "multistart":     multistart,
             "seed":           seed,
-            "backend_type":   "default.qubit",
+            "backend_type":   backend,
             "shots":          None,
         },
 
@@ -925,7 +926,7 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
             "num_qubits_tapered":    tap_meta["n_qubits_tap"],
             "ansatz_num_parameters": vqe_res["num_params"],
             **(
-                _circuit_metrics_inline(circuit_fn, H_tapered, vqe_res["optimal_params"])
+                _circuit_metrics_inline(circuit_fn, H_tapered, vqe_res["optimal_params"], backend=backend)
                 if circuit_fn is not None and H_tapered is not None
                 else {}
             ),
@@ -1001,6 +1002,11 @@ def main() -> None:
     ap.add_argument("--max-iter",     type=int, default=500)
     ap.add_argument("--multistart",   type=int, default=3)
     ap.add_argument("--seed",         type=int, default=42)
+    ap.add_argument("--backend",      default="default.qubit",
+                    choices=["default.qubit", "lightning.qubit", "lightning.gpu"],
+                    help="PennyLane device backend. Use lightning.qubit for CPU-accelerated "
+                         "simulation, lightning.gpu for GPU (requires cuQuantum + "
+                         "PennyLane-Lightning-GPU installed).")
     ap.add_argument("--out-dir",      default=str(REPO / "releases" / "v4" / "db"))
     ap.add_argument("--no-taper",     action="store_true")
     ap.add_argument("--no-classical", action="store_true")
@@ -1024,6 +1030,7 @@ def main() -> None:
              if "hea" in args.ansatz_type.lower() else ""))
     print(f"  Orbital opt: {args.orbital_opt}")
     print(f"  Multistart:  {args.multistart} x {args.max_iter} iters")
+    print(f"  Backend:     {args.backend}")
     print(f"  Taper:       {'NO (--no-taper)' if args.no_taper else 'YES (Z2 symmetry)'}")
     print()
 
@@ -1112,7 +1119,8 @@ def main() -> None:
         vqe_res = run_vqe(H_vqe, circuit_fn, n_params,
                           max_iter=args.max_iter,
                           multistart=args.multistart,
-                          seed=args.seed)
+                          seed=args.seed,
+                          backend=args.backend)
 
         # BK constant correction
         _bk_corr = tap_meta.get("bk_constant_correction") or 0.0
@@ -1136,6 +1144,7 @@ def main() -> None:
             pyscf_res, tap_meta, vqe_res, pauli_terms, hf_tapered,
             args.max_iter, args.multistart, args.seed,
             circuit_fn=circuit_fn, H_tapered=H_vqe,
+            backend=args.backend,
         )
 
         e_vqe   = vqe_res["best_energy_hartree"]
