@@ -584,10 +584,21 @@ def build_hea_circuit(H_tapered, hf_tapered, reps=2):
     return circuit_fn, n_params, "hea"
 
 
-# ─── VQE (identical to v3) ────────────────────────────────────────────────────
+# ─── VQE ─────────────────────────────────────────────────────────────────────
 
 def run_vqe(H_tapered, circuit_fn, n_params, max_iter=500, multistart=3, seed=42,
-            backend="default.qubit"):
+            backend="default.qubit", e_target=None, early_stop=True,
+            checkpoint_path=None):
+    """
+    Run VQE with COBYLA optimizer.
+
+    Args:
+        e_target:        CASCI energy (Ha). When early_stop=True, stops as soon
+                         as |best - e_target| < 0.01 Ha (certification threshold).
+        early_stop:      Stop immediately once gap < 0.01 Ha (default True).
+        checkpoint_path: If set, writes a JSON checkpoint after every restart so
+                         progress survives crashes on long runs.
+    """
     import pennylane as qml
     from scipy.optimize import minimize
 
@@ -603,6 +614,7 @@ def run_vqe(H_tapered, circuit_fn, n_params, max_iter=500, multistart=3, seed=42
     best_energy = np.inf
     best_params = None
     total_nfev  = 0
+    stopped_early = False
 
     for run in range(multistart):
         x0 = np.zeros(n_params) if run == 0 else rng.uniform(-np.pi, np.pi, n_params)
@@ -611,13 +623,53 @@ def run_vqe(H_tapered, circuit_fn, n_params, max_iter=500, multistart=3, seed=42
                           options={"maxiter": max_iter, "rhobeg": 0.5})
         total_nfev += result.nfev
         e_run = result.fun
-        status = "[OK]" if e_run <= best_energy else "    "
-        print(f"    run {run+1}/{multistart}: E = {e_run:.10f} Ha  (nfev={result.nfev}) {status}")
-        if e_run < best_energy:
+        improved = e_run < best_energy
+        status = "[OK]" if improved else "    "
+
+        # Gap annotation when we have a target
+        gap_str = ""
+        if e_target is not None:
+            gap = abs(e_run - e_target)
+            cert = "CERT" if gap < 0.01 else f"gap={gap:.3e}"
+            gap_str = f"  [{cert}]"
+
+        print(f"    run {run+1}/{multistart}: E = {e_run:.10f} Ha  "
+              f"(nfev={result.nfev}) {status}{gap_str}")
+
+        if improved:
             best_energy = e_run
             best_params = result.x.copy()
 
+        # Checkpoint after every restart
+        if checkpoint_path is not None and best_params is not None:
+            ckpt = {
+                "restart_completed": run + 1,
+                "total_restarts":    multistart,
+                "best_energy_hartree": float(best_energy),
+                "best_params":       best_params.tolist(),
+                "total_nfev":        total_nfev,
+                "saved_utc":         _utcnow(),
+            }
+            try:
+                Path(checkpoint_path).write_text(json.dumps(ckpt, indent=2))
+            except Exception as ckpt_err:
+                print(_warn(f"Checkpoint write failed: {ckpt_err}"))
+
+        # Early-stop once certified
+        if early_stop and e_target is not None:
+            if abs(best_energy - e_target) < 0.01:
+                print(_ok(f"Early stop: gap < 0.01 Ha after restart {run+1}/{multistart}"))
+                stopped_early = True
+                break
+
     print(_ok(f"VQE best energy: {best_energy:.10f} Ha  (total nfev={total_nfev})"))
+
+    # Clean up checkpoint — run is complete
+    if checkpoint_path is not None:
+        try:
+            Path(checkpoint_path).unlink(missing_ok=True)
+        except Exception:
+            pass
 
     return {
         "best_energy_hartree": float(best_energy),
@@ -625,7 +677,8 @@ def run_vqe(H_tapered, circuit_fn, n_params, max_iter=500, multistart=3, seed=42
         "num_params":          n_params,
         "nfev":                total_nfev,
         "optimizer":           "COBYLA",
-        "multistart_runs":     multistart,
+        "multistart_runs":     run + 1,   # actual restarts completed
+        "stopped_early":       stopped_early,
         "computed_utc":        _utcnow(),
     }
 
@@ -1008,10 +1061,13 @@ def main() -> None:
                          "simulation, lightning.gpu for GPU (requires cuQuantum + "
                          "PennyLane-Lightning-GPU installed).")
     ap.add_argument("--out-dir",      default=str(REPO / "releases" / "v4" / "db"))
-    ap.add_argument("--no-taper",     action="store_true")
-    ap.add_argument("--no-classical", action="store_true")
-    ap.add_argument("--dry-run",      action="store_true")
-    ap.add_argument("--no-colour",    action="store_true")
+    ap.add_argument("--no-taper",      action="store_true")
+    ap.add_argument("--no-classical",  action="store_true")
+    ap.add_argument("--no-early-stop", action="store_true",
+                    help="Disable early-stop: run all --multistart restarts even after "
+                         "certification threshold (gap < 0.01 Ha) is reached.")
+    ap.add_argument("--dry-run",       action="store_true")
+    ap.add_argument("--no-colour",     action="store_true")
     args = ap.parse_args()
 
     if args.no_colour:
@@ -1115,12 +1171,29 @@ def main() -> None:
 
         # Step 5: VQE
         print()
+        early_stop = not args.no_early_stop
+        e_casci_target = pyscf_res["e_casci"]
+        out_dir = Path(args.out_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        mol_safe   = args.molecule.replace(" ", "_")
+        map_short  = {"jordan_wigner": "JW", "bravyi_kitaev": "BK",
+                      "parity": "PAR"}.get(args.mapping.lower(), args.mapping.upper()[:3])
+        ans_short  = "UCCSD" if "uccsd" in args.ansatz_type.lower() else "HEA"
+        ckpt_name  = f".ckpt_{mol_safe}_{map_short}_{ans_short}.json"
+        ckpt_path  = None if args.dry_run else str(out_dir / ckpt_name)
+        if ckpt_path:
+            print(f"  Checkpoint:  {ckpt_path}")
+        if early_stop:
+            print(f"  Early-stop:  YES (stops when gap < 0.01 Ha)")
         print(_step(f"Step 5: VQE  (COBYLA, {args.multistart} restarts x {args.max_iter} iters)"))
         vqe_res = run_vqe(H_vqe, circuit_fn, n_params,
                           max_iter=args.max_iter,
                           multistart=args.multistart,
                           seed=args.seed,
-                          backend=args.backend)
+                          backend=args.backend,
+                          e_target=e_casci_target,
+                          early_stop=early_stop,
+                          checkpoint_path=ckpt_path)
 
         # BK constant correction
         _bk_corr = tap_meta.get("bk_constant_correction") or 0.0
