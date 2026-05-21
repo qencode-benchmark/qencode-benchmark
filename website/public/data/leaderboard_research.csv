@@ -1,2 +1,4 @@
 rank,entry_id,molecule,basis,orbital_opt,mapping,ansatz,gap,ccsd_t_correlation,vqe_energy,casci_energy,hf_energy,baseline,beats_classical
 1,N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_e0f95b17c3f05af0,N2,cc-pvdz,casscf,jordan_wigner,hardware_efficient,0.1115513689976666,-0.3248413299288302,-108.97840678096931,-109.08995814996698,-108.95422243901834,True,True
+2,N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_b7c6e556b64119cc,N2,cc-pvdz,casscf,jordan_wigner,hardware_efficient,0.12063259019357986,-0.32484133000181714,-108.96932556074852,-109.0899581509421,-108.95422243901837,True,True
+3,N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_689f76617d77bda0,N2,cc-pvdz,casscf,parity,hardware_efficient,0.12119705836242645,-0.3248413298198898,-108.9687610938126,-109.08995815217503,-108.95422243901837,True,True

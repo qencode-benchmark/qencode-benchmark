@@ -24,3 +24,4 @@ rank,entry_id,molecule,basis,orbital_opt,mapping,ansatz,gap,ccsd_t_correlation,v
 23,NH3_ccpvdz_PAR_HEA_v4_tapered__sha256_2c0b0ea8547a8bff,NH3,cc-pvdz,hf,parity,hardware_efficient,0.00036940507985860904,-0.2085497803430485,-56.19751918357956,-56.19788858865942,-56.19573149389924,True,True
 24,NH3_ccpvdz_JW_HEA_v4_tapered__sha256_1c4c065b47a9cf40,NH3,cc-pvdz,hf,jordan_wigner,hardware_efficient,0.00040023881481943135,-0.2085497803430485,-56.197488349844576,-56.197888588659396,-56.195731493899196,True,True
 25,LiH_ccpvdz_PAR_HEA_v4_tapered__sha256_c7026d08cccf45db,LiH,cc-pvdz,hf,parity,hardware_efficient,0.0004096531732598052,-0.03110471625531286,-7.983363323788232,-7.983772976961492,-7.983642231637666,True,True
+26,N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_82e00cea5a20cd83,N2,cc-pvdz,casscf,jordan_wigner,UCCSD,0.0020155434289250707,-0.3248413298102122,-109.08794260895877,-109.0899581523877,-108.95422243901834,True,True
