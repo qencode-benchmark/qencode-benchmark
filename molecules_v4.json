@@ -1,6 +1,6 @@
 {
-  "catalog_version": "4.0",
-  "description": "Molecule catalog for QEncode Suite v4. 7 certified molecules from v3 plus 2 new v4.1 targets (H2CO, C4H6), all with cc-pVDZ basis (publication-grade). Active spaces are chemistry-driven and unchanged from v3. New v4 metadata: bk_tapering_supported, casscf_recommended, qubit counts. Geometry in Angstrom, PySCF format. Entries with tier='target' have catalog entries ready but no certified db entries yet.",
+  "catalog_version": "4.2",
+  "description": "Molecule catalog for QEncode Suite v4. 7 certified molecules from v3 plus 3 new targets: H2CO and C4H6 (v4.1) and benzene (v4.2). All use cc-pVDZ basis (publication-grade). Active spaces are chemistry-driven. New v4 metadata: bk_tapering_supported, casscf_recommended, qubit counts. Geometry in Angstrom, PySCF format. Entries with tier='target' have catalog entries ready but no certified db entries yet.",
   "units": "angstrom",
   "suite": "v4",
   "default_basis": "cc-pvdz",
@@ -8,7 +8,8 @@
     "Active spaces are identical to v3 — they reflect the chemically relevant orbital window, not the basis set.",
     "BK mapping with tapering is only supported for H2 and HF in PL 0.45 (imaginary-strip verification passes). Larger molecules use JW + Parity only.",
     "PAR/UCCSD is excluded for LiH, H2O, NH3, and N2 due to a known issue: UCCSD excitation operators generated in the JW basis are not correctly adapted for Parity tapering in these active spaces. BeH2 (D∞h linear symmetry) is the exception — PAR/UCCSD converges reliably. PAR/HEA and JW/both work correctly for all molecules.",
-    "N2 requires CASSCF orbital optimization (--orbital-opt casscf) to reliably certify. HF orbitals do not partition the [6e,6o] active space well for the triple bond."
+    "N2 requires CASSCF orbital optimization (--orbital-opt casscf) to reliably certify. HF orbitals do not partition the [6e,6o] active space well for the triple bond.",
+    "Benzene also requires CASSCF (--orbital-opt casscf). HF orbitals mix π and σ* and do not cleanly partition the aromatic π active space. PAR/UCCSD excluded (same JW-basis operator mismatch as N2). BK excluded (PL 0.45 imaginary artefact)."
   ],
   "entries": [
     {
@@ -163,6 +164,23 @@
       "tier": "target",
       "supported_mappings": ["jordan_wigner", "parity"],
       "notes": "1,3-Butadiene. [4,4] active space: π and π* orbitals of the conjugated diene system (4 electrons in 4 π-type MOs). C2h symmetry, s-trans conformation. 8 qubits (JW). First conjugated molecule in the QEncode suite. Expected entries: JW/HEA, JW/UCCSD, PAR/HEA. New in Suite v4.1."
+    },
+    {
+      "molecule": "benzene",
+      "variant": "default",
+      "geometry": "C 1.3960 0.0000 0.0000; C 0.6980 1.2087 0.0000; C -0.6980 1.2087 0.0000; C -1.3960 0.0000 0.0000; C -0.6980 -1.2087 0.0000; C 0.6980 -1.2087 0.0000; H 2.4850 0.0000 0.0000; H 1.2425 2.1520 0.0000; H -1.2425 2.1520 0.0000; H -2.4850 0.0000 0.0000; H -1.2425 -2.1520 0.0000; H 1.2425 -2.1520 0.0000",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v4_active_space": [6, 6],
+      "v4_qubits_jw": 12,
+      "v4_qubits_tapered": null,
+      "v4_symmetries_removed": null,
+      "bk_tapering_supported": false,
+      "casscf_recommended": true,
+      "tier": "target",
+      "supported_mappings": ["jordan_wigner", "parity"],
+      "notes": "Benzene (C6H6). [6e, 6o] active space: 6 π electrons in the 6 π-type MOs of the aromatic ring (bonding π1, π2, π3 and antibonding π4*, π5*, π6* in Hückel notation). D6h symmetry. 12 qubits (JW), expected ~8 after Z2 tapering. First aromatic molecule in QEncode — directly relevant to pharmaceutical chemistry. CASSCF orbital optimization required: HF orbitals mix π and σ* and do not cleanly partition the π active space in cc-pVDZ. BK excluded (PL 0.45 imaginary artefact). PAR/UCCSD excluded (JW-basis UCCSD operator mismatch). Expected entries: JW/UCCSD (primary), JW/HEA reps=6, PAR/HEA reps=6. Same [6e,6o] class as N2 — expect ~400 UCCSD parameters, use multistart=1 max_iter=15000. New in Suite v4.2."
     }
   ]
 }
