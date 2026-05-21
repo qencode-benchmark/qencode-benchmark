@@ -223,6 +223,18 @@ def main():
     rows = [r for e in entries if (r := entry_to_row(e)) is not None]
     print(f"  Valid rows: {len(rows)}")
 
+    # ── Deduplicate: keep best gap per (molecule, mapping, ansatz, orbital_opt) ─
+    # Protects against duplicate JSON files in db/ (e.g., two runs of same config).
+    seen: dict[tuple, dict] = {}
+    for r in rows:
+        key = (r["molecule"], r["mapping"], r["ansatz"], r["orbital_opt"])
+        if key not in seen or r["gap"] < seen[key]["gap"]:
+            seen[key] = r
+    deduped = list(seen.values())
+    if len(deduped) < len(rows):
+        print(f"  [WARN] Deduplicated {len(rows) - len(deduped)} duplicate row(s) — kept best gap.")
+    rows = deduped
+
     # ── 2. Partition ──────────────────────────────────────────────────────────
     certified = [r for r in rows if r["trust"] == "certified"]
     validated = [r for r in rows if r["trust"] != "certified"]
