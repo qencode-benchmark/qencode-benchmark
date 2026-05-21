@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "certifying-n2-triple-bond",
+    date: "2026-05-21",
+    readingTime: "8 min read",
+    title: "Certifying N₂: QEncode Benchmarks the Triple Bond",
+    excerpt:
+      "N₂ is one of the hardest molecules in quantum chemistry — a triple bond, strong multireference character, and an orbital manifold that defeats standard HF partitioning. Here's how we certified it at cc-pVDZ with CASSCF orbitals, 12 qubits, and a 2 mHa gap.",
+    tags: ["N₂", "CASSCF", "12-qubit", "UCCSD", "benchmark", "DARPA QB-GSEE"],
+  },
+  {
     slug: "h2o-first-8-qubit-benchmark",
     date: "2026-05-07",
     readingTime: "7 min read",
