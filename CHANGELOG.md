@@ -4,6 +4,57 @@ All notable changes to QEncode are recorded here.
 
 ---
 
+## 2026-05-26 — Suite v4.2: Website Audit + SEO
+
+- Homepage redesigned — free-first strategy, leaderboard as primary CTA, molecule catalog table replaces fake hardcoded data
+- All stale Suite v2/v3 references removed from every page
+- Navbar: Methodology added (was missing), GitHub button added, CTA renamed "Get Started"
+- `/benchmark` rewritten with correct v4 qubit counts, full 10-molecule table, encoding exclusion notes
+- `/methodology` updated to v4 pipeline (CASSCF, cc-pVDZ, accurate iteration counts)
+- `/about` rewritten: real story, N₂ achievement, DARPA QB-GSEE alignment, principles
+- `/docs` quick-start commands added, stale v2 doc links fixed
+- `/apply` gatekeeping language removed, purpose clarified
+- `/certify` Suite v2 → v4, apply-first flow added
+- `/dashboard` placeholder replaced with useful quick-links grid
+- Sitemap: N₂ blog post added (was missing), methodology priority raised
+- robots.js: /api/ and post-conversion pages disallowed from indexing
+- Article JSON-LD schema added to all 6 blog posts (rich results eligible)
+- CITATION.cff created in repo root (was missing)
+- README fully rewritten for v4
+
+---
+
+## 2026-05-21 — Suite v4.1: N₂ Certified + Benzene HEA
+
+- N₂ JW/UCCSD certified: gap = 2.015 mHa, 12→8 qubits, 404 parameters, CASSCF orbital optimization
+- N₂ JW/HEA and PAR/HEA validated (Research tab): gap = 0.121 Ha — HEA insufficient for triple bond
+- Benzene JW/HEA validated: 12→9 qubits, 923 Pauli terms, 63 HEA params, gap = 0.091 Ha
+- H₂CO and C₄H₆ added to molecules_v4.json as tier="target"
+- `--orbital-opt casscf` flag: CASSCF pre-optimises orbital basis before VQE (required for N₂, benzene)
+- `--reps` flag: HEA layer count control
+- `--backend` flag: default.qubit | lightning.qubit | lightning.gpu
+- VQE checkpoint: `.ckpt_*.json` written after every restart, auto-deleted on success
+- VQE early-stop: fires when gap < 0.01 Ha, records actual restarts completed
+- Export deduplication: keeps best gap per (molecule, mapping, ansatz, orbital_opt)
+- Blog post: "Certifying N₂: QEncode Benchmarks the Triple Bond"
+- Website: CASSCF badge (purple) on leaderboard rows; cc-pVDZ basis chip (blue)
+- Leaderboard: 26 certified + 3 research entries
+
+---
+
+## 2026-05-14 — Suite v4.0: cc-pVDZ Foundation
+
+- Upgraded basis from 6-31G to cc-pVDZ (publication-grade)
+- `generate_entry_v4.py` and `schema_v4.json` — new v4 pipeline with PySCF 2.5.0 + PennyLane 0.45
+- Fixed BK complex-taper bug (PL 0.45 resolves imaginary artefact for H₂ and HF)
+- BK excluded for all molecules with active spaces > [2,2] (artefact too large to strip)
+- PAR/UCCSD excluded for LiH, H₂O, NH₃ (JW-basis operator mismatch)
+- 25 certified entries across 6 molecules at cc-pVDZ
+- CI smoke-v4 job: re-generates H₂+HF, verifies gap < 0.01 Ha
+- GitHub Release v4.0.0
+
+---
+
 ## 2026-05-12 — Suite v3.1 Release (6-31G basis)
 
 - Upgraded basis set from STO-3G to 6-31G (split-valence) — ~5× larger CCSD(T) correlation energies

@@ -14,9 +14,27 @@ export const metadata = {
   },
 };
 
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Certifying N₂: QEncode Benchmarks the Triple Bond",
+  description:
+    "N₂ is one of the hardest molecules in quantum chemistry — a triple bond with strong multireference character. How we certified it at cc-pVDZ with CASSCF orbitals, 12 qubits, and a 2 mHa gap.",
+  datePublished: "2026-05-21",
+  dateModified: "2026-05-21",
+  author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  url: "https://www.qencode-benchmark.org/blog/certifying-n2-triple-bond",
+  keywords: ["N2 VQE", "CASSCF", "quantum benchmark", "DARPA QB-GSEE", "12 qubit", "UCCSD"],
+};
+
 export default function Post() {
   return (
     <main className="container max-w-2xl py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
         ← Blog
       </Link>

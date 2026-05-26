@@ -14,9 +14,27 @@ export const metadata = {
   },
 };
 
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Why VQE Benchmarks Are So Hard to Reproduce — and How QEncode Fixes It",
+  description:
+    "Most published VQE results cannot be reproduced. The reasons are technical but fixable: underdocumented ansatz construction, hardware-specific transpilation, and no standard error metric. QEncode addresses all three.",
+  datePublished: "2026-04-18",
+  dateModified: "2026-04-18",
+  author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  url: "https://www.qencode-benchmark.org/blog/vqe-benchmarking-reproducibility",
+  keywords: ["VQE reproducibility", "quantum benchmark", "ansatz", "QEncode"],
+};
+
 export default function Post() {
   return (
     <main className="container max-w-2xl py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       {/* Back */}
       <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
         ← Blog

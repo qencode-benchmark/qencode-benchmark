@@ -14,9 +14,27 @@ export const metadata = {
   },
 };
 
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "H₂O Benchmarking: First 8-Qubit Results on the QEncode Leaderboard",
+  description:
+    "We added water to the QEncode benchmark suite. Here's what it takes to simulate H₂O with a [4,4] active space — 8 qubits, 185 Pauli terms, and what the VQE results reveal about UCCSD's limits.",
+  datePublished: "2026-05-07",
+  dateModified: "2026-05-07",
+  author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  url: "https://www.qencode-benchmark.org/blog/h2o-first-8-qubit-benchmark",
+  keywords: ["H2O VQE", "8 qubit", "water molecule", "quantum benchmark", "UCCSD"],
+};
+
 export default function Post() {
   return (
     <main className="container max-w-2xl py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
         ← Blog
       </Link>

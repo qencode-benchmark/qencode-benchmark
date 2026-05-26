@@ -14,9 +14,27 @@ export const metadata = {
   },
 };
 
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Jordan-Wigner vs Parity vs Bravyi-Kitaev: A Practical Comparison for VQE",
+  description:
+    "A technical comparison of the three main fermionic-to-qubit encodings — Jordan-Wigner, parity, and Bravyi-Kitaev — with benchmark data showing how encoding choice affects VQE circuit depth, gate count, and energy accuracy.",
+  datePublished: "2026-04-25",
+  dateModified: "2026-04-25",
+  author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  url: "https://www.qencode-benchmark.org/blog/jordan-wigner-vs-parity-vs-bravyi-kitaev",
+  keywords: ["Jordan-Wigner", "parity encoding", "Bravyi-Kitaev", "VQE encoding", "qubit mapping"],
+};
+
 export default function Post() {
   return (
     <main className="container max-w-2xl py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
         ← Blog
       </Link>

@@ -1,13 +1,11 @@
-# Quick Start — Run a QEncode Suite v3.1 Benchmark
+# Quick Start — QEncode Suite v4
 
-Reproduce any certified entry from Suite v3.1 (6-31G basis) locally in a few commands.
-
-Official platform:
+Run your first certified benchmark entry in a few minutes.
 
 - Website: https://www.qencode-benchmark.org
 - Live leaderboard: https://www.qencode-benchmark.org/leaderboard
-- Certification / pricing: https://www.qencode-benchmark.org/pricing
-- Contact: quencodebenchmark@gmail.com
+- Benchmark spec: https://www.qencode-benchmark.org/benchmark
+- Contact: support@qencode-benchmark.org
 
 ---
 
@@ -16,76 +14,136 @@ Official platform:
 ```bash
 git clone https://github.com/qencode-benchmark/qencode-benchmark.git
 cd qencode-benchmark
+
+# Conda (recommended)
 conda create -n qencode python=3.11
 conda activate qencode
-pip install -r requirements.txt
+pip install -r requirements-v4.txt
 ```
 
-> PySCF is required and installs cleanly on Linux/macOS via pip or conda-forge.
-> On Windows, use WSL + Conda (see [GETTING_STARTED.md](GETTING_STARTED.md)).
+> **Windows:** Use WSL2 + Conda. PySCF does not install natively on Windows.  
+> **GPU backend:** requires cuQuantum — pass `--backend lightning.gpu` when available.
 
 ---
 
-## 2. Reproduce a single entry
+## 2. Run a single entry
 
 ```bash
-python scripts/generate_entry_v3.py \
-  --molecule HF \
-  --basis 6-31g \
-  --mapping parity \
+# H₂ — simplest molecule, 4 qubits → 1 after tapering
+python scripts/generate_entry_v4.py \
+  --molecule H2 \
+  --mapping jordan_wigner \
   --ansatz-type uccsd \
-  --multistart 10 \
-  --seed 42
+  --out-dir releases/v4/db
+
+# LiH — 8 qubits, moderate complexity
+python scripts/generate_entry_v4.py \
+  --molecule LiH \
+  --mapping jordan_wigner \
+  --ansatz-type hardware_efficient \
+  --reps 4 --multistart 30 \
+  --out-dir releases/v4/db
+
+# N₂ — 12 qubits, CASSCF required, 404 UCCSD parameters
+python scripts/generate_entry_v4.py \
+  --molecule N2 \
+  --mapping jordan_wigner \
+  --ansatz-type uccsd \
+  --orbital-opt casscf \
+  --multistart 1 --max-iter 10000 \
+  --out-dir releases/v4/db
 ```
 
-The SHA-256 hash in the output should match `entry_hash_sha256` in the corresponding
-artifact JSON at `releases/v3.1/db/`.
+The script prints a banner, runs PySCF → PennyLane → VQE, and writes a JSON entry to `releases/v4/db/`.
 
 ---
 
-## 3. Run the full certified suite
+## 3. Key flags
+
+| Flag | Default | Description |
+|---|---|---|
+| `--molecule` | required | Molecule name (H2, HF, LiH, BeH2, H2O, NH3, N2, H2CO, C4H6, benzene) |
+| `--mapping` | required | jordan_wigner \| parity \| bravyi_kitaev |
+| `--ansatz-type` | required | uccsd \| hardware_efficient |
+| `--orbital-opt` | hf | hf \| casscf (casscf required for N₂ and benzene) |
+| `--multistart` | 5 | Number of COBYLA random restarts |
+| `--max-iter` | 500 | Max COBYLA iterations per restart |
+| `--reps` | 4 | HEA layer count (hardware_efficient only) |
+| `--backend` | default.qubit | default.qubit \| lightning.qubit \| lightning.gpu |
+| `--out-dir` | releases/v4/db | Output directory for JSON entry |
+
+---
+
+## 4. Verify an entry
 
 ```bash
-python scripts/run_suite_v3.py \
-  --basis 6-31g \
-  --out-dir releases/v3.1/db \
-  --skip-research
+python scripts/verify_entry.py releases/v4/db/<entry_id>.json
 ```
 
-Omit `--skip-research` to also run N₂ (research tier).
+The script re-runs the full pipeline and checks that the stored gap matches the recomputed gap within 1e-6 Ha.
 
 ---
 
-## 4. Regenerate leaderboard CSVs
+## 5. Export and publish leaderboard
 
 ```bash
-python scripts/export_leaderboard_v3.py \
-  --db-dir releases/v3.1/db \
-  --suite-version 3.1
+# Generate CSVs from all entries in releases/v4/db/
+python scripts/export_leaderboard_v4.py
+
+# Push to live Neon Postgres DB (requires LEADERBOARD_PUBLISH_SECRET)
+python scripts/publish_leaderboard.py --secret $LEADERBOARD_PUBLISH_SECRET
+
+# Commit updated CSV files
+git add website/public/data/ && git commit -m "data: update leaderboard CSVs"
+git push
 ```
 
 ---
 
-## Benchmark molecules (Suite v3.1)
+## 6. Supported molecule/mapping/ansatz combinations
 
-| Molecule | Formula | Active Space | Qubits (tapered) | Tier |
-|----------|---------|-------------|-----------------|------|
-| Hydrogen | H₂ | [2e, 2o] | 1 | Certified |
-| Hydrogen Fluoride | HF | [2e, 2o] | 1 | Certified |
-| Lithium Hydride | LiH | [4e, 4o] | 4 | Certified |
-| Beryllium Hydride | BeH₂ | [4e, 4o] | 3 | Certified |
-| Water | H₂O | [4e, 4o] | 4–5 | Certified |
-| Ammonia | NH₃ | [4e, 4o] | 4–5 | Certified |
-| Nitrogen | N₂ | [6e, 6o] | 8 | Research |
+| Molecule | JW/HEA | JW/UCCSD | PAR/HEA | PAR/UCCSD | BK/HEA | BK/UCCSD |
+|---|---|---|---|---|---|---|
+| H₂ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| HF | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| LiH | ✅ | ✅ | ✅ | ❌ PAR/UCCSD | ❌ BK | ❌ BK |
+| BeH₂ | ✅ | ✅ | ✅ | ✅ (D∞h exception) | ❌ BK | ❌ BK |
+| H₂O | ✅ | ✅ | ✅ | ❌ PAR/UCCSD | ❌ BK | ❌ BK |
+| NH₃ | ✅ | ✅ | ✅ | ❌ PAR/UCCSD | ❌ BK | ❌ BK |
+| N₂ | ✅ | ✅ (casscf) | ✅ | ❌ PAR/UCCSD | ❌ BK | ❌ BK |
+
+See [BENCHMARK_SPEC_V4.md](BENCHMARK_SPEC_V4.md) for full exclusion notes.
 
 ---
 
-## Pipeline
+## 7. Long runs (WSL2 / Ubuntu)
 
+For molecules requiring many iterations (N₂, benzene), use `nohup` with `tmux`:
+
+```bash
+nohup python scripts/generate_entry_v4.py \
+  --molecule benzene --mapping jordan_wigner \
+  --ansatz-type uccsd --orbital-opt casscf \
+  --multistart 1 --max-iter 15000 \
+  --backend lightning.qubit --out-dir releases/v4/db \
+  > benzene_jw_uccsd.log 2>&1 &
+echo "PID: $!"
+tail -f benzene_jw_uccsd.log
 ```
-PySCF (CASCI reference, 6-31G basis)
-  → PennyLane (qubit Hamiltonian, JW / Parity / BK mapping)
-  → Z2 symmetry tapering
-  → COBYLA VQE (10 multistart runs, seed=42)
-  → SHA-256 provenance hash
-```
+
+> `systemd-inhibit` does not work in WSL2. Do not rely on it to prevent sleep.  
+> Checkpoints are written to `.ckpt_*.json` after each restart and deleted on success.
+
+---
+
+## Environment details (requirements-v4.txt)
+
+| Package | Version |
+|---|---|
+| PySCF | 2.5.0 |
+| PennyLane | 0.45 |
+| openfermion | 1.7.1 |
+| NumPy | 1.26.4 |
+| SciPy | pinned |
+
+v3 entries remain reproducible using `requirements-v3.txt` and `scripts/verify_entry.py`.

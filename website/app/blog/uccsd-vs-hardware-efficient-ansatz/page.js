@@ -14,9 +14,27 @@ export const metadata = {
   },
 };
 
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "UCCSD vs Hardware-Efficient Ansatz: What the Benchmark Data Actually Shows",
+  description:
+    "We ran UCCSD and hardware-efficient ansatz families across five molecules at three qubit encodings and measured energy gap, circuit depth, and two-qubit gate count. Here's what the data shows.",
+  datePublished: "2026-04-25",
+  dateModified: "2026-04-25",
+  author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
+  url: "https://www.qencode-benchmark.org/blog/uccsd-vs-hardware-efficient-ansatz",
+  keywords: ["UCCSD", "hardware efficient ansatz", "HEA", "VQE", "quantum benchmark"],
+};
+
 export default function Post() {
   return (
     <main className="container max-w-2xl py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       {/* Back */}
       <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
         ← Blog
