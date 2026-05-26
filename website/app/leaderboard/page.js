@@ -75,11 +75,13 @@ export default async function LeaderboardPage() {
       </div>
       <div className="mb-8 rounded-lg border p-4 bg-muted/30 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Need your results listed here? Purchase certification and apply for managed execution access.
+          Want your results here?{" "}
+          <strong className="text-foreground">Run the benchmark yourself — it&apos;s free and open source.</strong>{" "}
+          Managed certification with signed artifacts is available for publications and grants.
         </p>
         <div className="flex gap-2">
-          <Button asChild size="sm"><Link href="/pricing">Pricing</Link></Button>
-          <Button asChild size="sm" variant="outline"><Link href="/apply">Apply for Access</Link></Button>
+          <Button asChild size="sm"><Link href="https://github.com/qencode-benchmark/qencode-benchmark" target="_blank" rel="noopener noreferrer">Get started</Link></Button>
+          <Button asChild size="sm" variant="outline"><Link href="/certify">Certification</Link></Button>
         </div>
       </div>
       <LeaderboardClient acc={acc} cost={cost} balanced={balanced} research={research} basisLabel={basisLabel} />

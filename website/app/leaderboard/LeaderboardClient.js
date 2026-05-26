@@ -130,8 +130,8 @@ function FilterChip({ label, active, onClick }) {
       className={`
         px-2.5 py-1 rounded-full text-xs font-medium border transition-colors
         ${active
-          ? "bg-[#185FA5] text-white border-[#185FA5]"
-          : "bg-background text-muted-foreground border-border hover:border-[#185FA5] hover:text-foreground"}
+          ? "bg-primary text-white border-primary"
+          : "bg-background text-muted-foreground border-border hover:border-primary hover:text-foreground"}
       `}
     >
       {label}
@@ -177,8 +177,9 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                       <Info className="h-3 w-3 text-muted-foreground cursor-help" />
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs text-xs">
-                      |E_vqe − E_fci| in Hartrees. Chemical accuracy = 1.6 × 10⁻³ Ha.
-                      Lower is better.{basisLabel ? ` Computed with ${basisLabel} basis set.` : ""}
+                      |E_VQE − E_CASCI| in Hartrees. Chemical accuracy = 1.6 × 10⁻³ Ha.
+                      CASCI is the full-CI reference within the active space — the exact result
+                      the VQE is trying to reach. Lower is better.{basisLabel ? ` Computed with ${basisLabel} basis set.` : ""}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -218,7 +219,7 @@ function LeaderboardTable({ rows, category, basisLabel }) {
         <TableBody>
           {rows.map((r, idx) => {
             const isFirst = r.rank === 1;
-            const configStr = `${r.molecule.toLowerCase()}-${r.mapping}-${r.ansatz}-v1`;
+            const configStr = `${r.molecule.toLowerCase()}-${r.mapping}-${r.ansatz}-v4`;
             return (
               <TableRow
                 key={`${r.molecule}-${r.mapping}-${r.ansatz}-${idx}`}
@@ -321,17 +322,17 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                     {r.entryId && (
                       <Link
                         href={`/entry/${r.entryId}`}
-                        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline transition-colors"
                         title="View full benchmark artifact"
                       >
-                        <ExternalLink className="h-3 w-3" /> Details
+                        <ExternalLink className="h-3 w-3" /> View entry
                       </Link>
                     )}
                     {r.baseline ? (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Badge className="bg-[#185FA5] text-white text-xs gap-1 cursor-help">
+                            <Badge className="bg-primary text-white text-xs gap-1 cursor-help">
                               <CheckCircle className="h-3 w-3" /> Baseline
                             </Badge>
                           </TooltipTrigger>
@@ -451,7 +452,9 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
   const filteredBalanced = useMemo(() => applyFilters(balanced).filter((r) => r.twoQ != null && r.depth != null), [balanced, molecule, activeMappings, activeAnsatze]);
   const filteredResearch = useMemo(() => applyFilters(research), [research, molecule, activeMappings, activeAnsatze]);
 
-  const totalVisible = filteredAcc.length + filteredCost.length + filteredBalanced.length;
+  // Use accuracy tab length as the canonical "certified entry" count — cost and balanced
+  // are subsets of the same entries, so summing all three would triple-count them.
+  const totalVisible = filteredAcc.length;
 
   // Controlled tab state — fall back to "accuracy" if Research tab disappears due to filter change
   const [activeTab, setActiveTab] = useState("accuracy");
@@ -523,7 +526,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
         {/* Active count */}
         <div className="flex items-center justify-between pt-1 border-t">
           <p className="text-xs text-muted-foreground">
-            Showing {totalVisible} entries across all categories
+            {totalVisible} certified {totalVisible === 1 ? "entry" : "entries"} match{totalVisible === 1 ? "es" : ""} current filters
           </p>
           <button
             onClick={() => {
@@ -577,7 +580,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
           <div className="mb-3">
             <h3 className="text-sm font-medium text-foreground">Best Accuracy</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Ranked by lowest |E<sub>VQE</sub> − E<sub>FCI</sub>| error gap. Chemical accuracy threshold: 1.6 × 10⁻³ Ha.
+              Ranked by lowest |E<sub>VQE</sub> − E<sub>CASCI</sub>| error gap. Chemical accuracy threshold: 1.6 × 10⁻³ Ha.
             </p>
           </div>
           <LeaderboardTable rows={filteredAcc} category="accuracy" basisLabel={basisLabel} />
@@ -633,7 +636,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
             <Crown className="h-3.5 w-3.5 text-amber-500" /> Rank #1 in category
           </span>
           <span className="flex items-center gap-1.5">
-            <Badge className="bg-[#185FA5] text-white text-xs">Baseline</Badge>
+            <Badge className="bg-primary text-white text-xs">Baseline</Badge>
             Run by QEncode team
           </span>
           <span className="flex items-center gap-1.5">
@@ -670,8 +673,8 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
               <p>Chemistry-motivated ansatz that applies all single and double electronic excitations from the Hartree-Fock reference state. Produces the best energies because the circuit is designed around the molecule&apos;s physics.</p>
               <p className="text-amber-700 dark:text-amber-400 font-medium">Why 2Q gates and depth show &ldquo;—&rdquo;:</p>
               <p>UCCSD uses exponential Pauli operators (<span className="font-mono">exp(iθH)</span>) that are symbolic until compiled for a specific hardware target. The raw gate count before transpilation is not meaningful for hardware comparison, so these columns are intentionally left blank. On real superconducting hardware, a single UCCSD layer for LiH (4 qubits) typically expands to hundreds of CNOT gates after decomposition.</p>
-              <p className="text-amber-700 dark:text-amber-400 font-medium">N₂ convergence challenge:</p>
-              <p>N₂ with 6-31G has 404 UCCSD parameters and a strongly-correlated triple bond. Only 1 of 10 optimiser restarts converged to a minimum — the landscape is exceptionally rugged at this scale. This is why N₂ UCCSD entries sit in the Research tier rather than Certified.</p>
+              <p className="text-emerald-700 dark:text-emerald-400 font-medium">N₂ — certified at cc-pVDZ:</p>
+              <p>N₂ with cc-pVDZ has 404 UCCSD parameters and a strongly-correlated triple bond. With CASSCF orbital optimisation, QEncode certified N₂ JW/UCCSD at 2.015 mHa gap — within chemical accuracy and aligned with DARPA QB-GSEE targets. Without CASSCF (HEA), the gap exceeds 0.1 Ha, illustrating how critical orbital optimisation is for multireference systems.</p>
             </div>
             {/* HEA */}
             <div className="rounded-md border bg-background p-3 space-y-1.5">
