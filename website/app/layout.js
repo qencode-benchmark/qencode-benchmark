@@ -105,7 +105,7 @@ export default function RootLayout({ children }) {
                 <Link href="/about">About</Link>
                 <a href="mailto:support@qencode-benchmark.org">support@qencode-benchmark.org</a>
                 <span>Citation: CITATION.cff</span>
-                <span>&copy; 2026 QEncode. Suite v2.</span>
+                <span>&copy; 2026 QEncode. Suite v4.</span>
               </div>
               <div className="pt-2">
                 <Image src="/logo.png" alt="QEncode Benchmark" width={80} height={80} className="opacity-60" />
