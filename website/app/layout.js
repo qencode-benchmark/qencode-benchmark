@@ -84,31 +84,32 @@ export default function RootLayout({ children }) {
               <div className="flex flex-col gap-1">
                 <Link href="/leaderboard">Leaderboard</Link>
                 <Link href="/benchmark">Benchmark Spec</Link>
-                <Link href="/pricing">Pricing</Link>
+                <Link href="/methodology">Methodology</Link>
                 <Link href="/blog">Blog</Link>
-                <Link href="/apply">Apply for Access</Link>
                 <Link href="/docs">Docs</Link>
+                <Link href="/pricing">Certification Pricing</Link>
+                <Link href="/apply">Get Started</Link>
               </div>
             </div>
             <div className="space-y-2">
               <h3 className="font-semibold text-foreground">Resources</h3>
               <div className="flex flex-col gap-1">
-                <Link href="/docs">Whitepaper (PDF)</Link>
-                <Link href="/docs">Benchmark Specification (PDF)</Link>
-                <Link href="/docs">Leaderboard Rules</Link>
-                <a href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href={`${REPO_URL}/blob/main/docs/QUICK_START.md`} target="_blank" rel="noopener noreferrer">Quick Start Guide</a>
+                <a href={`${REPO_URL}/blob/main/docs/BENCHMARK_SPEC_V4.md`} target="_blank" rel="noopener noreferrer">Benchmark Spec v4 (GitHub)</a>
+                <a href={`${REPO_URL}/blob/main/docs/LEADERBOARD_RULES_V1.md`} target="_blank" rel="noopener noreferrer">Leaderboard Rules</a>
+                <a href={`${REPO_URL}/blob/main/CITATION.cff`} target="_blank" rel="noopener noreferrer">Citation (CITATION.cff)</a>
+                <a href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub Repository</a>
               </div>
             </div>
             <div className="space-y-2">
               <h3 className="font-semibold text-foreground">Company</h3>
               <div className="flex flex-col gap-1">
-                <Link href="/about">About</Link>
+                <Link href="/about">About QEncode</Link>
                 <a href="mailto:support@qencode-benchmark.org">support@qencode-benchmark.org</a>
-                <span>Citation: CITATION.cff</span>
                 <span>&copy; 2026 QEncode. Suite v4.</span>
               </div>
-              <div className="pt-2">
-                <Image src="/logo.png" alt="QEncode Benchmark" width={80} height={80} className="opacity-60" />
+              <div className="pt-3">
+                <Image src="/logo.png" alt="QEncode Benchmark" width={72} height={72} className="opacity-50" />
               </div>
             </div>
           </div>

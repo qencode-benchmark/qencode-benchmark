@@ -106,18 +106,19 @@ export default function ApplyPage() {
   // ── Form ────────────────────────────────────────────────────────────────────
   return (
     <div className="container py-16 max-w-3xl">
-      <h1 className="text-3xl sm:text-4xl font-bold mb-3">Apply for Access</h1>
-      <p className="text-muted-foreground mb-8">
-        Share your workload and goals. We review each request and respond with access scope, expected
-        timeline, and recommended plan.
+      <h1 className="text-3xl sm:text-4xl font-bold mb-3">Apply for Certification</h1>
+      <p className="text-muted-foreground mb-3">
+        The QEncode benchmark suite is free and open source — clone the repo and run it yourself anytime.
+        Use this form if you need <strong className="text-foreground">managed certification</strong>: a signed
+        artifact, audit-ready report, and leaderboard inclusion for papers, grants, or hardware evaluations.
       </p>
       <p className="text-sm rounded-md border bg-muted/40 px-3 py-2 mb-8">
-        Early access is free for qualifying teams.
+        Tell us your molecule scope, timeline, and what you need the output for. We respond within 1–2 business days.
       </p>
 
       <Card className="border">
         <CardHeader>
-          <CardTitle>Qualification form</CardTitle>
+          <CardTitle>Certification request</CardTitle>
         </CardHeader>
         <CardContent className="text-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -179,12 +180,12 @@ export default function ApplyPage() {
                 />
               </label>
               <label className="space-y-1">
-                <span className="text-muted-foreground">Estimated Runs / Month</span>
+                <span className="text-muted-foreground">Number of molecules needed</span>
                 <input
                   type="number"
                   min="0"
                   className="w-full rounded-md border bg-background px-3 py-2"
-                  placeholder="Example: 12"
+                  placeholder="Example: 3"
                   value={form.monthlyRuns}
                   onChange={(e) => updateField("monthlyRuns", e.target.value)}
                 />
@@ -222,8 +223,11 @@ export default function ApplyPage() {
             </div>
 
             <div className="rounded-md border bg-muted/40 p-3 text-muted-foreground">
-              <span className="font-medium text-foreground">Auto recommendation:</span>{" "}
-              {recommendation}
+              <span className="font-medium text-foreground">Suggested plan:</span>{" "}
+              {recommendation === "Starter" || recommendation === "Team"
+                ? "Single molecule ($1,500) or Full Suite v4 ($4,000)"
+                : "Full Suite v4 or Enterprise — we'll scope with you"
+              }
             </div>
 
             {status === "error" && (

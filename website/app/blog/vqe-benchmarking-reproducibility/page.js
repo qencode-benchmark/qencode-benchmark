@@ -3,12 +3,12 @@ import Link from "next/link";
 export const metadata = {
   title: "Why VQE Benchmarks Are So Hard to Reproduce — and How QEncode Fixes It",
   description:
-    "Most published VQE results cannot be reproduced. The reasons are technical but fixable: underdocumented ansatz construction, hardware-specific transpilation, and no standard error metric. QEncode Suite v2 addresses all three.",
+    "Most published VQE results cannot be reproduced. The reasons are technical but fixable: underdocumented ansatz construction, hardware-specific transpilation, and no standard error metric. QEncode addresses all three.",
   alternates: { canonical: "/blog/vqe-benchmarking-reproducibility" },
   openGraph: {
     title: "Why VQE Benchmarks Are So Hard to Reproduce — and How QEncode Fixes It",
     description:
-      "Most published VQE results cannot be reproduced. QEncode Suite v2 defines a standard that makes quantum algorithm benchmarks verifiable and comparable.",
+      "Most published VQE results cannot be reproduced. QEncode defines a standard that makes quantum algorithm benchmarks verifiable and comparable.",
     url: "https://www.qencode-benchmark.org/blog/vqe-benchmarking-reproducibility",
     type: "article",
   },
@@ -37,7 +37,7 @@ export default function Post() {
         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
           Most published VQE results can't be reproduced. The reasons are technical but fixable:
           underdocumented ansatz construction, hardware-specific transpilation, and no standard
-          error metric. QEncode Suite v2 addresses all three.
+          error metric. Here&apos;s how QEncode addresses all three.
         </p>
       </div>
 

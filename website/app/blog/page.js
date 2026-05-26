@@ -65,7 +65,7 @@ const posts = [
     readingTime: "6 min read",
     title: "Why VQE Benchmarks Are So Hard to Reproduce — and How QEncode Fixes It",
     excerpt:
-      "Most published VQE results can't be reproduced. The reasons are technical but fixable: underdocumented ansatz construction, hardware-specific transpilation, and no standard error metric. QEncode Suite v2 addresses all three.",
+      "Most published VQE results can't be reproduced. The reasons are technical but fixable: underdocumented ansatz construction, hardware-specific transpilation, and no standard error metric. Here's how QEncode addresses all three.",
     tags: ["reproducibility", "VQE", "methodology", "certification"],
   },
 ];
