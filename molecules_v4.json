@@ -1,6 +1,6 @@
 {
-  "catalog_version": "4.2",
-  "description": "Molecule catalog for QEncode Suite v4. 7 certified molecules from v3 plus 3 new targets: H2CO and C4H6 (v4.1) and benzene (v4.2). All use cc-pVDZ basis (publication-grade). Active spaces are chemistry-driven. New v4 metadata: bk_tapering_supported, casscf_recommended, qubit counts. Geometry in Angstrom, PySCF format. Entries with tier='target' have catalog entries ready but no certified db entries yet.",
+  "catalog_version": "4.3",
+  "description": "Molecule catalog for QEncode Suite v4. 7 certified molecules from v3 plus targets: H2CO and C4H6 (v4.1), benzene (v4.2), H4 and H6 hydrogen chains (v4.3, DARPA QB-GSEE aligned). All use cc-pVDZ basis (publication-grade). Active spaces are chemistry-driven. New v4 metadata: bk_tapering_supported, casscf_recommended, qubit counts. Geometry in Angstrom, PySCF format. Entries with tier='target' have catalog entries ready but no certified db entries yet.",
   "units": "angstrom",
   "suite": "v4",
   "default_basis": "cc-pvdz",
@@ -180,7 +180,41 @@
       "casscf_recommended": true,
       "tier": "target",
       "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "Benzene (C6H6). [6e, 6o] active space: 6 π electrons in the 6 π-type MOs of the aromatic ring (bonding π1, π2, π3 and antibonding π4*, π5*, π6* in Hückel notation). D6h symmetry. 12 qubits (JW), expected ~8 after Z2 tapering. First aromatic molecule in QEncode — directly relevant to pharmaceutical chemistry. CASSCF orbital optimization required: HF orbitals mix π and σ* and do not cleanly partition the π active space in cc-pVDZ. BK excluded (PL 0.45 imaginary artefact). PAR/UCCSD excluded (JW-basis UCCSD operator mismatch). Expected entries: JW/UCCSD (primary), JW/HEA reps=6, PAR/HEA reps=6. Same [6e,6o] class as N2 — expect ~400 UCCSD parameters, use multistart=1 max_iter=15000. New in Suite v4.2."
+      "notes": "Benzene (C6H6). [6e, 6o] active space: 6 π electrons in the 6 π-type MOs of the aromatic ring (bonding π1, π2, π3 and antibonding π4*, π5*, π6* in Hückel notation). D6h symmetry. 12 qubits (JW), 9 after Z2 tapering (3 symmetries). JW/HEA validated: gap=91.1 mHa, 63 params, 30 restarts — Research tier. JW/UCCSD deferred: run on cloud VM (too long for local WSL2, ~400 params, max_iter=15000). CASSCF required. BK excluded. PAR/UCCSD excluded. New in Suite v4.2."
+    },
+    {
+      "molecule": "H4",
+      "variant": "chain_r1.0",
+      "geometry": "H 0.0 0.0 0.0; H 0.0 0.0 1.0; H 0.0 0.0 2.0; H 0.0 0.0 3.0",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v4_active_space": [4, 4],
+      "v4_qubits_jw": 8,
+      "v4_qubits_tapered": null,
+      "v4_symmetries_removed": null,
+      "bk_tapering_supported": false,
+      "casscf_recommended": false,
+      "tier": "target",
+      "supported_mappings": ["jordan_wigner", "parity"],
+      "notes": "H4 linear chain at R=1.0 Å interatomic spacing (slightly stretched from equilibrium ~0.74 Å — shows mild multireference character that makes it interesting for VQE). [4,4] active space: 4 electrons in the 4 lowest-energy σ-type MOs. 8 qubits (JW). DARPA QB-GSEE target — hydrogen chains appear explicitly in the QB-GSEE benchmark specification as a systematic test of VQE scaling. Cheap to run: expected <50 Pauli terms, should certify in minutes. Expected entries: JW/HEA, JW/UCCSD, PAR/HEA. New in Suite v4.3."
+    },
+    {
+      "molecule": "H6",
+      "variant": "chain_r1.0",
+      "geometry": "H 0.0 0.0 0.0; H 0.0 0.0 1.0; H 0.0 0.0 2.0; H 0.0 0.0 3.0; H 0.0 0.0 4.0; H 0.0 0.0 5.0",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v4_active_space": [6, 6],
+      "v4_qubits_jw": 12,
+      "v4_qubits_tapered": null,
+      "v4_symmetries_removed": null,
+      "bk_tapering_supported": false,
+      "casscf_recommended": true,
+      "tier": "target",
+      "supported_mappings": ["jordan_wigner", "parity"],
+      "notes": "H6 linear chain at R=1.0 Å interatomic spacing. [6,6] active space: 6 electrons in 6 σ-type MOs — same qubit count as N2 and benzene (12 qubits JW) but much simpler Hamiltonian (~200-300 Pauli terms vs 914 for benzene). CASSCF recommended at this chain length (increased multireference character vs H4). DARPA QB-GSEE target — H6 represents the first step into the regime where classical methods begin to struggle. Expected entries: JW/HEA, JW/UCCSD, PAR/HEA. UCCSD for H6 has fewer parameters than benzene — should complete in 2-4 hours locally. New in Suite v4.3."
     }
   ]
 }

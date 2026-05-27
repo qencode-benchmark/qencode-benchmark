@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "benzene-first-aromatic-molecule",
+    date: "2026-05-27",
+    readingTime: "6 min read",
+    title: "Benzene on the Leaderboard: QEncode's First Aromatic Molecule",
+    excerpt:
+      "Nearly every drug molecule contains an aromatic ring. We added benzene to Suite v4.2 — 12 qubits, CASSCF orbital optimization, 914 Pauli terms, and the first aromatic molecule on the public leaderboard.",
+    tags: ["benzene", "aromatic", "CASSCF", "HEA", "v4.2", "pharmaceutical"],
+  },
+  {
     slug: "certifying-n2-triple-bond",
     date: "2026-05-21",
     readingTime: "8 min read",
