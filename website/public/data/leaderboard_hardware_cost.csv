@@ -22,6 +22,9 @@ rank,entry_id,molecule,basis,orbital_opt,mapping,ansatz,gap,depth,2q_gates,ccsd_
 21,BeH2_ccpvdz_JW_UCCSD_v4_tapered__sha256_1871bda3189416a5,BeH2,cc-pvdz,hf,jordan_wigner,UCCSD,7.57855203250557e-05,14,8,-0.06896339711317268,True,True
 22,BeH2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_9106b6e5c6308767,BeH2,cc-pvdz,hf,parity,UCCSD,3.3719364438411503e-06,22,8,-0.06896339711316912,True,True
 23,H2O_ccpvdz_JW_UCCSD_v4_tapered__sha256_7f7efb1b1d9ee47d,H2O,cc-pvdz,hf,jordan_wigner,UCCSD,0.0003139103295950463,34,12,-0.21634849260682643,True,True
-24,LiH_ccpvdz_JW_UCCSD_v4_tapered__sha256_80539d487cf8bd61,LiH,cc-pvdz,hf,jordan_wigner,UCCSD,0.00013395488342382578,110,24,-0.031104716255311082,True,True
-25,NH3_ccpvdz_JW_UCCSD_v4_tapered__sha256_f10c041c744381f1,NH3,cc-pvdz,hf,jordan_wigner,UCCSD,0.00011530076172050485,120,24,-0.2085497803430485,True,True
-26,N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_82e00cea5a20cd83,N2,cc-pvdz,casscf,jordan_wigner,UCCSD,0.0020155434289250707,805,64,-0.3248413298102122,True,True
+24,H4_ccpvdz_JW_HEA_v4_tapered__sha256_924d046f2c82ab42,H4,cc-pvdz,hf,jordan_wigner,hardware_efficient,0.007494015277035526,16,16,-0.08731157362009423,True,True
+24,H4_ccpvdz_PAR_HEA_v4_tapered__sha256_8654d23b38b79be8,H4,cc-pvdz,hf,parity,hardware_efficient,0.007040556371525675,16,16,-0.08731157362009423,True,True
+26,LiH_ccpvdz_JW_UCCSD_v4_tapered__sha256_80539d487cf8bd61,LiH,cc-pvdz,hf,jordan_wigner,UCCSD,0.00013395488342382578,110,24,-0.031104716255311082,True,True
+27,H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_f039014381899d2c,H4,cc-pvdz,hf,jordan_wigner,UCCSD,0.00012963150165301585,120,24,-0.08731157362009245,True,True
+27,NH3_ccpvdz_JW_UCCSD_v4_tapered__sha256_f10c041c744381f1,NH3,cc-pvdz,hf,jordan_wigner,UCCSD,0.00011530076172050485,120,24,-0.2085497803430485,True,True
+29,N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_82e00cea5a20cd83,N2,cc-pvdz,casscf,jordan_wigner,UCCSD,0.0020155434289250707,805,64,-0.3248413298102122,True,True
