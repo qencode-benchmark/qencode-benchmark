@@ -744,6 +744,7 @@ def run_vqe_adapt(H_tapered, adapt_meta, max_iter=500, seed=42,
     Returns the same dict shape as run_vqe() so assemble_entry() can consume it.
     """
     import pennylane as qml
+    from pennylane import numpy as pnp
     from scipy.optimize import minimize
 
     pool          = adapt_meta["operator_pool"]
@@ -785,7 +786,9 @@ def run_vqe_adapt(H_tapered, adapt_meta, max_iter=500, seed=42,
             if pool_idx in selected_indices:
                 continue
             test_energy = make_test_circuit(candidate)
-            test_params = np.array(params + [0.0], dtype=float)
+            # CRITICAL: use pennylane.numpy with requires_grad=True so qml.grad
+            # actually computes gradients (plain np.array gives zero gradients).
+            test_params = pnp.array(params + [0.0], requires_grad=True)
             try:
                 grads = qml.grad(test_energy)(test_params)
                 grad_candidate = float(np.array(grads).flatten()[-1])
@@ -872,25 +875,14 @@ def run_vqe_adapt(H_tapered, adapt_meta, max_iter=500, seed=42,
             pass
 
     if not selected_ops:
-        # Nothing was added — return a degenerate result
-        return {
-            "best_energy_hartree": float(e_current) if e_current != np.inf else 0.0,
-            "optimal_params":      [],
-            "num_params":          0,
-            "nfev":                total_nfev,
-            "optimizer":           "ADAPT-VQE (COBYLA inner)",
-            "multistart_runs":     1,
-            "stopped_early":       stopped_early,
-            "computed_utc":        _utcnow(),
-            "adapt_metadata": {
-                "n_operators_pool":         n_pool,
-                "selected_operator_indices": [],
-                "gradient_threshold":        threshold,
-                "max_operators":             max_operators,
-                "converged":                 converged,
-                "n_iterations":              0,
-            },
-        }
+        # Nothing was added — this means ADAPT failed to find any helpful
+        # operator (likely a gradient computation bug). Raise an error rather
+        # than save a garbage entry with E=0.
+        raise RuntimeError(
+            f"ADAPT-VQE selected 0 operators. This usually means qml.grad "
+            f"returned 0 for all candidates — check requires_grad on test_params. "
+            f"Pool size was {n_pool}, threshold was {threshold:.0e}."
+        )
 
     print(_ok(f"ADAPT-VQE best energy: {e_current:.10f} Ha  "
               f"({len(selected_ops)} ops / pool of {n_pool}, total nfev={total_nfev})"))
