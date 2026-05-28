@@ -584,6 +584,52 @@ def build_hea_circuit(H_tapered, hf_tapered, reps=2):
     return circuit_fn, n_params, "hea"
 
 
+# ─── ADAPT-VQE ansatz (v4.3) ─────────────────────────────────────────────────
+
+def build_adapt_meta(H_tapered, hf_tapered, n_electrons, n_qubits_full,
+                     generators, paulixops, sectors,
+                     gradient_threshold=1e-3, max_operators=100):
+    """
+    ADAPT-VQE: returns a 'meta' dict — operator pool + HF state + thresholds.
+    The ansatz is BUILT INCREMENTALLY by run_vqe_adapt() — one operator at a
+    time, only keeping those whose gradient indicates they will lower the energy.
+
+    For [6e,6o] systems where full UCCSD has ~400 parameters, ADAPT-VQE typically
+    converges with 30-80 operators at the same accuracy.
+
+    Args:
+        gradient_threshold: stop when max |gradient| over remaining pool < this
+        max_operators:      hard cap on operators added (safety limit)
+
+    Returns:
+        adapt_meta: dict consumed by run_vqe_adapt()
+        n_params:   0 initially (grows during optimization)
+        label:      "adapt"
+    """
+    tapered_ops = _get_tapered_uccsd_ops(
+        n_electrons, n_qubits_full, generators, paulixops, sectors
+    )
+
+    if not tapered_ops:
+        print(_warn("ADAPT pool empty -- falling back to HEA"))
+        return build_hea_circuit(H_tapered, hf_tapered, reps=2)
+
+    n_pool = len(tapered_ops)
+    print(_ok(f"ADAPT-VQE pool: {n_pool} candidate operators "
+              f"(threshold={gradient_threshold:.0e}, max_ops={max_operators})"))
+
+    adapt_meta = {
+        "operator_pool":      tapered_ops,
+        "hf_tapered":         hf_tapered,
+        "wires":              sorted(H_tapered.wires),
+        "gradient_threshold": gradient_threshold,
+        "max_operators":      max_operators,
+        "n_pool":             n_pool,
+    }
+
+    return adapt_meta, 0, "adapt"
+
+
 # ─── VQE ─────────────────────────────────────────────────────────────────────
 
 def run_vqe(H_tapered, circuit_fn, n_params, max_iter=500, multistart=3, seed=42,
@@ -681,6 +727,191 @@ def run_vqe(H_tapered, circuit_fn, n_params, max_iter=500, multistart=3, seed=42
         "multistart_runs":     run + 1,   # actual restarts completed
         "stopped_early":       stopped_early,
         "computed_utc":        _utcnow(),
+    }
+
+
+def run_vqe_adapt(H_tapered, adapt_meta, max_iter=500, seed=42,
+                  backend="default.qubit", e_target=None, early_stop=True,
+                  checkpoint_path=None):
+    """
+    Run ADAPT-VQE: iteratively add the operator with the largest gradient,
+    then optimize all current parameters. Stop when max |gradient| over the
+    remaining pool drops below the threshold, or when certified.
+
+    The inner optimization uses COBYLA on the current accumulated parameters.
+    Each outer iteration adds at most one operator.
+
+    Returns the same dict shape as run_vqe() so assemble_entry() can consume it.
+    """
+    import pennylane as qml
+    from scipy.optimize import minimize
+
+    pool          = adapt_meta["operator_pool"]
+    wires         = adapt_meta["wires"]
+    hf_tapered    = adapt_meta["hf_tapered"]
+    threshold     = adapt_meta["gradient_threshold"]
+    max_operators = adapt_meta["max_operators"]
+    n_pool        = adapt_meta["n_pool"]
+
+    dev = qml.device(backend, wires=wires)
+
+    selected_ops     = []   # operators chosen so far (subset of pool)
+    selected_indices = []   # their indices in the pool
+    params           = []   # current parameter values for selected_ops
+    total_nfev       = 0
+    e_current        = np.inf
+    stopped_early    = False
+    converged        = False
+
+    for iteration in range(max_operators):
+        # Build a QNode that has all selected ops + one candidate at param=0
+        def make_test_circuit(candidate_op):
+            @qml.qnode(dev)
+            def test_energy(p):
+                # p has len(selected_ops) + 1 entries; last is candidate
+                qml.BasisState(hf_tapered, wires=wires)
+                for i, op in enumerate(selected_ops):
+                    _apply_tapered_op(op, p[i])
+                _apply_tapered_op(candidate_op, p[-1])
+                return qml.expval(H_tapered)
+            return test_energy
+
+        # Find the candidate with largest |gradient| at param_candidate = 0
+        best_grad_abs = 0.0
+        best_grad_signed = 0.0
+        best_idx      = -1
+
+        for pool_idx, candidate in enumerate(pool):
+            if pool_idx in selected_indices:
+                continue
+            test_energy = make_test_circuit(candidate)
+            test_params = np.array(params + [0.0], dtype=float)
+            try:
+                grads = qml.grad(test_energy)(test_params)
+                grad_candidate = float(np.array(grads).flatten()[-1])
+            except Exception as ex:
+                # Skip operators that cause numerical issues
+                continue
+
+            if abs(grad_candidate) > best_grad_abs:
+                best_grad_abs    = abs(grad_candidate)
+                best_grad_signed = grad_candidate
+                best_idx         = pool_idx
+
+        # Convergence: no operator helps anymore
+        if best_idx < 0 or best_grad_abs < threshold:
+            print(_ok(f"ADAPT converged: max|grad|={best_grad_abs:.2e} < "
+                      f"threshold {threshold:.0e} after {len(selected_ops)} operators"))
+            converged = True
+            break
+
+        # Add the operator and optimize all parameters
+        selected_ops.append(pool[best_idx])
+        selected_indices.append(best_idx)
+        params.append(0.0)
+
+        # Inner optimization: COBYLA over all current parameters
+        def full_circuit(p, wires=wires):
+            qml.BasisState(hf_tapered, wires=wires)
+            for i, op in enumerate(selected_ops):
+                _apply_tapered_op(op, p[i])
+
+        @qml.qnode(dev)
+        def energy_fn(p):
+            full_circuit(p, wires=wires)
+            return qml.expval(H_tapered)
+
+        result = minimize(lambda p: float(energy_fn(p)),
+                          np.array(params, dtype=float),
+                          method="COBYLA",
+                          options={"maxiter": max_iter, "rhobeg": 0.5})
+
+        params      = result.x.tolist()
+        e_current   = float(result.fun)
+        total_nfev += int(result.nfev)
+
+        # Progress print
+        gap_str = ""
+        if e_target is not None:
+            gap = abs(e_current - e_target)
+            cert = "CERT" if gap < 0.01 else f"gap={gap:.3e}"
+            gap_str = f"  [{cert}]"
+        print(f"    iter {iteration+1}: ops={len(selected_ops):3d}  "
+              f"E={e_current:.10f} Ha  |grad|={best_grad_abs:.2e}{gap_str}")
+
+        # Checkpoint
+        if checkpoint_path is not None:
+            try:
+                ckpt = {
+                    "iteration":          iteration + 1,
+                    "n_operators":        len(selected_ops),
+                    "selected_indices":   selected_indices,
+                    "best_energy_hartree": e_current,
+                    "best_params":        params,
+                    "total_nfev":         total_nfev,
+                    "saved_utc":          _utcnow(),
+                }
+                Path(checkpoint_path).write_text(json.dumps(ckpt, indent=2))
+            except Exception as ckpt_err:
+                print(_warn(f"Checkpoint write failed: {ckpt_err}"))
+
+        # Early-stop on certification
+        if early_stop and e_target is not None and abs(e_current - e_target) < 0.01:
+            print(_ok(f"Early stop: certified after {len(selected_ops)} operators"))
+            stopped_early = True
+            break
+
+    if not converged and not stopped_early and iteration + 1 >= max_operators:
+        print(_warn(f"ADAPT reached max_operators ({max_operators}) without convergence"))
+
+    # Clean up checkpoint file when finished
+    if checkpoint_path is not None:
+        try:
+            Path(checkpoint_path).unlink(missing_ok=True)
+        except Exception:
+            pass
+
+    if not selected_ops:
+        # Nothing was added — return a degenerate result
+        return {
+            "best_energy_hartree": float(e_current) if e_current != np.inf else 0.0,
+            "optimal_params":      [],
+            "num_params":          0,
+            "nfev":                total_nfev,
+            "optimizer":           "ADAPT-VQE (COBYLA inner)",
+            "multistart_runs":     1,
+            "stopped_early":       stopped_early,
+            "computed_utc":        _utcnow(),
+            "adapt_metadata": {
+                "n_operators_pool":         n_pool,
+                "selected_operator_indices": [],
+                "gradient_threshold":        threshold,
+                "max_operators":             max_operators,
+                "converged":                 converged,
+                "n_iterations":              0,
+            },
+        }
+
+    print(_ok(f"ADAPT-VQE best energy: {e_current:.10f} Ha  "
+              f"({len(selected_ops)} ops / pool of {n_pool}, total nfev={total_nfev})"))
+
+    return {
+        "best_energy_hartree": float(e_current),
+        "optimal_params":      params,
+        "num_params":          len(selected_ops),
+        "nfev":                total_nfev,
+        "optimizer":           "ADAPT-VQE (COBYLA inner)",
+        "multistart_runs":     1,
+        "stopped_early":       stopped_early,
+        "computed_utc":        _utcnow(),
+        "adapt_metadata": {
+            "n_operators_pool":          n_pool,
+            "selected_operator_indices": selected_indices,
+            "gradient_threshold":        threshold,
+            "max_operators":             max_operators,
+            "converged":                 converged,
+            "n_iterations":              iteration + 1,
+        },
     }
 
 
@@ -877,6 +1108,7 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
             "mapping":     mapping,
             "ansatz_type": ansatz_type,
             "ansatz_reps": ansatz_reps if "hea" in ansatz_type else 1,
+            "adapt_metadata": vqe_res.get("adapt_metadata"),  # None unless ansatz_type == "adapt"
             "tapering": {
                 "enabled":                    True,
                 "method":                     "z2_symmetry",
@@ -1000,7 +1232,12 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
     basis_safe = basis.replace("-", "").replace("_", "")
     map_short  = {"jordan_wigner": "JW", "bravyi_kitaev": "BK",
                   "parity": "PAR"}.get(mapping.lower(), mapping.upper()[:3])
-    ans_short  = "UCCSD" if "uccsd" in ansatz_type.lower() else "HEA"
+    if "uccsd" in ansatz_type.lower():
+        ans_short = "UCCSD"
+    elif ansatz_type.lower() == "adapt":
+        ans_short = "ADAPT"
+    else:
+        ans_short = "HEA"
     hash16     = h[:16]
     orb_tag    = "_casscf" if orbital_opt == "casscf" else ""
     entry_id   = f"{mol_safe}_{basis_safe}_{map_short}_{ans_short}_v4{orb_tag}_tapered__sha256_{hash16}"
@@ -1045,11 +1282,19 @@ def main() -> None:
                     choices=["jordan_wigner","jw","bravyi_kitaev","bk","parity","p"])
     ap.add_argument("--use-of-bridge", action="store_true")
     ap.add_argument("--ansatz-type",  default="uccsd",
-                    choices=["uccsd","hardware_efficient"])
+                    choices=["uccsd","hardware_efficient","adapt"],
+                    help="Ansatz family: uccsd (full UCCSD), hardware_efficient (HEA), "
+                         "or adapt (ADAPT-VQE — adaptively grows ansatz, v4.3).")
     ap.add_argument("--reps", "--ansatz-reps", dest="ansatz_reps", type=int, default=2,
                     help="HEA depth: number of Ry+CNOT repetition blocks (default: 2). "
                          "Higher values increase expressibility at the cost of more parameters. "
-                         "Ignored for UCCSD. Recommended: --reps 4 for N2 [6e,6o] 8-qubit.")
+                         "Ignored for UCCSD and ADAPT. Recommended: --reps 4 for N2 [6e,6o] 8-qubit.")
+    ap.add_argument("--adapt-threshold", type=float, default=1e-3,
+                    help="ADAPT-VQE gradient convergence threshold in Ha (default 1e-3). "
+                         "Smaller = more operators, higher accuracy.")
+    ap.add_argument("--adapt-max-ops", type=int, default=100,
+                    help="ADAPT-VQE: hard cap on number of operators added (default 100). "
+                         "Safety limit — most molecules converge with 30-80 operators.")
     ap.add_argument("--orbital-opt",  default="hf",
                     choices=["hf", "casscf"],
                     help="Orbital optimisation: hf (canonical) or casscf (v4 recommended)")
@@ -1084,9 +1329,14 @@ def main() -> None:
     print(f"  Molecule:    {args.molecule}")
     print(f"  Basis:       {args.basis}")
     print(f"  Mapping:     {args.mapping}")
-    print(f"  Ansatz:      {args.ansatz_type}"
-          + (f"  (reps={args.ansatz_reps}, {(args.ansatz_reps+1)} layers)"
-             if "hea" in args.ansatz_type.lower() else ""))
+    if "hea" in args.ansatz_type.lower():
+        ansatz_desc = f"  (reps={args.ansatz_reps}, {(args.ansatz_reps+1)} layers)"
+    elif args.ansatz_type == "adapt":
+        ansatz_desc = (f"  (threshold={args.adapt_threshold:.0e}, "
+                       f"max_ops={args.adapt_max_ops})")
+    else:
+        ansatz_desc = ""
+    print(f"  Ansatz:      {args.ansatz_type}{ansatz_desc}")
     print(f"  Orbital opt: {args.orbital_opt}")
     print(f"  Multistart:  {args.multistart} x {args.max_iter} iters")
     print(f"  Backend:     {args.backend}")
@@ -1162,11 +1412,20 @@ def main() -> None:
         # Step 4: Ansatz
         print()
         print(_step(f"Step 4: Ansatz  ({args.ansatz_type})"))
+        adapt_meta = None
         if args.ansatz_type == "uccsd":
             circuit_fn, n_params, method_label = build_uccsd_circuit(
                 H_vqe, hf_tapered, n_electrons, n_qubits,
                 tap_meta["generators"], tap_meta["paulixops"], tap_meta["sectors"],
             )
+        elif args.ansatz_type == "adapt":
+            adapt_meta, n_params, method_label = build_adapt_meta(
+                H_vqe, hf_tapered, n_electrons, n_qubits,
+                tap_meta["generators"], tap_meta["paulixops"], tap_meta["sectors"],
+                gradient_threshold=args.adapt_threshold,
+                max_operators=args.adapt_max_ops,
+            )
+            circuit_fn = None  # ADAPT builds the circuit incrementally
         else:
             circuit_fn, n_params, method_label = build_hea_circuit(
                 H_vqe, hf_tapered, reps=args.ansatz_reps
@@ -1181,22 +1440,39 @@ def main() -> None:
         mol_safe   = args.molecule.replace(" ", "_")
         map_short  = {"jordan_wigner": "JW", "bravyi_kitaev": "BK",
                       "parity": "PAR"}.get(args.mapping.lower(), args.mapping.upper()[:3])
-        ans_short  = "UCCSD" if "uccsd" in args.ansatz_type.lower() else "HEA"
+        if "uccsd" in args.ansatz_type.lower():
+            ans_short = "UCCSD"
+        elif args.ansatz_type == "adapt":
+            ans_short = "ADAPT"
+        else:
+            ans_short = "HEA"
         ckpt_name  = f".ckpt_{mol_safe}_{map_short}_{ans_short}.json"
         ckpt_path  = None if args.dry_run else str(out_dir / ckpt_name)
         if ckpt_path:
             print(f"  Checkpoint:  {ckpt_path}")
         if early_stop:
             print(f"  Early-stop:  YES (stops when gap < 0.01 Ha)")
-        print(_step(f"Step 5: VQE  (COBYLA, {args.multistart} restarts x {args.max_iter} iters)"))
-        vqe_res = run_vqe(H_vqe, circuit_fn, n_params,
-                          max_iter=args.max_iter,
-                          multistart=args.multistart,
-                          seed=args.seed,
-                          backend=args.backend,
-                          e_target=e_casci_target,
-                          early_stop=early_stop,
-                          checkpoint_path=ckpt_path)
+        if args.ansatz_type == "adapt":
+            print(_step(f"Step 5: ADAPT-VQE  (threshold={args.adapt_threshold:.0e}, "
+                        f"max_ops={args.adapt_max_ops}, inner COBYLA {args.max_iter} iters)"))
+            vqe_res = run_vqe_adapt(H_vqe, adapt_meta,
+                                    max_iter=args.max_iter,
+                                    seed=args.seed,
+                                    backend=args.backend,
+                                    e_target=e_casci_target,
+                                    early_stop=early_stop,
+                                    checkpoint_path=ckpt_path)
+            n_params = vqe_res["num_params"]   # ADAPT picks its own count
+        else:
+            print(_step(f"Step 5: VQE  (COBYLA, {args.multistart} restarts x {args.max_iter} iters)"))
+            vqe_res = run_vqe(H_vqe, circuit_fn, n_params,
+                              max_iter=args.max_iter,
+                              multistart=args.multistart,
+                              seed=args.seed,
+                              backend=args.backend,
+                              e_target=e_casci_target,
+                              early_stop=early_stop,
+                              checkpoint_path=ckpt_path)
 
         # BK constant correction
         _bk_corr = tap_meta.get("bk_constant_correction") or 0.0
