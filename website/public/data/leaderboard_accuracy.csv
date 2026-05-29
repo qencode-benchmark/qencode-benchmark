@@ -30,3 +30,4 @@ rank,entry_id,molecule,basis,orbital_opt,mapping,ansatz,gap,ccsd_t_correlation,v
 29,H4_ccpvdz_JW_HEA_v4_tapered__sha256_924d046f2c82ab42,H4,cc-pvdz,hf,jordan_wigner,hardware_efficient,0.007494015277035526,-0.08731157362009423,-2.178737659304002,-2.1862316745810375,-2.1664914657500036,True,True
 30,H6_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_51704a725c7eab7b,H6,cc-pvdz,casscf,jordan_wigner,adapt,0.009755258364605446,-0.13578138010446628,-3.3071135622023844,-3.31686882056699,-3.235505891201325,True,True
 31,H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_18897cf1d2c64873,H4,cc-pvdz,hf,jordan_wigner,adapt,0.009939757562603901,-0.08731157362009556,-2.1762919170184336,-2.1862316745810375,-2.1664914657500045,True,True
+32,benzene_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_a9e13a1a34e4e8b4,benzene,cc-pvdz,casscf,jordan_wigner,adapt,0.00997603884886189,-0.8738077323258437,-230.77716144312447,-230.78713748197333,-230.72182105409905,True,True
