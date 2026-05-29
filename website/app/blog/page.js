@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "adapt-vqe-certifies-benzene",
+    date: "2026-05-29",
+    readingTime: "9 min read",
+    title: "ADAPT-VQE Certifies Benzene — How We Broke the Medium Molecule Barrier",
+    excerpt:
+      "COBYLA + UCCSD hits a wall at ~400 parameters. ADAPT-VQE breaks it by building the ansatz one operator at a time, selecting only what matters. We used it to certify H₆ (28 operators) and benzene (10 operators) — the first aromatic molecule certified on QEncode.",
+    tags: ["ADAPT-VQE", "benzene", "H₆", "medium molecules", "v4.3"],
+  },
+  {
     slug: "benzene-first-aromatic-molecule",
     date: "2026-05-27",
     readingTime: "6 min read",

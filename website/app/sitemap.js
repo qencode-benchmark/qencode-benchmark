@@ -1,6 +1,7 @@
 const BASE_URL = "https://www.qencode-benchmark.org";
 
 const blogPosts = [
+  { slug: "adapt-vqe-certifies-benzene",            date: "2026-05-29" },
   { slug: "benzene-first-aromatic-molecule",         date: "2026-05-27" },
   { slug: "certifying-n2-triple-bond",              date: "2026-05-21" },
   { slug: "h2o-first-8-qubit-benchmark",            date: "2026-05-07" },
