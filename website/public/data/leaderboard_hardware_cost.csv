@@ -29,3 +29,4 @@ rank,entry_id,molecule,basis,orbital_opt,mapping,ansatz,gap,depth,2q_gates,ccsd_
 27,NH3_ccpvdz_JW_UCCSD_v4_tapered__sha256_f10c041c744381f1,NH3,cc-pvdz,hf,jordan_wigner,UCCSD,0.00011530076172050485,120,24,-0.2085497803430485,True,True
 29,N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_82e00cea5a20cd83,N2,cc-pvdz,casscf,jordan_wigner,UCCSD,0.0020155434289250707,805,64,-0.3248413298102122,True,True
 30,N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_4255bd948f483cd8,N2,cc-pvdz,casscf,jordan_wigner,hardware_efficient,0.00463444884356079,37,70,-0.3248413298206714,True,True
+31,benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_c8086c1f59dd9605,benzene,cc-pvdz,casscf,jordan_wigner,hardware_efficient,0.00699058457618662,38,80,-0.8738077323260143,True,True

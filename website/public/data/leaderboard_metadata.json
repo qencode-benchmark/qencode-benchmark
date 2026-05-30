@@ -2,9 +2,9 @@
   "suite_version": "4",
   "leaderboard_rules": "1",
   "generation_date": "2026-05-30",
-  "entries_included": 34,
+  "entries_included": 35,
   "trust_filter": "certified_only",
-  "beats_classical_count": 34,
-  "validated_count": 3,
+  "beats_classical_count": 35,
+  "validated_count": 2,
   "default_basis": "cc-pvdz"
 }
