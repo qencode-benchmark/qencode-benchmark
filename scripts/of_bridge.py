@@ -241,14 +241,26 @@ def verify_hamiltonian(H, e_casci: float, tol: float = 1e-4, label: str = "") ->
     """
     Exact-diagonalise H and compare ground state energy to e_casci.
 
+    Uses dense eigensolver for <=14 qubits (fast, exact).
+    Uses scipy sparse eigensolver for >14 qubits (H8+) to avoid 64 GiB allocation.
+
     Returns the exact ground state energy.
     Raises ValueError if |gs_energy - e_casci| > tol.
     """
     import pennylane as qml
 
-    wires   = sorted(H.wires)
-    mat     = qml.matrix(H, wire_order=wires)
-    gs_e    = float(np.linalg.eigvalsh(mat)[0])
+    wires = sorted(H.wires)
+    n_qubits = len(wires)
+
+    if n_qubits <= 14:
+        mat  = qml.matrix(H, wire_order=wires)
+        gs_e = float(np.linalg.eigvalsh(mat)[0])
+    else:
+        # Sparse eigensolver: avoids building 2^N x 2^N dense matrix (64 GiB at 16 qubits)
+        from scipy.sparse.linalg import eigsh as sparse_eigsh
+        H_sparse = H.sparse_matrix(wire_order=wires)
+        gs_e = float(sparse_eigsh(H_sparse.real, k=1, which="SA",
+                                  return_eigenvectors=False)[0])
     dev     = abs(gs_e - e_casci)
     info    = f" [{label}]" if label else ""
     if dev > tol:
