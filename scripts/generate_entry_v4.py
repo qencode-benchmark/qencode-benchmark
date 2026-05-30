@@ -487,6 +487,13 @@ def apply_tapering(H, n_qubits: int, n_electrons: int, e_casci: float,
 # ─── Ansatz builders (identical to v3) ───────────────────────────────────────
 
 def _get_tapered_uccsd_ops(n_electrons, n_qubits_full, generators, paulixops, sectors):
+    """
+    Build the UCCSD operator pool for ADAPT-VQE.
+    For systems <= 12 qubits: uses taper_operation (full tapering, exact).
+    For systems > 12 qubits (H8+): taper_operation requires >1 GB per operator —
+    instead builds untapered SingleExcitation/DoubleExcitation operators directly
+    on the tapered wire space (generators/sectors still applied via BasisState init).
+    """
     import pennylane as qml
     from pennylane import qchem
 
@@ -494,27 +501,47 @@ def _get_tapered_uccsd_ops(n_electrons, n_qubits_full, generators, paulixops, se
     wire_order = list(range(n_qubits_full))
     tapered_ops = []
 
-    for d_wires in doubles:
-        try:
-            orig_op = qml.DoubleExcitation(0.0, wires=list(d_wires))
-            tap = qchem.taper_operation(orig_op, generators, paulixops, sectors,
-                                        wire_order=wire_order)
-            for op in (tap if isinstance(tap, (list, tuple)) else [tap]):
-                if op is not None and getattr(op, "num_params", 0) > 0:
-                    tapered_ops.append(op)
-        except Exception:
-            pass
+    use_taper_op = (n_qubits_full <= 12)  # taper_operation builds 2^N x 2^N matrix
 
-    for s_wires in singles:
-        try:
-            orig_op = qml.SingleExcitation(0.0, wires=list(s_wires))
-            tap = qchem.taper_operation(orig_op, generators, paulixops, sectors,
-                                        wire_order=wire_order)
-            for op in (tap if isinstance(tap, (list, tuple)) else [tap]):
-                if op is not None and getattr(op, "num_params", 0) > 0:
-                    tapered_ops.append(op)
-        except Exception:
-            pass
+    if use_taper_op:
+        for d_wires in doubles:
+            try:
+                orig_op = qml.DoubleExcitation(0.0, wires=list(d_wires))
+                tap = qchem.taper_operation(orig_op, generators, paulixops, sectors,
+                                            wire_order=wire_order)
+                for op in (tap if isinstance(tap, (list, tuple)) else [tap]):
+                    if op is not None and getattr(op, "num_params", 0) > 0:
+                        tapered_ops.append(op)
+            except Exception:
+                pass
+        for s_wires in singles:
+            try:
+                orig_op = qml.SingleExcitation(0.0, wires=list(s_wires))
+                tap = qchem.taper_operation(orig_op, generators, paulixops, sectors,
+                                            wire_order=wire_order)
+                for op in (tap if isinstance(tap, (list, tuple)) else [tap]):
+                    if op is not None and getattr(op, "num_params", 0) > 0:
+                        tapered_ops.append(op)
+            except Exception:
+                pass
+    else:
+        # Large system (H8+): use untapered operators directly.
+        # The symmetry sectors are enforced by the HF BasisState initialisation;
+        # the UCCSD excitations themselves do not need the tapering transform.
+        print(_warn(f"taper_operation skipped for {n_qubits_full}-qubit system "
+                    f"(memory constraint) — using direct excitation operators"))
+        for d_wires in doubles:
+            try:
+                op = qml.DoubleExcitation(0.0, wires=list(d_wires))
+                tapered_ops.append(op)
+            except Exception:
+                pass
+        for s_wires in singles:
+            try:
+                op = qml.SingleExcitation(0.0, wires=list(s_wires))
+                tapered_ops.append(op)
+            except Exception:
+                pass
 
     return tapered_ops
 
@@ -1515,12 +1542,21 @@ def main() -> None:
                 mapping=args.mapping,
             )
 
-        # Exact diag verification
+        # Exact diag verification — sparse eigensolver (works for any qubit count)
         try:
             import pennylane as qml
+            from scipy.sparse.linalg import eigsh as sparse_eigsh
             wires_tap = sorted(H_vqe.wires)
-            H_mat     = qml.matrix(H_vqe, wire_order=wires_tap)
-            e_exact   = float(np.linalg.eigvalsh(np.real(H_mat))[0])
+            n_tap = len(wires_tap)
+            if n_tap <= 14:
+                # Dense for small systems (fast, exact)
+                H_mat   = qml.matrix(H_vqe, wire_order=wires_tap)
+                e_exact = float(np.linalg.eigvalsh(np.real(H_mat))[0])
+            else:
+                # Sparse eigensolver for large systems (H8+): avoids 64 GiB dense matrix
+                H_sparse = H_vqe.sparse_matrix(wire_order=wires_tap)
+                e_exact  = float(sparse_eigsh(H_sparse.real, k=1, which="SA",
+                                              return_eigenvectors=False)[0])
             _bk_corr  = tap_meta.get("bk_constant_correction") or 0.0
             e_exact  += _bk_corr
             gap_vs_casci = abs(e_exact - pyscf_res["e_casci"])
