@@ -5,11 +5,11 @@
   "suite": "v4",
   "default_basis": "cc-pvdz",
   "notes": [
-    "Active spaces are identical to v3 — they reflect the chemically relevant orbital window, not the basis set.",
+    "Active spaces are identical to v3 \u2014 they reflect the chemically relevant orbital window, not the basis set.",
     "BK mapping with tapering is only supported for H2 and HF in PL 0.45 (imaginary-strip verification passes). Larger molecules use JW + Parity only.",
-    "PAR/UCCSD is excluded for LiH, H2O, NH3, and N2 due to a known issue: UCCSD excitation operators generated in the JW basis are not correctly adapted for Parity tapering in these active spaces. BeH2 (D∞h linear symmetry) is the exception — PAR/UCCSD converges reliably. PAR/HEA and JW/both work correctly for all molecules.",
+    "PAR/UCCSD is excluded for LiH, H2O, NH3, and N2 due to a known issue: UCCSD excitation operators generated in the JW basis are not correctly adapted for Parity tapering in these active spaces. BeH2 (D\u221eh linear symmetry) is the exception \u2014 PAR/UCCSD converges reliably. PAR/HEA and JW/both work correctly for all molecules.",
     "N2 requires CASSCF orbital optimization (--orbital-opt casscf) to reliably certify. HF orbitals do not partition the [6e,6o] active space well for the triple bond.",
-    "Benzene also requires CASSCF (--orbital-opt casscf). HF orbitals mix π and σ* and do not cleanly partition the aromatic π active space. PAR/UCCSD excluded (same JW-basis operator mismatch as N2). BK excluded (PL 0.45 imaginary artefact)."
+    "Benzene also requires CASSCF (--orbital-opt casscf). HF orbitals mix \u03c0 and \u03c3* and do not cleanly partition the aromatic \u03c0 active space. PAR/UCCSD excluded (same JW-basis operator mismatch as N2). BK excluded (PL 0.45 imaginary artefact)."
   ],
   "entries": [
     {
@@ -19,15 +19,22 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [2, 2],
+      "v4_active_space": [
+        2,
+        2
+      ],
       "v4_qubits_jw": 4,
       "v4_qubits_tapered": 1,
       "v4_symmetries_removed": 3,
       "bk_tapering_supported": true,
       "casscf_recommended": false,
       "tier": "certified",
-      "supported_mappings": ["jordan_wigner", "parity", "bravyi_kitaev"],
-      "notes": "Full valence active space. [2,2]: σ bonding + σ* antibonding. 4 qubits (JW) → 1 qubit after Z2 tapering. BK tapering verified clean (imaginary parts < 1e-6 × max_abs). All 6 entries (JW+PAR+BK × HEA+UCCSD) certified in v4 with gap ~1e-6 Ha."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity",
+        "bravyi_kitaev"
+      ],
+      "notes": "Full valence active space. [2,2]: \u03c3 bonding + \u03c3* antibonding. 4 qubits (JW) \u2192 1 qubit after Z2 tapering. BK tapering verified clean (imaginary parts < 1e-6 \u00d7 max_abs). All 6 entries (JW+PAR+BK \u00d7 HEA+UCCSD) certified in v4 with gap ~1e-6 Ha."
     },
     {
       "molecule": "HF",
@@ -36,15 +43,22 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [2, 2],
+      "v4_active_space": [
+        2,
+        2
+      ],
       "v4_qubits_jw": 4,
       "v4_qubits_tapered": 1,
       "v4_symmetries_removed": 3,
       "bk_tapering_supported": true,
       "casscf_recommended": false,
       "tier": "certified",
-      "supported_mappings": ["jordan_wigner", "parity", "bravyi_kitaev"],
-      "notes": "[2,2] active space: F 2p HOMO + LUMO. 4 qubits (JW) → 1 qubit after Z2 tapering. BK tapering verified clean. All 6 entries certified in v4 with gap ~3.65e-4 Ha (residual from tapering approximation — well within 0.01 Ha certification threshold)."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity",
+        "bravyi_kitaev"
+      ],
+      "notes": "[2,2] active space: F 2p HOMO + LUMO. 4 qubits (JW) \u2192 1 qubit after Z2 tapering. BK tapering verified clean. All 6 entries certified in v4 with gap ~3.65e-4 Ha (residual from tapering approximation \u2014 well within 0.01 Ha certification threshold)."
     },
     {
       "molecule": "LiH",
@@ -53,15 +67,21 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [4, 4],
+      "v4_active_space": [
+        4,
+        4
+      ],
       "v4_qubits_jw": 8,
       "v4_qubits_tapered": 5,
       "v4_symmetries_removed": 3,
       "bk_tapering_supported": false,
       "casscf_recommended": false,
       "tier": "certified",
-      "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "[4,4] active space: Li 2s + H 1s + polarization orbitals. 8 qubits (JW) → 5 after Z2 tapering. BK excluded: PL 0.45 introduces ~7 mHa imaginary artefacts in BK tapering for this active space — too large to safely strip. JW and Parity entries certified (JW/HEA gap 9.3e-5 Ha, JW/UCCSD gap 1.3e-4 Ha). PAR/UCCSD excluded (UCCSD operator basis mismatch with Parity mapping)."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "[4,4] active space: Li 2s + H 1s + polarization orbitals. 8 qubits (JW) \u2192 5 after Z2 tapering. BK excluded: PL 0.45 introduces ~7 mHa imaginary artefacts in BK tapering for this active space \u2014 too large to safely strip. JW and Parity entries certified (JW/HEA gap 9.3e-5 Ha, JW/UCCSD gap 1.3e-4 Ha). PAR/UCCSD excluded (UCCSD operator basis mismatch with Parity mapping)."
     },
     {
       "molecule": "BeH2",
@@ -70,15 +90,21 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [4, 4],
+      "v4_active_space": [
+        4,
+        4
+      ],
       "v4_qubits_jw": 8,
       "v4_qubits_tapered": null,
       "v4_symmetries_removed": null,
       "bk_tapering_supported": false,
       "casscf_recommended": false,
       "tier": "certified",
-      "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "[4,4] active space: Be 2s + 2p + H 1s bonding/antibonding. Linear molecule (D∞h symmetry). BK excluded (same PL 0.45 imaginary artefact as LiH). All 4 supported entries (JW+PAR × HEA+UCCSD) certified in v4. BeH2 is the only [4e,4o]+ molecule where PAR/UCCSD converges reliably — the D∞h linear symmetry keeps the Parity-basis UCCSD operator space well-conditioned."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "[4,4] active space: Be 2s + 2p + H 1s bonding/antibonding. Linear molecule (D\u221eh symmetry). BK excluded (same PL 0.45 imaginary artefact as LiH). All 4 supported entries (JW+PAR \u00d7 HEA+UCCSD) certified in v4. BeH2 is the only [4e,4o]+ molecule where PAR/UCCSD converges reliably \u2014 the D\u221eh linear symmetry keeps the Parity-basis UCCSD operator space well-conditioned."
     },
     {
       "molecule": "H2O",
@@ -87,14 +113,20 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [4, 4],
+      "v4_active_space": [
+        4,
+        4
+      ],
       "v4_qubits_jw": 8,
       "v4_qubits_tapered": null,
       "v4_symmetries_removed": null,
       "bk_tapering_supported": false,
       "casscf_recommended": false,
       "tier": "certified",
-      "supported_mappings": ["jordan_wigner", "parity"],
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
       "notes": "[4,4] active space: O lone pair + O-H bonding/antibonding. C2v symmetry. BK excluded (PL 0.45 imaginary artefact). PAR/UCCSD excluded. JW/HEA, JW/UCCSD, PAR/HEA all certified in v4. 3 certified entries."
     },
     {
@@ -104,14 +136,20 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [4, 4],
+      "v4_active_space": [
+        4,
+        4
+      ],
       "v4_qubits_jw": 8,
       "v4_qubits_tapered": null,
       "v4_symmetries_removed": null,
       "bk_tapering_supported": false,
       "casscf_recommended": false,
       "tier": "certified",
-      "supported_mappings": ["jordan_wigner", "parity"],
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
       "notes": "[4,4] active space: N lone pair + N-H bond correlation. C3v symmetry. BK excluded (PL 0.45 imaginary artefact). PAR/UCCSD excluded. JW/HEA, JW/UCCSD, PAR/HEA certified in v4. 3 certified entries."
     },
     {
@@ -121,15 +159,21 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [6, 6],
+      "v4_active_space": [
+        6,
+        6
+      ],
       "v4_qubits_jw": 12,
       "v4_qubits_tapered": null,
       "v4_symmetries_removed": null,
       "bk_tapering_supported": false,
       "casscf_recommended": true,
       "tier": "certified",
-      "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "[6e, 6o] active space: σ, σ*, πx, πx*, πy, πy* — the full triple-bond manifold. D∞h symmetry. 12 qubits (JW). Strong multireference character. CASSCF orbital optimization required (--orbital-opt casscf): HF orbitals do not cleanly partition the triple-bond π/σ manifold in cc-pVDZ, leading to slow VQE convergence. CASSCF pre-optimises orbitals for the active space, making VQE certification achievable with 20 multistarts. BK excluded (PL 0.45 imaginary artefact). PAR/UCCSD excluded. Key DARPA QB-GSEE benchmark candidate."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "[6e, 6o] active space: \u03c3, \u03c3*, \u03c0x, \u03c0x*, \u03c0y, \u03c0y* \u2014 the full triple-bond manifold. D\u221eh symmetry. 12 qubits (JW). Strong multireference character. CASSCF orbital optimization required (--orbital-opt casscf): HF orbitals do not cleanly partition the triple-bond \u03c0/\u03c3 manifold in cc-pVDZ, leading to slow VQE convergence. CASSCF pre-optimises orbitals for the active space, making VQE certification achievable with 20 multistarts. BK excluded (PL 0.45 imaginary artefact). PAR/UCCSD excluded. Key DARPA QB-GSEE benchmark candidate."
     },
     {
       "molecule": "H2CO",
@@ -138,15 +182,21 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [4, 4],
+      "v4_active_space": [
+        4,
+        4
+      ],
       "v4_qubits_jw": 8,
       "v4_qubits_tapered": null,
       "v4_symmetries_removed": null,
       "bk_tapering_supported": false,
       "casscf_recommended": false,
       "tier": "target",
-      "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "Formaldehyde. [4,4] active space: C=O π and π* orbitals + adjacent σ/σ* — the chemically relevant correlation for the carbonyl group. C2v symmetry. 8 qubits (JW). Same active space class as H2O and NH3; expected entries: JW/HEA, JW/UCCSD, PAR/HEA. New in Suite v4.1."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "Formaldehyde. [4,4] active space: C=O \u03c0 and \u03c0* orbitals + adjacent \u03c3/\u03c3* \u2014 the chemically relevant correlation for the carbonyl group. C2v symmetry. 8 qubits (JW). Same active space class as H2O and NH3; expected entries: JW/HEA, JW/UCCSD, PAR/HEA. New in Suite v4.1."
     },
     {
       "molecule": "C4H6",
@@ -155,15 +205,21 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [4, 4],
+      "v4_active_space": [
+        4,
+        4
+      ],
       "v4_qubits_jw": 8,
       "v4_qubits_tapered": null,
       "v4_symmetries_removed": null,
       "bk_tapering_supported": false,
       "casscf_recommended": false,
       "tier": "target",
-      "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "1,3-Butadiene. [4,4] active space: π and π* orbitals of the conjugated diene system (4 electrons in 4 π-type MOs). C2h symmetry, s-trans conformation. 8 qubits (JW). First conjugated molecule in the QEncode suite. Expected entries: JW/HEA, JW/UCCSD, PAR/HEA. New in Suite v4.1."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "1,3-Butadiene. [4,4] active space: \u03c0 and \u03c0* orbitals of the conjugated diene system (4 electrons in 4 \u03c0-type MOs). C2h symmetry, s-trans conformation. 8 qubits (JW). First conjugated molecule in the QEncode suite. Expected entries: JW/HEA, JW/UCCSD, PAR/HEA. New in Suite v4.1."
     },
     {
       "molecule": "benzene",
@@ -172,15 +228,21 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [6, 6],
+      "v4_active_space": [
+        6,
+        6
+      ],
       "v4_qubits_jw": 12,
       "v4_qubits_tapered": null,
       "v4_symmetries_removed": null,
       "bk_tapering_supported": false,
       "casscf_recommended": true,
       "tier": "target",
-      "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "Benzene (C6H6). [6e, 6o] active space: 6 π electrons in the 6 π-type MOs of the aromatic ring (bonding π1, π2, π3 and antibonding π4*, π5*, π6* in Hückel notation). D6h symmetry. 12 qubits (JW), 9 after Z2 tapering (3 symmetries). JW/HEA validated: gap=91.1 mHa, 63 params, 30 restarts — Research tier. JW/UCCSD deferred: run on cloud VM (too long for local WSL2, ~400 params, max_iter=15000). CASSCF required. BK excluded. PAR/UCCSD excluded. New in Suite v4.2."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "Benzene (C6H6). [6e, 6o] active space: 6 \u03c0 electrons in the 6 \u03c0-type MOs of the aromatic ring (bonding \u03c01, \u03c02, \u03c03 and antibonding \u03c04*, \u03c05*, \u03c06* in H\u00fcckel notation). D6h symmetry. 12 qubits (JW), 9 after Z2 tapering (3 symmetries). JW/HEA validated: gap=91.1 mHa, 63 params, 30 restarts \u2014 Research tier. JW/UCCSD deferred: run on cloud VM (too long for local WSL2, ~400 params, max_iter=15000). CASSCF required. BK excluded. PAR/UCCSD excluded. New in Suite v4.2."
     },
     {
       "molecule": "H4",
@@ -189,15 +251,21 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [4, 4],
+      "v4_active_space": [
+        4,
+        4
+      ],
       "v4_qubits_jw": 8,
       "v4_qubits_tapered": null,
       "v4_symmetries_removed": null,
       "bk_tapering_supported": false,
       "casscf_recommended": false,
       "tier": "target",
-      "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "H4 linear chain at R=1.0 Å interatomic spacing (slightly stretched from equilibrium ~0.74 Å — shows mild multireference character that makes it interesting for VQE). [4,4] active space: 4 electrons in the 4 lowest-energy σ-type MOs. 8 qubits (JW). DARPA QB-GSEE target — hydrogen chains appear explicitly in the QB-GSEE benchmark specification as a systematic test of VQE scaling. Cheap to run: expected <50 Pauli terms, should certify in minutes. Expected entries: JW/HEA, JW/UCCSD, PAR/HEA. New in Suite v4.3."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "H4 linear chain at R=1.0 \u00c5 interatomic spacing (slightly stretched from equilibrium ~0.74 \u00c5 \u2014 shows mild multireference character that makes it interesting for VQE). [4,4] active space: 4 electrons in the 4 lowest-energy \u03c3-type MOs. 8 qubits (JW). DARPA QB-GSEE target \u2014 hydrogen chains appear explicitly in the QB-GSEE benchmark specification as a systematic test of VQE scaling. Cheap to run: expected <50 Pauli terms, should certify in minutes. Expected entries: JW/HEA, JW/UCCSD, PAR/HEA. New in Suite v4.3."
     },
     {
       "molecule": "H6",
@@ -206,15 +274,66 @@
       "charge": 0,
       "spin": 0,
       "units": "angstrom",
-      "v4_active_space": [6, 6],
+      "v4_active_space": [
+        6,
+        6
+      ],
       "v4_qubits_jw": 12,
       "v4_qubits_tapered": null,
       "v4_symmetries_removed": null,
       "bk_tapering_supported": false,
       "casscf_recommended": true,
       "tier": "target",
-      "supported_mappings": ["jordan_wigner", "parity"],
-      "notes": "H6 linear chain at R=1.0 Å interatomic spacing. [6,6] active space: 6 electrons in 6 σ-type MOs — same qubit count as N2 and benzene (12 qubits JW) but much simpler Hamiltonian (~200-300 Pauli terms vs 914 for benzene). CASSCF recommended at this chain length (increased multireference character vs H4). DARPA QB-GSEE target — H6 represents the first step into the regime where classical methods begin to struggle. Expected entries: JW/HEA, JW/UCCSD, PAR/HEA. UCCSD for H6 has fewer parameters than benzene — should complete in 2-4 hours locally. New in Suite v4.3."
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "H6 linear chain at R=1.0 \u00c5 interatomic spacing. [6,6] active space: 6 electrons in 6 \u03c3-type MOs \u2014 same qubit count as N2 and benzene (12 qubits JW) but much simpler Hamiltonian (~200-300 Pauli terms vs 914 for benzene). CASSCF recommended at this chain length (increased multireference character vs H4). DARPA QB-GSEE target \u2014 H6 represents the first step into the regime where classical methods begin to struggle. Expected entries: JW/HEA, JW/UCCSD, PAR/HEA. UCCSD for H6 has fewer parameters than benzene \u2014 should complete in 2-4 hours locally. New in Suite v4.3."
+    },
+    {
+      "molecule": "H8",
+      "variant": "chain_r1.0",
+      "geometry": "H 0.0 0.0 0.0; H 0.0 0.0 1.0; H 0.0 0.0 2.0; H 0.0 0.0 3.0; H 0.0 0.0 4.0; H 0.0 0.0 5.0; H 0.0 0.0 6.0; H 0.0 0.0 7.0",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v4_active_space": [
+        8,
+        8
+      ],
+      "v4_qubits_jw": 16,
+      "v4_qubits_tapered": null,
+      "v4_symmetries_removed": null,
+      "bk_tapering_supported": false,
+      "casscf_recommended": true,
+      "tier": "target",
+      "supported_mappings": [
+        "jordan_wigner"
+      ],
+      "notes": "H8 linear chain at R=1.0 Ang. [8,8] active space, 16 qubits JW. Requires ADAPT-VQE (UCCSD ~1000+ params). CASSCF required. DARPA QB-GSEE scaling target. New in Suite v4.3."
+    },
+    {
+      "molecule": "H10",
+      "variant": "chain_r1.0",
+      "geometry": "H 0.0 0.0 0.0; H 0.0 0.0 1.0; H 0.0 0.0 2.0; H 0.0 0.0 3.0; H 0.0 0.0 4.0; H 0.0 0.0 5.0; H 0.0 0.0 6.0; H 0.0 0.0 7.0; H 0.0 0.0 8.0; H 0.0 0.0 9.0",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v4_active_space": [
+        10,
+        10
+      ],
+      "v4_qubits_jw": 20,
+      "v4_qubits_tapered": null,
+      "v4_symmetries_removed": null,
+      "bk_tapering_supported": false,
+      "casscf_recommended": true,
+      "tier": "target",
+      "supported_mappings": [
+        "jordan_wigner"
+      ],
+      "notes": "H10 linear chain at R=1.0 Ang. [10,10] active space, 20 qubits JW. Requires ADAPT-VQE. DARPA QB-GSEE scaling target \u2014 where classical methods begin to struggle. New in Suite v4.3."
     }
-  ]
+  ],
+  "last_updated": "2026-05-29"
 }
