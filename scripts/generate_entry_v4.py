@@ -816,8 +816,7 @@ def _run_vqe_bfgs(energy_fn, n_params, max_iter, multistart, seed,
     for run in range(multistart):
         x0 = np.zeros(n_params) if run == 0 else rng.uniform(-np.pi, np.pi, n_params)
         result = minimize(f_and_grad, x0, jac=True, method="L-BFGS-B",
-                          options={"maxiter": max_iter, "disp": False,
-                                   "ftol": 1e-12, "gtol": 1e-8})
+                          options={"maxiter": max_iter, "ftol": 1e-12, "gtol": 1e-8})
         total_nfev += result.nfev
         gap_str = ""
         if e_target is not None:
@@ -833,13 +832,15 @@ def _run_vqe_bfgs(energy_fn, n_params, max_iter, multistart, seed,
             print(_ok(f"Early stop: gap < 0.01 Ha after run {run+1}"))
             break
 
+    circuit_evals = total_nfev * (1 + 2 * n_params)  # parameter-shift: 1 fwd + 2N per step
     print(_ok(f"VQE best energy: {best_energy:.10f} Ha  "
-              f"(L-BFGS-B, {run+1} restart(s), total nfev={total_nfev})"))
+              f"(L-BFGS-B, {run+1} restart(s), optimizer_steps={total_nfev}, "
+              f"circuit_evals~{circuit_evals})"))
     return {
         "best_energy_hartree": float(best_energy),
         "optimal_params":      list(best_params),
         "num_params":          n_params,
-        "nfev":                total_nfev,
+        "nfev":                circuit_evals,   # circuit evaluations (parameter-shift counted)
         "optimizer":           "L-BFGS-B",
         "multistart_runs":     run + 1,
         "stopped_early":       stopped_early,
