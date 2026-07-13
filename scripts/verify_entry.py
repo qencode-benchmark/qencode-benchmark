@@ -168,6 +168,34 @@ def main():
         ]
         if orbital_opt and orbital_opt != "hf":
             cmd += ["--orbital-opt", orbital_opt]
+
+        # v4.3: reproduce with the SAME ansatz depth, optimizer, and ADAPT config
+        # that produced the stored entry — otherwise HEA/ADAPT entries re-run with
+        # default settings and fail to reproduce.
+        enc_v = stored.get("encoding", {})
+        rc_v  = stored.get("run_config", {})
+        reps_v = enc_v.get("ansatz_reps")
+        if ansatz in ("hardware_efficient", "hea") and reps_v:
+            cmd += ["--reps", str(reps_v)]
+
+        opt_raw = str(rc_v.get("optimizer", "")).lower()
+        if ansatz != "adapt":
+            if "bfgs" in opt_raw:
+                cmd += ["--optimizer", "bfgs"]
+            elif "adam" in opt_raw:
+                cmd += ["--optimizer", "adam"]
+                import re as _re
+                m = _re.search(r"lr=([0-9.eE+-]+)", opt_raw)
+                if m:
+                    cmd += ["--learning-rate", m.group(1)]
+            # else: cobyla (default)
+
+        if ansatz == "adapt":
+            am = enc_v.get("adapt_metadata") or {}
+            if am.get("gradient_threshold") is not None:
+                cmd += ["--adapt-threshold", str(am["gradient_threshold"])]
+            if am.get("max_operators") is not None:
+                cmd += ["--adapt-max-ops", str(am["max_operators"])]
         print(_info(f"Running: {' '.join(cmd[2:])}"))
         print()
 

@@ -1,3 +1,4 @@
 rank,entry_id,molecule,basis,orbital_opt,mapping,ansatz,gap,ccsd_t_correlation,vqe_energy,casci_energy,hf_energy,baseline,beats_classical
-1,H6_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_34db2801be7caf93,H6,cc-pvdz,casscf,jordan_wigner,hardware_efficient,0.02859095608157025,-0.13578138010446583,-3.288277864485424,-3.3168688205669943,-3.2355058912013197,True,True
-2,N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_689f76617d77bda0,N2,cc-pvdz,casscf,parity,hardware_efficient,0.12119705836242645,-0.3248413298198898,-108.9687610938126,-109.08995815217503,-108.95422243901837,True,True
+1,N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_e81c6cbab92c366f,N2,cc-pvdz,casscf,parity,hardware_efficient,0.014260973983923009,-0.3248413298532711,-109.0756971768762,-109.08995815086016,-108.95422243901822,True,True
+2,H6_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_a14f67026d23fbf0,H6,cc-pvdz,casscf,jordan_wigner,hardware_efficient,0.028590956081576024,-0.13578138010446583,-3.288277864485424,-3.3168688205669943,-3.2355058912013197,True,True
+3,H8_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_35eb75bea4036941,H8,cc-pvdz,casscf,jordan_wigner,adapt,0.05091409893509713,-0.18466473494252345,-4.363632128778026,-4.414546225831473,-4.305530315152089,True,True

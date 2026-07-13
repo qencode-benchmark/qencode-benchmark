@@ -1,0 +1,158 @@
+{
+  "schema_version": "4.0.0",
+  "entry_id": "HF_ccpvdz_PAR_UCCSD_v4_tapered__sha256_17592c2803a5111b",
+  "created_utc": "2026-05-14T17:14:33.767023+00:00",
+  "problem": {
+    "name": "HF",
+    "basis": "cc-pvdz",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "H 0.0 0.0 0.0; F 0.0 0.0 0.917",
+    "active_space": {
+      "num_electrons": 2,
+      "num_spatial_orbitals": 2,
+      "method": "casci",
+      "frozen_core": false
+    },
+    "orbital_optimization": "hf"
+  },
+  "encoding": {
+    "mapping": "parity",
+    "ansatz_type": "uccsd_tapered",
+    "ansatz_reps": 1,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 3,
+      "original_num_qubits": 4,
+      "tapered_num_qubits": 1,
+      "sectors": [
+        1,
+        -1,
+        1
+      ],
+      "hf_tapered_state": [
+        1
+      ],
+      "bk_constant_correction_ha": null,
+      "bk_imaginary_stripped": false,
+      "bk_max_imaginary_abs_ha": null
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 1,
+      "num_pauli_terms": 3,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": -99.3088627403268
+        },
+        {
+          "pauli_string": "Z0",
+          "coefficient": 0.7105485288467579
+        },
+        {
+          "pauli_string": "X0",
+          "coefficient": -0.01008226217500797
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    }
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -100.01941126917364,
+      "casci_ground_energy_hartree": -100.01948279623355,
+      "casci_first_excited_hartree": -99.57661597325875,
+      "casscf_energy_hartree": null,
+      "exact_qubit_ground_energy_hartree": -100.01948279623352
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -100.01941126917364,
+      "mp2_energy_hartree": -100.22319317988975,
+      "ccsd_energy_hartree": -100.22815495697753,
+      "ccsd_t_energy_hartree": -100.23009134634653,
+      "mp2_correlation": -0.20378191071610274,
+      "ccsd_t_correlation": -0.2106800771728814,
+      "pyscf_version": "2.6.2",
+      "computed_utc": "2026-05-14T17:14:29.770909+00:00",
+      "basis": "cc-pvdz"
+    },
+    "vqe": {
+      "best_energy_hartree": -100.01948279554259,
+      "optimal_params": [
+        6.269040949695267
+      ],
+      "num_params": 1,
+      "nfev": 235,
+      "optimizer": "COBYLA",
+      "multistart_runs": 10,
+      "computed_utc": "2026-05-14T17:14:33.766946+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 6.909317562531214e-10,
+      "beats_classical": true,
+      "flags": [
+        "gap_certified",
+        "beats_classical"
+      ],
+      "notes": null,
+      "gap_reference": "exact_qubit_hamiltonian",
+      "beats_classical_definition": "abs_vqe_exact_gap < |CCSD(T) correlation energy|; the VQE error is smaller than the total correlation energy CCSD(T) recovers. NOT a claim that VQE outperforms classical methods."
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "17592c2803a5111b1c956c2ee093fc8d13519fecd485135f0d86c175074dd7e8",
+    "source_schema_version": "4.0.0",
+    "created_utc": "2026-05-14T17:14:33.767023+00:00",
+    "tool_versions": {
+      "python": "3.11.15",
+      "pyscf": "2.6.2",
+      "pennylane": "0.45.0",
+      "openfermion": "1.6.1",
+      "numpy": "2.2.6",
+      "scipy": "1.13.1",
+      "git_commit": "e7aa8b4"
+    },
+    "environment": {
+      "platform": "linux"
+    }
+  },
+  "trust": {
+    "level": "certified",
+    "certified_utc": "2026-05-14T17:14:33.767023+00:00",
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 500,
+    "multistart": 10,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 4,
+    "num_qubits_tapered": 1,
+    "ansatz_num_parameters": 1,
+    "ansatz_depth": 2,
+    "ansatz_num_2q_gates": 0,
+    "ansatz_num_1q_gates": 2,
+    "non_clifford_gate_count": 1,
+    "t_gate_estimate": 12,
+    "t_gate_synthesis_epsilon": 0.001
+  }
+}

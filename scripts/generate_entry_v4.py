@@ -1195,7 +1195,8 @@ def _safe_corr(e_method, e_hf):
 def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
                    pyscf_res, tap_meta, vqe_res, pauli_terms, hf_tapered,
                    max_iter, multistart, seed,
-                   circuit_fn=None, H_tapered=None, backend="default.qubit") -> tuple:
+                   circuit_fn=None, H_tapered=None, backend="default.qubit",
+                   e_exact_qubit=None) -> tuple:
 
     mol_name  = mol_config["molecule"]
     n_e, n_o  = mol_config["active_space"]
@@ -1206,7 +1207,15 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
     now_utc   = _utcnow()
     orbital_opt = pyscf_res.get("orbital_opt", "hf")
 
-    abs_gap         = abs(e_vqe - e_casci)
+    # Gap is measured against the exact ground state of the ACTUAL qubit
+    # Hamiltonian the VQE minimizes (e_exact_qubit), not PySCF's separately
+    # computed CASCI. For the OF-bridge path these are identical (verified);
+    # for the PennyLane-native path they can differ by a small model-mismatch,
+    # and using e_exact_qubit makes the gap a pure algorithm-accuracy metric
+    # (and enforces the variational bound E_VQE >= E_exact).
+    gap_ref_energy  = e_exact_qubit if e_exact_qubit is not None else e_casci
+    gap_ref_source  = "exact_qubit_hamiltonian" if e_exact_qubit is not None else "pyscf_casci"
+    abs_gap         = abs(e_vqe - gap_ref_energy)
     trusted         = abs_gap < 0.01
     beats_classical = None
     if e_ccsd_t is not None and e_hf is not None:
@@ -1277,10 +1286,11 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
 
         "results": {
             "reference": {
-                "hf_energy_hartree":           e_hf,
-                "casci_ground_energy_hartree": e_casci,
-                "casci_first_excited_hartree": pyscf_res.get("e_casci_ex"),
-                "casscf_energy_hartree":       pyscf_res.get("e_casscf"),
+                "hf_energy_hartree":              e_hf,
+                "casci_ground_energy_hartree":    e_casci,
+                "exact_qubit_ground_energy_hartree": gap_ref_energy,
+                "casci_first_excited_hartree":    pyscf_res.get("e_casci_ex"),
+                "casscf_energy_hartree":          pyscf_res.get("e_casscf"),
             },
             "classical_comparison": {
                 "hf_energy_hartree":     e_hf,
@@ -1306,7 +1316,13 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
                 "gap_threshold":     0.01,
                 "trusted":           trusted,
                 "abs_vqe_exact_gap": abs_gap,
+                "gap_reference":     gap_ref_source,
                 "beats_classical":   beats_classical,
+                "beats_classical_definition": (
+                    "abs_vqe_exact_gap < |CCSD(T) correlation energy|; i.e. the VQE "
+                    "error is smaller than the total correlation energy CCSD(T) "
+                    "recovers. NOT a claim that VQE outperforms classical methods."
+                ),
                 "flags":             flags,
                 "notes":             None,
             },
@@ -1543,6 +1559,7 @@ def main() -> None:
             )
 
         # Exact diag verification — sparse eigensolver (works for any qubit count)
+        e_exact_qubit = None   # exact GS of the qubit Hamiltonian (gap reference)
         try:
             import pennylane as qml
             from scipy.sparse.linalg import eigsh as sparse_eigsh
@@ -1559,8 +1576,9 @@ def main() -> None:
                                               return_eigenvectors=False)[0])
             _bk_corr  = tap_meta.get("bk_constant_correction") or 0.0
             e_exact  += _bk_corr
+            e_exact_qubit = e_exact   # this is the true gap reference
             gap_vs_casci = abs(e_exact - pyscf_res["e_casci"])
-            print(_ok(f"Exact H diag: {e_exact:.10f} Ha  (gap vs CASCI: {gap_vs_casci:.2e} Ha)"))
+            print(_ok(f"Exact H diag: {e_exact:.10f} Ha  (vs PySCF CASCI: {gap_vs_casci:.2e} Ha)"))
         except Exception as ex:
             print(_warn(f"Exact diagonalization skipped: {ex}"))
 
@@ -1654,6 +1672,7 @@ def main() -> None:
             args.max_iter, args.multistart, args.seed,
             circuit_fn=circuit_fn, H_tapered=H_vqe,
             backend=args.backend,
+            e_exact_qubit=e_exact_qubit,
         )
 
         e_vqe   = vqe_res["best_energy_hartree"]
