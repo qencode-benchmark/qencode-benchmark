@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 export const metadata = {
   title: "Benchmark Specification — Suite v4",
   description:
-    "QEncode Suite v4 benchmark specification: 13 molecules, cc-pVDZ basis, chemistry-driven active spaces, Jordan-Wigner / Parity / Bravyi-Kitaev encodings, UCCSD, HEA and ADAPT-VQE ansatz, CASSCF orbital optimization.",
+    "QEncode Suite v4 benchmark specification: 14 molecules, cc-pVDZ basis, chemistry-driven active spaces, Jordan-Wigner / Parity / Bravyi-Kitaev encodings, UCCSD, HEA and ADAPT-VQE ansatz, CASSCF orbital optimization.",
   keywords: [
     "quantum benchmark specification",
     "suite v4",
@@ -19,7 +19,7 @@ export const metadata = {
   openGraph: {
     title: "QEncode Benchmark Specification — Suite v4",
     description:
-      "Fixed benchmark definitions for 13 molecules at cc-pVDZ basis with chemistry-driven active spaces, three qubit encodings, and three ansatz families.",
+      "Fixed benchmark definitions for 14 molecules at cc-pVDZ basis with chemistry-driven active spaces, three qubit encodings, and three ansatz families.",
     url: "https://www.qencode-benchmark.org/benchmark"
   }
 };
@@ -203,9 +203,23 @@ const molecules = [
     basis: "cc-pVDZ",
     mappings: ["JW"],
     casscf: true,
-    tier: "research",
-    certifiedEntries: 0,
-    notes: "Largest suite system at 16 JW qubits. CASSCF required. Research tier — no certified entry yet.",
+    tier: "certified",
+    certifiedEntries: 1,
+    notes: "Extended hydrogen chain. Strong multireference. CASSCF required. Certified via ADAPT-VQE (98 operators).",
+  },
+  {
+    name: "H₁₀",
+    formula: "Hydrogen Chain (H₁₀)",
+    activeSpace: "[10e, 10o]",
+    qubitsJW: 20,
+    qubitsTagered: 18,
+    symRemoved: 2,
+    basis: "cc-pVDZ",
+    mappings: ["JW"],
+    casscf: true,
+    tier: "certified",
+    certifiedEntries: 1,
+    notes: "Ten-site hydrogen chain. Strongest multireference in the suite. CASSCF required. Certified via ADAPT-VQE (300 operators). DARPA QB-GSEE aligned.",
   },
 ];
 
@@ -247,7 +261,7 @@ const ansatzTypes = [
     name: "ADAPT-VQE",
     full: "Adaptive Derivative-Assembled Problem-Tailored VQE",
     desc: "Builds the circuit operator by operator, selecting from the UCCSD excitation pool by parameter-shift gradient magnitude at each step. Reaches UCCSD-class accuracy with a small fraction of the parameters, keeping the optimisation tractable where full UCCSD is not.",
-    note: "Certifies the medium molecules — H₂CO, C₄H₆, H₆, benzene — where UCCSD with COBYLA is infeasible.",
+    note: "Certifies the medium and large molecules — H₂CO, C₄H₆, H₆, benzene, H₈, H₁₀ — where UCCSD with COBYLA is infeasible.",
   },
 ];
 
@@ -272,7 +286,7 @@ export default function BenchmarkPage() {
       <section className="mb-14">
         <h2 className="text-xl font-semibold mb-1">Suite v4 — Molecule Catalog</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          12 certified molecules + H₈ (research tier). All use cc-pVDZ basis.
+          14 certified molecules. All use cc-pVDZ basis.
         </p>
         <div className="rounded-lg border overflow-hidden">
           <div className="overflow-x-auto">
@@ -336,9 +350,9 @@ export default function BenchmarkPage() {
         {/* Notes callout */}
         <div className="mt-4 rounded-lg border bg-muted/30 p-4 text-xs text-muted-foreground space-y-1.5">
           <p className="font-medium text-foreground text-sm">Encoding exclusion notes</p>
-          <p><span className="font-medium text-foreground">BK excluded (LiH, BeH₂, H₂O, NH₃, H₄, N₂, H₆, H₂CO, C₄H₆, benzene, H₈)</span> — PennyLane 0.45 introduces imaginary artefacts (&gt;7 mHa) in BK tapering for active spaces larger than [2,2]. Only H₂ and HF pass the imaginary-strip check.</p>
+          <p><span className="font-medium text-foreground">BK excluded (LiH, BeH₂, H₂O, NH₃, H₄, N₂, H₆, H₂CO, C₄H₆, benzene, H₈, H₁₀)</span> — PennyLane 0.45 introduces imaginary artefacts (&gt;7 mHa) in BK tapering for active spaces larger than [2,2]. Only H₂ and HF pass the imaginary-strip check.</p>
           <p><span className="font-medium text-foreground">PAR/UCCSD excluded (LiH, H₂O, NH₃, N₂, benzene)</span> — UCCSD excitation operators generated in the JW basis are not correctly adapted for Parity tapering in these active spaces. BeH₂ is the exception: D∞h linear symmetry keeps the operator space well-conditioned.</p>
-          <p><span className="font-medium text-foreground">CASSCF required (N₂, H₆, benzene, H₈)</span> — HF orbitals do not cleanly partition the active space for strongly correlated systems. CASSCF pre-optimises orbitals before the VQE circuit is built.</p>
+          <p><span className="font-medium text-foreground">CASSCF required (N₂, H₆, benzene, H₈, H₁₀)</span> — HF orbitals do not cleanly partition the active space for strongly correlated systems. CASSCF pre-optimises orbitals before the VQE circuit is built.</p>
         </div>
       </section>
 

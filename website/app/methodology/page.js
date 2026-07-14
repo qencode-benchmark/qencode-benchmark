@@ -56,7 +56,7 @@ export default function MethodologyPage() {
           <div>
             <p className="font-medium text-foreground mb-1">2. CASSCF orbital optimization (optional, required for some)</p>
             <p>
-              For molecules with strong multireference character — currently N₂, H₆, benzene, and H₈ — HF canonical
+              For molecules with strong multireference character — currently N₂, H₆, benzene, H₈, and H₁₀ — HF canonical
               orbitals do not cleanly partition the active space. QEncode runs CASSCF to pre-optimise the
               orbital basis before building the qubit Hamiltonian. The flag is{" "}
               <code className="font-mono text-xs bg-muted px-1 rounded">--orbital-opt casscf</code>.
@@ -107,7 +107,8 @@ export default function MethodologyPage() {
               <p>Small molecules — UCCSD: max_iter=500, multistart=10</p>
               <p>Hydrogen chains (H₄, H₆) — HEA: max_iter=500, multistart=1–10; UCCSD: max_iter=1,000, multistart=1</p>
               <p>N₂ UCCSD (404 params): max_iter=10,000, multistart=1 (HF zeros initialization)</p>
-              <p>ADAPT-VQE (H₂CO, C₄H₆, H₄, H₆, N₂, benzene, H₈) — COBYLA inner loop: max_iter=200–500, multistart=1</p>
+              <p>ADAPT-VQE (H₂CO, C₄H₆, H₄, H₆, N₂, benzene, H₈, H₁₀) — COBYLA inner loop: max_iter=200–500, multistart=1</p>
+              <p>Hydrogen chains H₈/H₁₀ — ADAPT-VQE, statevector engine, L-BFGS-B inner: max_iter=500, multistart=1, max_ops=300 (H₈ certified at 98 ops, H₁₀ at 300)</p>
               <p>Early-stop: fires when gap &lt; 0.01 Ha, records actual restarts completed</p>
             </div>
             <p className="mt-3">

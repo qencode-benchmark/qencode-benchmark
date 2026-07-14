@@ -158,7 +158,7 @@ export default function PricingPage() {
           <div>
             <h3 className="font-medium">What molecules are available in Suite v4?</h3>
             <p className="text-muted-foreground">
-              H₂, HF, LiH, BeH₂, H₂O, NH₃, H₂CO, C₄H₆, H₄, N₂, H₆, benzene (certified) + H₈ (research).
+              H₂, HF, LiH, BeH₂, H₂O, NH₃, H₂CO, C₄H₆, H₄, N₂, H₆, benzene, H₈, and H₁₀ — all certified.
               All use cc-pVDZ basis with chemistry-driven active spaces.
             </p>
           </div>

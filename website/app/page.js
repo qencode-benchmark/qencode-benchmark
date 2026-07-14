@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 export const metadata = {
   title: "Quantum Algorithm Benchmarking Platform",
   description:
-    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 37 certified entries across 13 molecules. Free to run. Certification optional.",
+    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 39 certified entries across 14 molecules. Free to run. Certification optional.",
   keywords: [
     "quantum algorithm benchmarking platform",
     "VQE leaderboard",
@@ -22,7 +22,7 @@ export const metadata = {
   openGraph: {
     title: "QEncode - Quantum Algorithm Benchmarking Platform",
     description:
-      "Open-source benchmark standard for reproducible VQE evaluation. 37 certified entries, 13 molecules. Free to run yourself. Certified results for publications.",
+      "Open-source benchmark standard for reproducible VQE evaluation. 39 certified entries, 14 molecules. Free to run yourself. Certified results for publications.",
     url: "/"
   },
   twitter: {
@@ -69,7 +69,8 @@ export default function HomePage() {
     { name: "N₂",    qubits: 12, entries: 3,  certified: true,  badge: "CASSCF" },
     { name: "H₆",    qubits: 12, entries: 1,  certified: true,  badge: "CASSCF" },
     { name: "Benzene", qubits: 12, entries: 2, certified: true,  badge: "CASSCF" },
-    { name: "H₈",    qubits: 16, entries: 0,  certified: false, badge: "CASSCF" },
+    { name: "H₈",    qubits: 16, entries: 1,  certified: true,  badge: "CASSCF" },
+    { name: "H₁₀",   qubits: 20, entries: 1,  certified: true,  badge: "CASSCF" },
   ];
 
   return (
@@ -134,15 +135,15 @@ export default function HomePage() {
         <div className="container py-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
             <div>
-              <p className="text-3xl font-bold">37</p>
+              <p className="text-3xl font-bold">39</p>
               <p className="text-sm text-muted-foreground mt-1">Certified entries</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">13</p>
+              <p className="text-3xl font-bold">14</p>
               <p className="text-sm text-muted-foreground mt-1">Molecules in catalog</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">12</p>
+              <p className="text-3xl font-bold">20</p>
               <p className="text-sm text-muted-foreground mt-1">Max qubits (certified)</p>
             </div>
             <div>
