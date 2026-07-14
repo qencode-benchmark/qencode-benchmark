@@ -3,7 +3,13 @@ import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM_ADDRESS = "QEncode <noreply@qencode-benchmark.org>";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "support@qencode-benchmark.org";
+
+// Public contact address. Routed to the team inbox by Cloudflare Email Routing,
+// so it must match a Routing rule on qencode-benchmark.org to receive mail.
+// noreply@ is send-only and has no routing rule — every outbound mail therefore
+// sets replyTo, otherwise customer replies are silently discarded.
+const SUPPORT_EMAIL = "support@qencode-benchmark.org";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || SUPPORT_EMAIL;
 
 /**
  * Send a payment confirmation email to the customer.
@@ -63,7 +69,7 @@ export async function sendCertificationComplete({ customerEmail, customerName, o
 
           <p style="margin:0;font-size:13px;color:#6b7280;">
             Questions? Reply to this email or contact
-            <a href="mailto:support@qencode-benchmark.org" style="color:#030712;font-weight:500;">support@qencode-benchmark.org</a>.
+            <a href="mailto:${SUPPORT_EMAIL}" style="color:#030712;font-weight:500;">${SUPPORT_EMAIL}</a>.
           </p>
         </td></tr>
 
@@ -82,6 +88,7 @@ export async function sendCertificationComplete({ customerEmail, customerName, o
   return resend.emails.send({
     from: FROM_ADDRESS,
     to: customerEmail,
+    replyTo: SUPPORT_EMAIL,
     subject,
     html,
   });
@@ -170,7 +177,7 @@ export async function sendCustomerConfirmation({ customerEmail, customerName, or
 
           <p style="margin:24px 0 0;font-size:13px;color:#6b7280;">
             Questions? Reply to this email or contact
-            <a href="mailto:support@qencode-benchmark.org" style="color:#030712;font-weight:500;">support@qencode-benchmark.org</a>.
+            <a href="mailto:${SUPPORT_EMAIL}" style="color:#030712;font-weight:500;">${SUPPORT_EMAIL}</a>.
           </p>
         </td></tr>
 
@@ -191,6 +198,7 @@ export async function sendCustomerConfirmation({ customerEmail, customerName, or
   return resend.emails.send({
     from: FROM_ADDRESS,
     to: customerEmail,
+    replyTo: SUPPORT_EMAIL,
     subject,
     html,
   });
@@ -198,7 +206,9 @@ export async function sendCustomerConfirmation({ customerEmail, customerName, or
 
 /**
  * Send an internal admin notification when a new order comes in.
- * This triggers the manual job queue on the Ubuntu execution machine.
+ * Informational only — the order row is written with status 'pending' by the
+ * webhook and job_poller.py claims it automatically. No manual step is needed
+ * unless the poller is down.
  */
 export async function sendAdminNotification({ customerEmail, customerName, orderId, orderNumber, productLabel, totalFormatted, rawPayload }) {
   const subject = `[QEncode] New certification order #${orderNumber} — ${productLabel}`;
@@ -217,14 +227,19 @@ export async function sendAdminNotification({ customerEmail, customerName, order
     <tr><td style="padding:4px 12px 4px 0;color:#666;">Amount</td><td style="padding:4px 0;">${totalFormatted}</td></tr>
   </table>
 
-  <h3 style="margin:24px 0 8px;font-size:14px;">Action required on Ubuntu</h3>
-  <pre style="background:#f4f4f4;padding:12px;border-radius:4px;font-size:12px;overflow-x:auto;">cd ~/work/qencode-db
+  <h3 style="margin:24px 0 8px;font-size:14px;">No action required</h3>
+  <p style="margin:0 0 8px;font-size:13px;color:#666;">
+    This order was saved with status <strong>pending</strong>. The job poller claims it
+    automatically within ~60 seconds, runs the benchmark, publishes the leaderboard, and
+    emails the customer their certificate.
+  </p>
+  <p style="margin:0 0 8px;font-size:13px;color:#666;">
+    Only act if this order is still <strong>pending</strong> after a few minutes — that means
+    the poller is not running. Start it on the execution machine:
+  </p>
+  <pre style="background:#f4f4f4;padding:12px;border-radius:4px;font-size:12px;overflow-x:auto;">cd ~/qencode-db
 conda activate qencode
-
-# Then run the appropriate job for this order:
-# Full Suite v2 → python scripts/run_certified_job.py --suite v2 --order ${orderNumber} --email ${customerEmail}
-# Single Molecule → python scripts/run_certified_job.py --molecule &lt;name&gt; --order ${orderNumber} --email ${customerEmail}
-</pre>
+python scripts/job_poller.py</pre>
 
   <details style="margin-top:16px;">
     <summary style="cursor:pointer;font-size:12px;color:#666;">Full webhook payload (expand)</summary>
@@ -237,6 +252,7 @@ conda activate qencode
   return resend.emails.send({
     from: FROM_ADDRESS,
     to: ADMIN_EMAIL,
+    replyTo: customerEmail,
     subject,
     html,
   });
@@ -286,7 +302,7 @@ export async function sendApplyConfirmation({ contactName, workEmail, company, r
           </table>
           <p style="margin:28px 0 0;font-size:13px;color:#6b7280;">
             Questions? Reply to this email or contact
-            <a href="mailto:support@qencode-benchmark.org" style="color:#030712;font-weight:500;">support@qencode-benchmark.org</a>.
+            <a href="mailto:${SUPPORT_EMAIL}" style="color:#030712;font-weight:500;">${SUPPORT_EMAIL}</a>.
           </p>
         </td></tr>
         <tr><td style="background:#f9fafb;padding:16px 32px;border-top:1px solid #e5e7eb;">
@@ -303,6 +319,7 @@ export async function sendApplyConfirmation({ contactName, workEmail, company, r
   return resend.emails.send({
     from: FROM_ADDRESS,
     to: workEmail,
+    replyTo: SUPPORT_EMAIL,
     subject,
     html,
   });

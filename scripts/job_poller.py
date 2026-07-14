@@ -7,7 +7,7 @@ for the next pending certification job, runs the benchmark, publishes
 the updated leaderboard, then marks the job complete.
 
 Usage:
-    cd ~/work/qencode-db
+    cd ~/qencode-db
     conda activate qencode
     python scripts/job_poller.py
 
