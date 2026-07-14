@@ -5,13 +5,13 @@ import { Badge } from "@/components/ui/badge";
 export const metadata = {
   title: "Benchmark Specification — Suite v4",
   description:
-    "QEncode Suite v4 benchmark specification: 10 molecules, cc-pVDZ basis, chemistry-driven active spaces, Jordan-Wigner / Parity / Bravyi-Kitaev encodings, UCCSD and HEA ansatz, CASSCF orbital optimization.",
+    "QEncode Suite v4 benchmark specification: 13 molecules, cc-pVDZ basis, chemistry-driven active spaces, Jordan-Wigner / Parity / Bravyi-Kitaev encodings, UCCSD, HEA and ADAPT-VQE ansatz, CASSCF orbital optimization.",
   keywords: [
     "quantum benchmark specification",
     "suite v4",
     "VQE molecules",
     "Jordan-Wigner Bravyi-Kitaev Parity",
-    "UCCSD HEA",
+    "UCCSD HEA ADAPT-VQE",
     "cc-pVDZ",
     "CASSCF VQE"
   ],
@@ -19,7 +19,7 @@ export const metadata = {
   openGraph: {
     title: "QEncode Benchmark Specification — Suite v4",
     description:
-      "Fixed benchmark definitions for 10 molecules at cc-pVDZ basis with chemistry-driven active spaces, three qubit encodings, and two ansatz families.",
+      "Fixed benchmark definitions for 13 molecules at cc-pVDZ basis with chemistry-driven active spaces, three qubit encodings, and three ansatz families.",
     url: "https://www.qencode-benchmark.org/benchmark"
   }
 };
@@ -72,8 +72,8 @@ const molecules = [
     formula: "Beryllium Hydride",
     activeSpace: "[4e, 4o]",
     qubitsJW: 8,
-    qubitsTagered: null,
-    symRemoved: null,
+    qubitsTagered: 3,
+    symRemoved: 5,
     basis: "cc-pVDZ",
     mappings: ["JW", "PAR"],
     casscf: false,
@@ -86,8 +86,8 @@ const molecules = [
     formula: "Water",
     activeSpace: "[4e, 4o]",
     qubitsJW: 8,
-    qubitsTagered: null,
-    symRemoved: null,
+    qubitsTagered: 4,
+    symRemoved: 4,
     basis: "cc-pVDZ",
     mappings: ["JW", "PAR"],
     casscf: false,
@@ -100,14 +100,28 @@ const molecules = [
     formula: "Ammonia",
     activeSpace: "[4e, 4o]",
     qubitsJW: 8,
-    qubitsTagered: null,
-    symRemoved: null,
+    qubitsTagered: 5,
+    symRemoved: 3,
     basis: "cc-pVDZ",
     mappings: ["JW", "PAR"],
     casscf: false,
     tier: "certified",
     certifiedEntries: 3,
     notes: "C3v symmetry. BK excluded. PAR/UCCSD excluded.",
+  },
+  {
+    name: "H₄",
+    formula: "Hydrogen Chain (H₄)",
+    activeSpace: "[4e, 4o]",
+    qubitsJW: 8,
+    qubitsTagered: 5,
+    symRemoved: 3,
+    basis: "cc-pVDZ",
+    mappings: ["JW", "PAR"],
+    casscf: false,
+    tier: "certified",
+    certifiedEntries: 4,
+    notes: "Linear hydrogen chain. Standard strong-correlation model system. BK excluded.",
   },
   {
     name: "N₂",
@@ -120,50 +134,78 @@ const molecules = [
     mappings: ["JW", "PAR"],
     casscf: true,
     tier: "certified",
-    certifiedEntries: 1,
+    certifiedEntries: 3,
     notes: "Full triple-bond σ/σ*/π manifold. Strong multireference. CASSCF required. DARPA QB-GSEE candidate.",
+  },
+  {
+    name: "H₆",
+    formula: "Hydrogen Chain (H₆)",
+    activeSpace: "[6e, 6o]",
+    qubitsJW: 12,
+    qubitsTagered: 9,
+    symRemoved: 3,
+    basis: "cc-pVDZ",
+    mappings: ["JW"],
+    casscf: true,
+    tier: "certified",
+    certifiedEntries: 1,
+    notes: "Extended hydrogen chain. Strong multireference. CASSCF required. Certified via ADAPT-VQE.",
   },
   {
     name: "H₂CO",
     formula: "Formaldehyde",
     activeSpace: "[4e, 4o]",
     qubitsJW: 8,
-    qubitsTagered: null,
-    symRemoved: null,
+    qubitsTagered: 4,
+    symRemoved: 4,
     basis: "cc-pVDZ",
     mappings: ["JW", "PAR"],
     casscf: false,
-    tier: "target",
-    certifiedEntries: 0,
-    notes: "C=O π/π* carbonyl correlation. C2v symmetry. New in v4.1.",
+    tier: "certified",
+    certifiedEntries: 1,
+    notes: "C=O π/π* carbonyl correlation. C2v symmetry. Certified via ADAPT-VQE.",
   },
   {
     name: "C₄H₆",
     formula: "1,3-Butadiene",
     activeSpace: "[4e, 4o]",
     qubitsJW: 8,
-    qubitsTagered: null,
-    symRemoved: null,
+    qubitsTagered: 4,
+    symRemoved: 4,
     basis: "cc-pVDZ",
     mappings: ["JW", "PAR"],
     casscf: false,
-    tier: "target",
-    certifiedEntries: 0,
-    notes: "Conjugated diene π system. C2h symmetry. First conjugated molecule. New in v4.1.",
+    tier: "certified",
+    certifiedEntries: 1,
+    notes: "Conjugated diene π system. C2h symmetry. First conjugated molecule. Certified via ADAPT-VQE.",
   },
   {
     name: "Benzene",
     formula: "Benzene (C₆H₆)",
     activeSpace: "[6e, 6o]",
     qubitsJW: 12,
-    qubitsTagered: null,
-    symRemoved: null,
+    qubitsTagered: 9,
+    symRemoved: 3,
     basis: "cc-pVDZ",
     mappings: ["JW", "PAR"],
     casscf: true,
-    tier: "target",
+    tier: "certified",
+    certifiedEntries: 2,
+    notes: "Aromatic π system. D6h symmetry. CASSCF required. First aromatic molecule certified.",
+  },
+  {
+    name: "H₈",
+    formula: "Hydrogen Chain (H₈)",
+    activeSpace: "[8e, 8o]",
+    qubitsJW: 16,
+    qubitsTagered: 13,
+    symRemoved: 3,
+    basis: "cc-pVDZ",
+    mappings: ["JW"],
+    casscf: true,
+    tier: "research",
     certifiedEntries: 0,
-    notes: "Aromatic π system. D6h symmetry. CASSCF required. First aromatic molecule. New in v4.2.",
+    notes: "Largest suite system at 16 JW qubits. CASSCF required. Research tier — no certified entry yet.",
   },
 ];
 
@@ -201,6 +243,12 @@ const ansatzTypes = [
     desc: "Generic parameterised circuit with alternating rotation and entanglement layers. Shallow, hardware-friendly, fast to run. Layer count (reps) is configurable. Sufficient for simple molecules, insufficient for strong multireference systems like N₂.",
     note: "Preferred for near-term hardware experiments. Not always sufficient for certification.",
   },
+  {
+    name: "ADAPT-VQE",
+    full: "Adaptive Derivative-Assembled Problem-Tailored VQE",
+    desc: "Builds the circuit operator by operator, selecting from the UCCSD excitation pool by parameter-shift gradient magnitude at each step. Reaches UCCSD-class accuracy with a small fraction of the parameters, keeping the optimisation tractable where full UCCSD is not.",
+    note: "Certifies the medium molecules — H₂CO, C₄H₆, H₆, benzene — where UCCSD with COBYLA is infeasible.",
+  },
 ];
 
 export default function BenchmarkPage() {
@@ -216,7 +264,7 @@ export default function BenchmarkPage() {
           All v4 molecules use the cc-pVDZ basis with chemistry-driven active spaces.
         </p>
         <p className="text-xs text-muted-foreground font-mono mt-2">
-          Pipeline: PySCF HF → [CASSCF] → CASCI reference · PennyLane Hamiltonian · Z2 tapering · COBYLA VQE
+          Pipeline: PySCF HF → [CASSCF] → CASCI reference · PennyLane Hamiltonian · Z2 tapering · VQE (COBYLA / L-BFGS-B / Adam)
         </p>
       </div>
 
@@ -224,7 +272,7 @@ export default function BenchmarkPage() {
       <section className="mb-14">
         <h2 className="text-xl font-semibold mb-1">Suite v4 — Molecule Catalog</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          7 certified molecules + 3 upcoming targets (H₂CO, C₄H₆, benzene). All use cc-pVDZ basis.
+          12 certified molecules + H₈ (research tier). All use cc-pVDZ basis.
         </p>
         <div className="rounded-lg border overflow-hidden">
           <div className="overflow-x-auto">
@@ -242,7 +290,7 @@ export default function BenchmarkPage() {
               </thead>
               <tbody>
                 {molecules.map((m) => (
-                  <tr key={m.name} className={`border-t hover:bg-muted/20 transition-colors ${m.tier === "target" ? "opacity-60" : ""}`}>
+                  <tr key={m.name} className={`border-t hover:bg-muted/20 transition-colors ${m.tier === "research" ? "opacity-60" : ""}`}>
                     <td className="px-4 py-3">
                       <span className="font-medium">{m.name}</span>
                       <p className="text-xs text-muted-foreground">{m.formula}</p>
@@ -272,14 +320,9 @@ export default function BenchmarkPage() {
                           <CheckCircle className="h-3.5 w-3.5" />
                           {m.certifiedEntries} entries
                         </span>
-                      ) : m.name === "Benzene" ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400">
-                          <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse inline-block" />
-                          v4.2 target
-                        </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                          <Clock className="h-3.5 w-3.5" /> Upcoming
+                          <Clock className="h-3.5 w-3.5" /> Research
                         </span>
                       )}
                     </td>
@@ -293,9 +336,9 @@ export default function BenchmarkPage() {
         {/* Notes callout */}
         <div className="mt-4 rounded-lg border bg-muted/30 p-4 text-xs text-muted-foreground space-y-1.5">
           <p className="font-medium text-foreground text-sm">Encoding exclusion notes</p>
-          <p><span className="font-medium text-foreground">BK excluded (LiH, BeH₂, H₂O, NH₃, N₂, H₂CO, C₄H₆, benzene)</span> — PennyLane 0.45 introduces imaginary artefacts (&gt;7 mHa) in BK tapering for active spaces larger than [2,2]. Only H₂ and HF pass the imaginary-strip check.</p>
+          <p><span className="font-medium text-foreground">BK excluded (LiH, BeH₂, H₂O, NH₃, H₄, N₂, H₆, H₂CO, C₄H₆, benzene, H₈)</span> — PennyLane 0.45 introduces imaginary artefacts (&gt;7 mHa) in BK tapering for active spaces larger than [2,2]. Only H₂ and HF pass the imaginary-strip check.</p>
           <p><span className="font-medium text-foreground">PAR/UCCSD excluded (LiH, H₂O, NH₃, N₂, benzene)</span> — UCCSD excitation operators generated in the JW basis are not correctly adapted for Parity tapering in these active spaces. BeH₂ is the exception: D∞h linear symmetry keeps the operator space well-conditioned.</p>
-          <p><span className="font-medium text-foreground">CASSCF required (N₂, benzene)</span> — HF orbitals do not cleanly partition the active space for strongly correlated systems. CASSCF pre-optimises orbitals before the VQE circuit is built.</p>
+          <p><span className="font-medium text-foreground">CASSCF required (N₂, H₆, benzene, H₈)</span> — HF orbitals do not cleanly partition the active space for strongly correlated systems. CASSCF pre-optimises orbitals before the VQE circuit is built.</p>
         </div>
       </section>
 

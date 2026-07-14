@@ -59,3 +59,13 @@ releases/v2/cache/
 
 # Phase 3 comparison SQLite (optional: regenerate with compare.py --sync)
 # benchmarks.db
+
+# v4 run scratch at repo root (generator logs, per-point and pre-merge curve data,
+# parallel worker output). Merged curves live in releases/v4/curves/ and are tracked.
+/*.log
+/*_dissoc.json
+/*_dissoc_classical.json
+/*_vqe_curve.json
+/*_vqe_partial.json
+/*_vqe_w[0-9]*.json
+/n2worker.py

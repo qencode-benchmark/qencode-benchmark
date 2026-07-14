@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 export const metadata = {
   title: "Benchmark Methodology — Suite v4",
   description:
-    "QEncode Suite v4 benchmark methodology: PySCF CASCI reference, optional CASSCF orbital optimization, PennyLane VQE, Z2 tapering, COBYLA optimizer, cc-pVDZ basis, Ed25519 provenance signing.",
+    "QEncode Suite v4 benchmark methodology: PySCF CASCI reference, optional CASSCF orbital optimization, PennyLane VQE, Z2 tapering, COBYLA / L-BFGS-B / Adam optimizers, cc-pVDZ basis, Ed25519 provenance signing.",
   keywords: [
     "quantum benchmark methodology",
     "VQE methodology",
@@ -56,7 +56,7 @@ export default function MethodologyPage() {
           <div>
             <p className="font-medium text-foreground mb-1">2. CASSCF orbital optimization (optional, required for some)</p>
             <p>
-              For molecules with strong multireference character — currently N₂ and benzene — HF canonical
+              For molecules with strong multireference character — currently N₂, H₆, benzene, and H₈ — HF canonical
               orbitals do not cleanly partition the active space. QEncode runs CASSCF to pre-optimise the
               orbital basis before building the qubit Hamiltonian. The flag is{" "}
               <code className="font-mono text-xs bg-muted px-1 rounded">--orbital-opt casscf</code>.
@@ -90,19 +90,24 @@ export default function MethodologyPage() {
           </div>
 
           <div>
-            <p className="font-medium text-foreground mb-1">5. VQE — COBYLA optimizer</p>
+            <p className="font-medium text-foreground mb-1">5. VQE — COBYLA / L-BFGS-B / Adam</p>
             <p>
-              The variational quantum eigensolver uses the COBYLA gradient-free optimizer. Ansatz: UCCSD
-              (tapered symmetry-adapted excitation operators) or HEA (hardware-efficient alternating
+              The variational quantum eigensolver runs with one of three optimizers: COBYLA
+              (gradient-free, the suite default), L-BFGS-B (quasi-Newton, driven by analytic
+              parameter-shift gradients), or Adam (stochastic gradient descent). Ansatz: UCCSD
+              (tapered symmetry-adapted excitation operators), HEA (hardware-efficient alternating
               rotation/entanglement layers, configurable{" "}
-              <code className="font-mono text-xs bg-muted px-1 rounded">--reps</code>).
+              <code className="font-mono text-xs bg-muted px-1 rounded">--reps</code>), or ADAPT-VQE
+              (operators selected one at a time from the UCCSD pool by parameter-shift gradient
+              magnitude, giving a far shorter parameter vector than full UCCSD).
             </p>
             <div className="mt-3 rounded-md bg-muted p-3 text-xs font-mono space-y-1">
               <p className="text-foreground font-semibold text-sm font-sans mb-2">Run config by molecule class</p>
-              <p>Small molecules (H₂, HF, LiH, BeH₂, H₂O, NH₃) — HEA: max_iter=500, multistart=30</p>
-              <p>Small molecules — UCCSD: max_iter=500, multistart=5</p>
+              <p>Small molecules (H₂, HF, LiH, BeH₂, H₂O, NH₃) — HEA: max_iter=500, multistart=10</p>
+              <p>Small molecules — UCCSD: max_iter=500, multistart=10</p>
+              <p>Hydrogen chains (H₄, H₆) — HEA: max_iter=500, multistart=1–10; UCCSD: max_iter=1,000, multistart=1</p>
               <p>N₂ UCCSD (404 params): max_iter=10,000, multistart=1 (HF zeros initialization)</p>
-              <p>Benzene UCCSD (~400 params): max_iter=15,000, multistart=1</p>
+              <p>ADAPT-VQE (H₂CO, C₄H₆, H₄, H₆, N₂, benzene, H₈) — COBYLA inner loop: max_iter=200–500, multistart=1</p>
               <p>Early-stop: fires when gap &lt; 0.01 Ha, records actual restarts completed</p>
             </div>
             <p className="mt-3">

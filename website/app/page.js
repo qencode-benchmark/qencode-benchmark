@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 export const metadata = {
   title: "Quantum Algorithm Benchmarking Platform",
   description:
-    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 26 certified entries across 10 molecules. Free to run. Certification optional.",
+    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 37 certified entries across 13 molecules. Free to run. Certification optional.",
   keywords: [
     "quantum algorithm benchmarking platform",
     "VQE leaderboard",
@@ -22,7 +22,7 @@ export const metadata = {
   openGraph: {
     title: "QEncode - Quantum Algorithm Benchmarking Platform",
     description:
-      "Open-source benchmark standard for reproducible VQE evaluation. 26 certified entries, 10 molecules. Free to run yourself. Certified results for publications.",
+      "Open-source benchmark standard for reproducible VQE evaluation. 37 certified entries, 13 molecules. Free to run yourself. Certified results for publications.",
     url: "/"
   },
   twitter: {
@@ -63,10 +63,13 @@ export default function HomePage() {
     { name: "BeH₂",  qubits: 8,  entries: 4,  certified: true  },
     { name: "H₂O",   qubits: 8,  entries: 3,  certified: true  },
     { name: "NH₃",   qubits: 8,  entries: 3,  certified: true  },
-    { name: "N₂",    qubits: 12, entries: 1,  certified: true,  badge: "CASSCF" },
-    { name: "H₂CO",  qubits: 8,  entries: 0,  certified: false, badge: "upcoming" },
-    { name: "C₄H₆",  qubits: 8,  entries: 0,  certified: false, badge: "upcoming" },
-    { name: "Benzene", qubits: 12, entries: 0, certified: false, badge: "v4.2" },
+    { name: "H₂CO",  qubits: 8,  entries: 1,  certified: true  },
+    { name: "C₄H₆",  qubits: 8,  entries: 1,  certified: true  },
+    { name: "H₄",    qubits: 8,  entries: 4,  certified: true  },
+    { name: "N₂",    qubits: 12, entries: 3,  certified: true,  badge: "CASSCF" },
+    { name: "H₆",    qubits: 12, entries: 1,  certified: true,  badge: "CASSCF" },
+    { name: "Benzene", qubits: 12, entries: 2, certified: true,  badge: "CASSCF" },
+    { name: "H₈",    qubits: 16, entries: 0,  certified: false, badge: "CASSCF" },
   ];
 
   return (
@@ -131,16 +134,16 @@ export default function HomePage() {
         <div className="container py-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
             <div>
-              <p className="text-3xl font-bold">26</p>
+              <p className="text-3xl font-bold">37</p>
               <p className="text-sm text-muted-foreground mt-1">Certified entries</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">10</p>
+              <p className="text-3xl font-bold">13</p>
               <p className="text-sm text-muted-foreground mt-1">Molecules in catalog</p>
             </div>
             <div>
               <p className="text-3xl font-bold">12</p>
-              <p className="text-sm text-muted-foreground mt-1">Max qubits (N₂)</p>
+              <p className="text-sm text-muted-foreground mt-1">Max qubits (certified)</p>
             </div>
             <div>
               <p className="text-3xl font-bold">2.0<span className="text-lg font-medium"> mHa</span></p>
@@ -215,7 +218,7 @@ export default function HomePage() {
                   >
                     <td className="px-4 py-3 font-medium">
                       {mol.name}
-                      {mol.badge && mol.badge !== "upcoming" && mol.badge !== "v4.2" && (
+                      {mol.badge && (
                         <Badge variant="secondary" className="ml-2 text-xs font-normal py-0">{mol.badge}</Badge>
                       )}
                     </td>
@@ -228,13 +231,9 @@ export default function HomePage() {
                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 dark:text-green-400">
                           <CheckCircle className="h-3.5 w-3.5" /> Certified
                         </span>
-                      ) : mol.badge === "v4.2" ? (
-                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400">
-                          <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse inline-block" /> v4.2 target
-                        </span>
                       ) : (
                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                          <span className="h-2 w-2 rounded-full bg-muted-foreground/40 inline-block" /> Upcoming
+                          <span className="h-2 w-2 rounded-full bg-muted-foreground/40 inline-block" /> Research
                         </span>
                       )}
                     </td>

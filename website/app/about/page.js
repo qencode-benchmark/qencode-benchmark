@@ -4,7 +4,7 @@ import { CheckCircle, GitFork, ExternalLink } from "lucide-react";
 export const metadata = {
   title: "About QEncode",
   description:
-    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 26 certified entries, cc-pVDZ basis, N₂ certified with CASSCF — aligned with DARPA QB-GSEE targets.",
+    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 37 certified entries, cc-pVDZ basis, N₂ certified with CASSCF — aligned with DARPA QB-GSEE targets.",
   keywords: [
     "about qencode",
     "quantum benchmark standard",
@@ -23,16 +23,16 @@ export const metadata = {
 
 const achievements = [
   {
-    label: "26 certified entries",
-    detail: "Across 7 molecules at cc-pVDZ basis — H₂, HF, LiH, BeH₂, H₂O, NH₃, N₂."
+    label: "37 certified entries",
+    detail: "Across 13 molecules at cc-pVDZ basis — H₂, HF, LiH, BeH₂, H₂O, NH₃, H₂CO, C₄H₆, H₄, N₂, H₆, benzene, plus H₈ at research tier."
   },
   {
     label: "N₂ certified — 2.0 mHa gap",
     detail: "12 qubits, CASSCF orbital optimization, 404 UCCSD parameters. DARPA QB-GSEE benchmark candidate."
   },
   {
-    label: "Benzene next — first aromatic",
-    detail: "[6e,6o] π active space, D6h symmetry, direct relevance to pharmaceutical chemistry."
+    label: "Benzene certified — first aromatic",
+    detail: "[6e,6o] π active space, D6h symmetry, CASSCF orbitals, certified via ADAPT-VQE at a 6.991 mHa best gap — direct relevance to pharmaceutical chemistry."
   },
   {
     label: "Ed25519-signed artifacts",

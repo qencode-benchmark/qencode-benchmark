@@ -662,7 +662,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
       <details className="group rounded-lg border bg-muted/10 text-xs">
         <summary className="flex cursor-pointer select-none items-center gap-2 p-4 font-medium text-muted-foreground hover:text-foreground transition-colors list-none">
           <Info className="h-3.5 w-3.5 shrink-0" />
-          Ansatz guide — UCCSD vs HEA, and why some circuit metrics show &ldquo;—&rdquo;
+          Ansatz guide — UCCSD vs HEA vs ADAPT-VQE, and why some circuit metrics show &ldquo;—&rdquo;
           <span className="ml-auto text-muted-foreground/50 group-open:rotate-180 transition-transform">▾</span>
         </summary>
         <div className="border-t px-4 pb-4 pt-3 space-y-4 text-muted-foreground">
@@ -684,6 +684,15 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
               <p>HEA uses only native hardware gates (RY, CNOT), so the circuit is already in a hardware-ready form. Gate counts reflect what would actually run on a device — making HEA entries directly comparable in the Lowest Cost and Balanced categories.</p>
               <p className="text-emerald-700 dark:text-emerald-400 font-medium">Trade-off:</p>
               <p>HEA achieves near-chemical-accuracy for small molecules but may plateau before reaching UCCSD accuracy on larger or strongly-correlated systems, since it has no built-in knowledge of the molecular Hamiltonian.</p>
+            </div>
+            {/* ADAPT-VQE */}
+            <div className="rounded-md border bg-background p-3 space-y-1.5">
+              <p className="font-semibold text-foreground">ADAPT-VQE — Adaptive Ansatz</p>
+              <p>Starts from an empty circuit and grows it one operator at a time. At each step it measures the parameter-shift gradient of every operator in the UCCSD excitation pool and appends only the one with the largest gradient, then re-optimises. The result is a small, problem-tailored subset of the UCCSD pool rather than the full excitation set.</p>
+              <p className="text-emerald-700 dark:text-emerald-400 font-medium">Why it matters for medium molecules:</p>
+              <p>Full UCCSD on molecules like H₂CO, C₄H₆, H₆ and benzene carries hundreds of parameters — more than COBYLA can navigate in a tractable number of iterations. ADAPT-VQE reaches the same accuracy class with a fraction of the parameters, and is what certifies these systems on the leaderboard.</p>
+              <p className="text-amber-700 dark:text-amber-400 font-medium">Circuit metrics:</p>
+              <p>ADAPT builds from the same exponential Pauli operators as UCCSD, so depth and 2Q gate counts are symbolic until compiled for a hardware target and may show &ldquo;—&rdquo; for the same reason.</p>
             </div>
           </div>
           <p className="text-muted-foreground/70 border-t pt-3">
