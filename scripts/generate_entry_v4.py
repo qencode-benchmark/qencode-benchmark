@@ -1779,6 +1779,121 @@ def _git_head() -> Optional[str]:
         return None
 
 
+def _git_dirty() -> Optional[bool]:
+    """True if tracked files differ from HEAD. None if git is unavailable."""
+    try:
+        out = subprocess.check_output(
+            ["git", "status", "--porcelain", "--untracked-files=no"],
+            cwd=REPO, stderr=subprocess.DEVNULL,
+        ).decode().strip()
+        return bool(out)
+    except Exception:
+        return None
+
+
+def _installed_versions() -> dict:
+    import importlib
+    got = {}
+    for mod in ("pennylane", "numpy", "pyscf", "scipy", "openfermion"):
+        try:
+            got[mod] = importlib.import_module(mod).__version__
+        except Exception:
+            got[mod] = None
+    return got
+
+
+def _required_versions() -> dict:
+    """Parse the `name==version` pins out of requirements-v4.txt."""
+    req = {}
+    path = REPO / "requirements-v4.txt"
+    try:
+        for line in path.read_text().splitlines():
+            line = line.split("#")[0].strip()
+            if "==" in line:
+                name, ver = line.split("==", 1)
+                req[name.strip().lower()] = ver.strip()
+    except Exception:
+        pass
+    return req
+
+
+def check_reproducibility_guard(allow_dirty: bool = False,
+                                allow_env_drift: bool = False) -> None:
+    """
+    Refuse to write an entry unless it can be reproduced from what it records.
+
+    Why this exists. Two silent failures happened before this check:
+
+      * ENVIRONMENT DRIFT. Both the workstation and the cluster wandered off
+        requirements-v4.txt (pennylane 0.45.0 -> 0.44.1, numpy 2.2.6 -> 1.26.4,
+        pyscf 2.6.2 -> 2.5.0, scipy 1.13.1 -> 1.17.0, openfermion 1.6.1 -> 1.7.1).
+        Nothing checked, so 21 of 46 entries were produced on an unpinned stack.
+        H6 lands on 9.755 mHa under the pinned stack and 9.273 mHa under the
+        drifted one -- same code, same 28 operators, same pool of 424. Both are
+        honest ADAPT runs; only one matches the published entry.
+
+      * DIRTY TREE. A patched generate_entry_v4.py was copied onto the cluster
+        without being committed there, so `git rev-parse HEAD` still reported the
+        old commit and the entry recorded provenance for code that did not
+        produce it.
+
+    An entry whose recorded provenance does not describe the run that made it is
+    worse than no entry: it looks reproducible and is not. Escape hatches exist
+    for development, but they are explicit and they are printed.
+    """
+    problems, notes = [], []
+
+    dirty = _git_dirty()
+    head  = _git_head()
+    if dirty is None:
+        notes.append("git unavailable -- provenance commit will be null")
+    elif dirty:
+        problems.append(
+            "working tree has uncommitted changes to tracked files; the recorded "
+            f"git_commit ({head}) would not describe the code being run")
+
+    req, got = _required_versions(), _installed_versions()
+    for pkg, want in sorted(req.items()):
+        have = got.get(pkg)
+        if have is None:
+            problems.append(f"{pkg} is required ({want}) but not importable")
+        elif have != want:
+            problems.append(f"{pkg} {have} installed, requirements-v4.txt pins {want}")
+
+    if not problems:
+        print(_ok(f"Reproducibility guard: clean tree @ {head}, "
+                  f"stack matches requirements-v4.txt"))
+        return
+
+    for n in notes:
+        print(_warn(n))
+
+    overridden = []
+    remaining  = []
+    for p in problems:
+        if "working tree" in p and allow_dirty:
+            overridden.append(p)
+        elif ("installed" in p or "not importable" in p) and allow_env_drift:
+            overridden.append(p)
+        else:
+            remaining.append(p)
+
+    for p in overridden:
+        print(_warn(f"Reproducibility guard OVERRIDDEN: {p}"))
+    if overridden:
+        print(_warn("This entry may not reproduce from its recorded provenance."))
+
+    if remaining:
+        msg = "\n".join(f"    - {p}" for p in remaining)
+        raise RuntimeError(
+            "Reproducibility guard failed -- refusing to write an entry that "
+            "cannot be reproduced from what it records:\n" + msg +
+            "\n\n    Fix the environment (pip install -r requirements-v4.txt) and "
+            "commit your changes,\n    or re-run with --allow-dirty / "
+            "--allow-env-drift if this is a development run."
+        )
+
+
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -1824,6 +1939,15 @@ def main() -> None:
                          "(gradient-free). Both reach the same energies; measured "
                          "on H10, bfgs was ~20x faster (11s vs 188s per operator "
                          "at op 25, and flat rather than growing).")
+    ap.add_argument("--allow-dirty", action="store_true",
+                    help="Write an entry even if the git tree has uncommitted "
+                         "changes. The recorded git_commit will then NOT describe "
+                         "the code that ran. Development only.")
+    ap.add_argument("--allow-env-drift", action="store_true",
+                    help="Write an entry even if the installed stack does not match "
+                         "requirements-v4.txt. Measured impact: H6 gives 9.755 mHa "
+                         "on the pinned stack and 9.273 mHa on a drifted one. "
+                         "Development only.")
     ap.add_argument("--optimizer", default="cobyla",
                     choices=["cobyla", "adam", "bfgs"],
                     help="VQE optimizer: cobyla (gradient-free, default), "
@@ -1864,6 +1988,14 @@ def main() -> None:
     print("  QEncode v4 - Entry Generator")
     print(f"  Python {sys.version.split()[0]}")
     print("=" * 65 + RESET)
+
+    # Fail fast, before hours of compute: an entry is only worth writing if it can
+    # be reproduced from the provenance it records. Skipped for --dry-run, which
+    # writes nothing. See check_reproducibility_guard() for what this caught.
+    if not args.dry_run:
+        check_reproducibility_guard(allow_dirty=args.allow_dirty,
+                                    allow_env_drift=args.allow_env_drift)
+
     print(f"  Molecule:    {args.molecule}")
     print(f"  Basis:       {args.basis}")
     print(f"  Mapping:     {args.mapping}")
