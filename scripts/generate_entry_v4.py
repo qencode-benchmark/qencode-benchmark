@@ -1554,7 +1554,7 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
                    pyscf_res, tap_meta, vqe_res, pauli_terms, hf_tapered,
                    max_iter, multistart, seed,
                    circuit_fn=None, H_tapered=None, backend="default.qubit",
-                   e_exact_qubit=None) -> tuple:
+                   e_exact_qubit=None, hamiltonian_source=None) -> tuple:
 
     mol_name  = mol_config["molecule"]
     n_e, n_o  = mol_config["active_space"]
@@ -1699,6 +1699,15 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
                 "scipy":       _pkg_version("scipy"),
                 "git_commit":  _git_head(),
             },
+            # How the qubit Hamiltonian was built. This is NOT cosmetic: the two
+            # paths produce different operators. PennyLane's native
+            # molecular_hamiltonian runs its own HF, which lands on a slightly
+            # different active space than PySCF's CASCI -- measured deviations of
+            # the exact qubit ground state from CASCI: up to 3.6e-4 Ha (HF, H2O)
+            # via "pennylane_native" versus ~1e-15 Ha via "of_bridge", which uses
+            # the PySCF integrals directly. Until v4.4 this was recorded nowhere
+            # and had to be inferred from that energy fingerprint.
+            "hamiltonian_source": hamiltonian_source,
             "environment": {"platform": sys.platform},
         },
 
@@ -1906,7 +1915,25 @@ def main() -> None:
                     help="Basis set (default: cc-pvdz for v4)")
     ap.add_argument("--mapping",      default="jordan_wigner",
                     choices=["jordan_wigner","jw","bravyi_kitaev","bk","parity","p"])
-    ap.add_argument("--use-of-bridge", action="store_true")
+    # v4.4: of_bridge is now the DEFAULT. It builds the qubit Hamiltonian from the
+    # PySCF active-space integrals, so the exact qubit ground state matches CASCI to
+    # ~1e-15 Ha. PennyLane's native molecular_hamiltonian runs its OWN Hartree-Fock,
+    # landing on a slightly different active space: measured deviations from CASCI of
+    # up to 3.6e-4 Ha (HF, H2O), 1.4e-4 (LiH), 1.3e-4 (NH3). Those entries were still
+    # self-consistent -- the gap is measured against each Hamiltonian's own exact
+    # ground state -- but they solved a Hamiltonian offset from the CASCI they claimed
+    # to target, and the suite ran two paths at once (25 of_bridge / 19 native) with
+    # no record of which. of_bridge is also far faster: PennyLane's native path
+    # stalled >11 min on H2CO/C4H6 where of_bridge took ~25 s.
+    ap.add_argument("--use-of-bridge", dest="use_of_bridge",
+                    action="store_true", default=True,
+                    help="Build H from PySCF integrals via OpenFermion (default). "
+                         "Matches CASCI to ~1e-15 Ha.")
+    ap.add_argument("--use-pennylane-native", dest="use_of_bridge",
+                    action="store_false",
+                    help="Build H with PennyLane's molecular_hamiltonian instead. "
+                         "Runs its own HF; deviates from CASCI by up to ~3.6e-4 Ha. "
+                         "Ignored for parity, which requires the bridge.")
     ap.add_argument("--ansatz-type",  default="uccsd",
                     choices=["uccsd","hardware_efficient","adapt"],
                     help="Ansatz family: uccsd (full UCCSD), hardware_efficient (HEA), "
@@ -2206,6 +2233,7 @@ def main() -> None:
             circuit_fn=circuit_fn, H_tapered=H_vqe,
             backend=args.backend,
             e_exact_qubit=e_exact_qubit,
+            hamiltonian_source=("of_bridge" if use_bridge else "pennylane_native"),
         )
 
         e_vqe   = vqe_res["best_energy_hartree"]
