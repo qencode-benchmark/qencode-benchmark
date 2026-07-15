@@ -32,6 +32,41 @@ Exit codes: 0 = entry written, 1 = pipeline error.
 """
 from __future__ import annotations
 
+import os
+
+# ─── Determinism: force single-threaded BLAS BEFORE numpy is imported ─────────
+#
+# This must run before `import numpy`. Once BLAS initialises its thread pool the
+# variables are ignored, so setting them later silently does nothing.
+#
+# Why it matters. Threaded BLAS sums floating point in whatever order the threads
+# finish, which perturbs energies in the last bits. Gradient-free COBYLA then
+# takes a different path across a multi-modal landscape and settles in a
+# different local minimum. Measured on LiH PAR/HEA -- identical command, identical
+# seed, identical stack, only the thread count varying:
+#
+#     OMP_NUM_THREADS=1 :  5.181379e-03, 5.181379e-03, 5.181379e-03   (identical)
+#     OMP_NUM_THREADS=4 :  8.993703e-03, 5.309440e-04, 8.993703e-03   (17x spread)
+#
+# H6 JW/ADAPT returned 9.755 mHa or 9.273 mHa from the same command at 4 threads;
+# at 1 thread it returns 9.2728 mHa every time, down to the same nfev, and two
+# entirely different dependency stacks (PL 0.45.0/numpy 2.2.6/pyscf 2.6.2/scipy
+# 1.13.1 vs PL 0.44.1/numpy 1.26.4/pyscf 2.5.0/scipy 1.17.0) then agree to seven
+# decimals. Pinned versions, hashes and signatures are worthless if the
+# arithmetic underneath is not deterministic.
+#
+# Gradient-based optimizers (L-BFGS-B, statevector ADAPT) are far less exposed --
+# they follow a computed direction rather than feeling their way -- but the
+# default is determinism for everything.
+#
+# Escape hatch for exploratory runs only: QENCODE_ALLOW_THREADS=1.
+_QENCODE_THREAD_VARS = ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+                        "NUMEXPR_NUM_THREADS", "VECLIB_MAXIMUM_THREADS")
+_QENCODE_THREADS_PINNED = os.environ.get("QENCODE_ALLOW_THREADS") != "1"
+if _QENCODE_THREADS_PINNED:
+    for _v in _QENCODE_THREAD_VARS:
+        os.environ[_v] = "1"
+
 import argparse
 import copy
 import hashlib
@@ -1708,7 +1743,14 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
             # the PySCF integrals directly. Until v4.4 this was recorded nowhere
             # and had to be inferred from that energy fingerprint.
             "hamiltonian_source": hamiltonian_source,
-            "environment": {"platform": sys.platform},
+            "environment": {
+                "platform": sys.platform,
+                # Load-bearing, not cosmetic: threaded BLAS makes gradient-free
+                # optimization non-deterministic (see the header of this file).
+                # An entry is only reproducible if this is 1.
+                "blas_threads": os.environ.get("OMP_NUM_THREADS"),
+                "threads_pinned": _QENCODE_THREADS_PINNED,
+            },
         },
 
         "trust": {
@@ -1852,6 +1894,18 @@ def check_reproducibility_guard(allow_dirty: bool = False,
     """
     problems, notes = [], []
 
+    # Threading is checked first because it is the one that silently produces
+    # different numbers from identical inputs. Everything else at least fails loudly.
+    if not _QENCODE_THREADS_PINNED:
+        problems.append(
+            "QENCODE_ALLOW_THREADS=1 -- BLAS is multi-threaded, so gradient-free "
+            "optimization is non-deterministic and this entry will not reproduce "
+            "(measured: identical LiH PAR/HEA commands returning 8.99 and 0.53 mHa)")
+    else:
+        actual = os.environ.get("OMP_NUM_THREADS")
+        if actual != "1":
+            problems.append(f"OMP_NUM_THREADS={actual} after pinning -- expected 1")
+
     dirty = _git_dirty()
     head  = _git_head()
     if dirty is None:
@@ -1871,7 +1925,7 @@ def check_reproducibility_guard(allow_dirty: bool = False,
 
     if not problems:
         print(_ok(f"Reproducibility guard: clean tree @ {head}, "
-                  f"stack matches requirements-v4.txt"))
+                  f"stack matches requirements-v4.txt, BLAS single-threaded"))
         return
 
     for n in notes:
