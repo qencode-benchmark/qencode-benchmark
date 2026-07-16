@@ -1,0 +1,201 @@
+{
+  "schema_version": "4.0.0",
+  "entry_id": "BeH2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_f71541a4f8d3e964",
+  "created_utc": "2026-07-15T13:21:10.928451+00:00",
+  "problem": {
+    "name": "BeH2",
+    "basis": "cc-pvdz",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "H 0.0 0.0 -1.30; Be 0.0 0.0 0.0; H 0.0 0.0 1.30",
+    "active_space": {
+      "num_electrons": 4,
+      "num_spatial_orbitals": 4,
+      "method": "casci",
+      "frozen_core": false
+    },
+    "orbital_optimization": "hf"
+  },
+  "encoding": {
+    "mapping": "parity",
+    "ansatz_type": "uccsd_tapered",
+    "ansatz_reps": 1,
+    "adapt_metadata": null,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 5,
+      "original_num_qubits": 8,
+      "tapered_num_qubits": 3,
+      "sectors": [
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "hf_tapered_state": [
+        1,
+        1,
+        0
+      ],
+      "bk_constant_correction_ha": -0.29919158919483735,
+      "bk_imaginary_stripped": false,
+      "bk_max_imaginary_abs_ha": null
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 3,
+      "num_pauli_terms": 8,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": -14.817431654298234
+        },
+        {
+          "pauli_string": "Z0Z1Z2",
+          "coefficient": 0.0907211876270758
+        },
+        {
+          "pauli_string": "Z1",
+          "coefficient": -0.4732233827547462
+        },
+        {
+          "pauli_string": "Z0Z2",
+          "coefficient": -0.24164688297733977
+        },
+        {
+          "pauli_string": "Y0Y2",
+          "coefficient": 0.01376127420421758
+        },
+        {
+          "pauli_string": "X0X2",
+          "coefficient": -0.01376127420421758
+        },
+        {
+          "pauli_string": "Z0X1Z2",
+          "coefficient": 0.004712861627623966
+        },
+        {
+          "pauli_string": "X1",
+          "coefficient": 0.004712861627623966
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1,
+        1,
+        0
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    }
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -15.766427614860913,
+      "casci_ground_energy_hartree": -15.768410988000909,
+      "exact_qubit_ground_energy_hartree": -15.768410988000909,
+      "casci_first_excited_hartree": -15.505738578615647,
+      "casscf_energy_hartree": null
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -15.766427614860913,
+      "mp2_energy_hartree": -15.818302820733445,
+      "ccsd_energy_hartree": -15.83495902596026,
+      "ccsd_t_energy_hartree": -15.835391011974085,
+      "mp2_correlation": -0.05187520587253225,
+      "ccsd_t_correlation": -0.06896339711317268,
+      "pyscf_version": "2.6.2",
+      "computed_utc": "2026-07-15T13:20:26.090580+00:00",
+      "basis": "cc-pvdz"
+    },
+    "vqe": {
+      "best_energy_hartree": -15.7661884701205,
+      "optimal_params": [
+        1.779953380170696,
+        -1.9109153034055837,
+        -0.2945827277341066,
+        -2.608577512487542,
+        -1.8469255440233057,
+        0.986113565655036,
+        1.574490295691653,
+        3.10427677940915,
+        -0.7995657231057828,
+        -0.7964685891429234,
+        -0.3571359877197077,
+        -1.4508264649701317
+      ],
+      "num_params": 12,
+      "nfev": 3412,
+      "optimizer": "COBYLA",
+      "multistart_runs": 10,
+      "computed_utc": "2026-07-15T13:21:10.928373+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 0.0022225178804085033,
+      "gap_reference": "exact_qubit_hamiltonian",
+      "beats_classical": true,
+      "beats_classical_definition": "abs_vqe_exact_gap < |CCSD(T) correlation energy|; i.e. the VQE error is smaller than the total correlation energy CCSD(T) recovers. NOT a claim that VQE outperforms classical methods.",
+      "flags": [
+        "gap_certified",
+        "beats_classical"
+      ],
+      "notes": null
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "f71541a4f8d3e9643e97ab6695da59dd99d619ef333dca6b4acd9977d9002926",
+    "source_schema_version": "4.0.0",
+    "created_utc": "2026-07-15T13:21:10.928451+00:00",
+    "tool_versions": {
+      "python": "3.11.15",
+      "pyscf": "2.6.2",
+      "pennylane": "0.45.0",
+      "openfermion": "1.6.1",
+      "numpy": "2.2.6",
+      "scipy": "1.13.1",
+      "git_commit": "e1f44cd"
+    },
+    "hamiltonian_source": "of_bridge",
+    "environment": {
+      "platform": "linux",
+      "blas_threads": "1",
+      "threads_pinned": true
+    }
+  },
+  "trust": {
+    "level": "certified",
+    "certified_utc": "2026-07-15T13:21:10.928451+00:00",
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 500,
+    "multistart": 10,
+    "multistart_requested": 10,
+    "early_stopped": false,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 8,
+    "num_qubits_tapered": 3,
+    "ansatz_num_parameters": 12,
+    "ansatz_depth": 22,
+    "ansatz_num_2q_gates": 8,
+    "ansatz_num_1q_gates": 2,
+    "non_clifford_gate_count": 22,
+    "t_gate_estimate": 264,
+    "t_gate_synthesis_epsilon": 0.001
+  }
+}
