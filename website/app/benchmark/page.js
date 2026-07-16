@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 export const metadata = {
   title: "Benchmark Specification — Suite v4",
   description:
-    "QEncode Suite v4 benchmark specification: 14 molecules, cc-pVDZ basis, chemistry-driven active spaces, Jordan-Wigner / Parity / Bravyi-Kitaev encodings, UCCSD, HEA and ADAPT-VQE ansatz, CASSCF orbital optimization.",
+    "QEncode Suite v4 benchmark specification: 16 molecules, cc-pVDZ basis, chemistry-driven active spaces, Jordan-Wigner / Parity / Bravyi-Kitaev encodings, UCCSD, HEA and ADAPT-VQE ansatz, CASSCF orbital optimization.",
   keywords: [
     "quantum benchmark specification",
     "suite v4",
@@ -19,7 +19,7 @@ export const metadata = {
   openGraph: {
     title: "QEncode Benchmark Specification — Suite v4",
     description:
-      "Fixed benchmark definitions for 14 molecules at cc-pVDZ basis with chemistry-driven active spaces, three qubit encodings, and three ansatz families.",
+      "Fixed benchmark definitions for 16 molecules at cc-pVDZ basis with chemistry-driven active spaces, three qubit encodings, and three ansatz families.",
     url: "https://www.qencode-benchmark.org/benchmark"
   }
 };
@@ -180,6 +180,34 @@ const molecules = [
     notes: "Conjugated diene π system. C2h symmetry. First conjugated molecule. Certified via ADAPT-VQE.",
   },
   {
+    name: "(H₂O)₂",
+    formula: "Water dimer",
+    activeSpace: "[4e, 4o]",
+    qubitsJW: 8,
+    qubitsTagered: 5,
+    symRemoved: 3,
+    basis: "cc-pVDZ",
+    mappings: ["JW", "PAR"],
+    casscf: false,
+    tier: "certified",
+    certifiedEntries: 4,
+    notes: "Water dimer at the Cs equilibrium, O···O 2.91 Å. First intermolecular system in the suite. [4,4] active space over the hydrogen-bond region. The H-bond is dominated by electrostatics rather than static correlation.",
+  },
+  {
+    name: "C₄H₄",
+    formula: "Cyclobutadiene",
+    activeSpace: "[4e, 4o]",
+    qubitsJW: 8,
+    qubitsTagered: 6,
+    symRemoved: 2,
+    basis: "cc-pVDZ",
+    mappings: ["JW", "PAR"],
+    casscf: true,
+    tier: "certified",
+    certifiedEntries: 4,
+    notes: "Cyclobutadiene, rectangular D2h. Antiaromatic 4n π system with substantial diradical character — the counterpart to benzene at identical [4,4] π treatment. CASSCF required. Certified via ADAPT-VQE with 2 operators.",
+  },
+  {
     name: "Benzene",
     formula: "Benzene (C₆H₆)",
     activeSpace: "[6e, 6o]",
@@ -261,7 +289,7 @@ const ansatzTypes = [
     name: "ADAPT-VQE",
     full: "Adaptive Derivative-Assembled Problem-Tailored VQE",
     desc: "Builds the circuit operator by operator, selecting from the UCCSD excitation pool by parameter-shift gradient magnitude at each step. Reaches UCCSD-class accuracy with a small fraction of the parameters, keeping the optimisation tractable where full UCCSD is not.",
-    note: "Certifies the medium and large molecules — H₂CO, C₄H₆, H₆, benzene, H₈, H₁₀ — where UCCSD with COBYLA is infeasible.",
+    note: "Certifies the medium and large molecules — H₂CO, C₄H₆, C₄H₄, H₆, benzene, H₈, H₁₀ — where UCCSD with COBYLA is infeasible.",
   },
 ];
 
@@ -286,7 +314,7 @@ export default function BenchmarkPage() {
       <section className="mb-14">
         <h2 className="text-xl font-semibold mb-1">Suite v4 — Molecule Catalog</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          14 certified molecules. All use cc-pVDZ basis.
+          16 certified molecules. All use cc-pVDZ basis.
         </p>
         <div className="rounded-lg border overflow-hidden">
           <div className="overflow-x-auto">
@@ -350,9 +378,9 @@ export default function BenchmarkPage() {
         {/* Notes callout */}
         <div className="mt-4 rounded-lg border bg-muted/30 p-4 text-xs text-muted-foreground space-y-1.5">
           <p className="font-medium text-foreground text-sm">Encoding exclusion notes</p>
-          <p><span className="font-medium text-foreground">BK excluded (LiH, BeH₂, H₂O, NH₃, H₄, N₂, H₆, H₂CO, C₄H₆, benzene, H₈, H₁₀)</span> — PennyLane 0.45 introduces imaginary artefacts (&gt;7 mHa) in BK tapering for active spaces larger than [2,2]. Only H₂ and HF pass the imaginary-strip check.</p>
+          <p><span className="font-medium text-foreground">BK excluded (LiH, BeH₂, H₂O, NH₃, H₄, N₂, H₆, H₂CO, C₄H₆, (H₂O)₂, C₄H₄, benzene, H₈, H₁₀)</span> — PennyLane 0.45 introduces imaginary artefacts (&gt;7 mHa) in BK tapering for active spaces larger than [2,2]. Only H₂ and HF pass the imaginary-strip check.</p>
           <p><span className="font-medium text-foreground">PAR/UCCSD excluded (LiH, H₂O, NH₃, N₂, benzene)</span> — UCCSD excitation operators generated in the JW basis are not correctly adapted for Parity tapering in these active spaces. BeH₂ is the exception: D∞h linear symmetry keeps the operator space well-conditioned.</p>
-          <p><span className="font-medium text-foreground">CASSCF required (N₂, H₆, benzene, H₈, H₁₀)</span> — HF orbitals do not cleanly partition the active space for strongly correlated systems. CASSCF pre-optimises orbitals before the VQE circuit is built.</p>
+          <p><span className="font-medium text-foreground">CASSCF required (C₄H₄, N₂, H₆, benzene, H₈, H₁₀)</span> — HF orbitals do not cleanly partition the active space for strongly correlated systems. CASSCF pre-optimises orbitals before the VQE circuit is built.</p>
         </div>
       </section>
 

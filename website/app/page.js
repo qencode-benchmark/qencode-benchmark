@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 export const metadata = {
   title: "Quantum Algorithm Benchmarking Platform",
   description:
-    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 39 certified entries across 14 molecules. Free to run. Certification optional.",
+    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 47 certified entries across 16 molecules. Free to run. Certification optional.",
   keywords: [
     "quantum algorithm benchmarking platform",
     "VQE leaderboard",
@@ -22,7 +22,7 @@ export const metadata = {
   openGraph: {
     title: "QEncode - Quantum Algorithm Benchmarking Platform",
     description:
-      "Open-source benchmark standard for reproducible VQE evaluation. 39 certified entries, 14 molecules. Free to run yourself. Certified results for publications.",
+      "Open-source benchmark standard for reproducible VQE evaluation. 47 certified entries, 16 molecules. Free to run yourself. Certified results for publications.",
     url: "/"
   },
   twitter: {
@@ -65,6 +65,8 @@ export default function HomePage() {
     { name: "NH₃",   qubits: 8,  entries: 3,  certified: true  },
     { name: "H₂CO",  qubits: 8,  entries: 1,  certified: true  },
     { name: "C₄H₆",  qubits: 8,  entries: 1,  certified: true  },
+    { name: "(H₂O)₂", qubits: 8, entries: 4,  certified: true  },
+    { name: "C₄H₄",  qubits: 8,  entries: 4,  certified: true,  badge: "CASSCF" },
     { name: "H₄",    qubits: 8,  entries: 4,  certified: true  },
     { name: "N₂",    qubits: 12, entries: 3,  certified: true,  badge: "CASSCF" },
     { name: "H₆",    qubits: 12, entries: 1,  certified: true,  badge: "CASSCF" },
@@ -135,11 +137,11 @@ export default function HomePage() {
         <div className="container py-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
             <div>
-              <p className="text-3xl font-bold">39</p>
+              <p className="text-3xl font-bold">47</p>
               <p className="text-sm text-muted-foreground mt-1">Certified entries</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">14</p>
+              <p className="text-3xl font-bold">16</p>
               <p className="text-sm text-muted-foreground mt-1">Molecules in catalog</p>
             </div>
             <div>
@@ -147,7 +149,7 @@ export default function HomePage() {
               <p className="text-sm text-muted-foreground mt-1">Max qubits (certified)</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">2.0<span className="text-lg font-medium"> mHa</span></p>
+              <p className="text-3xl font-bold">4.5<span className="text-lg font-medium"> mHa</span></p>
               <p className="text-sm text-muted-foreground mt-1">Best gap on N₂</p>
             </div>
           </div>

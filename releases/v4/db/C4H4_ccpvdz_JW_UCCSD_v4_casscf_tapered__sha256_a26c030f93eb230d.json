@@ -1,0 +1,1052 @@
+{
+  "schema_version": "4.0.0",
+  "entry_id": "C4H4_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_a26c030f93eb230d",
+  "created_utc": "2026-07-16T13:08:24.482985+00:00",
+  "problem": {
+    "name": "C4H4",
+    "basis": "cc-pvdz",
+    "variant": "default",
+    "charge": 0,
+    "spin": 0,
+    "geometry": "C 0.673 0.783 0.0; C -0.673 0.783 0.0; C -0.673 -0.783 0.0; C 0.673 -0.783 0.0; H 1.377 1.602 0.0; H -1.377 1.602 0.0; H -1.377 -1.602 0.0; H 1.377 -1.602 0.0",
+    "active_space": {
+      "num_electrons": 4,
+      "num_spatial_orbitals": 4,
+      "method": "casci",
+      "frozen_core": false
+    },
+    "orbital_optimization": "casscf"
+  },
+  "encoding": {
+    "mapping": "jordan_wigner",
+    "ansatz_type": "uccsd_tapered",
+    "ansatz_reps": 1,
+    "adapt_metadata": null,
+    "tapering": {
+      "enabled": true,
+      "method": "z2_symmetry",
+      "num_symmetries": 2,
+      "original_num_qubits": 8,
+      "tapered_num_qubits": 6,
+      "sectors": [
+        1,
+        1
+      ],
+      "hf_tapered_state": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "bk_constant_correction_ha": null,
+      "bk_imaginary_stripped": false,
+      "bk_max_imaginary_abs_ha": null
+    }
+  },
+  "artifacts": {
+    "qubit_hamiltonian": {
+      "num_qubits": 6,
+      "num_pauli_terms": 185,
+      "pauli_terms": [
+        {
+          "pauli_string": "I",
+          "coefficient": -152.4985496989498
+        },
+        {
+          "pauli_string": "Z1Z3Z5",
+          "coefficient": -0.15383414261528822
+        },
+        {
+          "pauli_string": "Z0Z2Z4",
+          "coefficient": -0.15383414261528822
+        },
+        {
+          "pauli_string": "Z0Z1Z2Z3Z4Z5",
+          "coefficient": 0.11168702912819632
+        },
+        {
+          "pauli_string": "Z0",
+          "coefficient": 0.20155951043025863
+        },
+        {
+          "pauli_string": "Z0Z1Z3Z5",
+          "coefficient": 0.11341930048149304
+        },
+        {
+          "pauli_string": "Z2Z4",
+          "coefficient": 0.16975892233713297
+        },
+        {
+          "pauli_string": "Z1",
+          "coefficient": 0.20155951043025863
+        },
+        {
+          "pauli_string": "Z3Z5",
+          "coefficient": 0.16975892233713297
+        },
+        {
+          "pauli_string": "Z0Z1Z2Z4",
+          "coefficient": 0.11341930048149304
+        },
+        {
+          "pauli_string": "Y0Z1Y2",
+          "coefficient": 3.7428151542933154e-07
+        },
+        {
+          "pauli_string": "Y0Y2Z3Z5",
+          "coefficient": 7.106295636276274e-08
+        },
+        {
+          "pauli_string": "X0Z1X2Z4",
+          "coefficient": -3.553147818138129e-08
+        },
+        {
+          "pauli_string": "X0Z1X2",
+          "coefficient": 3.7428151542933154e-07
+        },
+        {
+          "pauli_string": "X0X2Z3Z5",
+          "coefficient": 7.106295636276274e-08
+        },
+        {
+          "pauli_string": "Y0Z1Y2Z4",
+          "coefficient": -3.553147818138129e-08
+        },
+        {
+          "pauli_string": "Y1Z2Y3",
+          "coefficient": 3.7428151542933154e-07
+        },
+        {
+          "pauli_string": "X1Z2X3Z5",
+          "coefficient": -3.553147818138129e-08
+        },
+        {
+          "pauli_string": "Z0Y1Y3Z4",
+          "coefficient": 7.106295636276274e-08
+        },
+        {
+          "pauli_string": "X1Z2X3",
+          "coefficient": 3.7428151542933154e-07
+        },
+        {
+          "pauli_string": "Y1Z2Y3Z5",
+          "coefficient": -3.553147818138129e-08
+        },
+        {
+          "pauli_string": "Z0X1X3Z4",
+          "coefficient": 7.106295636276274e-08
+        },
+        {
+          "pauli_string": "X0Z1Z3Z5",
+          "coefficient": 1.0877041831122262e-06
+        },
+        {
+          "pauli_string": "X0",
+          "coefficient": 2.6700477637172677e-07
+        },
+        {
+          "pauli_string": "X0Z1Z2Z3Z4Z5",
+          "coefficient": -1.0877041831122262e-06
+        },
+        {
+          "pauli_string": "X0Z2Z4",
+          "coefficient": -2.6700477637172677e-07
+        },
+        {
+          "pauli_string": "X1Z2Z4",
+          "coefficient": 2.6700477637172677e-07
+        },
+        {
+          "pauli_string": "Z0X1",
+          "coefficient": 1.0877041831122262e-06
+        },
+        {
+          "pauli_string": "X1Z2Z3Z4Z5",
+          "coefficient": -2.6700477637172677e-07
+        },
+        {
+          "pauli_string": "Z0X1Z3Z5",
+          "coefficient": -1.0877041831122262e-06
+        },
+        {
+          "pauli_string": "Z2",
+          "coefficient": 0.06213361075240054
+        },
+        {
+          "pauli_string": "Z1Z2Z3Z5",
+          "coefficient": 0.0897689086533647
+        },
+        {
+          "pauli_string": "Z0Z4",
+          "coefficient": 0.17411413165267003
+        },
+        {
+          "pauli_string": "Z3",
+          "coefficient": 0.06213361075240054
+        },
+        {
+          "pauli_string": "Z1Z5",
+          "coefficient": 0.17411413165267003
+        },
+        {
+          "pauli_string": "Z0Z2Z3Z4",
+          "coefficient": 0.0897689086533647
+        },
+        {
+          "pauli_string": "Y2Z3Y4",
+          "coefficient": -7.501899050781561e-07
+        },
+        {
+          "pauli_string": "Z1Y2Y4Z5",
+          "coefficient": 2.3238095226127052e-07
+        },
+        {
+          "pauli_string": "Z0X2Z3X4",
+          "coefficient": -2.89727494182571e-07
+        },
+        {
+          "pauli_string": "X2Z3X4",
+          "coefficient": -7.501899050781561e-07
+        },
+        {
+          "pauli_string": "Z1X2X4Z5",
+          "coefficient": 2.3238095226127052e-07
+        },
+        {
+          "pauli_string": "Z0Y2Z3Y4",
+          "coefficient": -2.89727494182571e-07
+        },
+        {
+          "pauli_string": "Y3Z4Y5",
+          "coefficient": -7.501899050781561e-07
+        },
+        {
+          "pauli_string": "Z1X3Z4X5",
+          "coefficient": -2.89727494182571e-07
+        },
+        {
+          "pauli_string": "Z0Z2Y3Y5",
+          "coefficient": 2.3238095226127052e-07
+        },
+        {
+          "pauli_string": "X3Z4X5",
+          "coefficient": -7.501899050781561e-07
+        },
+        {
+          "pauli_string": "Z1Y3Z4Y5",
+          "coefficient": -2.89727494182571e-07
+        },
+        {
+          "pauli_string": "Z0Z2X3X5",
+          "coefficient": 2.3238095226127052e-07
+        },
+        {
+          "pauli_string": "Z4",
+          "coefficient": 0.0026001795401696245
+        },
+        {
+          "pauli_string": "Z1Z3Z4Z5",
+          "coefficient": 0.09552481236915845
+        },
+        {
+          "pauli_string": "Z0Z2",
+          "coefficient": 0.17761420472071468
+        },
+        {
+          "pauli_string": "Z5",
+          "coefficient": 0.0026001795401696245
+        },
+        {
+          "pauli_string": "Z1Z3",
+          "coefficient": 0.17761420472071468
+        },
+        {
+          "pauli_string": "Z0Z2Z4Z5",
+          "coefficient": 0.09552481236915845
+        },
+        {
+          "pauli_string": "Z0Z2X4Z5",
+          "coefficient": -8.014534975519139e-08
+        },
+        {
+          "pauli_string": "X4Z5",
+          "coefficient": 8.014534975519139e-08
+        },
+        {
+          "pauli_string": "Z0Z1Z2Z3Z4X5",
+          "coefficient": -8.014534975519139e-08
+        },
+        {
+          "pauli_string": "Z0Z2Z4X5",
+          "coefficient": 8.014534975519139e-08
+        },
+        {
+          "pauli_string": "Z0Z1",
+          "coefficient": 0.12352430259130344
+        },
+        {
+          "pauli_string": "Z0Y1Z2Y3",
+          "coefficient": 9.776201929748392e-08
+        },
+        {
+          "pauli_string": "Z0X1Z2X3",
+          "coefficient": 9.776201929748392e-08
+        },
+        {
+          "pauli_string": "Y0Y2",
+          "coefficient": 9.776201929748392e-08
+        },
+        {
+          "pauli_string": "X0X2",
+          "coefficient": 9.776201929748392e-08
+        },
+        {
+          "pauli_string": "X1",
+          "coefficient": 9.61955368522096e-07
+        },
+        {
+          "pauli_string": "X1Z3Z5",
+          "coefficient": -9.61955368522096e-07
+        },
+        {
+          "pauli_string": "X0Z3Z5",
+          "coefficient": 9.61955368522096e-07
+        },
+        {
+          "pauli_string": "X0Z2Z3Z4Z5",
+          "coefficient": -9.61955368522096e-07
+        },
+        {
+          "pauli_string": "Z0Z3",
+          "coefficient": 0.08836602372687363
+        },
+        {
+          "pauli_string": "Z1Z2",
+          "coefficient": 0.08836602372687363
+        },
+        {
+          "pauli_string": "Z0Y3Z4Y5",
+          "coefficient": -1.375484041078168e-07
+        },
+        {
+          "pauli_string": "Z0X3Z4X5",
+          "coefficient": -1.375484041078168e-07
+        },
+        {
+          "pauli_string": "Z1Y2Z3Y4",
+          "coefficient": -1.375484041078168e-07
+        },
+        {
+          "pauli_string": "Z1X2Z3X4",
+          "coefficient": -1.375484041078168e-07
+        },
+        {
+          "pauli_string": "Z0Z5",
+          "coefficient": 0.09647600171227712
+        },
+        {
+          "pauli_string": "Z1Z4",
+          "coefficient": 0.09647600171227712
+        },
+        {
+          "pauli_string": "Y0X1X2Y3",
+          "coefficient": 0.0018588755055878267
+        },
+        {
+          "pauli_string": "Y0Y1X2X3",
+          "coefficient": -0.0018588755055878267
+        },
+        {
+          "pauli_string": "X0X1Y2Y3",
+          "coefficient": -0.0018588755055878267
+        },
+        {
+          "pauli_string": "X0Y1Y2X3",
+          "coefficient": 0.0018588755055878267
+        },
+        {
+          "pauli_string": "Y0X1X2Z3Z4Y5",
+          "coefficient": 1.957485775110588e-07
+        },
+        {
+          "pauli_string": "Y0Y1X2Z3Z4X5",
+          "coefficient": -1.957485775110588e-07
+        },
+        {
+          "pauli_string": "X0X1Y2Z3Z4Y5",
+          "coefficient": -1.957485775110588e-07
+        },
+        {
+          "pauli_string": "X0Y1Y2Z3Z4X5",
+          "coefficient": 1.957485775110588e-07
+        },
+        {
+          "pauli_string": "Y0X1X3Y4",
+          "coefficient": -1.957485775110588e-07
+        },
+        {
+          "pauli_string": "X0X1X3X4",
+          "coefficient": -1.957485775110588e-07
+        },
+        {
+          "pauli_string": "Y0Y1Y3Y4",
+          "coefficient": -1.957485775110588e-07
+        },
+        {
+          "pauli_string": "X0Y1Y3X4",
+          "coefficient": -1.957485775110588e-07
+        },
+        {
+          "pauli_string": "X0Z1Z2Z3Z5",
+          "coefficient": 5.1510685503045786e-08
+        },
+        {
+          "pauli_string": "X0Z1Z3Z4Z5",
+          "coefficient": -5.1510685503045786e-08
+        },
+        {
+          "pauli_string": "X0X2X3",
+          "coefficient": 1.5168026303442045e-07
+        },
+        {
+          "pauli_string": "X0Z1X2X3Z5",
+          "coefficient": -1.5168026303442045e-07
+        },
+        {
+          "pauli_string": "Y0Y2X3",
+          "coefficient": 1.5168026303442045e-07
+        },
+        {
+          "pauli_string": "Y0Z1Y2X3Z5",
+          "coefficient": -1.5168026303442045e-07
+        },
+        {
+          "pauli_string": "Z0Y1Y2X3Z5",
+          "coefficient": 1.5168026303442045e-07
+        },
+        {
+          "pauli_string": "Y1Y2X3Z4Z5",
+          "coefficient": -1.5168026303442045e-07
+        },
+        {
+          "pauli_string": "Z0X1Y2Y3Z5",
+          "coefficient": -1.5168026303442045e-07
+        },
+        {
+          "pauli_string": "X1Y2Y3Z4Z5",
+          "coefficient": 1.5168026303442045e-07
+        },
+        {
+          "pauli_string": "Z0X1Z3",
+          "coefficient": 5.1510685503045786e-08
+        },
+        {
+          "pauli_string": "Z0X1Z5",
+          "coefficient": -5.1510685503045786e-08
+        },
+        {
+          "pauli_string": "X0Z1X2X4Z5",
+          "coefficient": -0.0165571798985497
+        },
+        {
+          "pauli_string": "Y0Z1Y2X4Z5",
+          "coefficient": -0.00485377491913649
+        },
+        {
+          "pauli_string": "X0X2Z3Z4X5",
+          "coefficient": 0.0028146064327765155
+        },
+        {
+          "pauli_string": "X0Z1X2Z4X5",
+          "coefficient": -0.0028146064327765155
+        },
+        {
+          "pauli_string": "Y0Y2Z3Z4X5",
+          "coefficient": 0.0028146064327765155
+        },
+        {
+          "pauli_string": "Y0Z1Y2Z4X5",
+          "coefficient": -0.0028146064327765155
+        },
+        {
+          "pauli_string": "Z0Y1Y3X4Z5",
+          "coefficient": -0.0028146064327765155
+        },
+        {
+          "pauli_string": "Y1Z2Y3X4Z5",
+          "coefficient": 0.0028146064327765155
+        },
+        {
+          "pauli_string": "Z0X1X3X4Z5",
+          "coefficient": -0.0028146064327765155
+        },
+        {
+          "pauli_string": "X1Z2X3X4Z5",
+          "coefficient": 0.0028146064327765155
+        },
+        {
+          "pauli_string": "Z0X1X3Z4X5",
+          "coefficient": -0.0165571798985497
+        },
+        {
+          "pauli_string": "Z0Y1Y3Z4X5",
+          "coefficient": -0.00485377491913649
+        },
+        {
+          "pauli_string": "Y0X1X4Y5",
+          "coefficient": 0.008154420102983754
+        },
+        {
+          "pauli_string": "Y0Y1X4X5",
+          "coefficient": -0.008154420102983754
+        },
+        {
+          "pauli_string": "X0X1Y4Y5",
+          "coefficient": -0.008154420102983754
+        },
+        {
+          "pauli_string": "X0Y1Y4X5",
+          "coefficient": 0.008154420102983754
+        },
+        {
+          "pauli_string": "X0Z1Y2Y4Z5",
+          "coefficient": -0.011703404979413214
+        },
+        {
+          "pauli_string": "X0Y3Y4",
+          "coefficient": 0.005241493892344762
+        },
+        {
+          "pauli_string": "X0Z1Y3Y4Z5",
+          "coefficient": -0.005241493892344762
+        },
+        {
+          "pauli_string": "Y0Y3X4",
+          "coefficient": -0.005241493892344762
+        },
+        {
+          "pauli_string": "Y0Z1Y3X4Z5",
+          "coefficient": 0.005241493892344762
+        },
+        {
+          "pauli_string": "Z0Y1Y2Z4X5",
+          "coefficient": 0.005241493892344762
+        },
+        {
+          "pauli_string": "Y1Y2X5",
+          "coefficient": -0.005241493892344762
+        },
+        {
+          "pauli_string": "Z0X1Y2Z4Y5",
+          "coefficient": -0.005241493892344762
+        },
+        {
+          "pauli_string": "X1Y2Y5",
+          "coefficient": 0.005241493892344762
+        },
+        {
+          "pauli_string": "Z0X1Y3Z4Y5",
+          "coefficient": -0.011703404979413214
+        },
+        {
+          "pauli_string": "X0X4X5",
+          "coefficient": 1.440192316712746e-07
+        },
+        {
+          "pauli_string": "X0Z1Z3X4X5",
+          "coefficient": -1.440192316712746e-07
+        },
+        {
+          "pauli_string": "Y0Y4X5",
+          "coefficient": 1.440192316712746e-07
+        },
+        {
+          "pauli_string": "Y0Z1Z3Y4X5",
+          "coefficient": -1.440192316712746e-07
+        },
+        {
+          "pauli_string": "Z0Y1Z3Y4X5",
+          "coefficient": 1.440192316712746e-07
+        },
+        {
+          "pauli_string": "Y1Z2Z3Y4X5",
+          "coefficient": -1.440192316712746e-07
+        },
+        {
+          "pauli_string": "Z0X1Z3Y4Y5",
+          "coefficient": -1.440192316712746e-07
+        },
+        {
+          "pauli_string": "X1Z2Z3Y4Y5",
+          "coefficient": 1.440192316712746e-07
+        },
+        {
+          "pauli_string": "Z0X4Z5",
+          "coefficient": 7.485059018860404e-08
+        },
+        {
+          "pauli_string": "Z2X4Z5",
+          "coefficient": -7.485059018860404e-08
+        },
+        {
+          "pauli_string": "Z0Z1Z2Z4X5",
+          "coefficient": 7.485059018860404e-08
+        },
+        {
+          "pauli_string": "Z0Z2Z3Z4X5",
+          "coefficient": -7.485059018860404e-08
+        },
+        {
+          "pauli_string": "Y0Y1Z3Z5",
+          "coefficient": 0.01779580918031533
+        },
+        {
+          "pauli_string": "Y0Y1",
+          "coefficient": -0.01779580918031533
+        },
+        {
+          "pauli_string": "Y0Y1Z2Z3Z4Z5",
+          "coefficient": -0.01779580918031533
+        },
+        {
+          "pauli_string": "Y0Y1Z2Z4",
+          "coefficient": 0.01779580918031533
+        },
+        {
+          "pauli_string": "X0Z1Z5",
+          "coefficient": 5.763161117996564e-07
+        },
+        {
+          "pauli_string": "X0Z1Z2Z4Z5",
+          "coefficient": -5.763161117996564e-07
+        },
+        {
+          "pauli_string": "Z0X1Z2",
+          "coefficient": 5.763161117996564e-07
+        },
+        {
+          "pauli_string": "Z0X1Z2Z3Z5",
+          "coefficient": -5.763161117996564e-07
+        },
+        {
+          "pauli_string": "X0Z1X3Z4X5",
+          "coefficient": 0.011093196382051368
+        },
+        {
+          "pauli_string": "X0Z1Y3Z4Y5",
+          "coefficient": 0.011093196382051368
+        },
+        {
+          "pauli_string": "X0Z1Z2X3X5",
+          "coefficient": -0.011093196382051368
+        },
+        {
+          "pauli_string": "X0Z1Z2Y3Y5",
+          "coefficient": -0.011093196382051368
+        },
+        {
+          "pauli_string": "Z0X1Y2Z3Y4",
+          "coefficient": -0.011093196382051368
+        },
+        {
+          "pauli_string": "Z0X1X2Z3X4",
+          "coefficient": -0.011093196382051368
+        },
+        {
+          "pauli_string": "Z0X1Y2Y4Z5",
+          "coefficient": 0.011093196382051368
+        },
+        {
+          "pauli_string": "Z0X1X2X4Z5",
+          "coefficient": 0.011093196382051368
+        },
+        {
+          "pauli_string": "X0Z1Z3",
+          "coefficient": 5.171443949334648e-07
+        },
+        {
+          "pauli_string": "X0Z1Z2Z3Z4",
+          "coefficient": -5.171443949334648e-07
+        },
+        {
+          "pauli_string": "Z0X1Z4",
+          "coefficient": 5.171443949334648e-07
+        },
+        {
+          "pauli_string": "Z0X1Z3Z4Z5",
+          "coefficient": -5.171443949334648e-07
+        },
+        {
+          "pauli_string": "Z2Z3",
+          "coefficient": 0.08815144771963945
+        },
+        {
+          "pauli_string": "Z2Y3Z4Y5",
+          "coefficient": -4.495742422799766e-08
+        },
+        {
+          "pauli_string": "Z2X3Z4X5",
+          "coefficient": -4.495742422799766e-08
+        },
+        {
+          "pauli_string": "Y2Y4",
+          "coefficient": -4.495742422799766e-08
+        },
+        {
+          "pauli_string": "X2X4",
+          "coefficient": -4.495742422799766e-08
+        },
+        {
+          "pauli_string": "Z2Z5",
+          "coefficient": 0.08729641856875424
+        },
+        {
+          "pauli_string": "Z3Z4",
+          "coefficient": 0.08729641856875424
+        },
+        {
+          "pauli_string": "Y2X3X4Y5",
+          "coefficient": 0.013160987532798981
+        },
+        {
+          "pauli_string": "Y2Y3X4X5",
+          "coefficient": -0.013160987532798981
+        },
+        {
+          "pauli_string": "X2X3Y4Y5",
+          "coefficient": -0.013160987532798981
+        },
+        {
+          "pauli_string": "X2Y3Y4X5",
+          "coefficient": 0.013160987532798981
+        },
+        {
+          "pauli_string": "Z1Y2Y3Z5",
+          "coefficient": 0.003976358609988053
+        },
+        {
+          "pauli_string": "Y2Y3",
+          "coefficient": -0.003976358609988053
+        },
+        {
+          "pauli_string": "Z0Z1Y2Y3Z4Z5",
+          "coefficient": -0.003976358609988053
+        },
+        {
+          "pauli_string": "Z0Y2Y3Z4",
+          "coefficient": 0.003976358609988053
+        },
+        {
+          "pauli_string": "Z1Y2Z4Y5",
+          "coefficient": 1.1554671532454247e-07
+        },
+        {
+          "pauli_string": "Y2Z3Z4Y5",
+          "coefficient": -1.1554671532454247e-07
+        },
+        {
+          "pauli_string": "Z0Z1Y2Y5",
+          "coefficient": -1.1554671532454247e-07
+        },
+        {
+          "pauli_string": "Z0Y2Z3Y5",
+          "coefficient": 1.1554671532454247e-07
+        },
+        {
+          "pauli_string": "Z1X3X4Z5",
+          "coefficient": 1.1554671532454247e-07
+        },
+        {
+          "pauli_string": "Z0Z1Z2X3X4Z5",
+          "coefficient": -1.1554671532454247e-07
+        },
+        {
+          "pauli_string": "X3X4",
+          "coefficient": -1.1554671532454247e-07
+        },
+        {
+          "pauli_string": "Z0Z2X3X4",
+          "coefficient": 1.1554671532454247e-07
+        },
+        {
+          "pauli_string": "Z4Z5",
+          "coefficient": 0.09111904032034654
+        },
+        {
+          "pauli_string": "Z1Z3Y4Y5",
+          "coefficient": 0.0044177558697295945
+        },
+        {
+          "pauli_string": "Y4Y5",
+          "coefficient": -0.0044177558697295945
+        },
+        {
+          "pauli_string": "Z0Z1Z2Z3Y4Y5",
+          "coefficient": -0.0044177558697295945
+        },
+        {
+          "pauli_string": "Z0Z2Y4Y5",
+          "coefficient": 0.0044177558697295945
+        }
+      ],
+      "is_tapered": true,
+      "framework": "pennylane"
+    },
+    "circuits": {
+      "hf_state": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "ansatz_pennylane": null,
+      "ansatz_includes_hf": true
+    }
+  },
+  "results": {
+    "reference": {
+      "hf_energy_hartree": -153.65282441944433,
+      "casci_ground_energy_hartree": -153.67342655025294,
+      "exact_qubit_ground_energy_hartree": -153.67342655025251,
+      "casci_first_excited_hartree": -153.6022622193834,
+      "casscf_energy_hartree": -153.67342655024657
+    },
+    "classical_comparison": {
+      "hf_energy_hartree": -153.65282441944433,
+      "mp2_energy_hartree": -154.18707176426747,
+      "ccsd_energy_hartree": -154.22357635915412,
+      "ccsd_t_energy_hartree": -154.24856986323496,
+      "mp2_correlation": -0.5342473448231431,
+      "ccsd_t_correlation": -0.5957454437906335,
+      "pyscf_version": "2.6.2",
+      "computed_utc": "2026-07-16T13:07:19.458839+00:00",
+      "basis": "cc-pvdz"
+    },
+    "vqe": {
+      "best_energy_hartree": -153.66550979254464,
+      "optimal_params": [
+        -0.012120126168694838,
+        -0.01424390455699355,
+        0.027924246696997806,
+        -0.014243904556980328,
+        -0.060464100951327336,
+        -0.013450214091398753,
+        -0.015537321174240223,
+        -0.009325811877639973,
+        -0.019545720368454936,
+        -0.06425365873299316,
+        -0.05951194379292245,
+        0.06904370027824606,
+        -0.10773320566634044,
+        0.02287933396214599,
+        -0.06550901368618908,
+        -0.020420418083172652,
+        -0.020339395899918584,
+        -0.06687611540972398,
+        -0.06117764034584039,
+        0.02151317526034724,
+        -0.06586004452894301,
+        0.0225306538322855,
+        -0.0654229484443187,
+        -0.02113997429637304,
+        -0.020740650256459638,
+        0.059967298548997655,
+        -0.030229091984647113,
+        0.012583435713127686,
+        -0.07580619145673399,
+        -0.029924649153418633,
+        -0.11680972285819487,
+        -0.027145797953001753,
+        0.07427409677084924,
+        -0.012868339046110202,
+        -0.10252459812254863,
+        -0.013484671374616952,
+        -0.01032004326051545,
+        0.07768004435106848,
+        -0.008062953018339584,
+        -0.09909713812702425,
+        -0.006468928886083941,
+        -0.010512926384263849,
+        -0.007893972249180689,
+        -0.007871361524757979,
+        -0.009992336423464525,
+        0.032433869160987915,
+        -0.011672372628781673,
+        0.030362927421164095,
+        -0.05803019148831723,
+        -0.05595747376890738,
+        -0.011032658301722415,
+        -0.013100898654117874,
+        -0.013971757016107946,
+        0.07221091383154324,
+        -0.010712800693043811,
+        -0.1045768670451135,
+        0.07551876100586738,
+        -0.10126411100619565,
+        -0.015454966875168844,
+        -0.012127232633624632,
+        -0.02014298713611811,
+        -0.011282160205934009,
+        -0.017699470194068943,
+        -0.02113967275528205,
+        -0.021126838769676266,
+        -0.019848180297268134,
+        -0.02206289743055173,
+        -0.022034145726949315,
+        -0.0065116214131405725,
+        -0.007910962963903902,
+        -0.0044891236837446774,
+        0.08019800053216904,
+        0.08216702953193412,
+        0.07817103954170317,
+        0.0801111269352468,
+        -0.010577940191779153,
+        -0.01385206910652368,
+        0.07240195518371861,
+        -0.010786794022533153,
+        -0.10439272829089144,
+        0.07621572159046931,
+        -0.10060081292410855,
+        -0.015212621110408605,
+        -0.010281255706435517,
+        -0.009779760965888878,
+        -0.011605640580342785,
+        -0.05776141190032165,
+        -0.011675580644526035,
+        0.03072045210241745,
+        -0.011461428744329236,
+        -0.010325683728845392,
+        -0.013153582980963165,
+        0.023961646578436767,
+        -0.06444702797462643,
+        -0.013249421198462343,
+        -0.017802446701411886,
+        -0.02060678085144619,
+        -0.02055076464943248,
+        -0.02016598940134229,
+        -0.020148325276022373,
+        -0.012450389829750563,
+        -0.014173624665234991,
+        -0.0586325015520506,
+        0.029837306669498454,
+        -0.0034194871614202636,
+        -0.003861251208295828,
+        -0.006823503499958287,
+        -0.0038604626456236113,
+        0.03710357685227744,
+        0.030162949686029856,
+        -0.05128666143263581,
+        -0.006922595216962334,
+        -0.006417747260762242,
+        -0.008471223221096637,
+        -0.006377966605697555,
+        -0.00896727441847986,
+        -0.007311974282485719,
+        0.03476271428486791,
+        -0.053643890487802416,
+        -0.008403711224584554,
+        -0.007901486463075237,
+        -0.009320641506873633,
+        -0.009219964236293784,
+        -0.008290915435041707,
+        -0.0092124752187043,
+        -0.009169356310574963,
+        -0.009301542529184382,
+        -0.006432041922323405,
+        -0.011230122742066586,
+        -0.015893279730441363,
+        -0.014909499751494231,
+        -0.01725616198544796,
+        -0.017255868150831452,
+        -0.015603506833208498,
+        -0.015892404191687352,
+        -0.010819293255229215,
+        -0.008445865375079787,
+        -0.008311327597111118,
+        -0.010741685872247428,
+        0.10623884867093024,
+        -0.008311026446675779,
+        -0.008396363097575046,
+        -0.008156499707620423,
+        -0.0013207647152986013,
+        -0.0023911578958513177,
+        0.04178107225619241,
+        -0.009128736915315188,
+        0.062859439867156,
+        -0.054950647894390324,
+        -0.04661247446433013,
+        -0.009196465295317754,
+        0.12033347023195962
+      ],
+      "num_params": 152,
+      "nfev": 500,
+      "optimizer": "COBYLA",
+      "multistart_runs": 1,
+      "computed_utc": "2026-07-16T13:08:24.482616+00:00"
+    },
+    "quality": {
+      "gap_threshold": 0.01,
+      "trusted": true,
+      "abs_vqe_exact_gap": 0.007916757707874922,
+      "gap_reference": "exact_qubit_hamiltonian",
+      "beats_classical": true,
+      "beats_classical_definition": "abs_vqe_exact_gap < |CCSD(T) correlation energy|; i.e. the VQE error is smaller than the total correlation energy CCSD(T) recovers. NOT a claim that VQE outperforms classical methods.",
+      "flags": [
+        "gap_certified",
+        "beats_classical"
+      ],
+      "notes": null
+    }
+  },
+  "provenance": {
+    "entry_hash_sha256": "a26c030f93eb230d3dc5b7bc3533a9a8030cc052265b1419bbe42ac854363818",
+    "source_schema_version": "4.0.0",
+    "created_utc": "2026-07-16T13:08:24.482985+00:00",
+    "tool_versions": {
+      "python": "3.11.15",
+      "pyscf": "2.6.2",
+      "pennylane": "0.45.0",
+      "openfermion": "1.6.1",
+      "numpy": "2.2.6",
+      "scipy": "1.13.1",
+      "git_commit": "d40e347"
+    },
+    "hamiltonian_source": "of_bridge",
+    "environment": {
+      "platform": "linux",
+      "blas_threads": "1",
+      "threads_pinned": true
+    }
+  },
+  "trust": {
+    "level": "certified",
+    "certified_utc": "2026-07-16T13:08:24.482985+00:00",
+    "signature_b64": null,
+    "signing_key_id": null
+  },
+  "run_config": {
+    "optimizer": "COBYLA",
+    "max_iterations": 500,
+    "multistart": 1,
+    "multistart_requested": 10,
+    "early_stopped": true,
+    "seed": 42,
+    "backend_type": "default.qubit",
+    "shots": null
+  },
+  "circuit_stats": {
+    "num_qubits_original": 8,
+    "num_qubits_tapered": 6,
+    "ansatz_num_parameters": 152,
+    "ansatz_depth": 286,
+    "ansatz_num_2q_gates": 32,
+    "ansatz_num_1q_gates": 4,
+    "non_clifford_gate_count": 300,
+    "t_gate_estimate": 3600,
+    "t_gate_synthesis_epsilon": 0.001
+  }
+}

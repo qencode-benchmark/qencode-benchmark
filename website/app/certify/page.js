@@ -173,8 +173,8 @@ export default function CertifyPage() {
           <div>
             <h3 className="font-medium">Which molecules are available?</h3>
             <p className="text-muted-foreground">
-              All Suite v4 molecules: H₂, HF, LiH, BeH₂, H₂O, NH₃, H₂CO, C₄H₆, H₄, N₂, H₆, benzene,
-              H₈, and H₁₀ — all certified. Custom molecules available on request — contact us to discuss scope.
+              All Suite v4 molecules: H₂, HF, LiH, BeH₂, H₂O, NH₃, H₂CO, C₄H₆, (H₂O)₂, C₄H₄, H₄, N₂, H₆,
+              benzene, H₈, and H₁₀ — all certified. Custom molecules available on request — contact us to discuss scope.
             </p>
           </div>
         </div>

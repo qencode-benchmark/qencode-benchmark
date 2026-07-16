@@ -4,7 +4,7 @@ import { CheckCircle, GitFork, ExternalLink } from "lucide-react";
 export const metadata = {
   title: "About QEncode",
   description:
-    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 39 certified entries, cc-pVDZ basis, N₂ certified with CASSCF — aligned with DARPA QB-GSEE targets.",
+    "QEncode is an open-source benchmark standard for reproducible VQE quantum chemistry evaluation. 47 certified entries, cc-pVDZ basis, N₂ certified with CASSCF — aligned with DARPA QB-GSEE targets.",
   keywords: [
     "about qencode",
     "quantum benchmark standard",
@@ -23,16 +23,16 @@ export const metadata = {
 
 const achievements = [
   {
-    label: "39 certified entries",
-    detail: "Across 14 molecules at cc-pVDZ basis — H₂, HF, LiH, BeH₂, H₂O, NH₃, H₂CO, C₄H₆, H₄, N₂, H₆, benzene, H₈, and H₁₀."
+    label: "47 certified entries",
+    detail: "Across 16 molecules at cc-pVDZ basis — H₂, HF, LiH, BeH₂, H₂O, NH₃, H₂CO, C₄H₆, (H₂O)₂, C₄H₄, H₄, N₂, H₆, benzene, H₈, and H₁₀."
   },
   {
-    label: "N₂ certified — 2.0 mHa gap",
-    detail: "12 qubits, CASSCF orbital optimization, 404 UCCSD parameters. DARPA QB-GSEE benchmark candidate."
+    label: "N₂ certified — 4.5 mHa gap",
+    detail: "12 qubits tapered to 8, CASSCF orbital optimization, certified via the hardware-efficient ansatz with L-BFGS-B analytic gradients. DARPA QB-GSEE benchmark candidate."
   },
   {
     label: "Benzene certified — first aromatic",
-    detail: "[6e,6o] π active space, D6h symmetry, CASSCF orbitals, certified via ADAPT-VQE at a 6.991 mHa best gap — direct relevance to pharmaceutical chemistry."
+    detail: "[6e,6o] π active space, D6h symmetry, CASSCF orbitals, certified at an 8.741 mHa best gap (hardware-efficient ansatz with L-BFGS-B; also certified via ADAPT-VQE at 9.540 mHa) — direct relevance to pharmaceutical chemistry."
   },
   {
     label: "H₁₀ certified — largest system in the suite",
@@ -63,7 +63,7 @@ const principles = [
   },
   {
     title: "The leaderboard records what actually happened",
-    desc: "Validated entries that don't pass certification (gap ≥ 0.01 Ha) appear in the Research tab, not the trash. The N₂ HEA result — 0.121 Ha gap across 30 restarts — is as informative as the 2.0 mHa UCCSD result. Both are in the database."
+    desc: "Entries that don't pass certification (gap ≥ 0.01 Ha) appear in the Research tab, not the trash. The N₂ hardware-efficient result — 0.139 Ha with a gradient-free optimizer — sits in the database beside the 4.5 mHa result from the same ansatz with analytic gradients. And when the v4.4 re-baseline demoted N₂ UCCSD from certified to research tier, the entry stayed and the change was published, rather than quietly disappearing."
   },
 ];
 
