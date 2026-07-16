@@ -333,7 +333,53 @@
         "jordan_wigner"
       ],
       "notes": "H10 linear chain at R=1.0 Ang. [10,10] active space, 20 qubits JW. Requires ADAPT-VQE. DARPA QB-GSEE scaling target \u2014 where classical methods begin to struggle. New in Suite v4.3."
+    },
+    {
+      "molecule": "C4H4",
+      "variant": "d2h_rectangular",
+      "geometry": "C 0.673 0.783 0.0; C -0.673 0.783 0.0; C -0.673 -0.783 0.0; C 0.673 -0.783 0.0; H 1.377 1.602 0.0; H -1.377 1.602 0.0; H -1.377 -1.602 0.0; H 1.377 -1.602 0.0",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v4_active_space": [
+        4,
+        4
+      ],
+      "v4_qubits_jw": 8,
+      "v4_qubits_tapered": null,
+      "v4_symmetries_removed": null,
+      "bk_tapering_supported": false,
+      "casscf_recommended": true,
+      "tier": "target",
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "Cyclobutadiene, rectangular D2h equilibrium geometry (C=C 1.346 A, C-C 1.566 A). [4,4] active space: the 4 pi electrons in the 4 pi MOs. 8 qubits (JW). ANTIAROMATIC (4n pi electrons) with substantial diradical character -- the direct counterpart to benzene at the same pi-electron treatment, and a classic hard case for single-reference methods. CASSCF recommended. The square D4h structure (the automerization transition state) is a genuine open-shell singlet and is deliberately NOT used here: the RHF reference is unstable there. New in Suite v4.5."
+    },
+    {
+      "molecule": "water_dimer",
+      "variant": "cs_equilibrium",
+      "geometry": "O -1.551007 -0.114520 0.000000; H -1.934259 0.762503 0.000000; H -0.599677 0.040712 0.000000; O 1.350625 0.111469 0.000000; H 1.680398 -0.373741 -0.758561; H 1.680398 -0.373741 0.758561",
+      "charge": 0,
+      "spin": 0,
+      "units": "angstrom",
+      "v4_active_space": [
+        4,
+        4
+      ],
+      "v4_qubits_jw": 8,
+      "v4_qubits_tapered": null,
+      "v4_symmetries_removed": null,
+      "bk_tapering_supported": false,
+      "casscf_recommended": false,
+      "tier": "target",
+      "supported_mappings": [
+        "jordan_wigner",
+        "parity"
+      ],
+      "notes": "Water dimer at the Cs equilibrium geometry, O...O = 2.91 A, near-linear hydrogen bond. [4,4] active space spanning the hydrogen-bond region (acceptor lone pair / donor O-H sigma*). 8 qubits (JW). The first INTERMOLECULAR system in the suite and the most-studied hydrogen-bonded complex in chemistry. Note the H-bond is dominated by electrostatics and dispersion rather than static correlation, so this is a coverage and cross-validation case, not a multireference showcase. HF orbitals. New in Suite v4.5."
     }
   ],
-  "last_updated": "2026-05-29"
+  "last_updated": "2026-07-16"
 }
