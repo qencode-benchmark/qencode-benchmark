@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "vqe-reproducibility-threading-bug",
+    date: "2026-07-16",
+    readingTime: "11 min read",
+    title: "We Audited Our Own VQE Benchmark and Found the Numbers Were Partly Luck",
+    excerpt:
+      "Threaded BLAS sums floating point in nondeterministic order. Gradient-free COBYLA turns that 1e-16 noise into a different local minimum — the same LiH command returned 8.99 mHa or 0.53 mHa on identical hardware. We traced it, fixed it in one line, and re-ran all 46 entries. ADAPT-VQE with analytic gradients was never affected. Also: H₁₀ certified at 9.977 mHa, 300 operators, 20 qubits.",
+    tags: ["reproducibility", "OMP_NUM_THREADS", "COBYLA", "ADAPT-VQE", "H₁₀", "v4.4"],
+  },
+  {
     slug: "adapt-vqe-certifies-benzene",
     date: "2026-05-29",
     readingTime: "9 min read",
