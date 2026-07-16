@@ -1,7 +1,7 @@
 {
   "schema_version": "4.0.0",
-  "entry_id": "H6_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_f1b24b50ee625705",
-  "created_utc": "2026-07-15T13:31:37.784498+00:00",
+  "entry_id": "H6_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_def5987c2958af93",
+  "created_utc": "2026-07-16T09:59:31.863603+00:00",
   "problem": {
     "name": "H6",
     "basis": "cc-pvdz",
@@ -3802,7 +3802,7 @@
       "mp2_correlation": -0.1024235815568133,
       "ccsd_t_correlation": -0.13578138010446583,
       "pyscf_version": "2.6.2",
-      "computed_utc": "2026-07-15T13:20:14.446377+00:00",
+      "computed_utc": "2026-07-16T09:49:23.668416+00:00",
       "basis": "cc-pvdz"
     },
     "vqe": {
@@ -3841,7 +3841,7 @@
       "nfev": 6023,
       "optimizer": "ADAPT-VQE (COBYLA inner)",
       "multistart_runs": 1,
-      "computed_utc": "2026-07-15T13:31:37.781768+00:00"
+      "computed_utc": "2026-07-16T09:59:31.861245+00:00"
     },
     "quality": {
       "gap_threshold": 0.01,
@@ -3858,9 +3858,9 @@
     }
   },
   "provenance": {
-    "entry_hash_sha256": "f1b24b50ee625705b762bcd9edc8d0d9b63db18a8d0ae53742a12d1fda82ffd0",
+    "entry_hash_sha256": "def5987c2958af93d666d1b8e35c9e7465c41c114c35073ab4560236fb660ce3",
     "source_schema_version": "4.0.0",
-    "created_utc": "2026-07-15T13:31:37.784498+00:00",
+    "created_utc": "2026-07-16T09:59:31.863603+00:00",
     "tool_versions": {
       "python": "3.11.15",
       "pyscf": "2.6.2",
@@ -3868,7 +3868,7 @@
       "openfermion": "1.6.1",
       "numpy": "2.2.6",
       "scipy": "1.13.1",
-      "git_commit": "e1f44cd"
+      "git_commit": "82b94f8"
     },
     "hamiltonian_source": "of_bridge",
     "environment": {
@@ -3879,7 +3879,7 @@
   },
   "trust": {
     "level": "certified",
-    "certified_utc": "2026-07-15T13:31:37.784498+00:00",
+    "certified_utc": "2026-07-16T09:59:31.863603+00:00",
     "signature_b64": null,
     "signing_key_id": null
   },
@@ -3896,6 +3896,13 @@
   "circuit_stats": {
     "num_qubits_original": 12,
     "num_qubits_tapered": 9,
-    "ansatz_num_parameters": 28
+    "ansatz_num_parameters": 28,
+    "ansatz_depth": 370,
+    "ansatz_num_2q_gates": 392,
+    "ansatz_num_1q_gates": 392,
+    "non_clifford_gate_count": 224,
+    "t_gate_estimate": 2688,
+    "t_gate_synthesis_epsilon": 0.001,
+    "cost_basis": "untapered_excitation_operators_standard_decomposition"
   }
 }

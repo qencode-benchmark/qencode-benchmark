@@ -1,7 +1,7 @@
 {
   "schema_version": "4.0.0",
-  "entry_id": "H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_917b8d24168fc1bd",
-  "created_utc": "2026-07-15T13:20:14.216823+00:00",
+  "entry_id": "H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_39f9134a722ad612",
+  "created_utc": "2026-07-16T09:36:29.649030+00:00",
   "problem": {
     "name": "H4",
     "basis": "cc-pvdz",
@@ -619,7 +619,7 @@
       "mp2_correlation": -0.06474587608813431,
       "ccsd_t_correlation": -0.08731157362009423,
       "pyscf_version": "2.6.2",
-      "computed_utc": "2026-07-15T13:20:13.424930+00:00",
+      "computed_utc": "2026-07-16T09:36:29.013828+00:00",
       "basis": "cc-pvdz"
     },
     "vqe": {
@@ -631,7 +631,7 @@
       "nfev": 20,
       "optimizer": "ADAPT-VQE (COBYLA inner)",
       "multistart_runs": 1,
-      "computed_utc": "2026-07-15T13:20:14.216365+00:00"
+      "computed_utc": "2026-07-16T09:36:29.648683+00:00"
     },
     "quality": {
       "gap_threshold": 0.01,
@@ -648,9 +648,9 @@
     }
   },
   "provenance": {
-    "entry_hash_sha256": "917b8d24168fc1bdf038dc6a686a05b7befafba40acc26cbe5878d5c4975152d",
+    "entry_hash_sha256": "39f9134a722ad612b32989df04e5a63d47ab23a93e38f5a431b5ce7fe6518070",
     "source_schema_version": "4.0.0",
-    "created_utc": "2026-07-15T13:20:14.216823+00:00",
+    "created_utc": "2026-07-16T09:36:29.649030+00:00",
     "tool_versions": {
       "python": "3.11.15",
       "pyscf": "2.6.2",
@@ -658,7 +658,7 @@
       "openfermion": "1.6.1",
       "numpy": "2.2.6",
       "scipy": "1.13.1",
-      "git_commit": "e1f44cd"
+      "git_commit": "82b94f8"
     },
     "hamiltonian_source": "of_bridge",
     "environment": {
@@ -669,13 +669,13 @@
   },
   "trust": {
     "level": "certified",
-    "certified_utc": "2026-07-15T13:20:14.216823+00:00",
+    "certified_utc": "2026-07-16T09:36:29.649030+00:00",
     "signature_b64": null,
     "signing_key_id": null
   },
   "run_config": {
     "optimizer": "ADAPT-VQE (COBYLA inner)",
-    "max_iterations": 200,
+    "max_iterations": 500,
     "multistart": 1,
     "multistart_requested": 3,
     "early_stopped": true,
@@ -686,6 +686,13 @@
   "circuit_stats": {
     "num_qubits_original": 8,
     "num_qubits_tapered": 5,
-    "ansatz_num_parameters": 1
+    "ansatz_num_parameters": 1,
+    "ansatz_depth": 20,
+    "ansatz_num_2q_gates": 14,
+    "ansatz_num_1q_gates": 14,
+    "non_clifford_gate_count": 8,
+    "t_gate_estimate": 96,
+    "t_gate_synthesis_epsilon": 0.001,
+    "cost_basis": "untapered_excitation_operators_standard_decomposition"
   }
 }
