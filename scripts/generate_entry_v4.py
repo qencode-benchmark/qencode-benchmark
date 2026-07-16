@@ -594,6 +594,11 @@ def _get_tapered_uccsd_ops(n_electrons, n_qubits_full, generators, paulixops, se
     singles, doubles = qchem.excitations(n_electrons, n_qubits_full)
     wire_order = list(range(n_qubits_full))
     tapered_ops = []
+    # Parallel to tapered_ops: the untapered excitation each operator came from,
+    # as ("s"|"d", wires). Tapering can transform an operator beyond recognition,
+    # so the source is recorded here rather than reverse-engineered later. It is
+    # what lets ADAPT report circuit cost (see _adapt_circuit_metrics).
+    op_sources = []
 
     use_taper_op = (n_qubits_full <= 12)  # taper_operation builds 2^N x 2^N matrix
 
@@ -606,6 +611,7 @@ def _get_tapered_uccsd_ops(n_electrons, n_qubits_full, generators, paulixops, se
                 for op in (tap if isinstance(tap, (list, tuple)) else [tap]):
                     if op is not None and getattr(op, "num_params", 0) > 0:
                         tapered_ops.append(op)
+                        op_sources.append(("d", tuple(int(w) for w in d_wires)))
             except Exception:
                 pass
         for s_wires in singles:
@@ -616,6 +622,7 @@ def _get_tapered_uccsd_ops(n_electrons, n_qubits_full, generators, paulixops, se
                 for op in (tap if isinstance(tap, (list, tuple)) else [tap]):
                     if op is not None and getattr(op, "num_params", 0) > 0:
                         tapered_ops.append(op)
+                        op_sources.append(("s", tuple(int(w) for w in s_wires)))
             except Exception:
                 pass
     else:
@@ -652,12 +659,14 @@ def _get_tapered_uccsd_ops(n_electrons, n_qubits_full, generators, paulixops, se
                         n_dropped_id += 1
                         continue
                     tapered_ops.append(qml.exp(G_tap, coeff=0j))
+                    op_sources.append((kind, tuple(int(w) for w in exc)))
                 except Exception:
                     n_dropped_zero += 1
         print(_ok(f"Tapered generator pool: {len(tapered_ops)} valid "
                   f"({n_dropped_zero} vanished/errored, {n_dropped_id} failed B^3=-B)"))
 
-    return tapered_ops
+    assert len(op_sources) == len(tapered_ops), "pool/source misalignment"
+    return tapered_ops, op_sources
 
 
 def _apply_tapered_op(op, param):
@@ -683,7 +692,7 @@ def _apply_tapered_op(op, param):
 def build_uccsd_circuit(H_tapered, hf_tapered, n_electrons, n_qubits_full,
                         generators, paulixops, sectors):
     wires       = sorted(H_tapered.wires)
-    tapered_ops = _get_tapered_uccsd_ops(
+    tapered_ops, _sources = _get_tapered_uccsd_ops(
         n_electrons, n_qubits_full, generators, paulixops, sectors
     )
 
@@ -747,7 +756,7 @@ def build_adapt_meta(H_tapered, hf_tapered, n_electrons, n_qubits_full,
         n_params:   0 initially (grows during optimization)
         label:      "adapt"
     """
-    tapered_ops = _get_tapered_uccsd_ops(
+    tapered_ops, op_sources = _get_tapered_uccsd_ops(
         n_electrons, n_qubits_full, generators, paulixops, sectors
     )
 
@@ -761,6 +770,8 @@ def build_adapt_meta(H_tapered, hf_tapered, n_electrons, n_qubits_full,
 
     adapt_meta = {
         "operator_pool":      tapered_ops,
+        "operator_sources":   op_sources,   # untapered excitation per pool entry
+        "n_qubits_full":      n_qubits_full,
         "hf_tapered":         hf_tapered,
         "wires":              sorted(H_tapered.wires),
         "gradient_threshold": gradient_threshold,
@@ -1482,6 +1493,86 @@ _T_PER_ROTATION = int(__import__("math").ceil(
 ))
 
 
+def _adapt_circuit_metrics(adapt_meta, vqe_res):
+    """
+    Circuit cost for an ADAPT-VQE ansatz.
+
+    _circuit_metrics_inline cannot be used here. It runs qml.specs on the tapered
+    circuit, and the tapered ADAPT operators are exponentials of Pauli SUMS
+    (taper_operation output, or qml.exp of a tapered generator). Those have no
+    native decomposition into one- and two-qubit gates without choosing a
+    Trotterization, so qml.specs reports zero 2-qubit gates -- which is why ADAPT
+    entries carried no cost metrics at all and were silently dropped from the Cost
+    and Balanced leaderboards.
+
+    Instead we cost the selected operators as what they physically are: fermionic
+    excitations. Each Single-/DoubleExcitation is decomposed by PennyLane's own
+    standard rule into CNOTs and rotations on the untapered active-space register,
+    and the results are summed. This is the operator-level cost conventionally
+    reported for ADAPT-VQE, is uniform across the tapered (<=12q) and statevector
+    (>12q) engines, and is fully determined by data already in the entry.
+
+    CAVEAT, recorded in circuit_stats.cost_basis: this is a DIFFERENT basis from the
+    HEA/UCCSD entries, which count their tapered hardware-efficient circuit. Ranking
+    ADAPT against HEA on gate count therefore compares two bases and should be read
+    with that in mind. Measured consequence: ADAPT uses far fewer parameters but more
+    two-qubit gates (N2: 25 operators -> 350 CNOTs, versus HEA 40 parameters -> 28),
+    because each fermionic excitation costs ~14 CNOTs. ADAPT's advantage is
+    trainability, not gate count.
+    """
+    import pennylane as qml
+
+    sources = adapt_meta.get("operator_sources")
+    nq      = adapt_meta.get("n_qubits_full")
+    md      = vqe_res.get("adapt_metadata") or {}
+    sel     = md.get("selected_operator_indices")
+    params  = vqe_res.get("optimal_params")
+    if not sources or not sel or params is None or nq is None:
+        return {}
+    if max(sel) >= len(sources) or len(sel) != len(params):
+        print(_warn("ADAPT metrics skipped: operator/source misalignment"))
+        return {}
+
+    HW = {"CNOT","RX","RY","RZ","Rot","Hadamard","PauliX","PauliY","PauliZ",
+          "S","T","PhaseShift","GlobalPhase","Identity","SX","CZ"}
+    ops = [(qml.DoubleExcitation(p, wires=list(sources[k][1])) if sources[k][0] == "d"
+            else qml.SingleExcitation(p, wires=list(sources[k][1])))
+           for k, p in zip(sel, params)]
+    changed = True
+    while changed:                      # decompose to the hardware gate set
+        changed, out = False, []
+        for op in ops:
+            if op.name in HW:
+                out.append(op)
+            else:
+                try:
+                    out.extend(op.decomposition()); changed = True
+                except Exception:
+                    out.append(op)
+        ops = out
+
+    ROT = ("RX","RY","RZ","Rot","PhaseShift","CRX","CRY","CRZ")
+    n2q = sum(1 for o in ops if len(o.wires) == 2)
+    n1q = sum(1 for o in ops if len(o.wires) == 1)
+    n_rot = sum(1 for o in ops if o.name in ROT)
+    last, depth = {}, 0                 # per-wire schedule -> circuit depth
+    for o in ops:
+        ws = list(o.wires)
+        t = 1 + max((last.get(w, 0) for w in ws), default=0)
+        for w in ws:
+            last[w] = t
+        depth = max(depth, t)
+    return {
+        "ansatz_depth":             int(depth),
+        "ansatz_num_2q_gates":      int(n2q),
+        "ansatz_num_1q_gates":      int(n1q),
+        "non_clifford_gate_count":  int(n_rot),
+        "t_gate_estimate":          int(n_rot * _T_PER_ROTATION),
+        "t_gate_synthesis_epsilon": _SYNTHESIS_EPS,
+        "cost_basis": "untapered_excitation_operators_standard_decomposition",
+    }
+
+
 def _circuit_metrics_inline(circuit_fn, H_tapered, optimal_params, backend="default.qubit"):
     import pennylane as qml
 
@@ -1589,7 +1680,8 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
                    pyscf_res, tap_meta, vqe_res, pauli_terms, hf_tapered,
                    max_iter, multistart, seed,
                    circuit_fn=None, H_tapered=None, backend="default.qubit",
-                   e_exact_qubit=None, hamiltonian_source=None) -> tuple:
+                   e_exact_qubit=None, hamiltonian_source=None,
+                   adapt_meta=None) -> tuple:
 
     mol_name  = mol_config["molecule"]
     n_e, n_o  = mol_config["active_space"]
@@ -1775,8 +1867,15 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
             "num_qubits_original":   tap_meta["n_qubits_full"],
             "num_qubits_tapered":    tap_meta["n_qubits_tap"],
             "ansatz_num_parameters": vqe_res["num_params"],
+            # ADAPT has no fixed circuit_fn (it grows the ansatz), so it used to fall
+            # through to {} and carry no cost metrics -- which silently excluded every
+            # ADAPT entry from the Cost and Balanced leaderboards. Cost it from its
+            # selected excitation operators instead.
             **(
-                _circuit_metrics_inline(circuit_fn, H_tapered, vqe_res["optimal_params"], backend=backend)
+                _adapt_circuit_metrics(adapt_meta, vqe_res)
+                if adapt_meta is not None
+                else _circuit_metrics_inline(circuit_fn, H_tapered, vqe_res["optimal_params"],
+                                             backend=backend)
                 if circuit_fn is not None and H_tapered is not None
                 else {}
             ),
@@ -2288,6 +2387,7 @@ def main() -> None:
             backend=args.backend,
             e_exact_qubit=e_exact_qubit,
             hamiltonian_source=("of_bridge" if use_bridge else "pennylane_native"),
+            adapt_meta=adapt_meta,
         )
 
         e_vqe   = vqe_res["best_energy_hartree"]
