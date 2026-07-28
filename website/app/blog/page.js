@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "vqe-reproducibility-scorecard",
+    date: "2026-07-28",
+    readingTime: "6 min read",
+    title: "The Four Things That Make a VQE Result Reproducible",
+    excerpt:
+      "Reproducibility is not one property but four: deterministic arithmetic, recorded package versions, a recorded seed, and a recorded code version. Setting a random seed — the thing most people reach for first — fixes none of the hard one. We wrote all four down and built a free checker (NumPy and SciPy only) that runs on your own code and prints the one-line fix.",
+    tags: ["reproducibility", "OMP_NUM_THREADS", "scorecard", "tooling", "provenance"],
+  },
+  {
     slug: "vqe-reproducibility-threading-bug",
     date: "2026-07-16",
     readingTime: "11 min read",
