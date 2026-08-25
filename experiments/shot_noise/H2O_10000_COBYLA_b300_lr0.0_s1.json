@@ -1,0 +1,19 @@
+{
+ "molecule": "H2O",
+ "shots": 10000,
+ "optimizer": "COBYLA",
+ "budget": 300,
+ "lr": 0.0,
+ "seed": 1,
+ "tag": "H2O_10000_COBYLA_b300_lr0.0_s1",
+ "n_qubits": 4,
+ "n_terms": 62,
+ "entry_id": "H2O_ccpvdz_JW_HEA_v4_tapered__sha256_6d66b3fceee03e10",
+ "entry_gap_mha": 0.4032122583481623,
+ "exact_energy_hartree": -76.02733835858903,
+ "final_energy_hartree": -75.588809284574,
+ "gap_mha": 438.5290740150367,
+ "evaluations": 141,
+ "seconds": 7.2,
+ "status": "ok"
+}

@@ -1,0 +1,19 @@
+{
+ "molecule": "LiH",
+ "shots": 1000,
+ "optimizer": "COBYLA",
+ "budget": 300,
+ "lr": 0.0,
+ "seed": 2,
+ "tag": "LiH_1000_COBYLA_b300_lr0.0_s2",
+ "n_qubits": 5,
+ "n_terms": 155,
+ "entry_id": "LiH_ccpvdz_JW_HEA_v4_tapered__sha256_f044f66bd4bc8376",
+ "entry_gap_mha": 0.09583123968592844,
+ "exact_energy_hartree": -7.983772976961489,
+ "final_energy_hartree": -7.195647983874754,
+ "gap_mha": 788.1249930867344,
+ "evaluations": 174,
+ "seconds": 29.8,
+ "status": "ok"
+}

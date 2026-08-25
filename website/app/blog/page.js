@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "shot-noise-optimizer-cliff",
+    date: "2026-08-25",
+    readingTime: "9 min read",
+    title: "We Added Shot Noise to Our Own Benchmark and One Optimizer Fell Off a Cliff",
+    excerpt:
+      "480 seeded VQE runs on published QEncode Hamiltonians. Under 1,000-shot sampling COBYLA degrades 2,510x and fails in every seed, while Adam degrades 20x and never fails. L-BFGS-B does both: untouched on a 62-term Hamiltonian, collapsed 169x on a 155-term one. The shot budget a gradient optimizer needs scales with the Hamiltonian, not the molecule - which is why published optimizer comparisons contradict each other.",
+    tags: ["shot noise", "optimizers", "COBYLA", "L-BFGS-B", "Adam", "reproducibility"],
+  },
+  {
     slug: "vqe-reproducibility-scorecard",
     date: "2026-07-28",
     readingTime: "6 min read",

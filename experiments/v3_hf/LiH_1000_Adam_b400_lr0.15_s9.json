@@ -1,0 +1,28 @@
+{
+ "molecule": "LiH",
+ "shots": 1000,
+ "optimizer": "Adam",
+ "budget": 400,
+ "lr": 0.15,
+ "seed": 9,
+ "tag": "LiH_1000_Adam_b400_lr0.15_s9",
+ "device_seed": 10009,
+ "init": "hartree_fock",
+ "n_qubits": 5,
+ "n_terms": 155,
+ "entry_id": "LiH_ccpvdz_JW_HEA_v4_tapered__sha256_f044f66bd4bc8376",
+ "hf_state": [
+  1,
+  1,
+  1,
+  1,
+  0
+ ],
+ "entry_gap_mha": 0.09583123968592844,
+ "exact_energy_hartree": -7.983772976961489,
+ "final_energy_hartree": -7.990075796402986,
+ "gap_mha": 6.302819441497576,
+ "evaluations": 400,
+ "seconds": 1226.9,
+ "status": "ok"
+}

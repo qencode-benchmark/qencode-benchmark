@@ -1,0 +1,27 @@
+{
+ "molecule": "H2O",
+ "shots": 1000,
+ "optimizer": "Adam",
+ "budget": 150,
+ "lr": 0.15,
+ "seed": 4,
+ "tag": "H2O_1000_Adam_b150_lr0.15_s4",
+ "device_seed": 10004,
+ "init": "hartree_fock",
+ "n_qubits": 4,
+ "n_terms": 62,
+ "entry_id": "H2O_ccpvdz_JW_HEA_v4_tapered__sha256_6d66b3fceee03e10",
+ "hf_state": [
+  1,
+  1,
+  1,
+  0
+ ],
+ "entry_gap_mha": 0.4032122583481623,
+ "exact_energy_hartree": -76.02733835858903,
+ "final_energy_hartree": -76.0358971443743,
+ "gap_mha": 8.558785785268697,
+ "evaluations": 150,
+ "seconds": 218.2,
+ "status": "ok"
+}

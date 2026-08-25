@@ -1,0 +1,19 @@
+{
+ "molecule": "H2O",
+ "shots": 1000,
+ "optimizer": "LBFGSB",
+ "budget": 100,
+ "lr": 0.0,
+ "seed": 8,
+ "tag": "H2O_1000_LBFGSB_b100_lr0.0_s8",
+ "n_qubits": 4,
+ "n_terms": 62,
+ "entry_id": "H2O_ccpvdz_JW_HEA_v4_tapered__sha256_6d66b3fceee03e10",
+ "entry_gap_mha": 0.4032122583481623,
+ "exact_energy_hartree": -76.02733835858903,
+ "final_energy_hartree": -75.55994602578775,
+ "gap_mha": 467.3923328012819,
+ "evaluations": 25,
+ "seconds": 37.3,
+ "status": "ok"
+}
