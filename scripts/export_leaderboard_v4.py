@@ -392,9 +392,9 @@ def main():
     print()
 
     # ── 9. Write files ────────────────────────────────────────────────────────
-    ACC_FIELDS      = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","baseline","beats_classical"]
-    COST_FIELDS     = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","ccsd_t_correlation","baseline","beats_classical"]
-    BALANCED_FIELDS = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","balanced_score","ccsd_t_correlation","baseline","beats_classical"]
+    ACC_FIELDS      = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","t_gate_estimate","non_clifford_gates","baseline","beats_classical"]
+    COST_FIELDS     = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"]
+    BALANCED_FIELDS = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","balanced_score","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"]
     RESEARCH_FIELDS = ACC_FIELDS
 
     _write_csv(OUTPUT_DIR / "leaderboard_accuracy.csv",      ACC_FIELDS,      acc_csv,      args.dry_run)

@@ -1,3 +1,3 @@
-rank,entry_id,molecule,basis,orbital_opt,mapping,ansatz,gap,ccsd_t_correlation,vqe_energy,casci_energy,hf_energy,baseline,beats_classical
-1,N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_5912a448b32eaa07,N2,cc-pvdz,casscf,jordan_wigner,UCCSD,0.010831542693779284,-0.3248413299058228,-109.07912660969744,-109.08995815239109,-108.9542224390184,True,True
-2,H6_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_fa91a2bc19cff218,H6,cc-pvdz,casscf,jordan_wigner,hardware_efficient,0.02725632549453838,-0.13578138010446583,-3.289612495072458,-3.316868820566995,-3.2355058912013224,True,True
+rank,entry_id,molecule,basis,orbital_opt,mapping,ansatz,gap,ccsd_t_correlation,vqe_energy,casci_energy,hf_energy,t_gate_estimate,non_clifford_gates,baseline,beats_classical
+1,N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_5912a448b32eaa07,N2,cc-pvdz,casscf,jordan_wigner,UCCSD,0.010831542693779284,-0.3248413299058228,-109.07912660969744,-109.08995815239109,-108.9542224390184,9648,804,True,True
+2,H6_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_fa91a2bc19cff218,H6,cc-pvdz,casscf,jordan_wigner,hardware_efficient,0.02725632549453838,-0.13578138010446583,-3.289612495072458,-3.316868820566995,-3.2355058912013224,1188,99,True,True

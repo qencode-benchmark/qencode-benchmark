@@ -39,6 +39,11 @@ def num(v):
 def bool_val(v):
     return str(v).strip().lower() in ("true", "1", "yes")
 
+def intval(v):
+    """Whole-number variant of num(), for the BIGINT resource columns."""
+    f = num(v)
+    return None if f is None else int(f)
+
 def _base_row(r):
     """Common fields for all leaderboard rows (v3 + v4)."""
     return {
@@ -58,6 +63,10 @@ def _base_row(r):
         "vqe_energy":         num(r.get("vqe_energy")),
         "casci_energy":       num(r.get("casci_energy")),
         "hf_energy":          num(r.get("hf_energy")),
+        # Fault-tolerant resource proxies. Absent from v3 CSVs, so .get() rather
+        # than indexing — an older CSV publishes with these as null, not an error.
+        "t_gate_estimate":    intval(r.get("t_gate_estimate")),
+        "non_clifford_gates": intval(r.get("non_clifford_gates")),
     }
 
 def parse_accuracy_csv(path):
