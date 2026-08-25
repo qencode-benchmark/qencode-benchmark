@@ -2,9 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  CheckCircle, Copy, Check, Crown, Info, TrendingDown, Cpu, BarChart2, Zap, ExternalLink,
-} from "lucide-react";
+import { CheckCircle, Copy, Check, Crown, Info, TrendingDown, Cpu, BarChart2, Zap, ExternalLink, Sparkles } from "lucide-react";
 import {
   Tabs, TabsContent, TabsList, TabsTrigger,
 } from "@/components/ui/tabs";
@@ -44,6 +42,42 @@ function fmtInt(v) {
  * How many times more accurate is VQE than CCSD(T)?
  * Returns a string like "70,000×" or null if data missing.
  */
+/**
+ * Entry IDs on the accuracy-vs-cost Pareto front, computed per molecule.
+ *
+ * An entry is dominated when another entry for the same molecule is at least as good
+ * on both axes -- lower error gap and fewer two-qubit gates -- and strictly better on
+ * at least one. What survives is the set of real trade-offs: every non-dominated entry
+ * is the most accurate available at its cost, and every dominated entry is beaten
+ * outright by something else in the suite.
+ *
+ * Grouped per molecule on purpose. Gaps are not comparable across molecules -- H2
+ * converges to 1e-16 and H10 to 1e-2 -- so a single global front would simply rank the
+ * easy systems first and say nothing about method choice.
+ */
+function paretoOptimalIds(rows) {
+  const byMolecule = new Map();
+  rows.forEach((r) => {
+    if (r.gap == null || r.twoQ == null || !r.entryId) return;
+    if (!byMolecule.has(r.molecule)) byMolecule.set(r.molecule, []);
+    byMolecule.get(r.molecule).push(r);
+  });
+  const ids = new Set();
+  byMolecule.forEach((group) => {
+    group.forEach((a) => {
+      const dominated = group.some(
+        (b) =>
+          b !== a &&
+          b.gap <= a.gap &&
+          b.twoQ <= a.twoQ &&
+          (b.gap < a.gap || b.twoQ < a.twoQ)
+      );
+      if (!dominated) ids.add(a.entryId);
+    });
+  });
+  return ids;
+}
+
 function fmtClassicalRatio(gap, ccsdTCorrelation) {
   if (gap == null || ccsdTCorrelation == null || gap <= 0 || ccsdTCorrelation <= 0) return null;
   const absCorr = Math.abs(ccsdTCorrelation);
@@ -141,7 +175,7 @@ function FilterChip({ label, active, onClick }) {
 
 // ── Main table renderer ────────────────────────────────────────────────────────
 
-function LeaderboardTable({ rows, category, basisLabel }) {
+function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
   const includeBalanced  = category === "balanced";
   const includeHardware  = category === "cost" || category === "balanced";
   const includeClassical = category === "accuracy" || category === "research";
@@ -375,6 +409,29 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                         <CheckCircle className="h-3 w-3 text-green-500 shrink-0" /> Verified
                       </Badge>
                     )}
+                    {paretoIds && paretoIds.has(r.entryId) && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Badge variant="outline" className="text-xs gap-1 cursor-help border-violet-400 text-violet-700 dark:text-violet-300">
+                              <Sparkles className="h-3 w-3 shrink-0" /> Pareto
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs text-xs space-y-1">
+                            <p className="font-semibold">On the accuracy-vs-cost frontier</p>
+                            <p className="text-muted-foreground">
+                              No other entry for this molecule is both at least as accurate and
+                              at least as cheap. It is the most accurate option available at its
+                              two-qubit gate count, so it is a genuine trade-off rather than a
+                              choice something else beats outright.
+                            </p>
+                            <p className="text-muted-foreground">
+                              Computed per molecule: gaps are not comparable between molecules.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
                     {r.beatsClassical && (
                       <TooltipProvider>
                         <Tooltip>
@@ -475,9 +532,14 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
     );
   }
 
+  // The frontier is a property of the full certified set, not of the current view:
+  // hiding an ansatz with a filter does not make a dominated entry undominated.
+  const paretoIds = useMemo(() => paretoOptimalIds(cost), [cost]);
+  const [paretoOnly, setParetoOnly] = useState(false);
+
   const filteredAcc      = useMemo(() => applyFilters(acc), [acc, molecule, activeMappings, activeAnsatze]);
-  const filteredCost     = useMemo(() => applyFilters(cost).filter((r) => r.twoQ != null && r.depth != null), [cost, molecule, activeMappings, activeAnsatze]);
-  const filteredBalanced = useMemo(() => applyFilters(balanced).filter((r) => r.twoQ != null && r.depth != null), [balanced, molecule, activeMappings, activeAnsatze]);
+  const filteredCost     = useMemo(() => applyFilters(cost).filter((r) => r.twoQ != null && r.depth != null).filter((r) => !paretoOnly || paretoIds.has(r.entryId)), [cost, molecule, activeMappings, activeAnsatze, paretoOnly, paretoIds]);
+  const filteredBalanced = useMemo(() => applyFilters(balanced).filter((r) => r.twoQ != null && r.depth != null).filter((r) => !paretoOnly || paretoIds.has(r.entryId)), [balanced, molecule, activeMappings, activeAnsatze, paretoOnly, paretoIds]);
   const filteredResearch = useMemo(() => applyFilters(research), [research, molecule, activeMappings, activeAnsatze]);
 
   // Use accuracy tab length as the canonical "certified entry" count — cost and balanced
@@ -551,6 +613,23 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
           </div>
         )}
 
+        {/* Frontier filter — applies to the two cost-aware boards */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide w-20 shrink-0">
+            Frontier
+          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <FilterChip
+              label="Pareto-optimal only"
+              active={paretoOnly}
+              onClick={() => setParetoOnly((v) => !v)}
+            />
+            <span className="text-xs text-muted-foreground">
+              non-dominated on accuracy vs 2Q gates, per molecule — affects Lowest Cost and Balanced
+            </span>
+          </div>
+        </div>
+
         {/* Active count */}
         <div className="flex items-center justify-between pt-1 border-t">
           <p className="text-xs text-muted-foreground">
@@ -561,6 +640,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
               setMolecule("All");
               setActiveMappings(new Set(mappings));
               setActiveAnsatze(new Set(ansatze));
+              setParetoOnly(false);
             }}
             className="text-xs text-muted-foreground underline hover:text-foreground transition-colors"
           >
@@ -621,7 +701,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
               Ranked by fewest two-qubit gates (then circuit depth). Entries without transpiled metrics are excluded.
             </p>
           </div>
-          <LeaderboardTable rows={filteredCost} category="cost" basisLabel={basisLabel} />
+          <LeaderboardTable rows={filteredCost} category="cost" basisLabel={basisLabel} paretoIds={paretoIds} />
         </TabsContent>
 
         <TabsContent value="balanced" className="mt-6">
@@ -631,7 +711,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
               Combined score weighting accuracy and hardware cost equally. Lower is better.
             </p>
           </div>
-          <LeaderboardTable rows={filteredBalanced} category="balanced" basisLabel={basisLabel} />
+          <LeaderboardTable rows={filteredBalanced} category="balanced" basisLabel={basisLabel} paretoIds={paretoIds} />
         </TabsContent>
 
         {filteredResearch.length > 0 && (
