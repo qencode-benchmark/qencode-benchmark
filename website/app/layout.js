@@ -96,7 +96,7 @@ export default function RootLayout({ children }) {
               <div className="flex flex-col gap-1">
                 <a href={`${REPO_URL}/blob/main/docs/QUICK_START.md`} target="_blank" rel="noopener noreferrer">Quick Start Guide</a>
                 <a href={`${REPO_URL}/blob/main/docs/BENCHMARK_SPEC_V4.md`} target="_blank" rel="noopener noreferrer">Benchmark Spec v4 (GitHub)</a>
-                <a href={`${REPO_URL}/blob/main/docs/LEADERBOARD_RULES_V1.md`} target="_blank" rel="noopener noreferrer">Leaderboard Rules</a>
+                <a href={`${REPO_URL}/blob/master/docs/LEADERBOARD_RULES_V2.md`} target="_blank" rel="noopener noreferrer">Leaderboard Rules</a>
                 <a href={`${REPO_URL}/blob/main/CITATION.cff`} target="_blank" rel="noopener noreferrer">Citation (CITATION.cff)</a>
                 <a href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub Repository</a>
               </div>

@@ -52,7 +52,7 @@ const repoDocs = [
   {
     title: "Leaderboard Rules",
     desc: "Eligibility, accuracy ranking, hardware cost ranking, balanced score formula, and research tab policy.",
-    href: `${REPO}/blob/main/docs/LEADERBOARD_RULES_V1.md`,
+    href: `${REPO}/blob/master/docs/LEADERBOARD_RULES_V2.md`,
   },
   {
     title: "requirements-v4.txt",

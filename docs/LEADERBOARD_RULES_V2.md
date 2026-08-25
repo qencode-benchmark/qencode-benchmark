@@ -1,9 +1,9 @@
-# Leaderboard Rules v1
+# Leaderboard Rules v2
 
 How entries become rows on [the public leaderboard](https://www.qencode-benchmark.org/leaderboard),
 and how those rows are ordered. This document describes what
 `scripts/export_leaderboard_v4.py` actually does; the leaderboard metadata reports
-`leaderboard_rules: 1`, matching the version in this filename.
+`leaderboard_rules: 2`, matching the version in this filename.
 
 Ranking rules are versioned independently of the benchmark suite. Any change to a
 ranking formula, an eligibility criterion, or a tie-break must be published as a new
@@ -101,6 +101,25 @@ anything.
 and v3 suites. It is not what produces the current leaderboard.
 
 ---
+
+## Changes from v1
+
+Rules v1 was drafted for the original suite and is superseded. The differences are
+recorded here rather than left for a reader to discover by comparing a published
+score against a formula that no longer produces it.
+
+| | v1 | v2 |
+|---|---|---|
+| Balanced score | `gap x depth` | `0.5*gap_rank + 0.5*cost_rank`, normalised over the field |
+| Categories | 3 | 4 — research tier added |
+| Ranking scope | per molecule | global across the suite; filters narrow the view |
+| Cost eligibility | not specified | symbolic (pre-transpilation) circuits excluded |
+| Reported per row | gap, depth, 2q | adds CCSD(T) correlation and T-gate estimate |
+
+Multiplying a gap in Hartrees by a gate count is not a meaningful quantity: the units
+do not combine, and the product is dominated by whichever factor happens to be
+numerically larger. v2 blends the two *rankings* instead, which is scale-free.
+
 
 ## Related
 

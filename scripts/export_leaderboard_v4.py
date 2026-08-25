@@ -43,7 +43,7 @@ DEFAULT_DB_DIR  = REPO / "releases" / "v4" / "db"
 OUTPUT_DIR      = REPO / "website" / "public" / "data"
 
 DEFAULT_SUITE_VERSION = "4"
-LEADERBOARD_RULES     = "1"
+LEADERBOARD_RULES     = "2"
 GAP_THRESHOLD         = 0.01   # Hartree — certified threshold
 
 

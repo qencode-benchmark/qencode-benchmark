@@ -220,7 +220,7 @@ def main():
 
     meta = {
         "suite_version":             "v2",
-        "leaderboard_rules":         "v1",
+        "leaderboard_rules":         "v2",
         "generation_date":           str(date.today()),
         "entries_included":          len(acc_rows),
         "research_entries_included": len(res_rows),
