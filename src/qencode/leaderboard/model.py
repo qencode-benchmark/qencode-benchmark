@@ -5,7 +5,6 @@ This module defines a canonical, rankable record shape for leaderboards.
 
 Inputs can be:
 - Benchmark rows from `qencode.comparison_engine` / SQLite sync.
-- Workflow result rows from `qencode.workflows.compare.load_workflow_results`.
 """
 
 from __future__ import annotations

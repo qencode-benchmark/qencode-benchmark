@@ -22,10 +22,9 @@
 #   src/qencode/attestation.py       cryptography (Ed25519 signature verification),
 #                                    reached transitively by both leaderboard scripts
 #
-# Not listed here on purpose: streamlit and plotly are imported only by
-# src/qencode/ui/, and qiskit only by src/qencode/dataset_loader.py. None of these
-# sit on the import path of the leaderboard scripts, so installing them is not
-# required to run the tooling. Install them yourself if you want the legacy UI.
+# Not listed here on purpose: qiskit is imported only by
+# src/qencode/dataset_loader.py, which is not on the import path of the leaderboard
+# scripts, so it is not required to run the tooling.
 #
 # Verified on the pinned stack (Python 3.11): installing these leaves numpy 2.2.6
 # and scipy 1.13.1 untouched, and `python scripts/generate_leaderboard.py --help`
