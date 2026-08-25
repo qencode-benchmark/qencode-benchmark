@@ -120,19 +120,19 @@ export default function PricingPage() {
         <div className="grid gap-4 sm:grid-cols-3 text-sm">
           <div className="rounded-md bg-muted/50 p-3">
             <div className="flex items-center gap-2 font-medium mb-1">
-              <Clock3 className="h-4 w-4 text-primary" /> 1. Apply
+              <Clock3 className="h-4 w-4 text-primary shrink-0" /> 1. Apply
             </div>
             <p className="text-muted-foreground">Submit workload scope and timeline in the access form.</p>
           </div>
           <div className="rounded-md bg-muted/50 p-3">
             <div className="flex items-center gap-2 font-medium mb-1">
-              <ShieldCheck className="h-4 w-4 text-primary" /> 2. Scope review
+              <ShieldCheck className="h-4 w-4 text-primary shrink-0" /> 2. Scope review
             </div>
             <p className="text-muted-foreground">QEncode confirms plan fit, runtime class, and expected turnaround.</p>
           </div>
           <div className="rounded-md bg-muted/50 p-3">
             <div className="flex items-center gap-2 font-medium mb-1">
-              <CheckCircle2 className="h-4 w-4 text-primary" /> 3. Execute & deliver
+              <CheckCircle2 className="h-4 w-4 text-primary shrink-0" /> 3. Execute & deliver
             </div>
             <p className="text-muted-foreground">Managed run + signed artifact delivery and publication options.</p>
           </div>

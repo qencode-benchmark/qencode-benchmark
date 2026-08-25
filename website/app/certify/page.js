@@ -47,7 +47,7 @@ export default function CertifyPage() {
           className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
           data-track="certify_apply_first_cta"
         >
-          Apply for certification <ArrowRight className="h-4 w-4" />
+          Apply for certification <ArrowRight className="h-4 w-4 shrink-0" />
         </Link>
       </div>
 
@@ -88,7 +88,7 @@ export default function CertifyPage() {
         <Card className="border">
           <CardHeader>
             <div className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary mb-3">
-              <ShieldCheck className="h-5 w-5" />
+              <ShieldCheck className="h-5 w-5 shrink-0" />
             </div>
             <CardTitle>Full Suite v4</CardTitle>
           </CardHeader>
@@ -123,19 +123,19 @@ export default function CertifyPage() {
         <div className="grid gap-4 sm:grid-cols-3 text-sm">
           <div className="rounded-md bg-muted/50 p-3">
             <div className="flex items-center gap-2 font-medium mb-1">
-              <Clock3 className="h-4 w-4 text-primary" /> Intake confirmation
+              <Clock3 className="h-4 w-4 text-primary shrink-0" /> Intake confirmation
             </div>
             <p className="text-muted-foreground">Within 1 business day after payment and request details.</p>
           </div>
           <div className="rounded-md bg-muted/50 p-3">
             <div className="flex items-center gap-2 font-medium mb-1">
-              <ShieldCheck className="h-4 w-4 text-primary" /> Standard turnaround
+              <ShieldCheck className="h-4 w-4 text-primary shrink-0" /> Standard turnaround
             </div>
             <p className="text-muted-foreground">5–10 business days depending on queue and compute load.</p>
           </div>
           <div className="rounded-md bg-muted/50 p-3">
             <div className="flex items-center gap-2 font-medium mb-1">
-              <CheckCircle2 className="h-4 w-4 text-primary" /> Delivery artifacts
+              <CheckCircle2 className="h-4 w-4 text-primary shrink-0" /> Delivery artifacts
             </div>
             <p className="text-muted-foreground">Signed receipt, validation summary, and leaderboard eligibility determination.</p>
           </div>

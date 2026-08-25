@@ -174,7 +174,7 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                      <Info className="h-3 w-3 text-muted-foreground cursor-help shrink-0" />
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs text-xs">
                       |E_VQE − E_CASCI| in Hartrees. Chemical accuracy = 1.6 × 10⁻³ Ha.
@@ -193,7 +193,7 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                        <Info className="h-3 w-3 text-muted-foreground cursor-help shrink-0" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs text-xs">
                         |CCSD(T) correlation energy| — the best classical perturbative result
@@ -214,7 +214,7 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                          <Info className="h-3 w-3 text-muted-foreground cursor-help shrink-0" />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs text-xs">
                           <p className="font-semibold">Fault-tolerant resource estimate</p>
@@ -254,7 +254,7 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                 <TableCell className="text-center">
                   {isFirst ? (
                     <span className="inline-flex items-center justify-center">
-                      <Crown className="h-4 w-4 text-amber-500" />
+                      <Crown className="h-4 w-4 text-amber-500 shrink-0" />
                     </span>
                   ) : (
                     <span className="font-mono text-sm text-muted-foreground">#{r.rank}</span>
@@ -353,7 +353,7 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                         className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline transition-colors"
                         title="View full benchmark artifact"
                       >
-                        <ExternalLink className="h-3 w-3" /> View entry
+                        <ExternalLink className="h-3 w-3 shrink-0" /> View entry
                       </Link>
                     )}
                     {r.baseline ? (
@@ -361,7 +361,7 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Badge className="bg-primary text-white text-xs gap-1 cursor-help">
-                              <CheckCircle className="h-3 w-3" /> Baseline
+                              <CheckCircle className="h-3 w-3 shrink-0" /> Baseline
                             </Badge>
                           </TooltipTrigger>
                           <TooltipContent className="max-w-xs text-xs">
@@ -372,7 +372,7 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                       </TooltipProvider>
                     ) : (
                       <Badge variant="secondary" className="text-xs gap-1">
-                        <CheckCircle className="h-3 w-3 text-green-500" /> Verified
+                        <CheckCircle className="h-3 w-3 text-green-500 shrink-0" /> Verified
                       </Badge>
                     )}
                     {r.beatsClassical && (
@@ -380,7 +380,7 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Badge className="bg-emerald-600 text-white text-xs gap-1 cursor-help">
-                              <Zap className="h-3 w-3" /> Beats CCSD(T)
+                              <Zap className="h-3 w-3 shrink-0" /> Beats CCSD(T)
                             </Badge>
                           </TooltipTrigger>
                           <TooltipContent className="max-w-xs text-xs space-y-1">
@@ -573,21 +573,21 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="w-full sm:w-auto h-auto flex-wrap gap-1">
           <TabsTrigger value="accuracy" className="flex items-center gap-1.5">
-            <TrendingDown className="h-3.5 w-3.5" />
+            <TrendingDown className="h-3.5 w-3.5 shrink-0" />
             Best Accuracy
             <span className="ml-1 rounded-full bg-muted px-1.5 py-0.5 text-xs font-mono">
               {filteredAcc.length}
             </span>
           </TabsTrigger>
           <TabsTrigger value="cost" className="flex items-center gap-1.5">
-            <Cpu className="h-3.5 w-3.5" />
+            <Cpu className="h-3.5 w-3.5 shrink-0" />
             Lowest Cost
             <span className="ml-1 rounded-full bg-muted px-1.5 py-0.5 text-xs font-mono">
               {filteredCost.length}
             </span>
           </TabsTrigger>
           <TabsTrigger value="balanced" className="flex items-center gap-1.5">
-            <BarChart2 className="h-3.5 w-3.5" />
+            <BarChart2 className="h-3.5 w-3.5 shrink-0" />
             Balanced
             <span className="ml-1 rounded-full bg-muted px-1.5 py-0.5 text-xs font-mono">
               {filteredBalanced.length}
@@ -595,7 +595,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
           </TabsTrigger>
           {filteredResearch.length > 0 && (
             <TabsTrigger value="research" className="flex items-center gap-1.5">
-              <Info className="h-3.5 w-3.5" />
+              <Info className="h-3.5 w-3.5 shrink-0" />
               Research
               <span className="ml-1 rounded-full bg-amber-100 text-amber-800 px-1.5 py-0.5 text-xs font-mono">
                 {filteredResearch.length}
@@ -638,7 +638,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
           <TabsContent value="research" className="mt-6">
             <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
               <h3 className="text-sm font-semibold text-amber-900 flex items-center gap-1.5">
-                <Info className="h-4 w-4" />
+                <Info className="h-4 w-4 shrink-0" />
                 Advanced Benchmark — Research Tier
               </h3>
               <p className="text-xs text-amber-800 mt-1">
@@ -661,7 +661,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
         <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">Legend</p>
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <Crown className="h-3.5 w-3.5 text-amber-500" /> Rank #1 in category
+            <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" /> Rank #1 in category
           </span>
           <span className="flex items-center gap-1.5">
             <Badge className="bg-primary text-white text-xs">Baseline</Badge>
@@ -673,7 +673,7 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
           </span>
           <span className="flex items-center gap-1.5">
             <Badge className="bg-emerald-600 text-white text-xs gap-1">
-              <Zap className="h-3 w-3" /> Beats CCSD(T)
+              <Zap className="h-3 w-3 shrink-0" /> Beats CCSD(T)
             </Badge>
             VQE error &lt; CCSD(T) correlation energy — hover for details
           </span>
