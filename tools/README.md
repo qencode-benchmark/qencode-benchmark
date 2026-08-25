@@ -64,3 +64,27 @@ import numpy as np   # everything after this is deterministic
 
 It must come **before** NumPy is imported — after that, BLAS has already built its
 thread pool and the variables are ignored.
+
+---
+
+# Fault-tolerant resource estimates
+
+`estimate_ft_resources.py` answers the question a VQE gap cannot: what would it cost to
+obtain this energy on a fault-tolerant machine?
+
+```bash
+python tools/estimate_ft_resources.py                  # certified suite, chemical accuracy
+python tools/estimate_ft_resources.py --eps 0.01       # to the certification threshold
+python tools/estimate_ft_resources.py --json out.json  # machine-readable
+```
+
+It reads the Pauli decomposition already stored in every published entry, computes the
+LCU 1-norm `lambda = sum |h_a|`, and evaluates the cost of qubitized quantum phase
+estimation. No new simulation is performed — the inputs are already in the repository,
+so any number it prints can be recomputed from a published entry.
+
+**These are model evaluations, not measurements.** The cost model, its constants, and
+its sources are documented at the top of the script so a reader can recompute or
+disagree with them. Physical qubit counts and wall-clock runtimes are deliberately not
+reported: they depend on code distance and physical error rate, which would dominate
+the result and make the output look more informative than it is.
