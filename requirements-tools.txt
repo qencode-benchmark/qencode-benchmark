@@ -1,0 +1,36 @@
+# QEncode leaderboard / analysis tooling.
+# NOT part of the pinned benchmark environment — install it in addition:
+#
+#     pip install -r requirements-v4.txt -r requirements-tools.txt
+#
+# Why this is a separate file rather than more lines in requirements-v4.txt:
+#
+# The reproducibility guard in scripts/generate_entry_v4.py parses every
+# `name==version` pin out of requirements-v4.txt and refuses to write an entry
+# unless each one is importable at exactly that version. That strictness is the
+# point — an entry must be reproducible from what it records.
+#
+# The benchmark pipeline imports none of the packages below. Pinning them in
+# requirements-v4.txt would make a missing or mismatched pandas block entry
+# generation entirely, and would write irrelevant dependencies into the recorded
+# environment of every entry. The benchmark stack stays minimal and about the
+# science; tooling dependencies live here.
+#
+# Used by:
+#   scripts/generate_leaderboard.py  pandas (required)
+#                                    yaml   (optional: baseline marking)
+#   src/qencode/attestation.py       cryptography (Ed25519 signature verification),
+#                                    reached transitively by both leaderboard scripts
+#
+# Not listed here on purpose: streamlit and plotly are imported only by
+# src/qencode/ui/, and qiskit only by src/qencode/dataset_loader.py. None of these
+# sit on the import path of the leaderboard scripts, so installing them is not
+# required to run the tooling. Install them yourself if you want the legacy UI.
+#
+# Verified on the pinned stack (Python 3.11): installing these leaves numpy 2.2.6
+# and scipy 1.13.1 untouched, and `python scripts/generate_leaderboard.py --help`
+# and `scripts/assign_trust_levels.py --help` both run.
+
+pandas==2.2.3
+PyYAML==6.0.2
+cryptography==43.0.1

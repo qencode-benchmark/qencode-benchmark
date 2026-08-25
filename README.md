@@ -170,6 +170,7 @@ qencode-db/
 ├── molecules_v4.json           # Suite v4 molecule catalog
 ├── requirements-v4.txt         # Pinned environment (PySCF 2.6.2, PennyLane 0.45.0)
 ├── requirements-v3.txt         # Frozen v3 environment
+├── requirements-tools.txt      # Extra deps for the leaderboard scripts (pandas, cryptography)
 ├── Dockerfile                  # Pinned, single-threaded run environment
 ├── QUICKSTART.md               # Five-minute walkthrough
 ├── scripts/
