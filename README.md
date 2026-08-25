@@ -188,6 +188,7 @@ qencode-db/
 ├── docs/
 │   ├── GETTING_STARTED.md      # Longer-form introduction
 │   ├── SUBMISSIONS.md          # Submitting a result
+│   ├── LEADERBOARD_RULES_V1.md # How rows are ranked
 │   ├── TRUST_POLICY.md         # Certified vs research tier
 │   └── V4_PLAN.md              # Suite roadmap
 ├── website/                    # Next.js site on Vercel
