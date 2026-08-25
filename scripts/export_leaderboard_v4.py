@@ -117,6 +117,10 @@ def entry_to_row(entry: dict) -> dict | None:
         depth   = cs.get("circuit_depth")   or cs.get("ansatz_depth")
         twoq    = cs.get("num_2q_gates")    or cs.get("ansatz_num_2q_gates")
         n_params= cs.get("ansatz_num_parameters")
+        # Fault-tolerant resource proxies. Recorded per entry since v4; surfaced on the
+        # leaderboard so an entry can be read as a resource estimate, not only an accuracy.
+        t_gates      = cs.get("t_gate_estimate")
+        non_clifford = cs.get("non_clifford_gate_count")
 
         if gap is None:
             return None
@@ -132,6 +136,8 @@ def entry_to_row(entry: dict) -> dict | None:
             "depth":              depth,
             "twoq":               twoq,
             "n_params":           n_params,
+            "t_gate_estimate":    t_gates,
+            "non_clifford_gates": non_clifford,
             "trust":              trust,
             "beats_classical":    beats,
             "baseline":           True,   # all v4 entries are QEncode baseline runs
@@ -253,6 +259,8 @@ def main():
             "ansatz":             r["ansatz"],
             "gap":                r["gap"],
             "ccsd_t_correlation": r["ccsd_t_correlation"],
+            "t_gate_estimate":    r["t_gate_estimate"],
+            "non_clifford_gates": r["non_clifford_gates"],
             "vqe_energy":         r["vqe_energy"],
             "casci_energy":       r["casci_energy"],
             "hf_energy":          r["hf_energy"],
@@ -282,6 +290,8 @@ def main():
             "depth":              r["depth"],
             "2q_gates":           r["twoq"],
             "ccsd_t_correlation": r["ccsd_t_correlation"],
+            "t_gate_estimate":    r["t_gate_estimate"],
+            "non_clifford_gates": r["non_clifford_gates"],
             "baseline":           r["baseline"],
             "beats_classical":    r["beats_classical"],
         }
@@ -322,6 +332,8 @@ def main():
             "2q_gates":           r["twoq"],
             "balanced_score":     r["balanced_score"],
             "ccsd_t_correlation": r["ccsd_t_correlation"],
+            "t_gate_estimate":    r["t_gate_estimate"],
+            "non_clifford_gates": r["non_clifford_gates"],
             "baseline":           r["baseline"],
             "beats_classical":    r["beats_classical"],
         }
@@ -341,6 +353,8 @@ def main():
             "ansatz":             r["ansatz"],
             "gap":                r["gap"],
             "ccsd_t_correlation": r["ccsd_t_correlation"],
+            "t_gate_estimate":    r["t_gate_estimate"],
+            "non_clifford_gates": r["non_clifford_gates"],
             "vqe_energy":         r["vqe_energy"],
             "casci_energy":       r["casci_energy"],
             "hf_energy":          r["hf_energy"],

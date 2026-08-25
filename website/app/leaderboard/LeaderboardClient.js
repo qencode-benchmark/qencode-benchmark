@@ -208,6 +208,31 @@ function LeaderboardTable({ rows, category, basisLabel }) {
               <>
                 <TableHead className="text-right">2Q Gates</TableHead>
                 <TableHead className="text-right">Depth</TableHead>
+                <TableHead className="text-right">
+                  <span className="flex items-center justify-end gap-1">
+                    T gates
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs text-xs">
+                          <p className="font-semibold">Fault-tolerant resource estimate</p>
+                          <p className="text-muted-foreground">
+                            Estimated T-gate count for this ansatz, from the non-Clifford
+                            rotations in the pre-transpilation circuit. T gates dominate the
+                            cost of a fault-tolerant implementation, so this is the
+                            resource-relevant figure — not the 2-qubit gate count.
+                          </p>
+                          <p className="text-muted-foreground">
+                            An estimate, not a compiled count: it assumes standard rotation
+                            synthesis and no hardware routing.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
+                </TableHead>
               </>
             )}
             {includeBalanced && (
@@ -305,6 +330,9 @@ function LeaderboardTable({ rows, category, basisLabel }) {
                     </TableCell>
                     <TableCell className="text-right font-mono text-xs tabular-nums">
                       {fmtInt(r.depth)}
+                    </TableCell>
+                    <TableCell className="text-right font-mono text-xs tabular-nums text-muted-foreground">
+                      {fmtInt(r.tGateEstimate)}
                     </TableCell>
                   </>
                 )}

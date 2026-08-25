@@ -59,6 +59,12 @@ export async function ensureSchema() {
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS basis       VARCHAR(50)`;
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS orbital_opt VARCHAR(20)`;
 
+  // Fault-tolerant resource columns: T-gate estimate and non-Clifford gate count.
+  // Recorded per entry since v4; surfaced so an entry reads as a resource estimate,
+  // not only an accuracy figure.
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS t_gate_estimate    BIGINT`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS non_clifford_gates BIGINT`;
+
   await sql`
     CREATE TABLE IF NOT EXISTS leaderboard_metadata (
       key        VARCHAR(100) PRIMARY KEY,
@@ -236,7 +242,7 @@ export async function replaceEntries(category, entries) {
       INSERT INTO leaderboard_entries
         (category, rank, molecule, mapping, ansatz, entry_id, gap, depth, two_q_gates, balanced_score,
          baseline, beats_classical, ccsd_t_correlation, vqe_energy, casci_energy, hf_energy,
-         basis, orbital_opt, updated_at)
+         basis, orbital_opt, t_gate_estimate, non_clifford_gates, updated_at)
       VALUES
         (
           ${category},
@@ -257,6 +263,8 @@ export async function replaceEntries(category, entries) {
           ${e.hf_energy          ?? null},
           ${e.basis              ?? null},
           ${e.orbital_opt        ?? null},
+          ${e.t_gate_estimate    ?? null},
+          ${e.non_clifford_gates ?? null},
           NOW()
         )
     `;

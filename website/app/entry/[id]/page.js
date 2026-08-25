@@ -211,6 +211,25 @@ export default async function EntryPage({ params }) {
           <Row label="Num parameters"      value={cs.ansatz_num_parameters ?? vqe.num_params} />
           {cs.ansatz_depth      != null && <Row label="Circuit depth"   value={cs.ansatz_depth} />}
           {cs.ansatz_num_2q_gates != null && <Row label="2Q gates"      value={cs.ansatz_num_2q_gates} />}
+          {cs.non_clifford_gate_count != null && (
+            <Row label="Non-Clifford gates" value={Number(cs.non_clifford_gate_count).toLocaleString()} />
+          )}
+          {cs.t_gate_estimate != null && (
+            <Row
+              label="T gates (FT estimate)"
+              value={
+                Number(cs.t_gate_estimate).toLocaleString() +
+                (cs.t_gate_synthesis_epsilon != null ? `  (ε = ${cs.t_gate_synthesis_epsilon})` : "")
+              }
+            />
+          )}
+          {cs.t_gate_estimate != null && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              T-gate count is the resource-relevant cost of a fault-tolerant implementation. It is an
+              estimate from the non-Clifford rotations in the pre-transpilation circuit, assuming
+              standard rotation synthesis to precision ε — not a compiled count for a specific device.
+            </p>
+          )}
           {isUccsd && (
             <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 px-3 py-2.5 text-xs text-amber-800 dark:text-amber-300 space-y-1">
               <p className="font-semibold">Note on UCCSD circuit metrics</p>

@@ -17,10 +17,17 @@ function applySymbolicMetrics(row) {
   const depth  = num(row.depth);
   const twoQ   = num(row.two_q_gates ?? row["2q_gates"]);
   const symbolic = ansatz === "uccsd" && ((depth ?? 0) <= 1 || (twoQ ?? 0) <= 1);
+  // Fault-tolerant resource proxies are derived from the same pre-transpilation
+  // circuit description, so they are only meaningful when the circuit metrics are.
+  // If we decline to report depth/2Q for a symbolic circuit, we decline the T-count too.
+  const tGates      = num(row.t_gate_estimate);
+  const nonClifford = num(row.non_clifford_gates);
   return {
-    depth:           symbolic ? null : depth,
-    twoQ:            symbolic ? null : twoQ,
-    symbolicMetrics: symbolic,
+    depth:            symbolic ? null : depth,
+    twoQ:             symbolic ? null : twoQ,
+    tGateEstimate:    symbolic ? null : tGates,
+    nonCliffordGates: symbolic ? null : nonClifford,
+    symbolicMetrics:  symbolic,
   };
 }
 
