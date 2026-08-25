@@ -1,20 +1,28 @@
 cff-version: 1.2.0
 message: "If you use QEncode in your research, please cite it as below."
 title: "QEncode Benchmark Suite"
+authors:
+  - given-names: Jovan
+    family-names: Ilov
+    affiliation: QEncode
 abstract: >
   QEncode is an open-source benchmark standard and certification platform for
   reproducible VQE quantum chemistry evaluation. It provides fixed benchmark
   definitions (cc-pVDZ basis, chemistry-driven active spaces), a fully
-  reproducible execution pipeline (PySCF → PennyLane → Z2 tapering → COBYLA VQE),
-  Ed25519-signed certification artifacts, and a public leaderboard. Suite v4
-  covers 10 molecules from H₂ to benzene, including the first aromatic molecule
-  in a certified VQE benchmark suite. N₂ is certified at 2.0 mHa, aligned with
-  DARPA QB-GSEE targets.
-version: "4.2.0"
-date-released: "2026-05-21"
+  reproducible execution pipeline (PySCF → qubit Hamiltonian → Z2 tapering →
+  VQE with UCCSD, hardware-efficient or ADAPT-VQE ansätze), Ed25519-signed
+  certification artifacts, and a public leaderboard. Determinism is enforced
+  rather than assumed: entries are generated single-threaded, against pinned
+  dependencies, from a clean source tree, and each records its full environment.
+  Suite v4.4 covers 16 molecules from H₂ to the H₁₀ chain (20 qubits before
+  tapering), with 47 certified entries. Every entry also reports classical
+  reference energies (HF, MP2, CCSD, CCSD(T)) and fault-tolerant resource
+  estimates.
+version: "4.4.0"
+date-released: "2026-08-25"
 url: "https://www.qencode-benchmark.org"
 repository-code: "https://github.com/qencode-benchmark/qencode-benchmark"
-license: MIT
+license: Apache-2.0
 keywords:
   - quantum computing
   - quantum chemistry
@@ -23,6 +31,7 @@ keywords:
   - VQE
   - reproducibility
   - quantum algorithms
+  - ADAPT-VQE
   - CASSCF
   - cc-pVDZ
   - DARPA QB-GSEE

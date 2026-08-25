@@ -228,6 +228,21 @@ If you use QEncode in your research, please cite it using the metadata in [CITAT
 QEncode Benchmark Suite v4 (2026). qencode-benchmark.org
 ```
 
+## Contributing
+
+Contributions are welcome — especially a result of ours that does not reproduce for
+you. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, the determinism rules the
+project enforces, and how to propose a molecule or submit an entry.
+
+---
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE). Free to use, modify, and redistribute,
+including commercially, with an express patent grant.
+
+---
+
 ## Contact
 
 support@qencode-benchmark.org
