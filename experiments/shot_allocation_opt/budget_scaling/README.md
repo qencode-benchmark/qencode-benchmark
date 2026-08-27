@@ -1,5 +1,7 @@
 # Budget scaling curves
 
+> **Consolidated write-up:** [docs/SHOT_NOISE_AND_ALLOCATION.md](../../docs/SHOT_NOISE_AND_ALLOCATION.md) states the ranked practical recommendations from all five studies in one place. This directory is the underlying data.
+
 1600 runs. At what budget does allocation quality start to matter, and what is the
 measurement penalty in units of shot budget?
 

@@ -32,6 +32,46 @@ import numpy as np
 import pennylane as qml
 from scipy.optimize import minimize
 
+def _provenance():
+    """Same shape as a certified suite entry, so an experiment record can be audited
+    the same way. Versions come from package metadata, not imports -- importing pyscf
+    to read its version would cost more than the measurement."""
+    import platform
+    import subprocess
+    from importlib.metadata import version, PackageNotFoundError
+
+    def _v(pkg):
+        try:
+            return version(pkg)
+        except PackageNotFoundError:
+            return None
+
+    try:
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=os.environ.get("QENCODE_REPO", os.getcwd()),
+            stderr=subprocess.DEVNULL).decode().strip()
+    except Exception:
+        commit = None
+
+    return {
+        "tool_versions": {
+            "python": platform.python_version(),
+            "pyscf": _v("pyscf"),
+            "pennylane": _v("pennylane"),
+            "openfermion": _v("openfermion"),
+            "numpy": _v("numpy"),
+            "scipy": _v("scipy"),
+            "git_commit": commit,
+        },
+        "environment": {
+            "platform": sys.platform,
+            "blas_threads": os.environ.get("OMP_NUM_THREADS"),
+            "threads_pinned": os.environ.get("OMP_NUM_THREADS") == "1",
+        },
+    }
+
+
 REPS = 2
 REPEATS = 200
 PILOT_FRAC = 0.10
@@ -97,6 +137,7 @@ def main():
     tag = "%s_%s_b%d" % (mol, state, budget)
     rec = {"molecule": mol, "state": state, "budget": budget, "tag": tag,
            "repeats": REPEATS, "pilot_frac": PILOT_FRAC, "reps": REPS,
+           "provenance": _provenance(),
            "pennylane": qml.__version__, "version": 2}
     t0 = time.time()
     try:

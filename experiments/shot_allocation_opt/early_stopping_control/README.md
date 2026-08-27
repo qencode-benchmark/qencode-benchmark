@@ -1,5 +1,7 @@
 # Early-stopping control
 
+> **Consolidated write-up:** [docs/SHOT_NOISE_AND_ALLOCATION.md](../../docs/SHOT_NOISE_AND_ALLOCATION.md) states the ranked practical recommendations from all five studies in one place. This directory is the underlying data.
+
 480 runs. The control for the claim made in the parent directory.
 
 ## Why this had to be run

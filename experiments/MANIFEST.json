@@ -1,0 +1,82 @@
+{
+ "description": "Content hashes and provenance for the shot-allocation studies. Every JSON record is hashed individually in the SHA256SUMS file inside its own directory; the aggregate below is the SHA-256 of those per-file digests in sorted filename order.",
+ "provenance": {
+  "tool_versions": {
+   "python": "3.11.15",
+   "pyscf": "2.6.2",
+   "pennylane": "0.45.0",
+   "openfermion": "1.6.1",
+   "numpy": "2.2.6",
+   "scipy": "1.13.1",
+   "git_commit": "f1c1461"
+  },
+  "environment": {
+   "platform": "linux",
+   "blas_threads": "1",
+   "threads_pinned": true
+  },
+  "note": "Runs were executed on a shared 40-core node, single-threaded per job with parallelism across processes only, so no run can perturb another. Every job seeds its own generator; see the `seed` field in each record."
+ },
+ "studies": [
+  {
+   "path": "experiments/shot_allocation/v1_std_only",
+   "description": "First estimator grid, judged on standard deviation. Where the bias hid.",
+   "runs": 90,
+   "aggregate_sha256": "c5ce65b4515027a9d84b407c2ac314350725a261d22c60f044a37b2cd8aca7ca",
+   "regenerate": "python tools/shot_allocation.py <molecule> <state> <budget> <outdir>"
+  },
+  {
+   "path": "experiments/shot_allocation/v2_fixes",
+   "description": "Estimator grid with the shrinkage and pooling repairs, judged on RMSE.",
+   "runs": 90,
+   "aggregate_sha256": "85fa8d173cc6f6720a05c2db0719bc894f804c75d4ce440aca8cbbe71c228113",
+   "regenerate": "python tools/shot_allocation.py <molecule> <state> <budget> <outdir>"
+  },
+  {
+   "path": "experiments/shot_allocation/final",
+   "description": "Full estimator scheme set including the recommended combination.",
+   "runs": 90,
+   "aggregate_sha256": "89cb802a86ab611b97ef887ec2523d2d2669ac8c11a6efbbbc3eac98f290ad3c",
+   "regenerate": "python tools/shot_allocation.py <molecule> <state> <budget> <outdir>"
+  },
+  {
+   "path": "experiments/shot_allocation_opt/grid",
+   "description": "Does allocation change the outcome of a full optimisation?",
+   "runs": 1200,
+   "aggregate_sha256": "e8f3037058bda25aed6db7223bb20c44baa22729c813f50358cfb49316a5e164",
+   "regenerate": "python tools/shot_allocation_optimize.py <mol> <opt> <scheme> <total> <per_eval> <seed> <outdir>"
+  },
+  {
+   "path": "experiments/shot_allocation_opt/early_stopping_control",
+   "description": "Control: does refusing to stop replace allocation quality?",
+   "runs": 480,
+   "aggregate_sha256": "b2150c5a2d77d942ae172017079ac4a9d8a4f8080f9765751369cc5acbc9c3b7",
+   "regenerate": "python tools/shot_allocation_optimize.py <mol> <opt>_r <scheme> 100000000 100000 <seed> <outdir>"
+  },
+  {
+   "path": "experiments/shot_allocation_opt/budget_scaling",
+   "description": "Where allocation quality starts to matter, 1e6 to 1e8 shots.",
+   "runs": 1600,
+   "aggregate_sha256": "f323024f4dc47b56933ad2bf22b80320f8e0f79cbbda0468c0b2df73358413c7",
+   "regenerate": "python tools/shot_allocation_optimize.py <mol> <opt> <scheme> <total> 100000 <seed> <outdir>"
+  },
+  {
+   "path": "experiments/shot_allocation_opt/early_stopping_numbers",
+   "description": "Termination point, count and scipy reason against noise level.",
+   "runs": 1320,
+   "aggregate_sha256": "6270c2a9a6b8bff36d40f4ead7d38b519ca1255d31119761a771aaefe727e8b9",
+   "regenerate": "python tools/shot_allocation_optimize.py <mol> <opt> <scheme> <total> <per_eval> <seed> <outdir>"
+  },
+  {
+   "path": "experiments/shot_allocation_opt/spsa_calibration",
+   "description": "SPSA gain sweep at zero noise. Produced before a fix to final-parameter tracking, so gap_final is unreliable in these records; the ranking used gap_best.",
+   "runs": 18,
+   "aggregate_sha256": "2fc331318da9bdf166818eef4af76bdbda3a63cc5ebe339dfde7a5eca3efd43c",
+   "regenerate": "SPSA_A=<a> SPSA_C=<c> python tools/shot_allocation_optimize.py LiH SPSA exact 200000000 100000 0 <outdir>"
+  }
+ ],
+ "totals": {
+  "runs": 4888,
+  "studies": 8
+ }
+}

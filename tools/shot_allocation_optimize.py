@@ -39,6 +39,46 @@ import numpy as np
 import pennylane as qml
 from scipy.optimize import minimize
 
+def _provenance():
+    """Same shape as a certified suite entry, so an experiment record can be audited
+    the same way. Versions come from package metadata, not imports -- importing pyscf
+    to read its version would cost more than the measurement."""
+    import platform
+    import subprocess
+    from importlib.metadata import version, PackageNotFoundError
+
+    def _v(pkg):
+        try:
+            return version(pkg)
+        except PackageNotFoundError:
+            return None
+
+    try:
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=os.environ.get("QENCODE_REPO", os.getcwd()),
+            stderr=subprocess.DEVNULL).decode().strip()
+    except Exception:
+        commit = None
+
+    return {
+        "tool_versions": {
+            "python": platform.python_version(),
+            "pyscf": _v("pyscf"),
+            "pennylane": _v("pennylane"),
+            "openfermion": _v("openfermion"),
+            "numpy": _v("numpy"),
+            "scipy": _v("scipy"),
+            "git_commit": commit,
+        },
+        "environment": {
+            "platform": sys.platform,
+            "blas_threads": os.environ.get("OMP_NUM_THREADS"),
+            "threads_pinned": os.environ.get("OMP_NUM_THREADS") == "1",
+        },
+    }
+
+
 REPS = 2
 PILOT_FRAC = 0.10
 P = {"X": qml.PauliX, "Y": qml.PauliY, "Z": qml.PauliZ}
@@ -223,6 +263,7 @@ def main():
     tag = "%s_%s_%s_T%d_P%d_s%d" % (mol, opt, scheme, total, per_eval, seed)
     rec = {"molecule": mol, "optimizer": opt, "scheme": scheme, "total_shots_budget": total,
            "shots_per_eval": per_eval, "seed": seed, "tag": tag, "reps": REPS,
+           "provenance": _provenance(),
            "pennylane": qml.__version__}
     t0 = time.time()
     try:

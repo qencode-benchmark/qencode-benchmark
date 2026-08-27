@@ -1,5 +1,7 @@
 # Does better shot allocation change the OUTCOME of a VQE optimisation?
 
+> **Consolidated write-up:** [docs/SHOT_NOISE_AND_ALLOCATION.md](../docs/SHOT_NOISE_AND_ALLOCATION.md) states the ranked practical recommendations from all five studies in one place. This directory is the underlying data.
+
 The companion study in `experiments/shot_allocation/` showed that Neyman allocation with
 shrinkage and pooling cuts energy RMSE ~1.5x at equal cost. That is a statement about the
 estimator in isolation. This asks the question that actually matters for anyone running

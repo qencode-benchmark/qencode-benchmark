@@ -1,5 +1,7 @@
 # Early stopping, as numbers
 
+> **Consolidated write-up:** [docs/SHOT_NOISE_AND_ALLOCATION.md](../../docs/SHOT_NOISE_AND_ALLOCATION.md) states the ranked practical recommendations from all five studies in one place. This directory is the underlying data.
+
 1320 runs. The behavioural claim in the parent directory — that optimisers with a
 convergence test mistake sampling noise for convergence and quit — measured directly
 rather than inferred from outcomes.

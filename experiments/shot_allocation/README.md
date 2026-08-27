@@ -1,5 +1,7 @@
 # Shot allocation for VQE energy estimation
 
+> **Consolidated write-up:** [docs/SHOT_NOISE_AND_ALLOCATION.md](../docs/SHOT_NOISE_AND_ALLOCATION.md) states the ranked practical recommendations from all five studies in one place. This directory is the underlying data.
+
 Measurement of how a fixed shot budget should be split across the Pauli terms of a
 molecular Hamiltonian, and what goes wrong with the textbook answer.
 
