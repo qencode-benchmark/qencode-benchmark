@@ -189,6 +189,16 @@ def main():
             cmd.append("--allow-dirty")
         if args.allow_env_drift:
             cmd.append("--allow-env-drift")
+
+        # The optimiser iteration cap must come from the entry, not from the generator's
+        # default. A full sweep of all 54 published entries separated perfectly on this:
+        # every entry recorded at the 500 default reproduced, and every entry recorded
+        # above it failed, because the verifier silently re-ran them at 500 and they
+        # landed somewhere else.
+        max_iter = (stored.get("run_config") or {}).get("max_iterations")
+        if max_iter:
+            cmd += ["--max-iter", str(int(max_iter))]
+
         if orbital_opt and orbital_opt != "hf":
             cmd += ["--orbital-opt", orbital_opt]
 
