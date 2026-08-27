@@ -114,7 +114,12 @@ export default function MethodologyPage() {
             <p className="mt-3">
               Circuit metrics (depth, two-qubit gate count, T-gate estimate) are recorded post-VQE using
               the default PennyLane transpiler. A <em>Beats Classical</em> flag is set when the VQE
-              correlation energy exceeds the CCSD(T) correlation energy.
+              error is smaller than the magnitude of the correlation energy CCSD(T) recovers, i.e.
+              when <span className="font-mono text-xs">|E_VQE &minus; E_CASCI| &lt; |E_corr(CCSD(T))|</span>.
+              It says the VQE error is small on the scale of correlation energy. It is{" "}
+              <strong>not</strong> a claim that VQE outperforms CCSD(T), and it is currently true for
+              every certified entry. Each entry carries this definition in its own{" "}
+              <span className="font-mono text-xs">beats_classical_definition</span> field.
             </p>
           </div>
 

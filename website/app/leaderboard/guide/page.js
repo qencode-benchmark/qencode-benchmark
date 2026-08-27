@@ -31,7 +31,7 @@ const faqSchema = {
       name: "Does VQE beat classical methods on the QEncode leaderboard?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Generally no, and the leaderboard is built to make that visible rather than to hide it. CCSD(T) is the classical gold standard for molecules of this size and it remains cheaper and more accurate than VQE across the suite. The Beats Classical flag is set only when the VQE correlation energy exceeds the CCSD(T) correlation energy for the same system. The purpose of the benchmark is to measure how far quantum algorithms are from that bar and whether they are moving, under conditions that can be independently reproduced.",
+        text: "No. CCSD(T) is the classical gold standard for molecules of this size and it is both cheaper and, on the full system, more accurate than anything on this leaderboard. The Beats Classical flag is weaker than its name suggests: it is set when the VQE error is smaller than the magnitude of the correlation energy CCSD(T) recovers, that is when |E_VQE - E_CASCI| is less than |E_corr(CCSD(T))|. That says the VQE error is small on the scale of correlation energy; it is not a claim that VQE outperforms CCSD(T), and it is currently true for every certified entry, so it does not discriminate between them. The purpose of the benchmark is to measure how far quantum algorithms are from the classical bar under conditions that can be independently reproduced, not to claim they have passed it.",
       },
     },
     {
@@ -153,16 +153,23 @@ export default function GuidePage() {
               molecules this size — recovers on the identical problem.
             </p>
             <p>
-              <strong>It usually wins.</strong> CCSD(T) is generally both cheaper and more
-              accurate than VQE across this suite, and the column exists so you can see
-              that rather than have to infer it. The{" "}
-              <strong>Beats Classical</strong> flag is set only when a VQE run&rsquo;s
-              correlation energy exceeds the CCSD(T) correlation energy for the same system.
+              <strong>CCSD(T) is not beaten here.</strong> It is cheaper and, on the full
+              system, more accurate than anything in this table. The column exists so you
+              can see the scale of the correlation energy the quantum calculation is trying
+              to capture.
             </p>
             <p>
-              This is the number to look at if you want to know whether quantum computing
-              is useful here yet. The point of the benchmark is to measure the distance to
-              that bar honestly, and whether it is closing.
+              <strong>The &ldquo;Beats Classical&rdquo; flag is weaker than it sounds</strong>,
+              and it is worth reading carefully. It is set when the VQE error is smaller than
+              the magnitude of the correlation energy CCSD(T) recovers —{" "}
+              <code className="font-mono text-xs bg-muted px-1 rounded">
+                |E<sub>VQE</sub> − E<sub>CASCI</sub>| &lt; |E<sub>corr</sub>(CCSD(T))|
+              </code>. That says the VQE error is small on the scale of correlation energy.
+              It is <em>not</em> a claim that VQE outperforms CCSD(T), and it is currently
+              true for every certified entry, so it does not discriminate between them.
+              Each entry carries this definition in its own{" "}
+              <code className="font-mono text-xs bg-muted px-1 rounded">beats_classical_definition</code>{" "}
+              field.
             </p>
           </Row>
         </div>
