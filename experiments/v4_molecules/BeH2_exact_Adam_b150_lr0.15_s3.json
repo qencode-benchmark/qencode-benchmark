@@ -1,0 +1,26 @@
+{
+ "molecule": "BeH2",
+ "shots": null,
+ "optimizer": "Adam",
+ "budget": 150,
+ "lr": 0.15,
+ "seed": 3,
+ "tag": "BeH2_exact_Adam_b150_lr0.15_s3",
+ "device_seed": 10003,
+ "init": "hartree_fock",
+ "n_qubits": 3,
+ "n_terms": 20,
+ "entry_id": "BeH2_ccpvdz_JW_HEA_v4_tapered__sha256_3a0217702318b7e5",
+ "hf_state": [
+  1,
+  1,
+  0
+ ],
+ "entry_gap_mha": 5.4250097747399195e-05,
+ "exact_energy_hartree": -15.768410988000882,
+ "final_energy_hartree": -15.768410727051533,
+ "gap_mha": 0.0002609493492400361,
+ "evaluations": 150,
+ "seconds": 8.5,
+ "status": "ok"
+}

@@ -1,0 +1,31 @@
+{
+ "molecule": "N2",
+ "shots": 1000,
+ "optimizer": "Adam",
+ "budget": 150,
+ "lr": 0.15,
+ "seed": 4,
+ "tag": "N2_1000_Adam_b150_lr0.15_s4",
+ "device_seed": 10004,
+ "init": "hartree_fock",
+ "n_qubits": 8,
+ "n_terms": 378,
+ "entry_id": "N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_17841edecba23ac1",
+ "hf_state": [
+  1,
+  1,
+  1,
+  1,
+  1,
+  0,
+  0,
+  0
+ ],
+ "entry_gap_mha": 4.513207152243126,
+ "exact_energy_hartree": -109.08995815239122,
+ "final_energy_hartree": -108.26846086768704,
+ "gap_mha": 821.4972847041793,
+ "evaluations": 150,
+ "seconds": 3836.4,
+ "status": "ok"
+}

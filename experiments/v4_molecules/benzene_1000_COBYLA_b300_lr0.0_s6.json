@@ -1,0 +1,32 @@
+{
+ "molecule": "benzene",
+ "shots": 1000,
+ "optimizer": "COBYLA",
+ "budget": 300,
+ "lr": 0.0,
+ "seed": 6,
+ "tag": "benzene_1000_COBYLA_b300_lr0.0_s6",
+ "device_seed": 10006,
+ "init": "hartree_fock",
+ "n_qubits": 9,
+ "n_terms": 914,
+ "entry_id": "benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_3d3de57a516e599d",
+ "hf_state": [
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  0,
+  0,
+  0
+ ],
+ "entry_gap_mha": 127.9563861249926,
+ "exact_energy_hartree": -230.78713748102905,
+ "final_energy_hartree": -229.61078528855717,
+ "gap_mha": 1176.3521924718816,
+ "evaluations": 252,
+ "seconds": 372.3,
+ "status": "ok"
+}

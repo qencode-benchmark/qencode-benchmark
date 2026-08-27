@@ -1,0 +1,29 @@
+{
+ "molecule": "C4H4",
+ "shots": null,
+ "optimizer": "COBYLA",
+ "budget": 300,
+ "lr": 0.0,
+ "seed": 6,
+ "tag": "C4H4_exact_COBYLA_b300_lr0.0_s6",
+ "device_seed": 10006,
+ "init": "hartree_fock",
+ "n_qubits": 6,
+ "n_terms": 185,
+ "entry_id": "C4H4_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_5b0a919ded51c8e6",
+ "hf_state": [
+  1,
+  1,
+  1,
+  1,
+  0,
+  0
+ ],
+ "entry_gap_mha": 9.636802410113887,
+ "exact_energy_hartree": -153.67342655025251,
+ "final_energy_hartree": -153.42112688992208,
+ "gap_mha": 252.29966033043638,
+ "evaluations": 300,
+ "seconds": 7.6,
+ "status": "ok"
+}

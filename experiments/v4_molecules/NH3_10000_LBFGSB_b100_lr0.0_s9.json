@@ -1,0 +1,28 @@
+{
+ "molecule": "NH3",
+ "shots": 10000,
+ "optimizer": "LBFGSB",
+ "budget": 100,
+ "lr": 0.0,
+ "seed": 9,
+ "tag": "NH3_10000_LBFGSB_b100_lr0.0_s9",
+ "device_seed": 10009,
+ "init": "hartree_fock",
+ "n_qubits": 5,
+ "n_terms": 132,
+ "entry_id": "NH3_ccpvdz_JW_HEA_v4_tapered__sha256_07291783190d6a4e",
+ "hf_state": [
+  1,
+  1,
+  1,
+  1,
+  0
+ ],
+ "entry_gap_mha": 1.8800185149174808,
+ "exact_energy_hartree": -56.19788858865957,
+ "final_energy_hartree": -56.195874154059744,
+ "gap_mha": 2.0144345998289737,
+ "evaluations": 42,
+ "seconds": 266.1,
+ "status": "ok"
+}
