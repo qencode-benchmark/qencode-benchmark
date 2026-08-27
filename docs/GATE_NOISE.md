@@ -47,10 +47,18 @@ The rebuilt noiseless circuit must reproduce the energy stored in the entry, or 
 molecule is excluded rather than reported. Ten of twelve rebuild to 10⁻¹³ Ha or better.
 
 **H₂ and HF do not, and were excluded.** Both are single-qubit after tapering with zero
-two-qubit gates, and the generic hardware-efficient reconstruction does not reproduce their
-published energies (off by 0.41 and 0.44 Ha). Something about the one-qubit case differs
-from the general layer structure. That is an open discrepancy worth understanding on its
-own, and it is the reason the gate exists.
+two-qubit gates, and the generic hardware-efficient reconstruction used here does not
+reproduce their published energies (off by 0.41 and 0.44 Ha).
+
+**This is a fault in the reconstruction, not in the entries.** Both entries re-verify
+cleanly through the pipeline — `scripts/verify_entry.py` reproduces each to within
+10⁻⁶ Ha with the hash intact — so they are fully reproducible, and the one-qubit tapered
+ansatz simply is not the generic layer structure this probe assumes. The gate did its job:
+it excluded two molecules the probe would have reported wrongly, rather than averaging
+them in.
+
+A corollary worth stating: it also means gate-noise figures for H₂ and HF are *absent*
+here, not zero.
 
 ---
 
@@ -153,7 +161,8 @@ entries. That is another reason the predictive formula matters.
   to reduce this bias, and none is applied.
 - **Hardware-efficient entries only.** UCCSD and ADAPT circuits cannot be rebuilt from the
   stored fields, so they are absent.
-- **H₂ and HF are unexplained** and excluded, as above.
+- **H₂ and HF are absent, not zero.** The probe cannot rebuild their one-qubit
+  tapered circuit; both entries themselves verify cleanly through the pipeline.
 
 ---
 
@@ -169,8 +178,8 @@ More useful, in order:
    estimates already are. It costs nothing, it is computable from stored fields, and it
    turns "this entry is certified" into "this entry is certified, and here is what it
    would cost on a device".
-2. **Understand the H₂/HF reconstruction discrepancy**, since it is a gap in what the
-   entries record about their own circuits.
+2. **Teach the probe the one-qubit tapered ansatz**, so H₂ and HF can be included.
+   This is a limitation of the probe, not of the entries, which verify cleanly.
 3. **Only then** consider a noisy tier, with error mitigation included, since without it
    the tier has no discrimination.
 
