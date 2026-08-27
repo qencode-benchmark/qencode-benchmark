@@ -1,7 +1,6 @@
 const BASE_URL = "https://www.qencode-benchmark.org";
 
 const blogPosts = [
-  { slug: "shot-noise-optimizer-cliff",           date: "2026-08-25" },
   { slug: "vqe-reproducibility-scorecard",          date: "2026-07-28" },
   { slug: "vqe-reproducibility-threading-bug",      date: "2026-07-16" },
   { slug: "adapt-vqe-certifies-benzene",            date: "2026-05-29" },
