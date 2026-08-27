@@ -146,6 +146,16 @@ iteration regardless of parameter count while parameter-shift costs 2N.
 - `spsa_calibration/` records were produced before a fix to final-parameter tracking, so
   their `gap_final` field is unreliable. The ranking used `gap_best`, which is unaffected.
 
+
+## Control: is this just a termination artefact?
+
+It is not, and the obvious free alternative does not replace it. See
+[](early_stopping_control/): forcing the optimisers to spend
+their whole budget recovers only ~3% of what Neyman bought on the strongest cell, while
+Neyman alone recovers nothing on H2O/COBYLA -- the two are complementary. That directory
+also shows L-BFGS-B with finite-difference gradients is unrescuable under sampling noise,
+and that the 10% pilot fails to pay for itself in one cell of six.
+
 ## Reproducing
 
 ```bash

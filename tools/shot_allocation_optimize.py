@@ -256,28 +256,57 @@ def main():
         # the callback, never from the optimizer return value alone.
         xfin = None
         spsa_x = [np.array(x0)]
+        # `_r` = refuse to stop: zero tolerances so the optimiser cannot declare
+        # convergence, plus restart from its own final point if it returns anyway.
+        restart = opt.endswith("_r")
+        base_opt = opt[:-2] if restart else opt
+        rec["refuse_to_stop"] = restart
+        restarts = [0]
+
+        def grad_ps(p):
+            g = np.zeros(npar)
+            for i in range(npar):
+                e = np.zeros(npar); e[i] = np.pi / 2.0
+                g[i] = (f(p + e) - f(p - e)) / 2.0
+            return g
+
+        def once(x):
+            rem = max(1, hard_cap - E.n_evals)
+            if base_opt == "COBYLA":
+                kw = {"tol": 1e-14} if restart else {}
+                r = minimize(f, x, method="COBYLA",
+                             options={"maxiter": rem, "rhobeg": 0.3}, **kw)
+                return np.array(r.x)
+            if base_opt == "LBFGSB":
+                o = {"maxfun": rem, "maxiter": rem}
+                if restart:
+                    o.update({"ftol": 0.0, "gtol": 0.0})
+                r = minimize(f, x, method="L-BFGS-B", options=o)
+                return np.array(r.x)
+            if base_opt == "LBFGSB_ps":
+                o = {"maxfun": rem, "maxiter": rem}
+                if restart:
+                    o.update({"ftol": 0.0, "gtol": 0.0})
+                r = minimize(f, x, method="L-BFGS-B", jac=grad_ps, options=o)
+                return np.array(r.x)
+            raise ValueError("no restart form for " + base_opt)
+
         try:
-            if opt == "COBYLA":
-                r = minimize(f, x0, method="COBYLA",
-                             options={"maxiter": hard_cap, "rhobeg": 0.3})
-                xfin = np.array(r.x)
-            elif opt == "LBFGSB":
-                # scipy 2-point finite differences, exactly as the archived failure did
-                r = minimize(f, x0, method="L-BFGS-B",
-                             options={"maxfun": hard_cap, "maxiter": hard_cap})
-                xfin = np.array(r.x)
-            elif opt == "LBFGSB_ps":
-                # analytic parameter-shift gradient: RY gates give an exact derivative
-                # from two evaluations per parameter
-                def grad(p):
-                    g = np.zeros(npar)
-                    for i in range(npar):
-                        e = np.zeros(npar); e[i] = np.pi / 2.0
-                        g[i] = (f(p + e) - f(p - e)) / 2.0
-                    return g
-                r = minimize(f, x0, method="L-BFGS-B", jac=grad,
-                             options={"maxfun": hard_cap, "maxiter": hard_cap})
-                xfin = np.array(r.x)
+            if base_opt in ("COBYLA", "LBFGSB", "LBFGSB_ps"):
+                x = np.array(x0, dtype=float)
+                while True:
+                    before = E.n_evals
+                    x = once(x)
+                    xfin = np.array(x)
+                    if not restart:
+                        break
+                    spent = E.n_evals - before
+                    restarts[0] += 1
+                    # a restart that buys no evaluations would spin forever
+                    if spent < 2 or E.n_evals >= hard_cap:
+                        break
+            elif opt == "__never__":
+                pass
             elif opt == "Adam":
                 x = np.array(x0, dtype=float)
                 m = np.zeros(npar); v2 = np.zeros(npar)
@@ -317,6 +346,7 @@ def main():
         e_true_best = E.exact(seen["best_params"])
         rec.update({
             "evaluations": E.n_evals,
+            "restarts": restarts[0],
             "shots_consumed": E.shots_used,
             "believed_energy_hartree": (None if seen["best_noisy"] == float("inf")
                                         else seen["best_noisy"]),
