@@ -5,6 +5,11 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  schedule:
+    # Sunday 03:00 UTC. The weekly job replays every entry that fits a CI budget,
+    # so drift in an entry outside the push-time subset is still caught.
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
 
 jobs:
 
@@ -127,3 +132,136 @@ jobs:
               print(f"FAIL: gap {gap:.3e} Ha exceeds 0.01 Ha threshold"); sys.exit(1)
           print("PASS")
           PYEOF
+
+  # ── v4 reproducibility: replay committed entries ──────────────────────────
+  #
+  # Added after the first end-to-end sweep of the database found that
+  # scripts/verify_entry.py could not re-run 29 of the 54 published entries at
+  # all, and re-ran 3 more at the wrong iteration budget. Both faults were in
+  # the verifier, not in the results, and neither was visible because nobody had
+  # ever run it across everything. See docs/VERIFICATION_SWEEP.md.
+  #
+  # The point of this job is that those two bugs cannot come back unnoticed.
+  verify-v4-subset:
+    name: Verify v4 entries (regression subset)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip (v4)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-v4-${{ hashFiles('requirements-v4.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-v4-
+
+      - name: Install v4 dependencies
+        run: pip install -r requirements-v4.txt
+
+      # Each entry below is here for a stated reason. Measured verification times
+      # come from experiments/verification_sweep/; the whole job is about a minute
+      # of compute on the reference machine.
+
+      # Regression for the ansatz-vocabulary bug: entries store ansatz_type "hea"
+      # while the CLI accepts only "hardware_efficient". This is 29 of 54 entries,
+      # and before a298c51 every one of them failed at the first call.
+      - name: HEA entry — regression for the ansatz vocabulary bug
+        run: python scripts/verify_entry.py releases/v4/db/HF_ccpvdz_JW_HEA_v4_tapered__sha256_94244108ad3c4f44.json
+
+      # Regression for the max_iterations bug: entries recorded above the
+      # generator's 500 default were silently re-run at 500 and landed elsewhere.
+      # Every entry at 500 reproduced; all three above it failed. This is one of
+      # the three, and the only one cheap enough for CI.
+      - name: max_iterations=1000 entry — regression for the iteration-budget bug
+        run: python scripts/verify_entry.py releases/v4/db/H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_7606caf47ff39f40.json
+
+      # One of each remaining ansatz family, so a change to circuit construction
+      # is caught rather than only a change to argument plumbing.
+      - name: UCCSD entry
+        run: python scripts/verify_entry.py releases/v4/db/H2_ccpvdz_JW_UCCSD_v4_tapered__sha256_93a0f8a8604d9aed.json
+
+      - name: ADAPT entry
+        run: python scripts/verify_entry.py releases/v4/db/H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_39f9134a722ad612.json
+
+      # Non-Jordan-Wigner mappings, which have their own tapering paths.
+      - name: Parity mapping entry
+        run: python scripts/verify_entry.py releases/v4/db/HF_ccpvdz_PAR_HEA_v4_tapered__sha256_007a1905c579328a.json
+
+      - name: Bravyi-Kitaev mapping entry
+        run: python scripts/verify_entry.py releases/v4/db/H2_ccpvdz_BK_HEA_v4_tapered__sha256_6e206ec6f1f02ea4.json
+
+  # ── v4 reproducibility: the whole database, weekly ────────────────────────
+  #
+  # The subset above guards against regressions on every push. This runs
+  # everything that fits in a CI budget, once a week, so drift in an entry that
+  # is not in the subset is still caught.
+  #
+  # 40 of 54 entries are included. The other 14 are the CASSCF and ADAPT runs on
+  # N2, H6, H8, H10 and benzene, which take 5 minutes to nearly an hour each on
+  # the reference machine and would not fit a 6-hour job. They are listed with
+  # their measured times at the top of .github/verify_ci_entries.txt and are
+  # verified on the cluster instead. Omitting them silently would be worse than
+  # saying so.
+  verify-v4-full:
+    name: Verify v4 entries (full, weekly)
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip (v4)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-v4-${{ hashFiles('requirements-v4.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-v4-
+
+      - name: Install v4 dependencies
+        run: pip install -r requirements-v4.txt
+
+      # The manifest is ordered slowest first, so round-robin dealing across four
+      # shards balances them without needing per-entry times here.
+      - name: Verify shard ${{ matrix.shard }} of 4
+        run: |
+          set -u
+          mapfile -t ALL < <(grep -v '^#' .github/verify_ci_entries.txt | grep -v '^$')
+          echo "manifest holds ${#ALL[@]} entries; this shard takes every 4th from index ${{ matrix.shard }}"
+          FAILED=0
+          COUNT=0
+          for i in "${!ALL[@]}"; do
+            if [ $(( i % 4 )) -ne ${{ matrix.shard }} ]; then continue; fi
+            E="releases/v4/db/${ALL[$i]}"
+            COUNT=$(( COUNT + 1 ))
+            echo "::group::${ALL[$i]}"
+            if python scripts/verify_entry.py "$E"; then
+              echo "  reproduced"
+            else
+              echo "::error title=Entry did not reproduce::${ALL[$i]}"
+              FAILED=$(( FAILED + 1 ))
+            fi
+            echo "::endgroup::"
+          done
+          echo "shard ${{ matrix.shard }}: $COUNT entries, $FAILED did not reproduce"
+          exit $FAILED
