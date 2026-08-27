@@ -1,0 +1,14 @@
+{
+ "entry_id": "C4H4_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_a26c030f93eb230d",
+ "file": "C4H4_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_a26c030f93eb230d.json",
+ "molecule": "C4H4",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 0.007916757707874922,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 150,
+ "returncode": 0
+}

@@ -1,0 +1,14 @@
+{
+ "entry_id": "N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_1a06482cb89e4a67",
+ "file": "N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_1a06482cb89e4a67.json",
+ "molecule": "N2",
+ "mapping": "parity",
+ "ansatz_type": "hea",
+ "optimizer": "L-BFGS-B",
+ "trust": "certified",
+ "stored_gap_ha": 0.009504032052447542,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 2822,
+ "returncode": 0
+}

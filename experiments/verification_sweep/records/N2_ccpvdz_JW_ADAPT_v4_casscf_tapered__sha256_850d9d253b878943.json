@@ -1,0 +1,14 @@
+{
+ "entry_id": "N2_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_850d9d253b878943",
+ "file": "N2_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_850d9d253b878943.json",
+ "molecule": "N2",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (COBYLA inner)",
+ "trust": "certified",
+ "stored_gap_ha": 0.008830610582577947,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 335,
+ "returncode": 0
+}

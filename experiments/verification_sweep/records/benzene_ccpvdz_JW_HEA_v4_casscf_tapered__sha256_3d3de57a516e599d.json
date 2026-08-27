@@ -1,0 +1,14 @@
+{
+ "entry_id": "benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_3d3de57a516e599d",
+ "file": "benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_3d3de57a516e599d.json",
+ "molecule": "benzene",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "validated",
+ "stored_gap_ha": 0.1279563861249926,
+ "verdict": "FAIL_ENERGY",
+ "energy_diff_ha": 0.2211,
+ "seconds": 1386,
+ "returncode": 1
+}

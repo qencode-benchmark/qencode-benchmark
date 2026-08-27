@@ -1,0 +1,14 @@
+{
+ "entry_id": "N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_5912a448b32eaa07",
+ "file": "N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_5912a448b32eaa07.json",
+ "molecule": "N2",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "validated",
+ "stored_gap_ha": 0.010831542693779284,
+ "verdict": "FAIL_ENERGY",
+ "energy_diff_ha": 0.1275,
+ "seconds": 287,
+ "returncode": 1
+}

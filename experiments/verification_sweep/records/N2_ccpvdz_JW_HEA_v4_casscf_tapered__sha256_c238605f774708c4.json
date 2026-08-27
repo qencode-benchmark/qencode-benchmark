@@ -1,0 +1,14 @@
+{
+ "entry_id": "N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_c238605f774708c4",
+ "file": "N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_c238605f774708c4.json",
+ "molecule": "N2",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "L-BFGS-B",
+ "trust": "validated",
+ "stored_gap_ha": 0.0484495925004893,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 1909,
+ "returncode": 0
+}

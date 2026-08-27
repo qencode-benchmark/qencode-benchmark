@@ -1,0 +1,14 @@
+{
+ "entry_id": "LiH_ccpvdz_JW_UCCSD_v4_tapered__sha256_21e143f12ed3a4b6",
+ "file": "LiH_ccpvdz_JW_UCCSD_v4_tapered__sha256_21e143f12ed3a4b6.json",
+ "molecule": "LiH",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 2.86281920214293e-06,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 40,
+ "returncode": 0
+}

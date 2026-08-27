@@ -1,0 +1,14 @@
+{
+ "entry_id": "N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_ebcfc9fbdeed4e51",
+ "file": "N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_ebcfc9fbdeed4e51.json",
+ "molecule": "N2",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "validated",
+ "stored_gap_ha": 0.13864574446627387,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 492,
+ "returncode": 0
+}

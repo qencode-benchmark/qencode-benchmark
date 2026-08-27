@@ -1,0 +1,14 @@
+{
+ "entry_id": "NH3_ccpvdz_JW_UCCSD_v4_tapered__sha256_bff85ae0c8311f46",
+ "file": "NH3_ccpvdz_JW_UCCSD_v4_tapered__sha256_bff85ae0c8311f46.json",
+ "molecule": "NH3",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 3.244514518740971e-05,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 50,
+ "returncode": 0
+}

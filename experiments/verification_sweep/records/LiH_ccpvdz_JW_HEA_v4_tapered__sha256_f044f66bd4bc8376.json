@@ -1,0 +1,14 @@
+{
+ "entry_id": "LiH_ccpvdz_JW_HEA_v4_tapered__sha256_f044f66bd4bc8376",
+ "file": "LiH_ccpvdz_JW_HEA_v4_tapered__sha256_f044f66bd4bc8376.json",
+ "molecule": "LiH",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 9.583123968592844e-05,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 10,
+ "returncode": 0
+}

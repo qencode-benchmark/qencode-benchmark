@@ -1,0 +1,14 @@
+{
+ "entry_id": "HF_ccpvdz_PAR_UCCSD_v4_tapered__sha256_17bfa6743a814ba6",
+ "file": "HF_ccpvdz_PAR_UCCSD_v4_tapered__sha256_17bfa6743a814ba6.json",
+ "molecule": "HF",
+ "mapping": "parity",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 1.4210854715202004e-14,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 3,
+ "returncode": 0
+}

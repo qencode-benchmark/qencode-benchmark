@@ -1,0 +1,14 @@
+{
+ "entry_id": "H2_ccpvdz_BK_UCCSD_v4_tapered__sha256_d3f280f5c8f32ccc",
+ "file": "H2_ccpvdz_BK_UCCSD_v4_tapered__sha256_d3f280f5c8f32ccc.json",
+ "molecule": "H2",
+ "mapping": "bravyi_kitaev",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 7.920997191490642e-11,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 4,
+ "returncode": 0
+}

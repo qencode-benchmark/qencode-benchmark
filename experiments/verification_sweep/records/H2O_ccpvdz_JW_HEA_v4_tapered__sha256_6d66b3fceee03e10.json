@@ -1,0 +1,14 @@
+{
+ "entry_id": "H2O_ccpvdz_JW_HEA_v4_tapered__sha256_6d66b3fceee03e10",
+ "file": "H2O_ccpvdz_JW_HEA_v4_tapered__sha256_6d66b3fceee03e10.json",
+ "molecule": "H2O",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 0.0004032122583481623,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 7,
+ "returncode": 0
+}

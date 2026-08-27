@@ -1,0 +1,14 @@
+{
+ "entry_id": "HF_ccpvdz_JW_UCCSD_v4_tapered__sha256_65500d662073f9e4",
+ "file": "HF_ccpvdz_JW_UCCSD_v4_tapered__sha256_65500d662073f9e4.json",
+ "molecule": "HF",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 1.826691686801496e-09,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 3,
+ "returncode": 0
+}

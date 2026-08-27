@@ -1,0 +1,14 @@
+{
+ "entry_id": "water_dimer_ccpvdz_JW_HEA_v4_tapered__sha256_bfa557aad3442cc8",
+ "file": "water_dimer_ccpvdz_JW_HEA_v4_tapered__sha256_bfa557aad3442cc8.json",
+ "molecule": "water_dimer",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 0.000331846078381659,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 21,
+ "returncode": 0
+}

@@ -1,0 +1,14 @@
+{
+ "entry_id": "H8_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_b2328caa5d17467b",
+ "file": "H8_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_b2328caa5d17467b.json",
+ "molecule": "H8",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (L-BFGS-B inner, statevector engine)",
+ "trust": "certified",
+ "stored_gap_ha": 0.009796656115030444,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 876,
+ "returncode": 0
+}

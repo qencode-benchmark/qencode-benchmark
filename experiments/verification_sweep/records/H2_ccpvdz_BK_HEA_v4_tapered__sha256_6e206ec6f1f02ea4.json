@@ -1,0 +1,14 @@
+{
+ "entry_id": "H2_ccpvdz_BK_HEA_v4_tapered__sha256_6e206ec6f1f02ea4",
+ "file": "H2_ccpvdz_BK_HEA_v4_tapered__sha256_6e206ec6f1f02ea4.json",
+ "molecule": "H2",
+ "mapping": "bravyi_kitaev",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 1.8946177959833221e-10,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 4,
+ "returncode": 0
+}

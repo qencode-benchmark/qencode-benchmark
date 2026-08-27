@@ -1,0 +1,14 @@
+{
+ "entry_id": "NH3_ccpvdz_JW_HEA_v4_tapered__sha256_07291783190d6a4e",
+ "file": "NH3_ccpvdz_JW_HEA_v4_tapered__sha256_07291783190d6a4e.json",
+ "molecule": "NH3",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 0.0018800185149174808,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 10,
+ "returncode": 0
+}

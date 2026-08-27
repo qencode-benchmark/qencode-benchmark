@@ -1,0 +1,14 @@
+{
+ "entry_id": "H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_7606caf47ff39f40",
+ "file": "H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_7606caf47ff39f40.json",
+ "molecule": "H4",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 0.002221794896831053,
+ "verdict": "FAIL_ENERGY",
+ "energy_diff_ha": 0.0008975,
+ "seconds": 47,
+ "returncode": 1
+}

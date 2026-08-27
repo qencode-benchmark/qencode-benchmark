@@ -1,0 +1,14 @@
+{
+ "entry_id": "BeH2_ccpvdz_JW_HEA_v4_tapered__sha256_3a0217702318b7e5",
+ "file": "BeH2_ccpvdz_JW_HEA_v4_tapered__sha256_3a0217702318b7e5.json",
+ "molecule": "BeH2",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 5.4250097747399195e-08,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 6,
+ "returncode": 0
+}

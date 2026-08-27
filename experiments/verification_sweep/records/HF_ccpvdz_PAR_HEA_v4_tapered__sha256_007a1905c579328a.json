@@ -1,0 +1,14 @@
+{
+ "entry_id": "HF_ccpvdz_PAR_HEA_v4_tapered__sha256_007a1905c579328a",
+ "file": "HF_ccpvdz_PAR_HEA_v4_tapered__sha256_007a1905c579328a.json",
+ "molecule": "HF",
+ "mapping": "parity",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 2.842170943040401e-14,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 4,
+ "returncode": 0
+}

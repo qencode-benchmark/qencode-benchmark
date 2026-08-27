@@ -1,0 +1,14 @@
+{
+ "entry_id": "BeH2_ccpvdz_JW_UCCSD_v4_tapered__sha256_31f7be8f2f7d9f00",
+ "file": "BeH2_ccpvdz_JW_UCCSD_v4_tapered__sha256_31f7be8f2f7d9f00.json",
+ "molecule": "BeH2",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 6.646118739794815e-06,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 10,
+ "returncode": 0
+}

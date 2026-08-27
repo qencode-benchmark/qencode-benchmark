@@ -1,0 +1,14 @@
+{
+ "entry_id": "NH3_ccpvdz_PAR_HEA_v4_tapered__sha256_aa3769fb20846ec5",
+ "file": "NH3_ccpvdz_PAR_HEA_v4_tapered__sha256_aa3769fb20846ec5.json",
+ "molecule": "NH3",
+ "mapping": "parity",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 0.006911462344646679,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 56,
+ "returncode": 0
+}

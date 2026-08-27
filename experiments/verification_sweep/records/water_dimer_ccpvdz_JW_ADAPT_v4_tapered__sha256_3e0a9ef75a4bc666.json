@@ -1,0 +1,14 @@
+{
+ "entry_id": "water_dimer_ccpvdz_JW_ADAPT_v4_tapered__sha256_3e0a9ef75a4bc666",
+ "file": "water_dimer_ccpvdz_JW_ADAPT_v4_tapered__sha256_3e0a9ef75a4bc666.json",
+ "molecule": "water_dimer",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (COBYLA inner)",
+ "trust": "certified",
+ "stored_gap_ha": 0.00011094360610286458,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 11,
+ "returncode": 0
+}

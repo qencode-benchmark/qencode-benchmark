@@ -1,0 +1,14 @@
+{
+ "entry_id": "C4H4_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_5b0a919ded51c8e6",
+ "file": "C4H4_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_5b0a919ded51c8e6.json",
+ "molecule": "C4H4",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 0.009636802410113887,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 116,
+ "returncode": 0
+}

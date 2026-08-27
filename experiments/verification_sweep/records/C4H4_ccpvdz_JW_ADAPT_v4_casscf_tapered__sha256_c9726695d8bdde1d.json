@@ -1,0 +1,14 @@
+{
+ "entry_id": "C4H4_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_c9726695d8bdde1d",
+ "file": "C4H4_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_c9726695d8bdde1d.json",
+ "molecule": "C4H4",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (COBYLA inner)",
+ "trust": "certified",
+ "stored_gap_ha": 0.005963395686137574,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 70,
+ "returncode": 0
+}

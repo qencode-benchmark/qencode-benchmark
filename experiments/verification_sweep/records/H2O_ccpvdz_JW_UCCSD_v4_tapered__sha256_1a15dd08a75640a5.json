@@ -1,0 +1,14 @@
+{
+ "entry_id": "H2O_ccpvdz_JW_UCCSD_v4_tapered__sha256_1a15dd08a75640a5",
+ "file": "H2O_ccpvdz_JW_UCCSD_v4_tapered__sha256_1a15dd08a75640a5.json",
+ "molecule": "H2O",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 1.4370171186328662e-07,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 12,
+ "returncode": 0
+}

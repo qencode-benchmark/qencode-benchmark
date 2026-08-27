@@ -1,0 +1,14 @@
+{
+ "entry_id": "C4H6_ccpvdz_JW_ADAPT_v4_tapered__sha256_d70625e50afebe76",
+ "file": "C4H6_ccpvdz_JW_ADAPT_v4_tapered__sha256_d70625e50afebe76.json",
+ "molecule": "C4H6",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (COBYLA inner)",
+ "trust": "certified",
+ "stored_gap_ha": 0.002828578592584563,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 98,
+ "returncode": 0
+}

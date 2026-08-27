@@ -1,0 +1,14 @@
+{
+ "entry_id": "benzene_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_6a02a889695ff913",
+ "file": "benzene_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_6a02a889695ff913.json",
+ "molecule": "benzene",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (COBYLA inner)",
+ "trust": "certified",
+ "stored_gap_ha": 0.009539714606773941,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 616,
+ "returncode": 0
+}

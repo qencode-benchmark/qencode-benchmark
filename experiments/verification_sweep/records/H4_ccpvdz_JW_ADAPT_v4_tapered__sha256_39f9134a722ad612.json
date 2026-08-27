@@ -1,0 +1,14 @@
+{
+ "entry_id": "H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_39f9134a722ad612",
+ "file": "H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_39f9134a722ad612.json",
+ "molecule": "H4",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (COBYLA inner)",
+ "trust": "certified",
+ "stored_gap_ha": 0.009941708740167421,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 5,
+ "returncode": 0
+}

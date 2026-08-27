@@ -1,0 +1,14 @@
+{
+ "entry_id": "HF_ccpvdz_JW_HEA_v4_tapered__sha256_94244108ad3c4f44",
+ "file": "HF_ccpvdz_JW_HEA_v4_tapered__sha256_94244108ad3c4f44.json",
+ "molecule": "HF",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 4.762256367030204e-09,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 3,
+ "returncode": 0
+}
