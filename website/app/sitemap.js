@@ -20,6 +20,7 @@ export default function sitemap() {
   const staticRoutes = [
     { route: "",             priority: 1.0, freq: "weekly"  },
     { route: "/leaderboard", priority: 0.9, freq: "daily"   },
+    { route: "/leaderboard/guide", priority: 0.7, freq: "monthly" },
     { route: "/benchmark",   priority: 0.8, freq: "monthly" },
     { route: "/methodology", priority: 0.8, freq: "monthly" },
     { route: "/blog",        priority: 0.8, freq: "weekly"  },

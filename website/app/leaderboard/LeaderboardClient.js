@@ -178,7 +178,11 @@ function FilterChip({ label, active, onClick }) {
 function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
   const includeBalanced  = category === "balanced";
   const includeHardware  = category === "cost" || category === "balanced";
-  const includeClassical = category === "accuracy" || category === "research";
+  // The balanced view is the only place accuracy and cost are meant to be read together,
+  // so it carries the classical baseline alongside the hardware columns. Without it a
+  // visitor never sees "how close to CCSD(T)" and "what it costs" on the same row.
+  const includeClassical = category === "accuracy" || category === "research"
+                        || category === "balanced";
 
   // Gap range in this filtered set (for bar scale)
   const gapVals = useMemo(() => rows.map((r) => r.gap).filter((v) => v != null && v > 0), [rows]);

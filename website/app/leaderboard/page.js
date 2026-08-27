@@ -50,9 +50,18 @@ export default async function LeaderboardPage() {
       <p className="text-muted-foreground mb-8 max-w-xl">
         Public rankings include only certified entries with official trust filtering ({metadata.generation_date}).
       </p>
-      <p className="text-xs text-muted-foreground -mt-6 mb-6 max-w-2xl">
+      <p className="text-xs text-muted-foreground -mt-6 mb-4 max-w-2xl">
         Entry counts can differ by molecule when some configurations are not yet certified.
         All runs use the <strong>{basisLabel ?? "specified"}</strong> basis set.
+      </p>
+      <p className="text-sm mb-6 max-w-2xl">
+        <Link href="/leaderboard/guide" className="text-primary hover:underline font-medium">
+          What these numbers mean →
+        </Link>{" "}
+        <span className="text-muted-foreground">
+          what the gap is measured against, why CCSD(T) is shown, and how T-gate estimates
+          are derived.
+        </span>
       </p>
       <div className="flex flex-wrap gap-2 mb-6">
         <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium">
