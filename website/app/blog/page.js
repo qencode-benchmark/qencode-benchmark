@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "shot-allocation-neyman-trap",
+    date: "2026-08-27",
+    readingTime: "9 min read",
+    title: "The Optimal Shot Allocation Rule Made Our Energies 50× Worse",
+    excerpt:
+      "Neyman allocation is the provably variance-minimising way to split a VQE shot budget across Pauli terms. Estimated from a pilot sample it deletes the largest-coefficient terms outright — median error 604 mHa against 11 for the simple scheme it was meant to beat. Judged on standard deviation it looked like the winner. Two cheap fixes recover a validated 2.3× shot saving across 10 molecules.",
+    tags: ["shot allocation", "Neyman allocation", "measurement", "estimator bias", "Rosalin", "variance reduction"],
+  },
+  {
     slug: "vqe-reproducibility-scorecard",
     date: "2026-07-28",
     readingTime: "6 min read",
