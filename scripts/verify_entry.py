@@ -91,6 +91,15 @@ def main():
     )
     ap.add_argument("--seed", type=int, default=42,
                     help="Random seed for VQE (default: 42)")
+    # The generator refuses to write an entry when the tree is dirty or the installed
+    # packages differ from the pins. That is right when producing an entry, and it also
+    # made the verifier unusable for anyone whose environment is not byte-identical to
+    # ours -- which is everyone verifying our work from outside. These pass the override
+    # through so a verification can proceed, loudly, on a drifted machine.
+    ap.add_argument("--allow-dirty", action="store_true",
+                    help="verify even if the git tree has uncommitted changes")
+    ap.add_argument("--allow-env-drift", action="store_true",
+                    help="verify even if installed package versions differ from the pins")
     args = ap.parse_args()
 
     entry_path = Path(args.entry_json)
@@ -112,7 +121,17 @@ def main():
     stored_hash   = prov.get("entry_hash_sha256", "")
     stored_energy = res.get("vqe", {}).get("best_energy_hartree")
     stored_gap    = res.get("quality", {}).get("abs_vqe_exact_gap")
+    # Entries record the ansatz in the pipeline's internal vocabulary, which is not the
+    # same as its command line vocabulary: 29 of the 54 published entries store "hea",
+    # and --ansatz-type rejects that. Without this mapping the verifier -- the tool that
+    # backs the claim that any published result can be independently rebuilt -- cannot
+    # re-run those entries at all.
+    _ANSATZ_CLI = {"hea": "hardware_efficient",
+                   "hardware_efficient": "hardware_efficient",
+                   "uccsd": "uccsd",
+                   "adapt": "adapt"}
     ansatz        = ansatz_raw.replace("_tapered", "")
+    ansatz        = _ANSATZ_CLI.get(ansatz, ansatz)
 
     print()
     print(f"{BOLD}QEncode Entry Verifier{RESET}")
@@ -166,6 +185,10 @@ def main():
             "--out-dir",     tmpdir,
             "--no-colour",
         ]
+        if args.allow_dirty:
+            cmd.append("--allow-dirty")
+        if args.allow_env_drift:
+            cmd.append("--allow-env-drift")
         if orbital_opt and orbital_opt != "hf":
             cmd += ["--orbital-opt", orbital_opt]
 
