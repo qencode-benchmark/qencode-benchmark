@@ -465,8 +465,15 @@ export default function Post() {
           </li>
           <li>
             This measures the <strong>energy estimator</strong>, not a full optimisation
-            run. Whether a 2.3× cheaper estimator makes VQE converge faster or more reliably
-            is a different question, and we have not answered it.
+            run. We have since run that experiment separately (1,200 optimisations, in{" "}
+            <code className="font-mono text-xs bg-muted px-1 rounded">experiments/shot_allocation_opt/</code>)
+            and the answer is <em>sometimes, and not for the reason you would guess</em>:
+            at the budget where our archived LiH failure happened, better allocation moves
+            the result by 0.7 mHa out of 707 — with perfect arithmetic the same run still
+            fails at 652 mHa, so that collapse was evaluation starvation, not measurement.
+            Given 10× the evaluations it matters a great deal, up to 27×, but by stopping
+            optimisers from mistaking sampling noise for convergence and quitting early,
+            not by taking better steps.
           </li>
           <li>
             Statevector simulation throughout — <strong>no gate noise</strong>, no readout
