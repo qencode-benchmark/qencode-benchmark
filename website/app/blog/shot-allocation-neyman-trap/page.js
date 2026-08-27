@@ -3,7 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "The Optimal Shot Allocation Rule Made Our Energies 50× Worse",
   description:
-    "Neyman allocation is the textbook variance-minimising way to split a VQE shot budget across Pauli terms. Estimated from a pilot sample it is catastrophically biased — it silently deletes the largest-coefficient terms. Two cheap fixes recover a validated 2.3× shot saving.",
+    "Neyman allocation is the textbook variance-minimising way to split a VQE shot budget across Pauli terms. Estimated from a pilot sample it is catastrophically biased — it silently deletes the largest-coefficient terms. Two cheap fixes recover a validated 2.3× saving in the energy estimator — though a follow-up study shows that does not translate into 2.3× cheaper VQE.",
   alternates: { canonical: "/blog/shot-allocation-neyman-trap" },
   openGraph: {
     title: "The Optimal Shot Allocation Rule Made Our Energies 50× Worse",
@@ -19,7 +19,7 @@ const articleSchema = {
   "@type": "Article",
   headline: "The Optimal Shot Allocation Rule Made Our Energies 50× Worse",
   description:
-    "Neyman allocation splits a measurement budget in proportion to each term's coefficient times its standard deviation. In VQE the standard deviation must be estimated from a pilot sample, and that estimate is exactly zero whenever the pilot comes out all-heads or all-tails — which starves near-deterministic terms of shots and drops them from the energy. Those terms carry 9.1× the mean coefficient. Shrinkage plus pooling fixes it and yields a validated 2.3× shot saving.",
+    "Neyman allocation splits a measurement budget in proportion to each term's coefficient times its standard deviation. In VQE the standard deviation must be estimated from a pilot sample, and that estimate is exactly zero whenever the pilot comes out all-heads or all-tails — which starves near-deterministic terms of shots and drops them from the energy. Those terms carry 9.1× the mean coefficient. Shrinkage plus pooling fixes it and yields a validated 2.3× saving in the cost of the energy estimator. A separate 1200-run study of full optimisations found this does not generally make VQE 2.3× cheaper: at low evaluation budgets the binding constraint is the number of evaluations an optimiser gets, not the noise on each one.",
   datePublished: "2026-08-27",
   dateModified: "2026-08-27",
   author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
@@ -58,7 +58,15 @@ const faqSchema = {
       name: "How do you fix biased Neyman shot allocation?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Two cheap repairs. First, shrink the variance estimate: use the Agresti-Coull proportion p = (k+1)/(pilot+2), which is never exactly 0 or 1, so the estimated sigma is never exactly zero and no term is ever starved; add a floor of one shot per term. Second, pool the pilot sample with the main measurement pass instead of discarding it — the pilot is already paid for. Together these give a 1.53x reduction in RMSE over uniform allocation, which is 2.3x fewer shots for the same accuracy, and they win in 84 of 90 test configurations.",
+        text: "Two cheap repairs. First, shrink the variance estimate: use the Agresti-Coull proportion p = (k+1)/(pilot+2), which is never exactly 0 or 1, so the estimated sigma is never exactly zero and no term is ever starved; add a floor of one shot per term. Second, pool the pilot sample with the main measurement pass instead of discarding it — the pilot is already paid for. Together these give a 1.53x reduction in RMSE over uniform allocation, which is 2.3x fewer shots for the same accuracy, and they win in 84 of 90 test configurations. This is a statement about the energy estimator alone. A follow-up study of 1200 full optimisations found that it does not generally make VQE 2.3x cheaper: at low evaluation budgets the limit is how many evaluations the optimiser gets, not how noisy each one is.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does better shot allocation make VQE cheaper overall?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Usually not, and not for the reason most people expect. Better allocation makes the energy estimator about 2.3 times cheaper, but a 1200-run study of full optimisations found that at low evaluation budgets the binding constraint is the number of evaluations the optimiser gets, not the noise on each one. In an archived LiH failure at 100 evaluations, better allocation improved the result by 0.7 millihartree out of 707, and the same optimiser running on perfect noise-free arithmetic still failed at 652 millihartree. Given roughly ten times the evaluations allocation quality does matter, by as much as a factor of 27, but through an indirect mechanism: optimisers that carry a convergence test mistake sampling noise for convergence and stop early, and a cleaner estimator delays that false signal rather than producing better search steps.",
       },
     },
     {
@@ -120,7 +128,9 @@ export default function Post() {
             <strong>9.1× the mean coefficient</strong> and a median of{" "}
             <strong>48% of the Hamiltonian one-norm</strong>. Shrinking the estimate and
             pooling the pilot into the final average fixes it, and gives a validated{" "}
-            <strong>2.3× shot saving</strong> across 10 molecules.
+            <strong>2.3× shot saving</strong> across 10 molecules — for the energy{" "}
+            <em>estimator</em>. Whether that makes a real VQE run cheaper is a separate
+            question, and mostly it does not; see the last section.
           </p>
         </div>
 
