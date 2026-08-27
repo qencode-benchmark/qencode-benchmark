@@ -1,0 +1,36 @@
+{
+ "molecule": "LiH",
+ "optimizer": "LBFGSB",
+ "scheme": "uniform",
+ "total_shots_budget": 10000000000,
+ "shots_per_eval": 10000000,
+ "seed": 8,
+ "tag": "LiH_LBFGSB_uniform_T10000000000_P10000000_s8",
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "n_qubits": 5,
+ "n_terms": 155,
+ "n_params": 15,
+ "entry_id": "LiH_ccpvdz_JW_HEA_v4_tapered__sha256_f044f66bd4bc8376",
+ "exact_energy_hartree": -7.983772976961489,
+ "max_evals": 1000,
+ "refuse_to_stop": false,
+ "evaluations": 512,
+ "restarts": 0,
+ "termination": [
+  {
+   "evals_at_stop": 512,
+   "status": 0,
+   "message": "CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH"
+  }
+ ],
+ "n_terminations": 1,
+ "shots_consumed": 5119994880,
+ "believed_energy_hartree": -7.277581970784089,
+ "final_energy_hartree": -7.274907274042511,
+ "best_energy_hartree": -7.274907273537154,
+ "gap_final_mha": 708.8657029189776,
+ "gap_best_mha": 708.865703424335,
+ "seconds": 64.1,
+ "status": "ok"
+}

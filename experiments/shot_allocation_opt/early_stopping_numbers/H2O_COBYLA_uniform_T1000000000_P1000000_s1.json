@@ -1,0 +1,36 @@
+{
+ "molecule": "H2O",
+ "optimizer": "COBYLA",
+ "scheme": "uniform",
+ "total_shots_budget": 1000000000,
+ "shots_per_eval": 1000000,
+ "seed": 1,
+ "tag": "H2O_COBYLA_uniform_T1000000000_P1000000_s1",
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "n_qubits": 4,
+ "n_terms": 62,
+ "n_params": 12,
+ "entry_id": "H2O_ccpvdz_JW_HEA_v4_tapered__sha256_6d66b3fceee03e10",
+ "exact_energy_hartree": -76.02733835858903,
+ "max_evals": 1000,
+ "refuse_to_stop": false,
+ "evaluations": 167,
+ "restarts": 0,
+ "termination": [
+  {
+   "evals_at_stop": 167,
+   "status": 1,
+   "message": "Optimization terminated successfully."
+  }
+ ],
+ "n_terminations": 1,
+ "shots_consumed": 166995491,
+ "believed_energy_hartree": -76.01233807196976,
+ "final_energy_hartree": -76.0036778709223,
+ "best_energy_hartree": -76.00368339565904,
+ "gap_final_mha": 23.660487666731456,
+ "gap_best_mha": 23.654962929995804,
+ "seconds": 7.6,
+ "status": "ok"
+}

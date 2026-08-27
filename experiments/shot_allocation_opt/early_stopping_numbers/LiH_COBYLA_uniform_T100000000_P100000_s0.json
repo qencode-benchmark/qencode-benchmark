@@ -1,0 +1,36 @@
+{
+ "molecule": "LiH",
+ "optimizer": "COBYLA",
+ "scheme": "uniform",
+ "total_shots_budget": 100000000,
+ "shots_per_eval": 100000,
+ "seed": 0,
+ "tag": "LiH_COBYLA_uniform_T100000000_P100000_s0",
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "n_qubits": 5,
+ "n_terms": 155,
+ "n_params": 15,
+ "entry_id": "LiH_ccpvdz_JW_HEA_v4_tapered__sha256_f044f66bd4bc8376",
+ "exact_energy_hartree": -7.983772976961489,
+ "max_evals": 1000,
+ "refuse_to_stop": false,
+ "evaluations": 113,
+ "restarts": 0,
+ "termination": [
+  {
+   "evals_at_stop": 113,
+   "status": 1,
+   "message": "Optimization terminated successfully."
+  }
+ ],
+ "n_terminations": 1,
+ "shots_consumed": 11293898,
+ "believed_energy_hartree": -7.339788836509462,
+ "final_energy_hartree": -7.289232378089436,
+ "best_energy_hartree": -7.289231976963375,
+ "gap_final_mha": 694.5405988720523,
+ "gap_best_mha": 694.5409999981135,
+ "seconds": 15.2,
+ "status": "ok"
+}

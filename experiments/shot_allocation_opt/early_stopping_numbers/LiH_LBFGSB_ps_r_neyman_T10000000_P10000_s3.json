@@ -1,0 +1,51 @@
+{
+ "molecule": "LiH",
+ "optimizer": "LBFGSB_ps_r",
+ "scheme": "neyman",
+ "total_shots_budget": 10000000,
+ "shots_per_eval": 10000,
+ "seed": 3,
+ "tag": "LiH_LBFGSB_ps_r_neyman_T10000000_P10000_s3",
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "n_qubits": 5,
+ "n_terms": 155,
+ "n_params": 15,
+ "entry_id": "LiH_ccpvdz_JW_HEA_v4_tapered__sha256_f044f66bd4bc8376",
+ "exact_energy_hartree": -7.983772976961489,
+ "max_evals": 1000,
+ "refuse_to_stop": true,
+ "evaluations": 1000,
+ "restarts": 4,
+ "termination": [
+  {
+   "evals_at_stop": 248,
+   "status": 0,
+   "message": "CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH"
+  },
+  {
+   "evals_at_stop": 496,
+   "status": 0,
+   "message": "CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH"
+  },
+  {
+   "evals_at_stop": 775,
+   "status": 0,
+   "message": "CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH"
+  },
+  {
+   "evals_at_stop": 992,
+   "status": 0,
+   "message": "CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH"
+  }
+ ],
+ "n_terminations": 4,
+ "shots_consumed": 9927576,
+ "believed_energy_hartree": -7.630902995948839,
+ "final_energy_hartree": -7.289968143390165,
+ "best_energy_hartree": -7.554464557034335,
+ "gap_final_mha": 693.804833571324,
+ "gap_best_mha": 429.3084199271533,
+ "seconds": 102.6,
+ "status": "ok"
+}

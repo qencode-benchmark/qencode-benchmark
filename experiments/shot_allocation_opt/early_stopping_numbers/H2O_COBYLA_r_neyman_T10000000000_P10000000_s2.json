@@ -1,0 +1,51 @@
+{
+ "molecule": "H2O",
+ "optimizer": "COBYLA_r",
+ "scheme": "neyman",
+ "total_shots_budget": 10000000000,
+ "shots_per_eval": 10000000,
+ "seed": 2,
+ "tag": "H2O_COBYLA_r_neyman_T10000000000_P10000000_s2",
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "n_qubits": 4,
+ "n_terms": 62,
+ "n_params": 12,
+ "entry_id": "H2O_ccpvdz_JW_HEA_v4_tapered__sha256_6d66b3fceee03e10",
+ "exact_energy_hartree": -76.02733835858903,
+ "max_evals": 1000,
+ "refuse_to_stop": true,
+ "evaluations": 1000,
+ "restarts": 4,
+ "termination": [
+  {
+   "evals_at_stop": 405,
+   "status": 1,
+   "message": "Optimization terminated successfully."
+  },
+  {
+   "evals_at_stop": 685,
+   "status": 1,
+   "message": "Optimization terminated successfully."
+  },
+  {
+   "evals_at_stop": 983,
+   "status": 1,
+   "message": "Optimization terminated successfully."
+  },
+  {
+   "evals_at_stop": 1000,
+   "status": 2,
+   "message": "Maximum number of function evaluations has been exceeded."
+  }
+ ],
+ "n_terminations": 4,
+ "shots_consumed": 9999969470,
+ "believed_energy_hartree": -76.02560919677306,
+ "final_energy_hartree": -76.02485003810953,
+ "best_energy_hartree": -76.02485003810956,
+ "gap_final_mha": 2.4883204795003167,
+ "gap_best_mha": 2.488320479471895,
+ "seconds": 42.6,
+ "status": "ok"
+}

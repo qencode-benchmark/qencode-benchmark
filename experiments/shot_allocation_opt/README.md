@@ -167,6 +167,17 @@ with COBYLA certifies 10/10 on exact arithmetic at 3e7 shots, while the best noi
 manages 2/10 at 1e8. Because the per-seed outcome is bimodal, that directory reports
 success rates rather than medians.
 
+
+## Early stopping, measured
+
+See [](early_stopping_numbers/), which sweeps noise at a fixed
+evaluation cap and records scipy status and message on every optimiser return. The
+behavioural claim above needs splitting in three: termination is strongly noise-graded for
+L-BFGS-B with parameter-shift gradients, weakly so for COBYLA, and **not at all** for
+finite differences, whose ~1e-8 differencing step is swamped equally at every noise level.
+The dominant mechanism is "the noisy objective stopped decreasing", not line-search
+failure, and  does not disable it.
+
 ## Reproducing
 
 ```bash

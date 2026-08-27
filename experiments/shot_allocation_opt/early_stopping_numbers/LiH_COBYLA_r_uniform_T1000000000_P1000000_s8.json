@@ -1,0 +1,46 @@
+{
+ "molecule": "LiH",
+ "optimizer": "COBYLA_r",
+ "scheme": "uniform",
+ "total_shots_budget": 1000000000,
+ "shots_per_eval": 1000000,
+ "seed": 8,
+ "tag": "LiH_COBYLA_r_uniform_T1000000000_P1000000_s8",
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "n_qubits": 5,
+ "n_terms": 155,
+ "n_params": 15,
+ "entry_id": "LiH_ccpvdz_JW_HEA_v4_tapered__sha256_f044f66bd4bc8376",
+ "exact_energy_hartree": -7.983772976961489,
+ "max_evals": 1000,
+ "refuse_to_stop": true,
+ "evaluations": 1000,
+ "restarts": 3,
+ "termination": [
+  {
+   "evals_at_stop": 370,
+   "status": 1,
+   "message": "Optimization terminated successfully."
+  },
+  {
+   "evals_at_stop": 743,
+   "status": 1,
+   "message": "Optimization terminated successfully."
+  },
+  {
+   "evals_at_stop": 1000,
+   "status": 2,
+   "message": "Maximum number of function evaluations has been exceeded."
+  }
+ ],
+ "n_terminations": 3,
+ "shots_consumed": 999922000,
+ "believed_energy_hartree": -7.693293169572415,
+ "final_energy_hartree": -7.67855975038845,
+ "best_energy_hartree": -7.67855975038845,
+ "gap_final_mha": 305.21322657303875,
+ "gap_best_mha": 305.21322657303875,
+ "seconds": 136.5,
+ "status": "ok"
+}

@@ -1,0 +1,36 @@
+{
+ "molecule": "H2O",
+ "optimizer": "LBFGSB_ps_r",
+ "scheme": "neyman",
+ "total_shots_budget": 10000000000,
+ "shots_per_eval": 10000000,
+ "seed": 3,
+ "tag": "H2O_LBFGSB_ps_r_neyman_T10000000000_P10000000_s3",
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "n_qubits": 4,
+ "n_terms": 62,
+ "n_params": 12,
+ "entry_id": "H2O_ccpvdz_JW_HEA_v4_tapered__sha256_6d66b3fceee03e10",
+ "exact_energy_hartree": -76.02733835858903,
+ "max_evals": 1000,
+ "refuse_to_stop": true,
+ "evaluations": 1000,
+ "restarts": 1,
+ "termination": [
+  {
+   "evals_at_stop": 1000,
+   "status": 0,
+   "message": "CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH"
+  }
+ ],
+ "n_terminations": 1,
+ "shots_consumed": 9999969449,
+ "believed_energy_hartree": -76.02731747472473,
+ "final_energy_hartree": -76.02710563357547,
+ "best_energy_hartree": -76.02710563357547,
+ "gap_final_mha": 0.2327250135607528,
+ "gap_best_mha": 0.2327250135607528,
+ "seconds": 25.9,
+ "status": "ok"
+}

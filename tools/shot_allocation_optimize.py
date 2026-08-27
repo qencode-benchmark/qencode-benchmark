@@ -270,24 +270,37 @@ def main():
                 g[i] = (f(p + e) - f(p - e)) / 2.0
             return g
 
+        termination = []
+
+        def _log_stop(r):
+            """One optimiser return: how far in, and what scipy said about it."""
+            termination.append({
+                "evals_at_stop": E.n_evals,
+                "status": int(getattr(r, "status", -1)),
+                "message": str(getattr(r, "message", ""))[:120],
+            })
+
         def once(x):
             rem = max(1, hard_cap - E.n_evals)
             if base_opt == "COBYLA":
                 kw = {"tol": 1e-14} if restart else {}
                 r = minimize(f, x, method="COBYLA",
                              options={"maxiter": rem, "rhobeg": 0.3}, **kw)
+                _log_stop(r)
                 return np.array(r.x)
             if base_opt == "LBFGSB":
                 o = {"maxfun": rem, "maxiter": rem}
                 if restart:
                     o.update({"ftol": 0.0, "gtol": 0.0})
                 r = minimize(f, x, method="L-BFGS-B", options=o)
+                _log_stop(r)
                 return np.array(r.x)
             if base_opt == "LBFGSB_ps":
                 o = {"maxfun": rem, "maxiter": rem}
                 if restart:
                     o.update({"ftol": 0.0, "gtol": 0.0})
                 r = minimize(f, x, method="L-BFGS-B", jac=grad_ps, options=o)
+                _log_stop(r)
                 return np.array(r.x)
             raise ValueError("no restart form for " + base_opt)
 
@@ -347,6 +360,8 @@ def main():
         rec.update({
             "evaluations": E.n_evals,
             "restarts": restarts[0],
+            "termination": termination,
+            "n_terminations": len(termination),
             "shots_consumed": E.shots_used,
             "believed_energy_hartree": (None if seen["best_noisy"] == float("inf")
                                         else seen["best_noisy"]),
