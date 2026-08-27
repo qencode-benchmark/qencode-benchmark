@@ -14,6 +14,27 @@ are in `tools/probe_*.py` and can be re-run.
 | Transition metals | **Would mostly produce research-tier entries** — one plausible candidate |
 | DMRG / selected-CI | **Skip permanently** — no probe needed, see below |
 
+## Decisions taken (2026-08-27)
+
+These probes were run to inform four decisions, which are now settled. The first two are
+written into [`LEADERBOARD_RULES_V2.md`](LEADERBOARD_RULES_V2.md) as dated amendments, so
+they govern eligibility rather than living only in a document like this one.
+
+1. **`default.qubit` stays the source of truth.** Any certified entry whose optimiser
+   contains a gradient-free component — plain COBYLA, or ADAPT-VQE with a COBYLA inner
+   optimiser — must be produced on it. That is 47 of the 54 current entries.
+2. **`lightning.qubit` is an optional, clearly labelled path for fully gradient-based
+   entries only**, carrying an explicit warning about trajectory divergence. 7 of 54
+   entries would be eligible today.
+3. **The suite is frozen** — no basis change, no new molecules, no transition metals —
+   until the paper pending on the v4.4 numbers is published.
+4. **DMRG and selected-CI are dropped**, not deferred.
+
+Effort continues on the items these probes were competing with: surfacing the classical
+baselines and resource estimates already in the database, packaging and a genuine
+five-minute quickstart, and the consolidated write-up of the shot-noise recommendations in
+[`SHOT_NOISE_AND_ALLOCATION.md`](SHOT_NOISE_AND_ALLOCATION.md).
+
 ---
 
 ## 1. Multi-backend

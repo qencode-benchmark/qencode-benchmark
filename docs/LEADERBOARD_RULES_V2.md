@@ -121,6 +121,62 @@ do not combine, and the product is dominated by whichever factor happens to be
 numerically larger. v2 blends the two *rankings* instead, which is scale-free.
 
 
+## Amendments to v2
+
+Amendments are dated and listed here rather than issued as a new version, because none of
+them changes the status of an existing entry or moves a published ranking. An amendment
+that did either would be a version bump.
+
+### 2026-08-27 — simulator backend eligibility
+
+**`default.qubit` is the reference backend.** Every entry in the database was produced on
+it (54 of 54), and it remains the source of truth.
+
+**An entry whose optimiser contains any gradient-free component must be produced on
+`default.qubit` to be certified.** That covers plain COBYLA and ADAPT-VQE with a COBYLA
+inner optimiser — 47 of the 54 current entries.
+
+**`lightning.qubit` is permitted only for fully gradient-based entries** (L-BFGS-B,
+ADAPT-VQE with a gradient-based inner optimiser — 7 of 54 today). Such an entry must
+record its backend in `run_config.backend_type`, which the pipeline already does, and must
+be displayed with that backend labelled.
+
+**Why the restriction.** The two backends agree on the arithmetic and disagree on the
+answer. Measured over H₂O, LiH, N₂ and benzene:
+
+| | worst disagreement |
+|---|---|
+| a single energy evaluation at a fixed point | 2.56 × 10⁻¹³ Ha |
+| after COBYLA (gradient-free) | 2.40 × 10⁻³ Ha — **2.40 mHa** |
+| after L-BFGS-B (parameter-shift) | 1.55 × 10⁻⁶ Ha |
+
+A gradient-free optimiser chooses its next step by comparing two nearly equal energies, so
+a difference in the thirteenth decimal can flip a comparison and send the run into a
+different local minimum. In one run benzene differed by **11.03 mHa** between backends —
+larger than the 10 mHa certification threshold, meaning two backends can place the same
+configuration on opposite sides of the certified line. The magnitude is not stable, because
+it is a question of which basin the run reaches.
+
+This is the same amplification that makes threaded BLAS unsafe, which is why the
+single-thread rule exists. A gradient-based optimiser is effectively immune: a 10⁻¹³
+perturbation moves a computed search direction by 10⁻¹³ rather than flipping a decision.
+
+`lightning.qubit` is roughly 1.8× faster. That speedup is real, and it is not worth a
+certification that depends on which simulator happened to run. Evidence and method:
+[`DEFERRED_TRACKS_FEASIBILITY.md`](DEFERRED_TRACKS_FEASIBILITY.md),
+`tools/probe_backend.py`, `tools/probe_backend_mechanism.py`.
+
+### 2026-08-27 — suite stability during publication
+
+The molecule catalogue, basis set and active spaces are **frozen** until the paper
+currently pending on the v4.4 numbers is published. A basis-set change re-runs and
+re-hashes every entry, which would move every figure that paper cites.
+
+This is a timing decision, not a rejection. A cc-pVTZ track has been measured and is
+cheaper than assumed — identical qubit counts, identical Pauli term counts, λ within 2%,
+so circuits and gate counts are unchanged and only the energies move. It is a *when*.
+
+
 ## Related
 
 - [`docs/TRUST_POLICY.md`](TRUST_POLICY.md) — certified vs research tier
