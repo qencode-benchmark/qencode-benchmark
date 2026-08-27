@@ -13,7 +13,7 @@
 Most published VQE results cannot be independently reproduced — different teams use different molecules, basis sets, encodings, active spaces, and error metrics, making cross-study comparison unreliable. QEncode fixes this with:
 
 - **Fixed benchmark definitions** — 16 molecules, cc-pVDZ basis, chemistry-driven active spaces, 3 qubit encodings, 3 ansatz families, CASCI reference energies
-- **Open-source pipeline** — one script (`generate_entry_v4.py`) with a pinned environment (`requirements-v4.txt`). Any result is independently reproducible
+- **Open-source pipeline** — `pip install qencode-benchmark`, or one script with a pinned environment. Any result is independently reproducible
 - **Enforced determinism** — the linear-algebra backend is pinned to a single thread before NumPy loads, because multi-threaded BLAS makes gradient-free VQE non-reproducible ([why](https://www.qencode-benchmark.org/blog/vqe-reproducibility-threading-bug))
 - **Signed certification** — entries are signed with Ed25519 and carry a SHA-256 provenance hash
 - **Public leaderboard** — certified entries ranked by accuracy gap, circuit cost, and balanced score
@@ -64,14 +64,28 @@ docker run --rm -v "$PWD/out:/work/out" qencode \
   --molecule H2 --mapping jordan_wigner --ansatz-type uccsd --out-dir /work/out
 ```
 
-**Local install:**
+**pip:**
+
+```bash
+pip install qencode-benchmark            # Python 3.10+
+
+# Run a single entry (H₂, Jordan-Wigner, UCCSD) — takes about ten seconds
+qencode run --molecule H2 --mapping jordan_wigner \
+  --ansatz-type uccsd --out-dir out
+```
+
+No clone needed — the molecule catalogue ships with the package. `qencode where` reports
+which mode you are in.
+
+**From a clone**, which additionally gives you the entry database and records the
+producing commit inside each entry:
 
 ```bash
 git clone https://github.com/qencode-benchmark/qencode-benchmark
 cd qencode-benchmark
-pip install -r requirements-v4.txt      # Python 3.11
+pip install -e .
 
-# Run a single entry (H₂, Jordan-Wigner, UCCSD) — takes about a minute
+# Run a single entry (H₂, Jordan-Wigner, UCCSD) — takes about ten seconds
 python scripts/generate_entry_v4.py \
   --molecule H2 --mapping jordan_wigner \
   --ansatz-type uccsd --out-dir releases/v4/db
@@ -173,12 +187,19 @@ qencode-db/
 ├── requirements-tools.txt      # Extra deps for the leaderboard scripts (pandas, cryptography)
 ├── Dockerfile                  # Pinned, single-threaded run environment
 ├── QUICKSTART.md               # Five-minute walkthrough
+├── pyproject.toml              # Package metadata, pinned deps, `qencode` entry point
+├── src/qencode/                # The installable package
+│   ├── __init__.py             # Public API: generate_entry, load_entry, gap_mha
+│   ├── cli.py                  # `qencode run | check | resources | where`
+│   ├── _paths.py               # Locates the checkout, or falls back to bundled data
+│   ├── pipeline/               # Main pipeline (PySCF → taper → VQE → JSON)
+│   └── data/                   # Molecule catalogues bundled into the wheel
 ├── scripts/
-│   ├── generate_entry_v4.py    # Main pipeline (PySCF → taper → VQE → JSON)
+│   ├── generate_entry_v4.py    # Compatibility shim onto qencode.pipeline
 │   ├── export_leaderboard_v4.py # JSON db → CSVs with deduplication
 │   ├── publish_leaderboard.py  # CSVs → Neon Postgres via /api/admin/publish-leaderboard
 │   ├── verify_entry.py         # Re-run any entry, auto-detects v3 vs v4 schema
-│   └── of_bridge.py            # OpenFermion integral → qubit Hamiltonian bridge
+│   └── of_bridge.py            # Compatibility shim onto qencode.pipeline
 ├── tools/
 │   └── check_vqe_reproducibility.py  # Reproducibility scorecard for any VQE setup
 ├── releases/

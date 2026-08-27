@@ -3,7 +3,7 @@
 By the end of this page you will have produced a benchmark entry on your own machine,
 checked that it reproduces, and compared it against the public leaderboard.
 
-You need Docker, **or** Python 3.11 and about 400 MB of dependencies.
+You need Python 3.10+ and about 400 MB of dependencies, **or** Docker.
 
 ---
 
@@ -17,28 +17,52 @@ cd qencode-benchmark
 docker build -t qencode .
 ```
 
-**Or locally** — Python 3.11 (Linux/macOS/WSL2; PySCF does not build natively on Windows):
+**Or with pip** — Python 3.10+ (Linux/macOS/WSL2; PySCF does not build natively on Windows):
+
+```bash
+pip install qencode-benchmark
+```
+
+That installs the pinned stack and puts a `qencode` command on your path. It works
+without a clone: the molecule catalogue ships with the package. Working from a clone
+gives you the entry database and full provenance, since an entry records the git commit
+that produced it:
 
 ```bash
 git clone https://github.com/qencode-benchmark/qencode-benchmark
 cd qencode-benchmark
-pip install -r requirements-v4.txt
+pip install -e .
 ```
+
+Check which you have with `qencode where`.
 
 ---
 
 ## 2. Run your first entry
 
-H₂ in a [2e, 2o] active space — four qubits, tapered to one. About a minute.
+H₂ in a [2e, 2o] active space — four qubits, tapered to one. About ten seconds.
 
 ```bash
+# pip
+qencode run --molecule H2 --mapping jordan_wigner --ansatz-type uccsd --out-dir out
+
 # Docker
 docker run --rm -v "$PWD/out:/work/out" qencode \
   --molecule H2 --mapping jordan_wigner --ansatz-type uccsd --out-dir /work/out
 
-# Local
+# from a clone, without installing
 python scripts/generate_entry_v4.py \
   --molecule H2 --mapping jordan_wigner --ansatz-type uccsd --out-dir out
+```
+
+All three run the same code. Or from Python:
+
+```python
+import qencode
+
+entry = qencode.generate_entry(molecule="H2", out_dir="out")
+print(qencode.gap_mha(entry), "mHa from exact")
+print(qencode.entry_hash(entry))
 ```
 
 Before computing anything, the pipeline runs a reproducibility guard. It refuses to

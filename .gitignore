@@ -69,3 +69,8 @@ releases/v2/cache/
 /*_vqe_partial.json
 /*_vqe_w[0-9]*.json
 /n2worker.py
+
+# packaging build artefacts
+*.egg-info/
+build/
+dist/

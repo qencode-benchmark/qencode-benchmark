@@ -3,14 +3,14 @@
 # The point of this image is not convenience alone. A VQE result is only
 # reproducible if the arithmetic is deterministic and the software stack is
 # recorded, so this image fixes both: it installs the exact pins from
-# requirements-v4.txt and restricts the linear-algebra backend to a single
-# thread before NumPy is ever imported.
+# pyproject.toml and restricts the linear-algebra backend to a single thread
+# before NumPy is ever imported.
 #
 #   docker build -t qencode .
 #   docker run --rm -v "$PWD/out:/work/out" qencode \
 #     --molecule H2 --mapping jordan_wigner --ansatz-type uccsd --out-dir /work/out
 #
-# Anything after the image name is passed straight to generate_entry_v4.py, so
+# Anything after the image name is passed straight to the entry generator, so
 #   docker run --rm qencode --help
 # prints the full option list.
 
@@ -39,17 +39,32 @@ ENV OMP_NUM_THREADS=1 \
 
 WORKDIR /work
 
-# Dependencies first so edits to the pipeline do not invalidate the layer.
+# Dependencies first, from the pins alone, so edits to the pipeline do not
+# invalidate the layer that takes minutes to build.
 COPY requirements-v4.txt .
 RUN pip install --no-cache-dir -r requirements-v4.txt
 
+# The package, then everything the pipeline reads at runtime.
+COPY pyproject.toml README.md ./
+COPY src/ src/
 COPY scripts/ scripts/
 COPY tools/ tools/
-COPY molecules_v4.json .
+COPY molecules_v4.json molecules_v3.json ./
 COPY schema/ schema/
+
+# Deps are already present and pinned above; --no-deps keeps pip from resolving
+# them a second time.
+RUN pip install --no-cache-dir --no-deps .
+
+# QENCODE_REPO makes the checkout explicit rather than inferred, so the pipeline
+# reads the catalogue and the version pins from the files copied above rather
+# than from the copies bundled inside the wheel.
+ENV QENCODE_REPO=/work
 
 # Entries land here; mount a volume over it to keep them.
 RUN mkdir -p /work/out
 
-ENTRYPOINT ["python", "scripts/generate_entry_v4.py"]
+# `qencode run` and `python scripts/generate_entry_v4.py` are the same code; the
+# script remains as a compatibility shim for documented commands.
+ENTRYPOINT ["qencode", "run"]
 CMD ["--help"]

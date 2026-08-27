@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qencode-benchmark"
+version = "4.4.0"
+description = "Reproducible VQE quantum chemistry benchmarking: generate, verify and compare certified benchmark entries"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "QEncode" }]
+keywords = [
+    "quantum-computing", "vqe", "quantum-chemistry", "benchmark",
+    "reproducibility", "variational-quantum-eigensolver", "pennylane", "pyscf",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+# Runtime pins match requirements-v4.txt. A VQE result is only reproducible if the stack
+# is, so these are exact rather than lower bounds — see docs/LEADERBOARD_RULES_V2.md.
+dependencies = [
+    "numpy==2.2.6",
+    "scipy==1.13.1",
+    "pennylane==0.45.0",
+    "pyscf==2.6.2",
+    "openfermion==1.6.1",
+]
+
+[project.optional-dependencies]
+# Analysis and tooling only — no chemistry stack needed to check a result or read a
+# leaderboard export, which is the point of keeping them separate.
+tools = ["pandas==2.2.3", "PyYAML==6.0.2", "cryptography==43.0.1"]
+dev = ["pytest>=7", "build>=1.0", "twine>=5.0"]
+
+[project.urls]
+Homepage = "https://www.qencode-benchmark.org"
+Leaderboard = "https://www.qencode-benchmark.org/leaderboard"
+Repository = "https://github.com/qencode-benchmark/qencode-benchmark"
+Documentation = "https://www.qencode-benchmark.org/methodology"
+
+[project.scripts]
+qencode = "qencode.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"qencode" = ["data/*.json", "data/*.txt"]
