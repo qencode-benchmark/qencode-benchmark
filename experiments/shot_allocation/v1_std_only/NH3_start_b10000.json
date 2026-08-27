@@ -1,0 +1,56 @@
+{
+ "molecule": "NH3",
+ "state": "start",
+ "budget": 10000,
+ "tag": "NH3_start_b10000",
+ "repeats": 40,
+ "pilot_frac": 0.1,
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "source_entry": "NH3_ccpvdz_JW_HEA_v4_tapered__sha256_07291783190d6a4e.json",
+ "opt_nfev": 0,
+ "analytic": {
+  "std_uniform_mha": 24.036773102533626,
+  "std_weighted_mha": 21.378022881377493,
+  "std_neyman_mha": 14.800452108923245,
+  "pred_neyman_vs_uniform": 1.624056679190345,
+  "pred_neyman_vs_weighted": 1.4444168815957052
+ },
+ "n_terms": 132,
+ "n_qubits": 5,
+ "n_live_terms": 131,
+ "lambda": 59.5386139501505,
+ "zero_variance_terms": 0,
+ "exact_energy": -55.06030779710003,
+ "schemes": {
+  "uniform": {
+   "std_mha": 24.053971671812192,
+   "mean_err_mha": 1.6963691938940428,
+   "shots": 9956,
+   "terms_funded": 131
+  },
+  "weighted": {
+   "std_mha": 24.213216038521445,
+   "mean_err_mha": -5.499597374075904,
+   "shots": 9938,
+   "terms_funded": 131
+  },
+  "neyman": {
+   "std_mha": 8.005007685059276,
+   "mean_err_mha": 342.3331227283981,
+   "shots": 9944,
+   "terms_funded": 110
+  },
+  "oracle": {
+   "std_mha": 13.897515895690063,
+   "mean_err_mha": -1.4192360041889174,
+   "shots": 9926,
+   "terms_funded": 131
+  }
+ },
+ "neyman_vs_uniform": 3.004865531448153,
+ "neyman_vs_weighted": 3.0247586249933938,
+ "neyman_vs_oracle": 0.5760027723761634,
+ "runtime_s": 0.2,
+ "status": "ok"
+}

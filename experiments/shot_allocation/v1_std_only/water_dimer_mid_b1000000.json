@@ -1,0 +1,56 @@
+{
+ "molecule": "water_dimer",
+ "state": "mid",
+ "budget": 1000000,
+ "tag": "water_dimer_mid_b1000000",
+ "repeats": 40,
+ "pilot_frac": 0.1,
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "source_entry": "water_dimer_ccpvdz_JW_HEA_v4_tapered__sha256_bfa557aad3442cc8.json",
+ "opt_nfev": 40,
+ "analytic": {
+  "std_uniform_mha": 10.141475978840887,
+  "std_weighted_mha": 3.2426007384610656,
+  "std_neyman_mha": 3.20883770970919,
+  "pred_neyman_vs_uniform": 3.16048267201397,
+  "pred_neyman_vs_weighted": 1.0105218873019712
+ },
+ "n_terms": 155,
+ "n_qubits": 5,
+ "n_live_terms": 154,
+ "lambda": 154.15792753721914,
+ "zero_variance_terms": 0,
+ "exact_energy": -151.32467810545046,
+ "schemes": {
+  "uniform": {
+   "std_mha": 9.27422774075935,
+   "mean_err_mha": 1.3339192147441281,
+   "shots": 999922,
+   "terms_funded": 154
+  },
+  "weighted": {
+   "std_mha": 3.187921102784931,
+   "mean_err_mha": 0.4061189041522084,
+   "shots": 999927,
+   "terms_funded": 154
+  },
+  "neyman": {
+   "std_mha": 3.4300878660721863,
+   "mean_err_mha": 0.18269614349719632,
+   "shots": 999925,
+   "terms_funded": 154
+  },
+  "oracle": {
+   "std_mha": 3.3942970252088585,
+   "mean_err_mha": -0.5805500447308987,
+   "shots": 999931,
+   "terms_funded": 154
+  }
+ },
+ "neyman_vs_uniform": 2.7037872214566105,
+ "neyman_vs_weighted": 0.92939925368018,
+ "neyman_vs_oracle": 1.0105444045107177,
+ "runtime_s": 0.5,
+ "status": "ok"
+}

@@ -1,0 +1,56 @@
+{
+ "molecule": "benzene",
+ "state": "start",
+ "budget": 100000,
+ "tag": "benzene_start_b100000",
+ "repeats": 40,
+ "pilot_frac": 0.1,
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "source_entry": "benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_3d3de57a516e599d.json",
+ "opt_nfev": 0,
+ "analytic": {
+  "std_uniform_mha": 32.847696203296174,
+  "std_weighted_mha": 27.762242470972712,
+  "std_neyman_mha": 22.38784686150594,
+  "pred_neyman_vs_uniform": 1.4672110456399041,
+  "pred_neyman_vs_weighted": 1.2400586194247916
+ },
+ "n_terms": 914,
+ "n_qubits": 9,
+ "n_live_terms": 913,
+ "lambda": 241.7144703012849,
+ "zero_variance_terms": 0,
+ "exact_energy": -225.40056851775975,
+ "schemes": {
+  "uniform": {
+   "std_mha": 32.36603764173163,
+   "mean_err_mha": 3.284321067212659,
+   "shots": 99517,
+   "terms_funded": 913
+  },
+  "weighted": {
+   "std_mha": 28.48500449374521,
+   "mean_err_mha": 6.8780025980572645,
+   "shots": 99529,
+   "terms_funded": 897
+  },
+  "neyman": {
+   "std_mha": 22.944599057426572,
+   "mean_err_mha": -2221.6187159953333,
+   "shots": 99586,
+   "terms_funded": 836
+  },
+  "oracle": {
+   "std_mha": 24.07465313118579,
+   "mean_err_mha": 5.246076728809612,
+   "shots": 99486,
+   "terms_funded": 901
+  }
+ },
+ "neyman_vs_uniform": 1.4106168323414474,
+ "neyman_vs_weighted": 1.2414688276945658,
+ "neyman_vs_oracle": 0.9530604213651007,
+ "runtime_s": 1.5,
+ "status": "ok"
+}

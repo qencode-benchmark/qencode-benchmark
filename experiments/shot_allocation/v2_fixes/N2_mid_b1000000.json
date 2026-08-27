@@ -1,0 +1,89 @@
+{
+ "molecule": "N2",
+ "state": "mid",
+ "budget": 1000000,
+ "tag": "N2_mid_b1000000",
+ "repeats": 200,
+ "pilot_frac": 0.1,
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "version": 2,
+ "source_entry": "N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_17841edecba23ac1.json",
+ "opt_nfev": 40,
+ "pilot_shots_per_term": 265,
+ "diagnostic": {
+  "n_sigma_hat_zero": 0,
+  "mean_abs_c_killed": 0.0,
+  "mean_abs_c_kept": 0.045058895091212324,
+  "sum_abs_c_killed": 0.0,
+  "lambda": 16.987203449387046,
+  "mean_abs_sigma_killed": 0.0,
+  "mean_abs_sigma_kept": 0.952335608898829
+ },
+ "n_terms": 378,
+ "n_qubits": 8,
+ "n_live_terms": 377,
+ "lambda": 122.47607631909416,
+ "zero_variance_terms": 0,
+ "exact_energy": -107.15422030275043,
+ "schemes": {
+  "uniform": {
+   "std_mha": 25.809810450911755,
+   "bias_mha": 1.2832976815388975,
+   "rmse_mha": 25.777168907268813,
+   "shots": 999804,
+   "terms_funded": 377
+  },
+  "weighted": {
+   "std_mha": 14.810303546017,
+   "bias_mha": 0.5352720184959026,
+   "rmse_mha": 14.782925346606204,
+   "shots": 999822,
+   "terms_funded": 377
+  },
+  "oracle": {
+   "std_mha": 12.987475250655116,
+   "bias_mha": -0.16734890198222274,
+   "rmse_mha": 12.956046714736885,
+   "shots": 999816,
+   "terms_funded": 377
+  },
+  "naive": {
+   "std_mha": 14.217635191547695,
+   "bias_mha": 1.02125277284415,
+   "rmse_mha": 14.218769352997382,
+   "shots": 999821,
+   "terms_funded": 377
+  },
+  "retain": {
+   "std_mha": 14.217635191547695,
+   "bias_mha": 1.02125277284415,
+   "rmse_mha": 14.218769352997382,
+   "shots": 999821,
+   "terms_funded": 377
+  },
+  "shrunk": {
+   "std_mha": 14.52390958578172,
+   "bias_mha": 1.335938659096314,
+   "rmse_mha": 14.54901927995616,
+   "shots": 999803,
+   "terms_funded": 377
+  },
+  "fixed": {
+   "std_mha": 15.442097225929624,
+   "bias_mha": 0.9006989253066422,
+   "rmse_mha": 15.429754808661857,
+   "shots": 999812,
+   "terms_funded": 377
+  },
+  "pooled": {
+   "std_mha": 13.040911391455953,
+   "bias_mha": -9.346614306977585,
+   "rmse_mha": 16.017935012778292,
+   "shots": 999821,
+   "terms_funded": 377
+  }
+ },
+ "runtime_s": 2.8,
+ "status": "ok"
+}

@@ -1,0 +1,89 @@
+{
+ "molecule": "benzene",
+ "state": "converged",
+ "budget": 100000,
+ "tag": "benzene_converged_b100000",
+ "repeats": 200,
+ "pilot_frac": 0.1,
+ "reps": 2,
+ "pennylane": "0.45.0",
+ "version": 2,
+ "source_entry": "benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_3d3de57a516e599d.json",
+ "opt_nfev": 3000,
+ "pilot_shots_per_term": 10,
+ "diagnostic": {
+  "n_sigma_hat_zero": 56,
+  "mean_abs_c_killed": 0.10770148928932761,
+  "mean_abs_c_kept": 0.008404582458287688,
+  "sum_abs_c_killed": 6.031283400202346,
+  "lambda": 13.234010566954893,
+  "mean_abs_sigma_killed": 0.2694423671998903,
+  "mean_abs_sigma_kept": 0.9822891719381541
+ },
+ "n_terms": 914,
+ "n_qubits": 9,
+ "n_live_terms": 913,
+ "lambda": 241.7144703012849,
+ "zero_variance_terms": 0,
+ "exact_energy": -230.44136319353436,
+ "schemes": {
+  "uniform": {
+   "std_mha": 42.20885087464116,
+   "bias_mha": 2.786033958329881,
+   "rmse_mha": 42.19527392865295,
+   "shots": 99517,
+   "terms_funded": 913
+  },
+  "weighted": {
+   "std_mha": 31.616402138950896,
+   "bias_mha": -0.2370516799885536,
+   "rmse_mha": 31.538152978412935,
+   "shots": 99529,
+   "terms_funded": 897
+  },
+  "oracle": {
+   "std_mha": 23.63333727406181,
+   "bias_mha": 2.6921300187154884,
+   "rmse_mha": 23.727400228296883,
+   "shots": 99569,
+   "terms_funded": 901
+  },
+  "naive": {
+   "std_mha": 19.7476773114712,
+   "bias_mha": 1736.6820144007988,
+   "rmse_mha": 1736.7937240929516,
+   "shots": 99571,
+   "terms_funded": 845
+  },
+  "retain": {
+   "std_mha": 19.747677311471204,
+   "bias_mha": 1.7679450045307021,
+   "rmse_mha": 19.777424881439817,
+   "shots": 99571,
+   "terms_funded": 845
+  },
+  "shrunk": {
+   "std_mha": 29.12153376167676,
+   "bias_mha": 1.743615658000408,
+   "rmse_mha": 29.100921043020147,
+   "shots": 99538,
+   "terms_funded": 897
+  },
+  "fixed": {
+   "std_mha": 31.541696981068068,
+   "bias_mha": 3.5201958063453276,
+   "rmse_mha": 31.659059267738918,
+   "shots": 99515,
+   "terms_funded": 913
+  },
+  "pooled": {
+   "std_mha": 18.2833614620558,
+   "bias_mha": -0.29555566669614564,
+   "rmse_mha": 18.239990487183423,
+   "shots": 99571,
+   "terms_funded": 913
+  }
+ },
+ "runtime_s": 167.7,
+ "status": "ok"
+}

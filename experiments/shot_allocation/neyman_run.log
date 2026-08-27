@@ -1,0 +1,114 @@
+=== neyman validation: 90 jobs, 30 at a time, 40 cores ===
+Thu Aug 27 10:40:43 AM CEST 2026
+
+--- first: is the binomial sampling model equal to real circuit sampling? ---
+/home/lpejov/venv45/lib/python3.11/site-packages/pennylane/devices/device_api.py:207: PennyLaneDeprecationWarning: Setting shots on device is deprecated. Please use the `set_shots` transform on the respective QNode instead.
+  warnings.warn(
+H2O  L=62  shots/term=500  repeats=200
+  circuit sampling : std =  11.4507 mHa   mean err =   0.0402
+  binomial model   : std =  11.1610 mHa   mean err =   0.9203
+  ratio A/B = 1.0260   (1 +- 0.196 expected from sampling noise alone)
+  VERDICT: consistent -- binomial model is valid
+/home/lpejov/venv45/lib/python3.11/site-packages/pennylane/devices/device_api.py:207: PennyLaneDeprecationWarning: Setting shots on device is deprecated. Please use the `set_shots` transform on the respective QNode instead.
+  warnings.warn(
+BeH2  L=20  shots/term=500  repeats=200
+  circuit sampling : std =   6.6948 mHa   mean err =  -0.8197
+  binomial model   : std =   7.0432 mHa   mean err =   0.3646
+  ratio A/B = 0.9505   (1 +- 0.196 expected from sampling noise alone)
+  VERDICT: consistent -- binomial model is valid
+
+--- main grid ---
+BeH2_start_b1000000    L=20   uni=    0.740 wgt=    0.864 ney=    0.429 | meas   1.72x  theory   1.43x
+BeH2_start_b100000     L=20   uni=    1.878 wgt=    2.444 ney=    1.083 | meas   1.73x  theory   1.43x
+BeH2_mid_b1000000      L=20   uni=    0.991 wgt=    0.843 ney=    0.787 | meas   1.26x  theory   1.40x
+BeH2_mid_b10000        L=20   uni=    7.924 wgt=    8.696 ney=    4.676 | meas   1.69x  theory   1.40x
+BeH2_start_b10000      L=20   uni=    7.171 wgt=    8.027 ney=    3.021 | meas   2.37x  theory   1.43x
+H4_start_b10000        L=132  uni=   20.597 wgt=   32.399 ney=   16.791 | meas   1.23x  theory   1.20x
+H4_start_b100000       L=132  uni=    9.078 wgt=    8.818 ney=    6.043 | meas   1.50x  theory   1.20x
+H2O_start_b1000000     L=62   uni=    2.272 wgt=    1.974 ney=    1.062 | meas   2.14x  theory   1.74x
+H2O_start_b10000       L=62   uni=   24.114 wgt=   15.807 ney=    7.479 | meas   3.22x  theory   1.74x
+H2O_start_b100000      L=62   uni=    5.475 wgt=    4.627 ney=    3.335 | meas   1.64x  theory   1.74x
+NH3_start_b1000000     L=132  uni=    2.160 wgt=    2.274 ney=    1.521 | meas   1.42x  theory   1.62x
+NH3_start_b100000      L=132  uni=    6.049 wgt=    6.806 ney=    4.631 | meas   1.31x  theory   1.62x
+NH3_start_b10000       L=132  uni=   24.054 wgt=   24.213 ney=    8.005 | meas   3.00x  theory   1.62x
+H4_start_b1000000      L=132  uni=    2.805 wgt=    3.180 ney=    2.163 | meas   1.30x  theory   1.20x
+BeH2_mid_b100000       L=20   uni=    2.601 wgt=    2.385 ney=    2.007 | meas   1.30x  theory   1.40x
+H2O_mid_b100000        L=62   uni=   23.074 wgt=   11.142 ney=   11.346 | meas   2.03x  theory   2.55x
+H2O_converged_b100000  L=62   uni=    2.551 wgt=    4.929 ney=    1.893 | meas   1.35x  theory   1.48x
+H2O_mid_b10000         L=62   uni=   95.674 wgt=   33.758 ney=   29.262 | meas   3.27x  theory   2.55x
+H2O_mid_b1000000       L=62   uni=    7.707 wgt=    3.821 ney=    4.040 | meas   1.91x  theory   2.55x
+H4_mid_b100000         L=132  uni=   22.078 wgt=   12.674 ney=   14.368 | meas   1.54x  theory   1.76x
+H4_mid_b10000          L=132  uni=   60.409 wgt=   38.824 ney=   37.837 | meas   1.60x  theory   1.76x
+H4_mid_b1000000        L=132  uni=    7.656 wgt=    3.688 ney=    3.930 | meas   1.95x  theory   1.76x
+H2O_converged_b1000000 L=62   uni=    0.863 wgt=    1.612 ney=    0.577 | meas   1.50x  theory   1.48x
+NH3_mid_b100000        L=132  uni=   18.587 wgt=    9.812 ney=    8.651 | meas   2.15x  theory   2.31x
+H2O_converged_b10000   L=62   uni=    8.213 wgt=   16.857 ney=    4.555 | meas   1.80x  theory   1.48x
+NH3_mid_b10000         L=132  uni=   60.465 wgt=   31.174 ney=   23.765 | meas   2.54x  theory   2.31x
+NH3_mid_b1000000       L=132  uni=    4.881 wgt=    3.090 ney=    2.900 | meas   1.68x  theory   2.31x
+LiH_start_b10000       L=155  uni=   41.236 wgt=   22.043 ney=    4.567 | meas   9.03x  theory   3.00x
+water_dimer_mid_b100000 L=155  uni=   31.672 wgt=   11.279 ney=   11.767 | meas   2.69x  theory   3.16x
+LiH_start_b100000      L=155  uni=   13.840 wgt=    5.104 ney=    2.566 | meas   5.39x  theory   3.00x
+water_dimer_mid_b1000000 L=155  uni=    9.274 wgt=    3.188 ney=    3.430 | meas   2.70x  theory   3.16x
+LiH_start_b1000000     L=155  uni=    3.898 wgt=    1.622 ney=    1.290 | meas   3.02x  theory   3.00x
+water_dimer_start_b10000 L=155  uni=   18.032 wgt=   15.436 ney=    5.122 | meas   3.52x  theory   2.10x
+LiH_mid_b1000000       L=155  uni=    4.979 wgt=    3.126 ney=    2.195 | meas   2.27x  theory   2.38x
+water_dimer_start_b1000000 L=155  uni=    1.825 wgt=    1.703 ney=    1.023 | meas   1.78x  theory   2.10x
+water_dimer_start_b100000 L=155  uni=    7.395 wgt=    4.468 ney=    2.619 | meas   2.82x  theory   2.10x
+LiH_mid_b10000         L=155  uni=   43.828 wgt=   30.164 ney=    8.627 | meas   5.08x  theory   2.38x
+LiH_mid_b100000        L=155  uni=   11.829 wgt=    8.841 ney=    4.779 | meas   2.48x  theory   2.38x
+water_dimer_mid_b10000 L=155  uni=   89.692 wgt=   24.352 ney=   32.070 | meas   2.80x  theory   3.16x
+C4H4_start_b100000     L=185  uni=    5.469 wgt=    4.538 ney=    2.554 | meas   2.14x  theory   1.81x
+C4H4_start_b10000      L=185  uni=   14.706 wgt=   11.983 ney=    4.646 | meas   3.17x  theory   1.81x
+C4H4_start_b1000000    L=185  uni=    2.018 wgt=    1.329 ney=    1.145 | meas   1.76x  theory   1.81x
+C4H4_mid_b10000        L=185  uni=   56.199 wgt=   25.899 ney=   15.306 | meas   3.67x  theory   2.37x
+N2_start_b10000        L=378  uni=   96.836 wgt=  102.312 ney=   19.249 | meas   5.03x  theory   1.38x
+N2_start_b100000       L=378  uni=   24.585 wgt=   30.175 ney=   18.101 | meas   1.36x  theory   1.38x
+N2_start_b1000000      L=378  uni=    9.372 wgt=    7.749 ney=    7.475 | meas   1.25x  theory   1.38x
+C4H4_mid_b1000000      L=185  uni=    5.024 wgt=    2.328 ney=    2.701 | meas   1.86x  theory   2.37x
+C4H4_mid_b100000       L=185  uni=   18.610 wgt=    8.101 ney=    8.170 | meas   2.28x  theory   2.37x
+N2_mid_b1000000        L=378  uni=   25.958 wgt=   14.820 ney=   15.691 | meas   1.65x  theory   1.83x
+BeH2_converged_b10000  L=20   uni=    5.858 wgt=    8.966 ney=    2.394 | meas   2.45x  theory   1.46x
+BeH2_converged_b1000000 L=20   uni=    0.573 wgt=    0.763 ney=    0.581 | meas   0.99x  theory   1.46x
+BeH2_converged_b100000 L=20   uni=    1.946 wgt=    2.868 ney=    1.068 | meas   1.82x  theory   1.46x
+N2_mid_b100000         L=378  uni=   76.573 wgt=   46.750 ney=   38.850 | meas   1.97x  theory   1.83x
+N2_mid_b10000          L=378  uni=  295.369 wgt=  146.947 ney=   56.207 | meas   5.25x  theory   1.83x
+benzene_start_b10000   L=914  uni=  116.825 wgt=   92.980 ney=   33.226 | meas   3.52x  theory   1.47x
+benzene_start_b100000  L=914  uni=   32.366 wgt=   28.485 ney=   22.945 | meas   1.41x  theory   1.47x
+benzene_start_b1000000 L=914  uni=   11.309 wgt=    8.930 ney=    7.568 | meas   1.49x  theory   1.47x
+H6_start_b10000        L=919  uni=  124.956 wgt=  115.926 ney=   48.832 | meas   2.56x  theory   1.29x
+benzene_mid_b100000    L=914  uni=   89.100 wgt=   47.509 ney=   48.787 | meas   1.83x  theory   2.47x
+H6_start_b1000000      L=919  uni=   12.360 wgt=   12.483 ney=   10.140 | meas   1.22x  theory   1.29x
+H6_start_b100000       L=919  uni=   41.752 wgt=   38.003 ney=   29.417 | meas   1.42x  theory   1.29x
+benzene_mid_b10000     L=914  uni=  399.298 wgt=  129.164 ney=   68.553 | meas   5.82x  theory   2.47x
+benzene_mid_b1000000   L=914  uni=   38.482 wgt=   14.630 ney=   14.122 | meas   2.72x  theory   2.47x
+H6_mid_b10000          L=919  uni=  269.591 wgt=  178.358 ney=   74.612 | meas   3.61x  theory   1.87x
+H6_mid_b100000         L=919  uni=   78.174 wgt=   48.787 ney=   60.504 | meas   1.29x  theory   1.87x
+H6_mid_b1000000        L=919  uni=   29.600 wgt=   19.047 ney=   18.158 | meas   1.63x  theory   1.87x
+H4_converged_b10000    L=132  uni=   29.015 wgt=   26.597 ney=   15.705 | meas   1.85x  theory   1.17x
+H4_converged_b1000000  L=132  uni=    2.318 wgt=    2.523 ney=    1.615 | meas   1.44x  theory   1.17x
+water_dimer_converged_b10000 L=155  uni=   10.220 wgt=   14.888 ney=    8.150 | meas   1.25x  theory   1.82x
+water_dimer_converged_b100000 L=155  uni=    3.020 wgt=    3.599 ney=    1.686 | meas   1.79x  theory   1.82x
+H4_converged_b100000   L=132  uni=    8.200 wgt=    9.640 ney=    5.694 | meas   1.44x  theory   1.17x
+NH3_converged_b10000   L=132  uni=   15.476 wgt=   21.747 ney=    7.880 | meas   1.96x  theory   1.73x
+LiH_converged_b100000  L=155  uni=    3.119 wgt=    4.910 ney=    1.565 | meas   1.99x  theory   2.03x
+water_dimer_converged_b1000000 L=155  uni=    1.083 wgt=    1.535 ney=    0.644 | meas   1.68x  theory   1.82x
+NH3_converged_b100000  L=132  uni=    5.140 wgt=    5.440 ney=    2.627 | meas   1.96x  theory   1.73x
+NH3_converged_b1000000 L=132  uni=    1.707 wgt=    2.121 ney=    0.858 | meas   1.99x  theory   1.73x
+LiH_converged_b1000000 L=155  uni=    0.951 wgt=    1.890 ney=    0.599 | meas   1.59x  theory   2.03x
+C4H4_converged_b10000  L=185  uni=    8.753 wgt=   13.835 ney=    4.462 | meas   1.96x  theory   1.88x
+LiH_converged_b10000   L=155  uni=    9.791 wgt=   20.449 ney=    4.663 | meas   2.10x  theory   2.03x
+C4H4_converged_b100000 L=185  uni=    2.917 wgt=    4.266 ney=    1.373 | meas   2.12x  theory   1.88x
+C4H4_converged_b1000000 L=185  uni=    1.080 wgt=    1.103 ney=    0.461 | meas   2.34x  theory   1.88x
+N2_converged_b10000    L=378  uni=  113.947 wgt=   91.562 ney=   22.428 | meas   5.08x  theory   1.40x
+N2_converged_b100000   L=378  uni=   32.666 wgt=   26.293 ney=   17.737 | meas   1.84x  theory   1.40x
+N2_converged_b1000000  L=378  uni=   11.626 wgt=   10.154 ney=    6.359 | meas   1.83x  theory   1.40x
+benzene_converged_b10000 L=914  uni=  135.911 wgt=   99.098 ney=   38.335 | meas   3.55x  theory   1.67x
+benzene_converged_b100000 L=914  uni=   36.051 wgt=   36.069 ney=   18.790 | meas   1.92x  theory   1.67x
+H6_converged_b100000   L=919  uni=   50.329 wgt=   37.552 ney=   31.817 | meas   1.58x  theory   1.38x
+benzene_converged_b1000000 L=914  uni=   11.638 wgt=   10.456 ney=    8.188 | meas   1.42x  theory   1.67x
+H6_converged_b10000    L=919  uni=  156.520 wgt=  137.716 ney=   58.874 | meas   2.66x  theory   1.38x
+H6_converged_b1000000  L=919  uni=   16.915 wgt=   12.563 ney=   13.579 | meas   1.25x  theory   1.38x
+
+=== done ===
+Thu Aug 27 10:44:49 AM CEST 2026
+results: 90 files in /home/lpejov/qencode/neyman_valid
