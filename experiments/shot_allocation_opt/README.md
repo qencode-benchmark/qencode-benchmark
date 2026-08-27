@@ -156,6 +156,17 @@ Neyman alone recovers nothing on H2O/COBYLA -- the two are complementary. That d
 also shows L-BFGS-B with finite-difference gradients is unrescuable under sampling noise,
 and that the 10% pilot fails to pay for itself in one cell of six.
 
+
+## Budget scaling: where does allocation quality start to matter?
+
+See [](budget_scaling/). Below 1e8 shots nothing works under sampling
+noise -- every scheme, every optimiser, 0/10 seeds certifying from 1e6 through 3e7 -- so
+allocation quality is irrelevant across four budget decades and then worth two orders of
+magnitude in the last step. The measurement penalty is worth more than 30x in budget: H2O
+with COBYLA certifies 10/10 on exact arithmetic at 3e7 shots, while the best noisy scheme
+manages 2/10 at 1e8. Because the per-seed outcome is bimodal, that directory reports
+success rates rather than medians.
+
 ## Reproducing
 
 ```bash
