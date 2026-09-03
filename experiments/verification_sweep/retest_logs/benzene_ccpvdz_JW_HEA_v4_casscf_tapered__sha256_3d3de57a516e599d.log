@@ -1,0 +1,16 @@
+
+[1mQEncode Entry Verifier[0m
+  Entry:    benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_3d3de57a516e599d.json
+  Molecule: benzene  |  Basis: cc-pvdz  |  Mapping: jordan_wigner  |  Ansatz: hardware_efficient
+  Hash:     3d3de57a516e599d…  [92m✓ not tampered[0m
+  Mode:     energy tolerance ± 1e-06 Ha  (cert. threshold: 1e-2 Ha)
+
+  [1m···[0m  Schema version: 4.0.0 → using generate_entry_v4.py
+  [1m···[0m  Running: --molecule benzene --basis cc-pvdz --mapping jordan_wigner --ansatz-type hardware_efficient --multistart 30 --seed 42 --out-dir /tmp/tmprokgrba9 --no-colour --max-iter 1000 --orbital-opt casscf --reps 6
+
+  Stored  VQE energy: -230.6591810949 Ha
+  Generated VQE:      -230.6591810949 Ha
+  |ΔE|:               0.000e+00 Ha   tolerance: 1e-06 Ha
+  Stored VQE gap:     1.280e-01 Ha  (vs 1e-2 Ha cert. threshold)
+
+[92m  [PASS][0m  PASS — VQE energy reproduced within 1e-06 Ha

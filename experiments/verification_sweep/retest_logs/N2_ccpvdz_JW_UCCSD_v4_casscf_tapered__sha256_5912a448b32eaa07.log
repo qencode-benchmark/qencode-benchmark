@@ -1,0 +1,16 @@
+
+[1mQEncode Entry Verifier[0m
+  Entry:    N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_5912a448b32eaa07.json
+  Molecule: N2  |  Basis: cc-pvdz  |  Mapping: jordan_wigner  |  Ansatz: uccsd
+  Hash:     5912a448b32eaa07…  [92m✓ not tampered[0m
+  Mode:     energy tolerance ± 1e-06 Ha  (cert. threshold: 1e-2 Ha)
+
+  [1m···[0m  Schema version: 4.0.0 → using generate_entry_v4.py
+  [1m···[0m  Running: --molecule N2 --basis cc-pvdz --mapping jordan_wigner --ansatz-type uccsd --multistart 1 --seed 42 --out-dir /tmp/tmp596wkg65 --no-colour --max-iter 10000 --orbital-opt casscf
+
+  Stored  VQE energy: -109.0791266097 Ha
+  Generated VQE:      -109.0791266097 Ha
+  |ΔE|:               0.000e+00 Ha   tolerance: 1e-06 Ha
+  Stored VQE gap:     1.083e-02 Ha  (vs 1e-2 Ha cert. threshold)
+
+[92m  [PASS][0m  PASS — VQE energy reproduced within 1e-06 Ha

@@ -1,0 +1,14 @@
+{
+ "entry_id": "H10_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_d2701c2be739db5f",
+ "file": "H10_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_d2701c2be739db5f.json",
+ "molecule": "H10",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (L-BFGS-B inner, statevector engine)",
+ "trust": "certified",
+ "stored_gap_ha": 0.009977477498571474,
+ "verdict": "PASS",
+ "energy_diff_ha": null,
+ "seconds": 7306,
+ "returncode": 0
+}

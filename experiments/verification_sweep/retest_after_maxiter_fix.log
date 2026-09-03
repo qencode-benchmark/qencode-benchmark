@@ -1,0 +1,8 @@
+=== retest after the max-iter fix ===
+Thu Aug 27 09:22:17 PM CEST 2026
+commit: 0d20bd0
+  H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_7606caf47ff39f     58s  PASS — VQE energy reproduced
+  N2_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_5912a44   7496s  PASS — VQE energy reproduced
+  benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_3d3d   2085s  PASS — VQE energy reproduced
+=== done ===
+Fri Aug 28 12:02:56 AM CEST 2026
