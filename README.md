@@ -133,6 +133,8 @@ Reproducibility is enforced by the pipeline, not assumed. Before any entry is wr
 
 An entry that fails any check is not written. Each entry records its thread count and full software environment in its provenance block.
 
+**What reproducibility means here.** Gradient-free optimizers are certified on **outcome** — the regenerated gap stays below the certification threshold — **not on bit-identical energies across machines. Bit-identical regeneration is guaranteed only on the reference pinned environment.** A gradient-free optimizer picks its next step by comparing two nearly equal energies, so a last-bit arithmetic difference can flip a comparison and land the run in a different local minimum: two simulator backends agreeing to 10⁻¹³ Ha have ended 11 mHa apart after COBYLA. Verify accordingly — `--mode certification` across machines, `--mode strict` on the pinned environment. Measured envelopes and the two entries that do not re-certify across environments are in [`docs/VERIFICATION_SWEEP.md`](docs/VERIFICATION_SWEEP.md).
+
 The single-thread requirement is not a detail. Multi-threaded BLAS sums floating-point numbers in whatever order cores finish, which perturbs an energy in its last bits — and a gradient-free optimizer such as COBYLA, which picks its next step by *comparing* energies, can be driven into a different local minimum by that noise. We found this in our own published numbers and re-ran the entire suite. The full account is in **[We Audited Our Own VQE Benchmark](https://www.qencode-benchmark.org/blog/vqe-reproducibility-threading-bug)**.
 
 To check your own setup — not just ours:

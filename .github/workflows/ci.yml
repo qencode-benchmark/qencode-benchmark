@@ -205,8 +205,29 @@ jobs:
   # everything that fits in a CI budget, once a week, so drift in an entry that
   # is not in the subset is still caught.
   #
+  # THIS JOB RUNS IN CERTIFICATION MODE, NOT STRICT MODE, AND THAT IS DELIBERATE.
+  #
+  # A gradient-free optimiser picks its next step by comparing two nearly equal
+  # energies, so a last-bit arithmetic difference can flip a comparison and send
+  # the run to a different local minimum. Two simulator backends agreeing to
+  # 1e-13 Ha landed 11 mHa apart after COBYLA; a different machine is a larger
+  # perturbation than that. Measured across a drifted environment, published
+  # energies move by up to ~1e-3 Ha -- while every entry still certifies.
+  #
+  # So this job asserts the property that should hold across machines: the
+  # regenerated entry still meets the certification threshold. Energy movement is
+  # reported but not gated on. Bit-level energy agreement is a guarantee of the
+  # reference pinned environment and is checked there, by tools/verify_sweep.sh.
+  #
+  # The first run of this job (2026-08-30) failed all four shards for exactly this
+  # reason, asserting a guarantee the numerics do not support across machines.
+  #
+  # A stricter gradient-based-only job would be immune to that amplification, but
+  # is not possible here: all seven gradient-based entries are the heavy CASSCF
+  # and large-system runs, 20 minutes to 2.1 hours each, and none fits CI.
+  #
   # 40 of 54 entries are included. The other 14 are the CASSCF and ADAPT runs on
-  # N2, H6, H8, H10 and benzene, which take 5 minutes to nearly an hour each on
+  # N2, H6, H8, H10 and benzene, which take 5 minutes to over two hours each on
   # the reference machine and would not fit a 6-hour job. They are listed with
   # their measured times at the top of .github/verify_ci_entries.txt and are
   # verified on the cluster instead. Omitting them silently would be worse than
@@ -243,7 +264,7 @@ jobs:
 
       # The manifest is ordered slowest first, so round-robin dealing across four
       # shards balances them without needing per-entry times here.
-      - name: Verify shard ${{ matrix.shard }} of 4
+      - name: Verify shard ${{ matrix.shard }} of 4 (certification mode)
         run: |
           set -u
           mapfile -t ALL < <(grep -v '^#' .github/verify_ci_entries.txt | grep -v '^$')
@@ -255,7 +276,7 @@ jobs:
             E="releases/v4/db/${ALL[$i]}"
             COUNT=$(( COUNT + 1 ))
             echo "::group::${ALL[$i]}"
-            if python scripts/verify_entry.py "$E"; then
+            if python scripts/verify_entry.py "$E" --mode certification; then
               echo "  reproduced"
             else
               echo "::error title=Entry did not reproduce::${ALL[$i]}"

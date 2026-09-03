@@ -116,6 +116,60 @@ The other 14 are the CASSCF and ADAPT runs on N₂, H₆, H₈, H₁₀ and benz
 
 ---
 
+## Across machines: what actually holds
+
+The sweep above ran on the reference pinned environment. The weekly CI job runs on GitHub
+runners, and its first execution (2026-08-30) failed all four shards — because it asserted
+bit-level energy agreement, which the numerics do not support across machines.
+
+Re-running 39 entries on an environment with drifted package versions:
+
+| | energy movement |
+|---|---|
+| median | 7.7 × 10⁻⁸ Ha |
+| 90th percentile | 2.1 × 10⁻³ Ha |
+| maximum | 1.4 × 10⁻² Ha |
+
+**17 of 39 exceeded the 10⁻⁶ Ha strict tolerance while still certifying.** That is the gap
+between "the energy is identical" and "the entry is still valid", and only the second is a
+cross-machine property. See the dated amendment in
+[`LEADERBOARD_RULES_V2.md`](LEADERBOARD_RULES_V2.md).
+
+`scripts/verify_entry.py` now has two modes:
+
+- `--mode strict` (default) — the energy must match to `--tolerance`. This is the
+  determinism guarantee, valid on the reference pinned environment. Used by
+  `tools/verify_sweep.sh`.
+- `--mode certification` — the regenerated entry must still meet the 10 mHa threshold.
+  Energy movement is reported but not gated on. Used by the weekly CI job.
+
+### Two entries do not re-certify across environments
+
+| entry | published gap | regenerated gap |
+|---|---|---|
+| `C4H4_ccpvdz_PAR_HEA` | 6.1 mHa | **20.5 mHa** |
+| `C4H4_ccpvdz_JW_HEA` | 9.6 mHa | **19.0 mHa** |
+
+Both were certified close to the 10 mHa threshold, and **an entry certified close to the
+threshold is not robustly certified** — a different environment moves it across. This is a
+property of those two entries rather than of the verifier, and it is recorded rather than
+worked around. Both still reproduce exactly on the reference environment.
+
+A caveat on the measurement: the drifted environment used here has different *package
+versions* (pyscf 2.5.0 against the pinned 2.6.2, scipy 1.17 against 1.13.1), a larger
+perturbation than CI experiences — CI installs the pins and differs only in Python patch
+level and CPU. These figures are an upper bound on what CI sees, not a prediction of it.
+
+### A stricter gradient-based job is not possible here
+
+Gradient-based optimisers are effectively immune to this amplification, so a strict job
+restricted to them would be sound. It cannot be built: **all seven gradient-based entries
+are the heavy CASSCF and large-system runs** — H₆, H₈, H₁₀, N₂ ×3 and benzene — at 20
+minutes to 2.1 hours each, none of which fits a CI budget. The methods immune to the
+problem were used on precisely the systems too expensive to check often.
+
+---
+
 ## Reproducing
 
 ```bash

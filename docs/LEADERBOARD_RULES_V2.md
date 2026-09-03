@@ -166,6 +166,45 @@ certification that depends on which simulator happened to run. Evidence and meth
 [`DEFERRED_TRACKS_FEASIBILITY.md`](DEFERRED_TRACKS_FEASIBILITY.md),
 `tools/probe_backend.py`, `tools/probe_backend_mechanism.py`.
 
+### 2026-09-03 — what reproducibility means for a gradient-free optimiser
+
+**Gradient-free optimisers are certified on outcome, not on bit-identical energies across
+machines. Bit-identical regeneration is guaranteed only on the reference pinned
+environment.**
+
+This states what the numerics support rather than what the word "reproducible" is usually
+taken to imply. A gradient-free optimiser chooses its next step by comparing two nearly
+equal energies, so a last-bit arithmetic difference can flip a comparison and send the run
+into a different local minimum. Two simulator backends that agree to 10⁻¹³ Ha on a single
+evaluation have landed 11 mHa apart after COBYLA. A different machine is a larger
+perturbation than that.
+
+Reproducing a published entry therefore means three things, in decreasing strength:
+
+1. **The procedure is identical and fully declared** — same ansatz, optimiser, iteration
+   budget, seed, active space, mapping and classical preprocessing. Every one of those is
+   recorded in the entry.
+2. **The outcome still satisfies the certification criterion** — the regenerated gap is
+   below the 10 mHa threshold. This is what should hold on any machine, and it is what
+   `scripts/verify_entry.py --mode certification` checks.
+3. **The energy matches bit-for-bit** — only claimed on the reference pinned environment,
+   and checked there by `tools/verify_sweep.sh`. `--mode strict` is that check.
+
+Anything stronger than (2) across machines is aspirational and is currently false for
+COBYLA-style methods.
+
+**Measured.** Re-running 39 entries on an environment with drifted package versions moved
+the published energy by a median of 7.7 × 10⁻⁸ Ha, a 90th percentile of 2.1 × 10⁻³ Ha and
+a maximum of 1.4 × 10⁻² Ha. **17 of 39 exceeded the 10⁻⁶ Ha strict tolerance**, while
+still certifying — which is exactly the gap between (2) and (3) above.
+
+**A known limit of (2).** Two entries do not re-certify on that environment:
+`C4H4_ccpvdz_PAR_HEA` and `C4H4_ccpvdz_JW_HEA`, published at gaps of 6.1 and 9.6 mHa,
+regenerate at 20.5 and 19.0 mHa. Both were certified close to the threshold, and an entry
+certified close to the threshold is not robustly certified: a different environment moves
+it across. That is a property of those entries, not of the verifier, and it is recorded
+here rather than worked around.
+
 ### 2026-08-27 — suite stability during publication
 
 The molecule catalogue, basis set and active spaces are **frozen** until the paper

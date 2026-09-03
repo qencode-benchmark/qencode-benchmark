@@ -46,6 +46,11 @@ YELLOW = "\033[93m"
 BOLD   = "\033[1m"
 RESET  = "\033[0m"
 
+# The published certification threshold. An entry is certified when its gap to the
+# active-space CASCI reference is below this.
+CERT_THRESHOLD_HA = 1e-2
+
+
 def _ok(msg):   return f"{GREEN}  [PASS]{RESET}  {msg}"
 def _fail(msg): return f"{RED}  [FAIL]{RESET}  {msg}"
 def _warn(msg): return f"{YELLOW}  [INFO]{RESET}  {msg}"
@@ -96,6 +101,14 @@ def main():
     # made the verifier unusable for anyone whose environment is not byte-identical to
     # ours -- which is everyone verifying our work from outside. These pass the override
     # through so a verification can proceed, loudly, on a drifted machine.
+    ap.add_argument(
+        "--mode", choices=("strict", "certification"), default="strict",
+        help="strict: the regenerated energy must match the published one to "
+             "--tolerance. This is the determinism guarantee and it holds on the "
+             "reference pinned environment. certification: the regenerated entry must "
+             "still meet the certification threshold; energy movement is reported but "
+             "not gated on. Use this across machines, where gradient-free trajectories "
+             "are not expected to be bit-identical (default: strict)")
     ap.add_argument("--allow-dirty", action="store_true",
                     help="verify even if the git tree has uncommitted changes")
     ap.add_argument("--allow-env-drift", action="store_true",
@@ -155,7 +168,12 @@ def main():
             print(f"  Computed: {computed_h}")
         sys.exit(0 if ok else 1)
 
-    print(f"  Mode:     energy tolerance ± {args.tolerance:.0e} Ha  (cert. threshold: 1e-2 Ha)")
+    if args.mode == "certification":
+        print(f"  Mode:     certification — regenerated gap must stay below "
+              f"{CERT_THRESHOLD_HA:.0e} Ha")
+    else:
+        print(f"  Mode:     strict — energy must match to ± {args.tolerance:.0e} Ha "
+              f"(reference pinned environment only)")
     print()
 
     # ── Re-run the generator ──────────────────────────────────────────────────
@@ -256,15 +274,51 @@ def main():
     diff = abs(new_energy - stored_energy)
     print(f"  Stored  VQE energy: {stored_energy:.10f} Ha")
     print(f"  Generated VQE:      {new_energy:.10f} Ha")
-    print(f"  |ΔE|:               {diff:.3e} Ha   tolerance: {args.tolerance:.0e} Ha")
+    print(f"  |ΔE|:               {diff:.3e} Ha")
     if stored_gap is not None:
-        print(f"  Stored VQE gap:     {stored_gap:.3e} Ha  (vs 1e-2 Ha cert. threshold)")
+        print(f"  Stored VQE gap:     {stored_gap:.3e} Ha")
+    if new_gap is not None:
+        print(f"  Regenerated gap:    {new_gap:.3e} Ha  (cert. threshold "
+              f"{CERT_THRESHOLD_HA:.0e} Ha)")
     print()
+
+    # ── Certification mode ────────────────────────────────────────────────────
+    #
+    # A gradient-free optimiser chooses its next step by comparing two nearly equal
+    # energies, so a last-bit arithmetic difference can flip a comparison and send the run
+    # into a different local minimum. Two simulator backends agreeing to 1e-13 Ha have
+    # landed 11 mHa apart after COBYLA (docs/DEFERRED_TRACKS_FEASIBILITY.md). A different
+    # machine is a larger perturbation than that.
+    #
+    # So bit-level energy agreement is a property of the reference pinned environment, not
+    # of the method. Across machines the meaningful question is whether the entry still
+    # satisfies the criterion it was certified under. This mode asks that instead, and
+    # reports the energy movement without gating on it.
+    if args.mode == "certification":
+        if new_gap is None:
+            print(_fail("Regenerated entry has no gap; cannot check certification."))
+            sys.exit(1)
+        print(f"  Mode:     certification — does the regenerated entry still certify?")
+        print(f"            energy movement is reported, not gated on.")
+        print()
+        if new_gap < CERT_THRESHOLD_HA:
+            print(_ok(f"PASS — regenerated gap {new_gap:.3e} Ha is within the "
+                      f"{CERT_THRESHOLD_HA:.0e} Ha certification threshold "
+                      f"(energy moved {diff:.3e} Ha)"))
+        else:
+            print(_fail(f"FAIL — regenerated gap {new_gap:.3e} Ha exceeds the "
+                        f"{CERT_THRESHOLD_HA:.0e} Ha certification threshold"))
+            sys.exit(1)
+        return
 
     if diff <= args.tolerance:
         print(_ok(f"PASS — VQE energy reproduced within {args.tolerance:.0e} Ha"))
     else:
         print(_fail(f"FAIL — energy differs by {diff:.3e} Ha (exceeds {args.tolerance:.0e} Ha)"))
+        print()
+        print("  This is a strict determinism check and it only holds on the reference")
+        print("  pinned environment. Across machines, use --mode certification; see")
+        print("  docs/VERIFICATION_SWEEP.md.")
         print()
         print("  Certification tool versions:")
         for k, v in prov.get("tool_versions", {}).items():
