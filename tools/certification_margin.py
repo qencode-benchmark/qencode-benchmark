@@ -42,6 +42,20 @@ CERT_THRESHOLD_HA = 1e-2
 # environment. Tightening to 5% would miss one of them.
 THIN_MARGIN_FRACTION = 0.20
 
+# Entries measured on a different environment and still certified. Recorded so that a thin
+# margin is not read as a problem where it has actually been checked and survived.
+MEASURED_ROBUST = {
+    "H10_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_d2701c2be739db5f.json": {
+        "published_gap_ha": 9.977e-03,
+        "regenerated_gap_ha": 9.976e-03,
+        "energy_moved_ha": 1.005e-06,
+        "environment": "drifted packages (python 3.11.14, pyscf 2.5.0, scipy 1.17.0, "
+                       "pennylane 0.44.1, numpy 1.26.4)",
+        "note": "thinnest margin in the suite at 0.23 percent, and it survives: the "
+                "energy moved 22x less than the margin. Gradient-based inner optimiser.",
+    },
+}
+
 # Entries observed to fail re-certification when regenerated on a different environment.
 # Each was verified directly with `verify_entry.py --mode certification`, not inferred
 # from an energy movement, because |dE| does not predict the direction: an entry whose
@@ -61,6 +75,15 @@ MEASURED_FRAGILE = {
 }
 
 
+def _optimiser_family(optimizer):
+    """Gradient-free optimisers amplify last-bit arithmetic differences into different
+    local minima; gradient-based ones do not. Measured on this suite the difference is
+    four orders of magnitude: C4H4 under COBYLA moved 1.4e-02 Ha across environments,
+    H10 under an L-BFGS-B inner optimiser moved 1.0e-06 Ha. ADAPT-VQE is classified by
+    its *inner* optimiser, which is why the string is searched rather than matched."""
+    return "gradient-free" if "COBYLA" in str(optimizer or "") else "gradient-based"
+
+
 def collect(repo):
     out = []
     for f in sorted(glob.glob(os.path.join(repo, "releases/v4/db/*.json"))):
@@ -73,6 +96,14 @@ def collect(repo):
         certified = gap < CERT_THRESHOLD_HA
         margin = CERT_THRESHOLD_HA - gap
         thin = certified and margin < CERT_THRESHOLD_HA * THIN_MARGIN_FRACTION
+        family = _optimiser_family((d.get("run_config") or {}).get("optimizer"))
+        # A thin margin is dangerous when the optimiser amplifies and largely harmless
+        # when it does not. H10 holds the thinnest margin in the suite, 0.23%, and
+        # survives a drifted environment; C4H4 fails from fifteen times more headroom
+        # under COBYLA. So the risk flag is the conjunction, minus anything already
+        # measured to survive.
+        at_risk = (thin and family == "gradient-free"
+                   and name not in MEASURED_ROBUST)
         out.append({
             "file": name,
             "entry_id": d.get("entry_id"),
@@ -83,6 +114,11 @@ def collect(repo):
             "margin_ha": margin if certified else None,
             "margin_fraction": (margin / CERT_THRESHOLD_HA) if certified else None,
             "thin_margin": thin,
+            "optimizer": (d.get("run_config") or {}).get("optimizer"),
+            "optimiser_family": family,
+            "at_risk": at_risk,
+            "measured_robust": name in MEASURED_ROBUST,
+            "robustness_evidence": MEASURED_ROBUST.get(name),
             "measured_fragile": name in MEASURED_FRAGILE,
             "fragility_evidence": MEASURED_FRAGILE.get(name),
         })
@@ -121,25 +157,42 @@ def main():
     print("Certification threshold: %.0e Ha. Margin = threshold - gap." % CERT_THRESHOLD_HA)
     print("%d certified entries, %d research tier.\n"
           % (len(cert), len(rows) - len(cert)))
-    print("%-50s %10s %10s %7s %s"
-          % ("entry", "gap Ha", "margin Ha", "margin", "flags"))
+    print("%-44s %10s %7s %-14s %s"
+          % ("entry", "margin Ha", "margin", "optimiser", "flags"))
     print("-" * 100)
     for r in show:
         flags = []
         if r["measured_fragile"]:
             flags.append("MEASURED-FRAGILE")
+        elif r["measured_robust"]:
+            flags.append("measured-robust")
+        elif r["at_risk"]:
+            flags.append("AT-RISK (thin + gradient-free)")
         elif r["thin_margin"]:
-            flags.append("thin-margin")
-        print("%-50s %10.3e %10.3e %6.1f%% %s"
-              % (r["file"][:50], r["gap_ha"], r["margin_ha"],
-                 100 * r["margin_fraction"], " ".join(flags)))
+            flags.append("thin-margin, gradient-based")
+        print("%-44s %10.3e %6.1f%% %-14s %s"
+              % (r["file"][:44], r["margin_ha"], 100 * r["margin_fraction"],
+                 r["optimiser_family"], " ".join(flags)))
 
     print()
     thin = [r for r in cert if r["thin_margin"]]
     meas = [r for r in cert if r["measured_fragile"]]
+    at_risk = [r for r in cert if r["at_risk"]]
+    robust = [r for r in cert if r["measured_robust"]]
     print("  thin margin (< %.0f%% of threshold): %d of %d certified entries"
           % (THIN_MARGIN_FRACTION * 100, len(thin), len(cert)))
+    print("     of those, gradient-free and unmeasured (AT RISK): %d" % len(at_risk))
+    print("     gradient-based, so largely protected:             %d"
+          % len([r for r in thin if r["optimiser_family"] == "gradient-based"]))
     print("  measured to fail re-certification:  %d" % len(meas))
+    print("  measured and still certifying:      %d" % len(robust))
+    if robust:
+        print()
+        print("  Optimiser family dominates margin. H10 holds the thinnest margin in the")
+        print("  suite at 0.2% and survives a drifted environment -- its energy moved")
+        print("  1.0e-06 Ha, 22x less than its own margin -- because its inner optimiser is")
+        print("  gradient-based. C4H4 fails from 15x more headroom under COBYLA, having")
+        print("  moved 1.4e-02 Ha. That is a factor of 14000 between the two families.")
     missed = [r for r in meas if not r["thin_margin"]]
     if missed:
         print()

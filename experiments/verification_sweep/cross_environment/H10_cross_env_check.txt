@@ -1,0 +1,41 @@
+H10 cross-environment certification check
+=========================================
+Date        2026-09-03
+Entry       H10_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_d2701c2be739db5f.json
+Why         Thinnest margin of the 47 certified entries (0.23% of the threshold), and the
+            flagship 20-qubit result. C4H4 failed re-certification from a 3.6% margin, so
+            the question was whether H10 survives with fifteen times less headroom.
+            Opposing signal: H10 used ADAPT-VQE with an L-BFGS-B inner optimiser, which is
+            gradient-based and therefore immune to the comparison-flipping that makes
+            COBYLA environment-sensitive.
+
+Environment tested (drifted against the pinned reference):
+    python      3.11.14   (pinned 3.11.15)
+    pyscf       2.5.0     (pinned 2.6.2)
+    scipy       1.17.0    (pinned 1.13.1)
+    pennylane   0.44.1    (pinned 0.45.0)
+    numpy       1.26.4    (pinned 2.2.6)     <- major version difference
+
+Command
+    python scripts/verify_entry.py <entry> --mode certification \
+        --allow-dirty --allow-env-drift
+
+Result
+    Stored VQE gap        9.977e-03 Ha
+    Regenerated gap       9.976e-03 Ha       (certification threshold 1e-02 Ha)
+    Energy moved          1.005e-06 Ha
+    Verdict               PASS
+    Elapsed               18025 s (5.0 h)
+
+Reading
+    The margin is 2.252e-05 Ha and the energy moved 1.005e-06 Ha -- 22x smaller than the
+    margin. H10 survives the thinnest margin in the suite despite substantial package
+    drift including a numpy major version.
+
+    Compare C4H4_ccpvdz_PAR_HEA, which uses COBYLA: it moved 1.443e-02 Ha on the same
+    environment, 14358x more than H10, and lost certification from a margin fifteen times
+    larger.
+
+    Conclusion: optimiser family dominates margin. A thin margin is dangerous when the
+    optimiser is gradient-free and largely harmless when it is gradient-based. The
+    certification-margin heuristic should be read together with the optimiser, not alone.
