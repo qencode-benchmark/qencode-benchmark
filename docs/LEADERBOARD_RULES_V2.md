@@ -193,9 +193,9 @@ Reproducing a published entry therefore means three things, in decreasing streng
 Anything stronger than (2) across machines is aspirational and is currently false for
 COBYLA-style methods.
 
-**Measured.** Re-running 39 entries on an environment with drifted package versions moved
-the published energy by a median of 7.7 × 10⁻⁸ Ha, a 90th percentile of 2.1 × 10⁻³ Ha and
-a maximum of 1.4 × 10⁻² Ha. **17 of 39 exceeded the 10⁻⁶ Ha strict tolerance**, while
+**Measured.** Re-running all 40 entries on an environment with drifted package versions moved
+the published energy by a median of 6.7 × 10⁻⁸ Ha, a 90th percentile of 2.1 × 10⁻³ Ha and
+a maximum of 1.4 × 10⁻² Ha. **17 of 40 exceeded the 10⁻⁶ Ha strict tolerance**, while
 still certifying — which is exactly the gap between (2) and (3) above.
 
 **A known limit of (2).** Two entries do not re-certify on that environment:

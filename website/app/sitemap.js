@@ -1,6 +1,7 @@
 const BASE_URL = "https://www.qencode-benchmark.org";
 
 const blogPosts = [
+  { slug: "verifying-the-whole-database",         date: "2026-09-03" },
   { slug: "shot-allocation-neyman-trap",            date: "2026-08-27" },
   { slug: "vqe-reproducibility-scorecard",          date: "2026-07-28" },
   { slug: "vqe-reproducibility-threading-bug",      date: "2026-07-16" },

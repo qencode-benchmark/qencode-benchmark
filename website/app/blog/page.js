@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "verifying-the-whole-database",
+    date: "2026-09-03",
+    readingTime: "11 min read",
+    title: "We Said Every Result Was Reproducible. Then We Tried to Check.",
+    excerpt:
+      "Our verifier could not re-run 29 of our 54 published entries, and nobody had noticed — a verifier that errors out looks like a broken command, not a broken guarantee. Three bugs later, all 54 reproduce. Then CI failed, because we had asked for bit-identical energies across machines and the numerics do not support that. The finding that outlasts the bugs: an entry certified close to the threshold is not robustly certified.",
+    tags: ["reproducibility", "verification", "certification margin", "CI", "COBYLA", "benchmark integrity"],
+  },
+  {
     slug: "shot-allocation-neyman-trap",
     date: "2026-08-27",
     readingTime: "9 min read",

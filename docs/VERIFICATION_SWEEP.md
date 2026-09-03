@@ -122,15 +122,15 @@ The sweep above ran on the reference pinned environment. The weekly CI job runs 
 runners, and its first execution (2026-08-30) failed all four shards — because it asserted
 bit-level energy agreement, which the numerics do not support across machines.
 
-Re-running 39 entries on an environment with drifted package versions:
+Re-running all 40 entries on an environment with drifted package versions:
 
 | | energy movement |
 |---|---|
-| median | 7.7 × 10⁻⁸ Ha |
+| median | 6.7 × 10⁻⁸ Ha |
 | 90th percentile | 2.1 × 10⁻³ Ha |
 | maximum | 1.4 × 10⁻² Ha |
 
-**17 of 39 exceeded the 10⁻⁶ Ha strict tolerance while still certifying.** That is the gap
+**17 of 40 exceeded the 10⁻⁶ Ha strict tolerance while still certifying.** That is the gap
 between "the energy is identical" and "the entry is still valid", and only the second is a
 cross-machine property. See the dated amendment in
 [`LEADERBOARD_RULES_V2.md`](LEADERBOARD_RULES_V2.md).
