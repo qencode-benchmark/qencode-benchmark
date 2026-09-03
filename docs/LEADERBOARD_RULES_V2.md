@@ -205,6 +205,46 @@ certified close to the threshold is not robustly certified: a different environm
 it across. That is a property of those entries, not of the verifier, and it is recorded
 here rather than worked around.
 
+### 2026-09-03 — certification margin
+
+**An entry certified close to the threshold is not robustly certified**, and the
+leaderboard has been showing it identically to one certified with room to spare. Both are
+"certified"; only one survives being re-run somewhere else.
+
+    margin = certification_threshold - gap
+
+`tools/certification_margin.py` reports the margin for every certified entry and flags two
+kinds of fragility, because neither subsumes the other:
+
+- **thin margin** — margin below 20% of the threshold. A heuristic, computable for every
+  entry without re-running anything. **10 of the 47 certified entries** qualify, the
+  tightest being H₁₀ at a margin of **0.2%** (gap 9.977 mHa against a 10 mHa threshold).
+- **measured fragile** — the entry has been *observed* to fail re-certification on another
+  environment. Authoritative, but only exists for entries that have been re-run.
+
+Two entries are currently measured fragile:
+
+| entry | published gap | regenerated gap |
+|---|---|---|
+| `C4H4_ccpvdz_PAR_HEA` | 6.1 mHa | 20.5 mHa |
+| `C4H4_ccpvdz_JW_HEA` | 9.6 mHa | 19.0 mHa |
+
+They remain certified: they reproduce exactly on the reference pinned environment, which
+is what certification attests. They are flagged, not withdrawn. The weekly cross-machine CI
+job reports them as known and does not fail on them; any *other* entry that stops
+certifying is a real regression.
+
+**The heuristic does not subsume the measurement.** `C4H4_ccpvdz_PAR_HEA` has a margin of
+**38.9%** of the threshold — comfortably outside any sensible thin-margin cut — and fails
+anyway, because its energy moved 14 mHa. Margin bounds how far an entry *can* move before
+it stops certifying; it says nothing about how far it *will*. Both flags are needed.
+
+A related trap, recorded because it caught us: `gap + |ΔE|` does **not** predict
+re-certification. Two entries that looked like failures by that arithmetic passed when
+actually tested, because their energy moved *toward* the reference and the gap shrank.
+Fragility is established by running `verify_entry.py --mode certification`, never by
+inference.
+
 ### 2026-08-27 — suite stability during publication
 
 The molecule catalogue, basis set and active spaces are **frozen** until the paper
