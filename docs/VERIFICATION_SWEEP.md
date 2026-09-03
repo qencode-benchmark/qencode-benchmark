@@ -160,6 +160,29 @@ versions* (pyscf 2.5.0 against the pinned 2.6.2, scipy 1.17 against 1.13.1), a l
 perturbation than CI experiences — CI installs the pins and differs only in Python patch
 level and CPU. These figures are an upper bound on what CI sees, not a prediction of it.
 
+### The measurement was not contaminated by threading
+
+It was run five jobs at a time, which raises the obvious objection: the whole reason this
+project pins `OMP_NUM_THREADS=1` is that threaded BLAS makes a gradient-free optimiser
+non-deterministic, so a measurement of *environment* drift taken under concurrency could
+be measuring *thread* drift instead. Checked rather than assumed:
+
+- `QENCODE_ALLOW_THREADS` was never set, so the pipeline pinned threads before importing
+  NumPy in every subprocess, and the guard verifying `OMP_NUM_THREADS=1` afterwards
+  **cannot be bypassed** by `--allow-dirty` or `--allow-env-drift` — only tree-dirtiness
+  can.
+- Two entries were measured under different concurrency and agree exactly:
+
+  | entry | in the parallel sweep | re-run separately |
+  |---|---|---|
+  | `LiH_ccpvdz_JW_HEA` | 1.329 × 10⁻⁴ Ha | 1.329 × 10⁻⁴ Ha |
+  | `C4H4_ccpvdz_PAR_HEA` | 1.443 × 10⁻² Ha | 1.443 × 10⁻² Ha |
+
+The second re-run happened to overlap three other jobs and still reproduced bit-identically,
+which is stronger than a quiet-machine control: the result does not depend on machine load.
+Each job is single-threaded and parallelism is across processes only — the same isolation
+rule the rest of the suite uses.
+
 ### A stricter gradient-based job is not possible here
 
 Gradient-based optimisers are effectively immune to this amplification, so a strict job
