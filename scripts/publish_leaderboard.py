@@ -14,6 +14,15 @@ Usage:
 Or set env var:
     export LEADERBOARD_PUBLISH_SECRET=your_secret
     python scripts/publish_leaderboard.py
+
+If the deployment sits behind Vercel deployment protection, supply the bypass token
+through the environment as well. It is a credential and must not be committed:
+
+    export VERCEL_PROTECTION_BYPASS=...
+
+The POST carries the publish secret in an Authorization header, so TLS certificate
+verification is always on and the header is never forwarded across a redirect to a
+different origin. `--insecure` exists for a local test server and warns loudly.
 """
 
 import argparse
@@ -22,6 +31,7 @@ import json
 import os
 import ssl
 import sys
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -108,6 +118,10 @@ def main():
                         help=f"Base URL (default: {DEFAULT_URL})")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print the payload but don't send it")
+    parser.add_argument("--insecure", action="store_true",
+                        help="Disable TLS certificate verification. Exposes the publish "
+                             "secret to anyone who can intercept the connection; for a "
+                             "local test server only, never for production.")
     args = parser.parse_args()
 
     if not args.secret and not args.dry_run:
@@ -163,36 +177,68 @@ def main():
     # ── POST to API ────────────────────────────────────────────────────────────
     endpoint = args.url.rstrip("/") + "/api/admin/publish-leaderboard"
     body     = json.dumps(payload).encode("utf-8")
-    req      = urllib.request.Request(
-        endpoint,
-        data=body,
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {args.secret}",
-            # Bypass Cloudflare WAF (error 1010): spoof browser UA + Vercel bypass token
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-                          "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-            "x-vercel-protection-bypass": "4sSOP9JIfrN0ZfLfkex41oDGOZYfxSgZ",
-        },
-        method="POST",
-    )
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {args.secret}",
+        # Cloudflare answers the default urllib User-Agent with error 1010.
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    }
+    # Vercel deployment-protection bypass, read from the environment rather than
+    # hardcoded. It is a credential, and committing it published it to anyone who
+    # could read the repository. Unset simply means the header is not sent.
+    bypass = os.environ.get("VERCEL_PROTECTION_BYPASS", "").strip()
+    if bypass:
+        headers["x-vercel-protection-bypass"] = bypass
+
+    req = urllib.request.Request(endpoint, data=body, headers=headers, method="POST")
 
     print(f"\nPOSTing to {endpoint} ...")
-    # Use an unverified SSL context to work around certificate chain issues on some systems.
-    # Build an opener that follows 307/308 redirects with POST (urllib default drops body).
+
+    # TLS is verified. This request carries the publish secret in an Authorization
+    # header, so an unverified context would hand that credential -- the one that
+    # controls the public leaderboard -- to anyone able to intercept the connection,
+    # with no valid certificate required. An earlier version disabled verification
+    # outright to work around local certificate-chain problems. That is a trust-store
+    # issue on the client; the fix is certifi, not switching verification off for
+    # every user of the script.
     ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
+    try:
+        import certifi
+        ctx.load_verify_locations(cafile=certifi.where())
+    except ImportError:
+        pass                      # fall back to the system trust store
+    if args.insecure:
+        print("  WARNING: --insecure given, TLS certificate verification is DISABLED.")
+        print("           The publish secret is exposed to anyone who can intercept")
+        print("           this connection. Intended for a local test server only.")
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
+    # urllib drops the body when it follows a redirect, so 307/308 are re-issued by
+    # hand. Credentials are NOT carried to a different origin: the redirect target is
+    # chosen by the server, so forwarding Authorization blindly would let any redirect
+    # -- hostile, compromised, or merely misconfigured -- harvest the publish secret.
+    _SENSITIVE = ("authorization", "cookie", "x-vercel-protection-bypass")
+
+    def _origin(url):
+        p = urllib.parse.urlsplit(url)
+        return (p.scheme, p.hostname, p.port or (443 if p.scheme == "https" else 80))
 
     class _PostRedirectHandler(urllib.request.HTTPRedirectHandler):
         def redirect_request(self, req, fp, code, msg, headers, newurl):
-            if code in (307, 308):
-                new_req = urllib.request.Request(
-                    newurl, data=req.data, headers=dict(req.headers),
-                    method=req.get_method(),
-                )
-                return new_req
-            return super().redirect_request(req, fp, code, msg, headers, newurl)
+            if code not in (307, 308):
+                return super().redirect_request(req, fp, code, msg, headers, newurl)
+            fwd = dict(req.headers)
+            if _origin(req.full_url) != _origin(newurl):
+                dropped = sorted(k for k in fwd if k.lower() in _SENSITIVE)
+                for k in dropped:
+                    del fwd[k]
+                if dropped:
+                    print(f"  note: redirect crosses origins ({newurl}); "
+                          f"not forwarding {', '.join(dropped)}")
+            return urllib.request.Request(newurl, data=req.data, headers=fwd,
+                                          method=req.get_method())
 
     opener = urllib.request.build_opener(
         urllib.request.HTTPSHandler(context=ctx),
