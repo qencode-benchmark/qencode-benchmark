@@ -82,6 +82,17 @@ export default async function LeaderboardPage() {
           Entries: {metadata.entries_included}
         </span>
       </div>
+      <div className="mb-4 rounded-lg border p-4 bg-muted/30 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">
+          <strong className="text-foreground">Already have a VQE energy?</strong>{" "}
+          Score it against these references in one line — no clone, no chemistry stack.{" "}
+          <code className="font-mono text-xs bg-background border px-1.5 py-0.5 rounded">pip install qencode-benchmark</code>
+        </p>
+        <div className="flex gap-2">
+          <Button asChild size="sm"><Link href="/score" data-track="leaderboard_score">Score your result</Link></Button>
+        </div>
+      </div>
+
       <div className="mb-8 rounded-lg border p-4 bg-muted/30 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
           Want your results here?{" "}

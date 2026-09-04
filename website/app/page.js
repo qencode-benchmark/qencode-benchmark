@@ -156,16 +156,78 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Problem statement ── */}
+      {/* ── Score your own result ── */}
       <section className="container py-20">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-4 max-w-2xl">
-          Most benchmark claims are not directly comparable.
-        </h2>
-        <p className="text-muted-foreground text-lg max-w-2xl">
-          Different molecule choices, encodings, ansatz settings, and runtime assumptions make
-          cross-study comparison unreliable. Without a fixed benchmark standard, teams spend time
-          arguing about setup rather than measuring quality.
-        </p>
+        <div className="rounded-xl border bg-card p-8">
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
+            <div>
+              <Badge variant="secondary" className="text-xs mb-4">New in 4.5.0</Badge>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                Already have a VQE energy? Score it in one line.
+              </h2>
+              <p className="text-muted-foreground mb-4">
+                You don&apos;t have to run our pipeline to use QEncode. Knowing whether your energy is
+                any good means comparing it against the <em>exact</em> ground state of the same
+                active space — normally a PySCF install and a wait.
+              </p>
+              <p className="text-muted-foreground mb-6">
+                We ship those reference energies for all 16 suite molecules inside the package, so
+                scoring imports <strong className="text-foreground">no chemistry stack</strong> and
+                needs no network.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Button asChild>
+                  <Link href="/score" data-track="home_score_page">
+                    How it works <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <a
+                    href="https://pypi.org/project/qencode-benchmark/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-track="home_score_pypi"
+                  >
+                    View on PyPI <ExternalLink className="ml-1 h-3.5 w-3.5" />
+                  </a>
+                </Button>
+              </div>
+            </div>
+            <div>
+              <pre className="bg-muted/50 border rounded-md p-4 text-xs font-mono overflow-x-auto leading-relaxed">
+{`pip install qencode-benchmark`}
+              </pre>
+              <pre className="bg-muted/50 border rounded-md p-4 text-xs font-mono overflow-x-auto leading-relaxed mt-3">
+{`import qencode
+
+s = qencode.score(-7.9835,
+                  molecule="LiH",
+                  active_space=(4, 4),
+                  optimizer="COBYLA",
+                  ansatz="hea")
+print(s.report())`}
+              </pre>
+              <p className="text-xs text-muted-foreground mt-3">
+                Returns the gap to exact diagonalisation, the certification margin, and whether your
+                optimiser and ansatz make that margin fragile on another machine.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Problem statement ── */}
+      <section className="border-t">
+        <div className="container py-20">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 max-w-2xl">
+            Most benchmark claims are not directly comparable.
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-2xl">
+            Different molecule choices, encodings, ansatz settings, and runtime assumptions make
+            cross-study comparison unreliable. Without a fixed benchmark standard, teams spend time
+            arguing about setup rather than measuring quality.
+          </p>
+        </div>
       </section>
 
       {/* ── Pillars ── */}
@@ -254,7 +316,7 @@ export default function HomePage() {
           <h2 className="text-2xl sm:text-3xl font-bold mb-10">How it works</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { num: "01", title: "Run the open-source suite", desc: "Clone the repo, install requirements-v4.txt, run generate_entry_v4.py. One command per molecule." },
+              { num: "01", title: "Run the open-source suite", desc: "pip install qencode-benchmark, then qencode run --molecule H2. One command per molecule, no clone needed." },
               { num: "02", title: "Submit or self-publish", desc: "Share your JSON entry with the community, or apply for managed certification with a signed artifact." },
               { num: "03", title: "Receive signed artifacts", desc: "QEncode runs the fixed pipeline, signs the result, and delivers a validation report." },
               { num: "04", title: "Publish or keep private", desc: "Choose public leaderboard inclusion or private delivery only for grant and paper use." }

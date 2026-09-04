@@ -8,6 +8,7 @@ import { Menu, X, Github } from "lucide-react";
 
 const links = [
   { to: "/leaderboard",  label: "Leaderboard"  },
+  { to: "/score",        label: "Score a result" },
   { to: "/benchmark",    label: "Benchmark"     },
   { to: "/methodology",  label: "Methodology"   },
   { to: "/blog",         label: "Blog"          },

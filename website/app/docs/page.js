@@ -23,7 +23,16 @@ export const metadata = {
 
 const REPO = "https://github.com/qencode-benchmark/qencode-benchmark";
 
+// All repository links use blob/HEAD, which resolves to whatever the default branch is.
+// They previously used blob/main — a branch 249 commits behind master, so those links
+// either 404ed or silently served content from April.
 const internalDocs = [
+  {
+    title: "Score your own VQE result",
+    desc: "Compare an energy you already have against the exact active-space ground state, in one function call. Reports the gap, the certification margin, and whether your optimiser and ansatz make that margin fragile.",
+    href: "/score",
+    external: false,
+  },
   {
     title: "Benchmark Specification",
     desc: "Suite v4 molecule catalog, qubit counts, active spaces, encoding support matrix, and ansatz definitions.",
@@ -36,38 +45,54 @@ const internalDocs = [
     href: "/methodology",
     external: false,
   },
+  {
+    title: "Reading the leaderboard",
+    desc: "What the gap is measured against, the two thresholds, the certification margin, the optimiser chip, and what the CCSD(T) badge does and does not claim.",
+    href: "/leaderboard/guide",
+    external: false,
+  },
 ];
 
 const repoDocs = [
   {
-    title: "Quick Start Guide",
-    desc: "Run your first entry in under 10 minutes. Covers environment setup, generate_entry_v4.py, and entry verification.",
-    href: `${REPO}/blob/main/docs/QUICK_START.md`,
+    title: "Scoring notebook",
+    desc: "Executable walkthrough of qencode.score: edit one cell with your energy and run it top to bottom. Outputs are committed, so it reads on GitHub without being run.",
+    href: `${REPO}/blob/HEAD/notebooks/score_your_vqe_result.ipynb`,
   },
   {
-    title: "Benchmark Specification v4 (Markdown)",
-    desc: "Machine-readable spec: geometry, active spaces, supported mappings, exclusion rules, and certification criteria.",
-    href: `${REPO}/blob/main/docs/BENCHMARK_SPEC_V4.md`,
+    title: "Quick Start Guide",
+    desc: "Run your first entry in under 10 minutes. Covers environment setup, entry generation, and verification.",
+    href: `${REPO}/blob/HEAD/docs/QUICK_START.md`,
+  },
+  {
+    title: "Trust Policy",
+    desc: "The single definition of certified: gap below 10 mHa against the active-space CASCI reference. What certification attests, what it does not, and the markers that are reported but are not certification.",
+    href: `${REPO}/blob/HEAD/docs/TRUST_POLICY.md`,
   },
   {
     title: "Leaderboard Rules",
-    desc: "Eligibility, accuracy ranking, hardware cost ranking, balanced score formula, and research tab policy.",
-    href: `${REPO}/blob/master/docs/LEADERBOARD_RULES_V2.md`,
+    desc: "Eligibility, accuracy ranking, hardware cost ranking, balanced score formula, research tier policy, and the dated amendments on reproducibility and certification margin.",
+    href: `${REPO}/blob/HEAD/docs/LEADERBOARD_RULES_V2.md`,
+  },
+  {
+    title: "Verification sweep",
+    desc: "The first end-to-end re-run of all 54 published entries, the three verifier bugs it found, and what reproducibility means across machines for gradient-free optimisers.",
+    href: `${REPO}/blob/HEAD/docs/VERIFICATION_SWEEP.md`,
   },
   {
     title: "requirements-v4.txt",
-    desc: "Pinned environment: PySCF 2.5.0, PennyLane 0.45, openfermion 1.7.1. Install with pip install -r requirements-v4.txt.",
-    href: `${REPO}/blob/main/requirements-v4.txt`,
+    desc: "Pinned environment: PySCF 2.6.2, PennyLane 0.45.0, openfermion 1.6.1, NumPy 2.2.6, SciPy 1.13.1. Exact pins, not lower bounds — a VQE result is only reproducible if the stack is.",
+    href: `${REPO}/blob/HEAD/requirements-v4.txt`,
   },
   {
     title: "CITATION.cff",
     desc: "How to cite QEncode in papers and grant applications.",
-    href: `${REPO}/blob/main/CITATION.cff`,
+    href: `${REPO}/blob/HEAD/CITATION.cff`,
   },
   {
     title: "License",
     desc: "Open-source licensing terms for using, modifying, and distributing QEncode.",
-    href: `${REPO}/blob/main/LICENSE`,
+    href: `${REPO}/blob/HEAD/LICENSE`,
   },
 ];
 
@@ -80,24 +105,51 @@ export default function DocsPage() {
         The full suite is open source — all scripts, specs, and data are in the GitHub repository.
       </p>
 
-      {/* Quick start */}
+      {/* Score an existing result */}
       <section className="mb-10">
-        <h2 className="text-lg font-semibold mb-3">Quick start</h2>
+        <h2 className="text-lg font-semibold mb-3">Already have a VQE energy?</h2>
         <div className="rounded-lg border bg-muted/30 p-5 text-sm space-y-3">
-          <p className="text-muted-foreground">Run your first benchmark entry with three commands:</p>
+          <p className="text-muted-foreground">
+            Score it against the exact active-space ground state without running the pipeline.
+            No clone, and no chemistry stack — the reference energies ship inside the package.
+          </p>
           <pre className="bg-background border rounded-md p-4 text-xs font-mono overflow-x-auto leading-relaxed">
-{`git clone https://github.com/qencode-benchmark/qencode-benchmark
-pip install -r requirements-v4.txt
+{`pip install qencode-benchmark
 
-python scripts/generate_entry_v4.py \\
-  --molecule H2 --mapping jordan_wigner \\
-  --ansatz-type uccsd --out-dir releases/v4/db`}
+python -c "
+import qencode
+s = qencode.score(-7.9835, molecule='LiH', active_space=(4, 4),
+                  optimizer='COBYLA', ansatz='hea')
+print(s.report())"`}
           </pre>
           <p className="text-muted-foreground text-xs">
-            Output: a signed JSON entry in <code className="font-mono bg-muted px-1 rounded">releases/v4/db/</code>{" "}
-            with PySCF reference energies, VQE result, circuit metrics, and a SHA-256 provenance hash.
-            Runs on any machine with Python 3.11. GPU backend available with{" "}
-            <code className="font-mono bg-muted px-1 rounded">--backend lightning.gpu</code>.
+            Reports the gap to exact diagonalisation, which of the two thresholds it clears, the
+            certification margin, whether your optimiser and ansatz make that margin fragile across
+            machines, and the rank among published entries.{" "}
+            <Link href="/score" className="text-primary hover:underline font-medium">Full guide →</Link>
+          </p>
+        </div>
+      </section>
+
+      {/* Quick start */}
+      <section className="mb-10">
+        <h2 className="text-lg font-semibold mb-3">Generate a benchmark entry</h2>
+        <div className="rounded-lg border bg-muted/30 p-5 text-sm space-y-3">
+          <p className="text-muted-foreground">
+            The full pipeline: computes the CASCI reference, runs the VQE, and writes a hashed entry.
+            Needs the chemistry stack, which the package pulls in.
+          </p>
+          <pre className="bg-background border rounded-md p-4 text-xs font-mono overflow-x-auto leading-relaxed">
+{`pip install qencode-benchmark
+
+qencode run --molecule H2 --mapping jordan_wigner \\
+  --ansatz-type uccsd --out-dir out`}
+          </pre>
+          <p className="text-muted-foreground text-xs">
+            Output: a JSON entry with PySCF reference energies, the VQE result, circuit metrics and a
+            SHA-256 provenance hash. About ten seconds for H₂. Clone the repository instead if you
+            want the entry database and the producing commit recorded inside each entry. GPU backend
+            available with <code className="font-mono bg-muted px-1 rounded">--backend lightning.gpu</code>.
           </p>
         </div>
       </section>
