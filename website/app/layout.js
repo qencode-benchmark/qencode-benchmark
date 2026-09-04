@@ -97,7 +97,7 @@ export default function RootLayout({ children }) {
               <div className="flex flex-col gap-1">
                 {/* blob/HEAD follows the default branch. These previously pointed at
                     blob/main, which is 249 commits behind and served April content. */}
-                <a href={`${REPO_URL}/blob/HEAD/docs/QUICK_START.md`} target="_blank" rel="noopener noreferrer">Quick Start Guide</a>
+                <a href={`${REPO_URL}/blob/HEAD/QUICKSTART.md`} target="_blank" rel="noopener noreferrer">Quick Start Guide</a>
                 <a href="https://pypi.org/project/qencode-benchmark/" target="_blank" rel="noopener noreferrer">Python package (PyPI)</a>
                 <a href={`${REPO_URL}/blob/HEAD/notebooks/score_your_vqe_result.ipynb`} target="_blank" rel="noopener noreferrer">Scoring notebook</a>
                 <a href={`${REPO_URL}/blob/HEAD/docs/LEADERBOARD_RULES_V2.md`} target="_blank" rel="noopener noreferrer">Leaderboard Rules</a>

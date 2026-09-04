@@ -62,7 +62,7 @@ const repoDocs = [
   {
     title: "Quick Start Guide",
     desc: "Run your first entry in under 10 minutes. Covers environment setup, entry generation, and verification.",
-    href: `${REPO}/blob/HEAD/docs/QUICK_START.md`,
+    href: `${REPO}/blob/HEAD/QUICKSTART.md`,
   },
   {
     title: "Trust Policy",

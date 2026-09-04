@@ -14,18 +14,28 @@ Open http://localhost:3000.
 
 ## Data source
 
-The site serves leaderboard data from:
+In production the leaderboard is served from Neon Postgres. The CSVs in
+`website/public/data/` are the local-development fallback, used automatically when
+`POSTGRES_URL` is unset:
 
-- `website/public/data/leaderboard_accuracy.csv`
-- `website/public/data/leaderboard_hardware_cost.csv`
-- `website/public/data/leaderboard_balanced.csv`
-- `website/public/data/leaderboard_metadata.json`
+- `leaderboard_accuracy.csv`, `leaderboard_hardware_cost.csv`,
+  `leaderboard_balanced.csv`, `leaderboard_research.csv`
+- `leaderboard_metadata.json`
+- `references_v4.json` — the reference energies behind `/score`, a byte-for-byte copy of
+  the table shipped in the Python package. `tests/test_website_references.py` fails if
+  the two ever differ.
 
-To refresh from the latest benchmark release:
+To regenerate the CSVs from the entry database and publish them:
 
 ```bash
-python scripts/sync_website_leaderboard_data.py
+python scripts/export_leaderboard_v4.py            # entry JSONs -> CSVs
+python scripts/publish_leaderboard.py              # CSVs -> live Postgres
 ```
+
+Use `--dry-run` on either to see what would happen without writing anything.
+
+> Until 2026-09-04 this section told you to run `scripts/sync_website_leaderboard_data.py`,
+> a script that has never existed in this repository.
 
 ## Design (Phase 2)
 

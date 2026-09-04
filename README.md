@@ -247,11 +247,14 @@ qencode-db/
 │   ├── v4/db/                  # Suite v4 (cc-pVDZ) entry JSONs ← current
 │   ├── v3.1/db/                # Suite v3.1 (6-31G) frozen entries
 │   └── v3/db/                  # Suite v3 (STO-3G) frozen entries
+├── notebooks/
+│   └── score_your_vqe_result.ipynb  # Score an energy you already have
 ├── docs/
-│   ├── GETTING_STARTED.md      # Longer-form introduction
-│   ├── SUBMISSIONS.md          # Submitting a result
-│   ├── LEADERBOARD_RULES_V2.md # How rows are ranked
-│   ├── TRUST_POLICY.md         # Certified vs research tier
+│   ├── TRUST_POLICY.md         # What "certified" means — the single definition
+│   ├── VERIFY.md               # Checking an entry, and what a check proves
+│   ├── VERIFICATION_SWEEP.md   # The full-database re-run and what it found
+│   ├── LEADERBOARD_RULES_V2.md # How rows are ranked, and dated amendments
+│   ├── SUBMISSIONS.md          # Getting a result listed
 │   └── V4_PLAN.md              # Suite roadmap
 ├── website/                    # Next.js site on Vercel
 └── schema/schema_v4.json       # Entry JSON schema (v4)
