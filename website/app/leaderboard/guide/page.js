@@ -178,8 +178,8 @@ export default function GuidePage() {
               <strong>The ansatz matters as much as the optimiser.</strong> ADAPT-VQE selects
               its operators by analytic gradient, so its structure is gradient-determined even
               with a COBYLA inner optimiser. Measured on H₄, where both variants exist for the
-              same molecule and environment: ADAPT/COBYLA moved 3 × 10⁻⁸ Ha across
-              environments; HEA/COBYLA moved 9 × 10⁻⁴ Ha — twenty-five thousand times more.
+              same molecule and environment: ADAPT/COBYLA moved 3.4 × 10⁻⁸ Ha across
+              environments; HEA/COBYLA moved 8.8 × 10⁻⁴ Ha — 25,595 times more.
               The chip turns amber for the amplifying combination: gradient-free optimiser on
               an unstructured ansatz.
             </p>
