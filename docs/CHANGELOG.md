@@ -2,9 +2,55 @@
 
 Full version history. For the latest release summary only, see [RELEASE_NOTES.md](RELEASE_NOTES.md).
 
+> This file was not kept up to date between v3.1.0 and v4.5.0. Rather than invent
+> retrospective entries, the gap is stated: the v4 suite work is recorded in
+> [`V4_PLAN.md`](V4_PLAN.md), [`RELEASE_NOTES.md`](RELEASE_NOTES.md), the dated amendments
+> in [`LEADERBOARD_RULES_V2.md`](LEADERBOARD_RULES_V2.md) and the git history.
+
 ---
 
-## v3.1.0 (current) — 2026-05-12
+## v4.5.0 — 2026-09-04 — first PyPI release
+
+**The package version now moves independently of the suite version.** Suite v4.4 (the
+data — molecules, basis, active spaces) is frozen until the paper it underpins is
+published. The software is not frozen, so the two numbers part company here.
+
+### Score a VQE result without running the pipeline
+
+- `qencode.score(energy, molecule=..., optimizer=..., ansatz=...)` reports the gap to the
+  exact ground state of the same active space, which of the two thresholds it clears, the
+  certification margin, whether the (optimiser, ansatz) pair makes that margin fragile
+  across machines, and where the number ranks among the published entries.
+- The references for all 16 suite molecules ship inside the package as a 23 KB table, so
+  **scoring imports no chemistry stack** — verified against the built wheel installed with
+  no dependencies at all.
+- It refuses rather than guesses: a mismatched active space raises, an energy below the
+  variational minimum is reported before any gap, and nothing is ever called *certified*.
+- `notebooks/score_your_vqe_result.ipynb` is the walkthrough, with executed outputs.
+
+### Packaging
+
+- Published to PyPI via **Trusted Publishing (OIDC)** — no API token exists anywhere.
+- `.github/workflows/publish.yml` builds and `twine check --strict`s on every packaging
+  change, and re-verifies zero-dependency scoring against the built wheel.
+
+### Correctness and hygiene
+
+- **Statevector ADAPT engine now verifies `B³ = -B` for every pool operator.** Fed a
+  `taper_operation` pool its closed-form exponential is not exact and it reported energies
+  *below* the exact ground state; it now raises. No published entry was affected — the two
+  entries using this engine (H₈, H₁₀) use the generator pool, which is filtered on exactly
+  this identity.
+- One definition of *certified* across the repository, pinned by a test.
+- Leaderboard shows certification margin, optimiser family, chemical accuracy and measured
+  cross-environment robustness per row.
+- The publish path verifies TLS and no longer forwards credentials across redirects.
+- `scripts/` reduced from 63 files to 17; v1/v2 tooling moved to `scripts/legacy/`.
+- Test suite runs in CI for the first time: 116 tests.
+
+---
+
+## v3.1.0 — 2026-05-12
 
 ### Suite v3.1 — 6-31G Basis Release
 

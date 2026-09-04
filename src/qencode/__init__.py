@@ -47,7 +47,7 @@ from typing import Any, Dict, Optional, Union
 
 from qencode._paths import default_out_dir, is_checkout, repo_root
 
-__version__ = "4.4.0"
+__version__ = "4.5.0"
 
 __all__ = [
     "__version__",
