@@ -399,7 +399,7 @@ v4.5 — Research tier
 - COBYLA VQE with multistart (remains the default optimizer)
 - CASCI active-space FCI as the VQE reference energy
 - Z2 symmetry tapering
-- Certification criterion: `|E_VQE − E_CASCI| < |E_CCSD(T) − E_HF|`
+- Certification criterion: `|E_VQE − E_CASCI| < 0.01 Ha` (this line originally named the CCSD(T) comparison, which is the informational badge, not the criterion -- corrected 2026-09-04, see TRUST_POLICY.md)
 - Ed25519 signing
 - Open-source self-run reproducibility
 

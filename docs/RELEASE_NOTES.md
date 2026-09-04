@@ -20,6 +20,13 @@ protocol) are identical to Suite v3. Only the basis set changed.
 
 ### Certification criterion
 
+> **Correction, 2026-09-04.** The paragraph below is left as originally published, and it
+> is wrong about what the criterion *was*. The code that produced Suite v3.1 certified on
+> `|E_VQE − E_CASCI| < 0.01 Ha` — the same bar as every later suite — and the CCSD(T)
+> comparison was, and is, an informational badge. The two conditions agreed on all 42
+> v3.1 entries, so no tier assignment was affected. The single definition is
+> [`TRUST_POLICY.md`](TRUST_POLICY.md).
+
 All 30 certified entries satisfy `beats_ccsd_t = True`:
 
 ```
