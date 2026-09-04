@@ -1,0 +1,79 @@
+H4 cross-environment certification check -- the ansatz control
+==============================================================
+Date        2026-09-04
+
+Two entries, same molecule, same basis, same mapping, same drifted environment. The only
+difference is the ansatz and the optimiser it is handed to. This is the cleanest control
+available in the suite for isolating what makes an entry environment-fragile.
+
+    H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_39f9134a722ad612.json    ADAPT-VQE (COBYLA inner)
+    H4_ccpvdz_JW_HEA_v4_tapered__sha256_2cb5ee33e450acbd.json      HEA, plain COBYLA
+
+Why         After H10 survived the thinnest margin in the suite, the working rule was
+            "gradient-free optimisers amplify, gradient-based ones do not", and the
+            highest-risk remaining entry was H4/ADAPT: a 0.58% margin AND a COBYLA inner
+            optimiser. That rule predicted H4/ADAPT would be the next failure.
+            It was wrong.
+
+Environment tested (drifted against the pinned reference):
+    python      3.11.14   (pinned 3.11.15)
+    pyscf       2.5.0     (pinned 2.6.2)
+    scipy       1.17.0    (pinned 1.13.1)
+    pennylane   0.44.1    (pinned 0.45.0)
+    numpy       1.26.4    (pinned 2.2.6)     <- major version difference
+
+Command
+    python scripts/verify_entry.py <entry> --mode certification \
+        --allow-dirty --allow-env-drift
+
+Results
+    entry                     stored gap    regen gap    energy moved   verdict   elapsed
+    H4 ADAPT (COBYLA inner)   9.942e-03     9.942e-03    3.428e-08      PASS       11 s
+    H4 HEA   (plain COBYLA)   9.283e-03     8.405e-03    8.774e-04      PASS       61 s
+
+Reading
+
+1.  Gradient-free is not sufficient for fragility. H4/ADAPT was flagged AT-RISK by the
+    optimiser-family rule and moved 3.428e-08 Ha -- 1692x LESS than its own margin, and
+    the smallest movement measured anywhere in the suite.
+
+2.  The ansatz is the variable, not the optimiser alone. Holding molecule, basis, mapping
+    and environment fixed, HEA moved 25595x more than ADAPT under the same optimiser
+    family. ADAPT selects its operators by analytic gradient, so the ansatz structure is
+    gradient-determined and COBYLA only polishes a small, incrementally grown and
+    well-conditioned parameter set. HEA hands COBYLA a full unstructured parameter vector
+    over a landscape with many near-degenerate minima, which is where a flipped comparison
+    can select a different basin.
+
+3.  Every measured entry, ranked by movement against its own margin:
+
+        entry                          margin Ha    moved Ha   moved/margin
+        H4   ADAPT / COBYLA inner      5.800e-05   3.428e-08         0.001x
+        H10  ADAPT / L-BFGS-B inner    2.300e-05   1.005e-06         0.04x
+        H4   HEA   / COBYLA            7.170e-04   8.774e-04         1.22x
+        C4H4 HEA   / COBYLA (PAR)      3.891e-03   1.443e-02         3.71x
+
+    The two ADAPT entries sit three orders of magnitude below their margins. Both HEA
+    entries moved MORE than their own margin. The separation is clean with no overlap:
+    ADAPT <= 1.0e-06 Ha, HEA >= 8.8e-04 Ha.
+
+4.  H4/HEA passed on the sign, not on robustness. It moved 1.22x its own margin and
+    survived only because the energy moved TOWARD the reference, shrinking the gap from
+    9.283 to 8.405 mHa. Had the movement gone the other way it would have failed. It is
+    recorded as marginal rather than robust: a pass whose direction was luck is not
+    evidence of stability.
+
+    This is the mirror image of the trap already recorded in LEADERBOARD_RULES_V2.md --
+    that gap + |dE| over-predicts failure because movement can be favourable. The same
+    fact means a pass does not prove a small movement.
+
+Conclusion
+    Amplification risk is the conjunction of a gradient-free optimiser AND an unstructured
+    ansatz, not the optimiser alone. The risk flag in tools/certification_margin.py was
+    updated accordingly; it previously named 6 at-risk entries, of which 4 were ADAPT
+    entries that this measurement indicates are not the concern.
+
+Caveat
+    n = 5 measured entries. The ADAPT/HEA separation is three orders of magnitude with no
+    overlap, but it rests on two ADAPT measurements. It is stated as what has been
+    measured, not as a proven law.

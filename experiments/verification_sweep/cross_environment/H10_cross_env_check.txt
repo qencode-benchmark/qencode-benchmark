@@ -39,3 +39,13 @@ Reading
     Conclusion: optimiser family dominates margin. A thin margin is dangerous when the
     optimiser is gradient-free and largely harmless when it is gradient-based. The
     certification-margin heuristic should be read together with the optimiser, not alone.
+
+--------------------------------------------------------------------------------------
+SUPERSEDED IN PART, 2026-09-04. The conclusion above is directionally right and its
+attribution is incomplete. H4/ADAPT is gradient-free by that rule and moved 3.428e-08 Ha,
+falsifying "gradient-free implies fragile". The controlled H4 comparison shows the
+variable is the ANSATZ: ADAPT (gradient-selected structure) is protected regardless of
+its inner optimiser, while an unstructured ansatz under a gradient-free optimiser is not.
+The H10 measurement itself stands unchanged; only the rule drawn from it was too broad.
+See H4_cross_env_check.txt.
+--------------------------------------------------------------------------------------

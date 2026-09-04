@@ -245,6 +245,60 @@ actually tested, because their energy moved *toward* the reference and the gap s
 Fragility is established by running `verify_entry.py --mode certification`, never by
 inference.
 
+### 2026-09-04 — what actually amplifies: the ansatz, not the optimiser alone
+
+The amendment above attributes environment fragility to the optimiser family. **That is
+measurably incomplete, and the correction is recorded here rather than edited into the
+earlier text.**
+
+`H4_ccpvdz_JW_ADAPT` is gradient-free by that rule (ADAPT-VQE with a COBYLA inner
+optimiser), holds the **second-thinnest margin in the suite at 0.58%**, and was therefore
+the entry the rule predicted would fail next. Re-run on the drifted environment its energy
+moved **3.4 × 10⁻⁸ Ha** — 1692× *less* than its own margin, and the smallest movement
+measured anywhere in the suite.
+
+H₄ is the controlled comparison, because it is the only molecule carrying both an ADAPT and
+an HEA entry. Same molecule, basis, mapping, seed and environment; only the ansatz differs:
+
+| H₄ entry | optimiser | energy moved | against its own margin |
+|---|---|---|---|
+| ADAPT | COBYLA **inner** | 3.4 × 10⁻⁸ Ha | 0.001× |
+| HEA | plain COBYLA | 8.8 × 10⁻⁴ Ha | **1.22×** |
+
+**25,595× apart.** ADAPT selects its operators by analytic gradient, so the ansatz
+*structure* is gradient-determined and the gradient-free optimiser only polishes a small,
+incrementally grown, well-conditioned parameter set. An unstructured ansatz hands the same
+optimiser a full parameter vector over a landscape of near-degenerate minima — which is
+where a flipped comparison selects a different basin.
+
+All five cross-environment measurements, ranked by movement against the entry's own margin:
+
+| entry | ansatz / optimiser | margin | moved | moved/margin |
+|---|---|---|---|---|
+| H₄ | ADAPT / COBYLA inner | 5.8 × 10⁻⁵ | 3.4 × 10⁻⁸ | 0.001× |
+| H₁₀ | ADAPT / L-BFGS-B inner | 2.3 × 10⁻⁵ | 1.0 × 10⁻⁶ | 0.04× |
+| H₄ | HEA / COBYLA | 7.2 × 10⁻⁴ | 8.8 × 10⁻⁴ | 1.22× |
+| C₄H₄ | HEA / COBYLA | 3.9 × 10⁻³ | 1.4 × 10⁻² | 3.71× |
+
+Clean separation, no overlap: **ADAPT ≤ 1.0 × 10⁻⁶ Ha, HEA ≥ 8.8 × 10⁻⁴ Ha.** The risk
+flag in `tools/certification_margin.py` is now the conjunction *gradient-free **and**
+unstructured ansatz*. It previously named 6 at-risk entries, 4 of which were ADAPT runs
+this measurement indicates are not the concern.
+
+**A pass is not automatically robustness.** `H4_ccpvdz_JW_HEA` moved **1.22× its own
+margin** and certified anyway, because the energy moved *toward* the reference and its gap
+shrank from 9.283 to 8.405 mHa. The opposite sign would have failed it. It is recorded as
+**measured-marginal**, not measured-robust — a distinct flag, because a pass that depended
+on the direction of the movement is not evidence of stability. This is the mirror of the
+`gap + |ΔE|` trap noted above: movement can be favourable, so that arithmetic
+over-predicts failure *and* a pass under-reports risk.
+
+Nothing here changes the status of any entry, the CI allow-list, or a published ranking.
+Evidence: `experiments/verification_sweep/cross_environment/H4_cross_env_check.txt`.
+
+**Caveat.** n = 5 measured entries, resting on two ADAPT measurements. Stated as what has
+been measured, not as a proven law.
+
 ### 2026-08-27 — suite stability during publication
 
 The molecule catalogue, basis set and active spaces are **frozen** until the paper
