@@ -564,9 +564,14 @@ def apply_tapering(H, n_qubits: int, n_electrons: int, e_casci: float,
 
 # ─── Ansatz builders (identical to v3) ───────────────────────────────────────
 
-def _get_tapered_uccsd_ops(n_electrons, n_qubits_full, generators, paulixops, sectors):
+def _get_tapered_uccsd_ops(n_electrons, n_qubits_full, generators, paulixops, sectors,
+                           pool="auto"):
     """
     Build the UCCSD operator pool for ADAPT-VQE.
+
+    pool: "auto" picks by size as described below; "taper_operation" or "generators"
+    forces one path. The forced forms exist so the two ADAPT engines can be compared
+    on the same operators in tests; production uses "auto".
 
     <= 12 qubits: taper_operation (unchanged; this produced every certified entry).
 
@@ -605,7 +610,10 @@ def _get_tapered_uccsd_ops(n_electrons, n_qubits_full, generators, paulixops, se
     # what lets ADAPT report circuit cost (see _adapt_circuit_metrics).
     op_sources = []
 
-    use_taper_op = (n_qubits_full <= 12)  # taper_operation builds 2^N x 2^N matrix
+    if pool not in ("auto", "taper_operation", "generators"):
+        raise ValueError(f"pool must be auto, taper_operation or generators, not {pool!r}")
+    # taper_operation builds a 2^N x 2^N matrix, so "auto" only uses it up to 12 qubits.
+    use_taper_op = (pool == "taper_operation") or (pool == "auto" and n_qubits_full <= 12)
 
     if use_taper_op:
         for d_wires in doubles:
@@ -743,7 +751,7 @@ def build_hea_circuit(H_tapered, hf_tapered, reps=2):
 
 def build_adapt_meta(H_tapered, hf_tapered, n_electrons, n_qubits_full,
                      generators, paulixops, sectors,
-                     gradient_threshold=1e-3, max_operators=100):
+                     gradient_threshold=1e-3, max_operators=100, pool="auto"):
     """
     ADAPT-VQE: returns a 'meta' dict — operator pool + HF state + thresholds.
     The ansatz is BUILT INCREMENTALLY by run_vqe_adapt() — one operator at a
@@ -762,7 +770,7 @@ def build_adapt_meta(H_tapered, hf_tapered, n_electrons, n_qubits_full,
         label:      "adapt"
     """
     tapered_ops, op_sources = _get_tapered_uccsd_ops(
-        n_electrons, n_qubits_full, generators, paulixops, sectors
+        n_electrons, n_qubits_full, generators, paulixops, sectors, pool=pool
     )
 
     if not tapered_ops:
@@ -1308,6 +1316,11 @@ def run_vqe_adapt_statevector(H_tapered, adapt_meta, max_iter=500, seed=42,
       adjoint grad vs finite differences             : 5.7e-10
       H6 [6,6]: identical operators and energies to the QNode path at every step
                 (9.5280 mHa, 27 ops), tapered and untapered alike.
+
+    Pool contract: every operator must satisfy B^3 = -B for B := 2iG, which is what
+    makes _sv_apply_exp exact. The generator pool guarantees it; a taper_operation pool
+    never does, and the engine raises rather than run on one. See
+    tests/test_pipeline_regressions.py for how that was found.
     """
     import pennylane as qml
     import scipy.sparse as _sp
@@ -1339,12 +1352,35 @@ def run_vqe_adapt_statevector(H_tapered, adapt_meta, max_iter=500, seed=42,
 
     t0 = _time.time()
     Bs, B2s = [], []
-    for op in pool:
+    invalid = []
+    for k, op in enumerate(pool):
         G = op.base if hasattr(op, "base") else qml.generator(op, format="observable")
         B = (2j * _op_csr(G)).tocsr()
+        B2 = (B @ B).tocsr()
+        # _sv_apply_exp is a closed form that is exact only when B^3 = -B. That holds
+        # for tapered excitation generators, which the >12-qubit pool builder filters
+        # on, and for NOTHING that qchem.taper_operation returns (single Pauli words,
+        # B^2 = -4I). Fed such a pool this engine used to apply a non-unitary map and
+        # report energies below the exact ground state -- found by the engine
+        # equivalence test on H4, where it sat 0.78 Ha under the true minimum on a
+        # theta grid. The check costs one sparse product per operator, the same one the
+        # pool builder already pays, and it is the difference between a wrong number
+        # and an error.
+        resid = B2 @ B + B
+        if resid.nnz and abs(resid).max() > 1e-8:
+            invalid.append(k)
         Bs.append(B)
-        B2s.append((B @ B).tocsr())
-    print(_ok(f"Pool sparse generators built ({_time.time()-t0:.1f}s)"))
+        B2s.append(B2)
+    if invalid:
+        raise ValueError(
+            f"statevector ADAPT engine: {len(invalid)} of {len(pool)} pool operators fail "
+            f"B^3 = -B (first: {invalid[:5]}), so the closed-form exponential this engine "
+            f"uses is not exact for them. This is what a taper_operation pool looks like; "
+            f"the engine needs the tapered-generator pool (build_adapt_meta(..., "
+            f"pool='generators'), which 'auto' selects above 12 qubits) or the QNode "
+            f"engine (run_vqe_adapt) must be used instead.")
+    print(_ok(f"Pool sparse generators built ({_time.time()-t0:.1f}s); "
+              f"B^3 = -B verified for all {len(pool)}"))
 
     psi0 = np.zeros(2 ** n_tap, dtype=complex)
     psi0[int("".join(str(int(b)) for b in hf_tapered), 2)] = 1.0
