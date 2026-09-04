@@ -32,4 +32,12 @@
 
 pandas==2.2.3
 PyYAML==6.0.2
-cryptography==43.0.1
+# 43.0.1 carried 10 published advisories: X.509 path building, DNS name constraint
+# enforcement, and the OpenSSL bundled in the wheels. None were reachable from this
+# repository -- attestation.py uses only Ed25519 sign/verify and PEM key loading, and
+# nothing here parses X.509 or terminates TLS -- but there is no reason to keep a pin
+# with known advisories when the fix costs nothing. 50.0.1 is advisory-free; 49.0.0
+# still carries two. It requires only cffi, so the pinned science stack is untouched,
+# and it was checked against the exact API attestation.py uses: keygen, PEM round-trip,
+# sign, verify, and rejection of a tampered payload.
+cryptography==50.0.1
