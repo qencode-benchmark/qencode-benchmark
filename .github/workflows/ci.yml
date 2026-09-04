@@ -133,6 +133,53 @@ jobs:
           print("PASS")
           PYEOF
 
+  # ── Test suite ──────────────────────────────────────────────────────────────
+  #
+  # Until 2026-09-04 no CI job ran pytest, so every test in tests/ was a local habit
+  # rather than a gate. That includes the pins on published numbers: every stored
+  # entry's hash recomputed from its contents, five entries regenerated through the
+  # real verifier at 1e-6 Ha, the H2 hash, and the regression tests on the three
+  # places pipeline bugs have actually lived (sector search, ADAPT operator
+  # selection, the imaginary-strip guard). A refactor that moved a published number
+  # would have passed CI. Now it cannot.
+  #
+  # pytest is installed alongside the pins, not in requirements-v4.txt, because the
+  # reproducibility guard parses that file and refuses to run unless every pin in it
+  # is importable at exactly that version; a test runner is not part of the recorded
+  # environment. --no-deps keeps the package install from touching the pinned stack.
+  tests:
+    name: Test suite (pytest, chemistry stack)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip (v4)
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-v4-${{ hashFiles('requirements-v4.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-v4-
+
+      - name: Install pinned stack, the package, and pytest
+        run: |
+          pip install -r requirements-v4.txt
+          pip install --no-deps -e .
+          pip install pytest
+
+      - name: Run tests
+        env:
+          QENCODE_REPO: ${{ github.workspace }}
+        run: python -m pytest tests/ -v --durations=10
+
   # ── v4 reproducibility: replay committed entries ──────────────────────────
   #
   # Added after the first end-to-end sweep of the database found that
