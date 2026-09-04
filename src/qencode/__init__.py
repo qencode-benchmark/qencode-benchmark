@@ -60,7 +60,17 @@ __all__ = [
     "default_out_dir",
     "is_checkout",
     "threads_pinned",
+    "score",
+    "reference",
+    "available",
+    "Score",
 ]
+
+# Scoring reads a packaged reference table and needs no chemistry stack, so it is
+# imported eagerly: it costs one JSON load and nothing else. The module is
+# ``qencode.scoring`` and the function is ``qencode.score`` -- deliberately different
+# names, so that neither shadows the other on ``import qencode.scoring``.
+from qencode.scoring import Score, available, reference, score  # noqa: E402
 
 
 def threads_pinned() -> bool:
@@ -144,8 +154,14 @@ def gap_mha(entry: Dict[str, Any]) -> Optional[float]:
 
 
 def beats_classical(entry: Dict[str, Any]) -> Optional[bool]:
-    """Whether this run recovered more correlation energy than CCSD(T).
+    """Whether the VQE error is smaller than the CCSD(T) correlation energy.
 
-    Usually False, and that is the honest state of the field at these sizes.
+    Weaker than the name suggests, and not a quality mark. It compares the VQE's error
+    against the size of the correlation energy CCSD(T) recovers on the same molecule. It
+    does not mean VQE outperformed CCSD(T), which is cheaper and, on the full system,
+    more accurate than anything in this suite.
+
+    It is True for all 54 published entries at cc-pVDZ, including the 7 that are not
+    certified, so it does not discriminate between them. See docs/TRUST_POLICY.md.
     """
     return entry.get("results", {}).get("quality", {}).get("beats_classical")

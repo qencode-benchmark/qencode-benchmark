@@ -1,0 +1,104 @@
+name: Publish to PyPI
+
+# Publishing uses PyPI Trusted Publishing (OpenID Connect), so there is no API token
+# anywhere: not in the repository, not in a GitHub secret, not on anyone's laptop. PyPI
+# verifies the short-lived identity of this exact workflow, in this exact repository, and
+# mints a credential that lives for minutes. A token that does not exist cannot leak --
+# which matters here, because this project already had one credential committed to a
+# public repository (see the 2026-09-04 publish-path fixes).
+#
+# ONE-TIME SETUP, done by a project owner on the PyPI website:
+#
+#   https://pypi.org/manage/account/publishing/  ->  "Add a new pending publisher"
+#     PyPI Project Name: qencode-benchmark
+#     Owner:             qencode-benchmark
+#     Repository name:   qencode-benchmark
+#     Workflow name:     publish.yml
+#     Environment name:  pypi
+#
+# Then create the "pypi" environment under Settings -> Environments in GitHub, and
+# consider adding yourself as a required reviewer so a publish waits for a human click.
+#
+# TO PUBLISH: create a GitHub Release (or push a tag and publish the release). The version
+# comes from pyproject.toml and cannot be re-uploaded once taken, so bump it first.
+#
+# The dry-run job runs on every push that touches packaging, so a broken sdist or a failed
+# twine check is found long before a release, not during one.
+
+on:
+  release:
+    types: [published]
+  push:
+    paths:
+      - "pyproject.toml"
+      - "src/qencode/**"
+      - ".github/workflows/publish.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # Build and check on every packaging change. Publishes nothing.
+  build:
+    name: Build and check the distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build tooling
+        run: pip install build twine
+
+      - name: Build sdist and wheel
+        run: python -m build
+
+      - name: Check metadata renders on PyPI
+        run: python -m twine check --strict dist/*
+
+      # The scoring path is the reason someone installs this without the chemistry stack.
+      # If the reference table ever stops being packaged, `qencode.score` breaks for every
+      # such user and nothing else would notice, so it is checked against the built wheel
+      # in a clean environment with no dependencies installed at all.
+      - name: Score a result from the built wheel, with no dependencies
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install --no-deps dist/*.whl
+          cd /tmp    # not the checkout, so nothing resolves from the source tree
+          /tmp/clean/bin/python -c "
+          import sys, qencode
+          s = qencode.score(-7.9835, molecule='LiH', active_space=(4, 4),
+                            optimizer='COBYLA', ansatz='hea')
+          assert 0.27 < s.gap_mha < 0.28, s.gap_mha
+          assert s.meets_certification_threshold and s.amplifies
+          assert len(qencode.available()) == 16
+          assert not any(m in sys.modules for m in ('numpy', 'pyscf', 'pennylane')), \
+              'scoring pulled in a chemistry stack'
+          print('wheel scores correctly with zero dependencies')
+          "
+          /tmp/clean/bin/qencode --version
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write        # the only credential involved; nothing long-lived exists
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1

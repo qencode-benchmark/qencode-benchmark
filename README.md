@@ -54,6 +54,45 @@ An entry is *certified* when its gap to the active-space CASCI reference is belo
 
 ---
 
+## Score a VQE result you already have
+
+You do not need to run our pipeline to use QEncode. If you have a VQE energy for one of
+the 16 suite molecules, one call tells you how far it is from the exact ground state of
+the same active space, which threshold it clears, how much margin it has, and whether your
+optimiser and ansatz make that margin fragile on another machine:
+
+```python
+import qencode
+
+s = qencode.score(-7.9835, molecule="LiH", active_space=(4, 4),
+                  optimizer="COBYLA", ansatz="hea")
+print(s.report())
+```
+
+```
+  your energy             -7.9835000000 Ha
+  exact ground state      -7.9837729770 Ha   (CASCI in the declared active space)
+  gap                      0.0002729770 Ha   = 0.273 mHa
+
+  reaches CHEMICAL ACCURACY (< 1.6 mHa) and would meet the 10 mHa certification threshold
+  margin             9.727e-03 Ha (97.3% of the threshold)
+  amplifying         YES -- gradient-free optimiser on an unstructured ansatz
+  among published    #3 of 4 QEncode entries for this problem
+```
+
+The comparison normally needs a CASCI reference, which means installing PySCF and waiting.
+The references for all 16 molecules ship inside the package instead, so **scoring imports
+no chemistry stack — not even NumPy.** It refuses rather than guesses: a declared active
+space that does not match raises, and an energy below the variational minimum is reported
+as a problem with your setup, not as a good result.
+
+**Meeting the threshold is not certification** — that requires the pipeline, with recorded
+provenance, a content hash and a signature. See [`docs/TRUST_POLICY.md`](docs/TRUST_POLICY.md).
+
+Walkthrough: **[notebooks/score_your_vqe_result.ipynb](notebooks/score_your_vqe_result.ipynb)**.
+
+---
+
 ## Quick start
 
 **Docker (recommended — pinned environment, determinism already enforced):**
