@@ -113,6 +113,12 @@ def main():
                     help="verify even if the git tree has uncommitted changes")
     ap.add_argument("--allow-env-drift", action="store_true",
                     help="verify even if installed package versions differ from the pins")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="print the generator command this entry would be re-run with, "
+                         "then exit without running it. The reconstruction of that "
+                         "command from the stored entry is where two of the three "
+                         "verifier bugs lived (ansatz vocabulary, iteration budget), and "
+                         "it is deterministic on any machine, unlike the energy.")
     args = ap.parse_args()
 
     entry_path = Path(args.entry_json)
@@ -249,6 +255,10 @@ def main():
                 cmd += ["--adapt-max-ops", str(am["max_operators"])]
         print(_info(f"Running: {' '.join(cmd[2:])}"))
         print()
+
+        if args.dry_run:
+            print(_ok("Dry run: command reconstructed, generator not executed."))
+            return
 
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:

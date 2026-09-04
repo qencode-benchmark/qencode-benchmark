@@ -5,16 +5,25 @@ refactor that altered one output byte would invalidate every entry in the databa
 it would do so silently — the pipeline would still run, still print success, and still
 write a plausible-looking file.
 
-So this pins the H2 content hash and checks that every way of invoking the pipeline still
-produces it: the compatibility shim at the documented path, the console entry point, and
-the Python API.
+So every way of invoking the pipeline — the compatibility shim at the documented path,
+the console entry point, and the Python API — is run on H2 and checked three ways:
+
+  * all three produce the same content hash as each other, in one interpreter
+  * the energy matches the published H2 JW/UCCSD entry to 1e-6 Ha, on any machine
+  * on the reference environment, the hash equals a pinned value
 
     pytest tests/test_packaging.py -v
 
-The environment guard is bypassed deliberately (--allow-dirty --allow-env-drift). This
-test compares three code paths against each other in one interpreter, so a drifted stack
-affects all of them identically; it is a packaging test, not a reproducibility test.
-Reproducibility is what tools/check_vqe_reproducibility.py is for.
+The first version of this file pinned one hash unconditionally. The hash covers
+provenance.tool_versions, so that value was specific to the environment it was recorded
+in — the drifted development stack — and it failed the first time the suite ran on the
+pinned reference stack in CI. The reference-environment pin is therefore gated on the
+generated entry actually recording the reference versions, and the two checks that do
+not depend on the environment always run.
+
+The environment guard is bypassed deliberately (--allow-dirty --allow-env-drift). This is
+a packaging test; reproducibility is what tools/check_vqe_reproducibility.py and
+tests/test_pipeline_regressions.py are for.
 """
 from __future__ import annotations
 
@@ -28,19 +37,22 @@ import pytest
 
 REPO = Path(__file__).resolve().parents[1]
 
-# Recorded from the pipeline before it was moved into the package, in the same
-# interpreter, and re-verified after. If this changes, something about the computation
-# changed and not merely where the files live.
-H2_HASH = "bf184258d3c03986821cc389bd1fc4e46ccc2680955def87e420520c3448f440"
+# The hash the shim produces on the reference environment: Linux, and exactly the
+# versions in requirements-v4.txt with Python 3.11.15. Measured in a venv built the way
+# CI builds one. Only asserted when the generated entry records those versions.
+REFERENCE_H2_HASH = "375960cd1eb599cba7452d036b850a85e468f5e0ae1b62c76dccc1447cedd77e"
+REFERENCE_VERSIONS = {"python": "3.11.15", "pyscf": "2.6.2", "pennylane": "0.45.0",
+                      "openfermion": "1.6.1", "numpy": "2.2.6", "scipy": "1.13.1"}
+
+PUBLISHED_H2 = next(REPO.glob("releases/v4/db/H2_ccpvdz_JW_UCCSD_*.json"))
 
 COMMON = ["--molecule", "H2", "--allow-dirty", "--allow-env-drift"]
 
 
-def _hash_of(out_dir: Path) -> str:
+def _entry_in(out_dir: Path) -> dict:
     files = sorted(out_dir.glob("*.json"))
     assert files, "the pipeline wrote no entry to %s" % out_dir
-    entry = json.loads(files[-1].read_text(encoding="utf-8"))
-    return entry["provenance"]["entry_hash_sha256"]
+    return json.loads(files[-1].read_text(encoding="utf-8"))
 
 
 def _run(cmd, out_dir):
@@ -52,24 +64,66 @@ def _run(cmd, out_dir):
     assert proc.returncode == 0, "command failed: %s\n%s" % (cmd, proc.stdout[-2000:])
 
 
-def test_shim_at_documented_path(tmp_path):
-    """scripts/generate_entry_v4.py is referenced by the Dockerfile, CI, the QUICKSTART
-    and several published posts, so it has to keep working."""
-    _run([sys.executable, str(REPO / "scripts" / "generate_entry_v4.py")], tmp_path)
-    assert _hash_of(tmp_path) == H2_HASH
-
-
-def test_console_entry_point(tmp_path):
-    _run([sys.executable, "-m", "qencode.cli", "run"], tmp_path)
-    assert _hash_of(tmp_path) == H2_HASH
-
-
-def test_python_api(tmp_path):
+@pytest.fixture(scope="module")
+def entries(tmp_path_factory):
+    """One H2 run through each code path, all in this interpreter's environment."""
     import qencode
 
-    entry = qencode.generate_entry(
-        molecule="H2", out_dir=str(tmp_path), allow_dirty=True, allow_env_drift=True)
-    assert qencode.entry_hash(entry) == H2_HASH
+    shim = tmp_path_factory.mktemp("shim")
+    _run([sys.executable, str(REPO / "scripts" / "generate_entry_v4.py")], shim)
+
+    cli = tmp_path_factory.mktemp("cli")
+    _run([sys.executable, "-m", "qencode.cli", "run"], cli)
+
+    api_dir = tmp_path_factory.mktemp("api")
+    api = qencode.generate_entry(molecule="H2", out_dir=str(api_dir),
+                                 allow_dirty=True, allow_env_drift=True)
+    return {"shim": _entry_in(shim), "cli": _entry_in(cli), "api": api}
+
+
+def _hash(e):
+    return e["provenance"]["entry_hash_sha256"]
+
+
+def test_shim_at_documented_path(entries):
+    """scripts/generate_entry_v4.py is referenced by the Dockerfile, CI, the QUICKSTART
+    and several published posts, so it has to keep working."""
+    assert _hash(entries["shim"])
+
+
+def test_all_three_code_paths_agree_with_each_other(entries):
+    hashes = {k: _hash(v) for k, v in entries.items()}
+    assert len(set(hashes.values())) == 1, hashes
+
+
+def test_every_code_path_reproduces_the_published_energy(entries):
+    """H2 tapers to one qubit and converges exactly, so this holds on any machine."""
+    published = json.loads(PUBLISHED_H2.read_text())["results"]["vqe"]["best_energy_hartree"]
+    for name, e in entries.items():
+        assert abs(e["results"]["vqe"]["best_energy_hartree"] - published) < 1e-6, name
+
+
+def test_reference_environment_hash(entries):
+    """On the reference stack the hash is a fixed value. Elsewhere the two tests above
+    still hold; only this pin is skipped, and it says why."""
+    recorded = dict(entries["shim"]["provenance"]["tool_versions"])
+    recorded.pop("git_commit", None)
+    if recorded != REFERENCE_VERSIONS:
+        pytest.skip("not the reference environment: %s" % {
+            k: (recorded.get(k), REFERENCE_VERSIONS[k])
+            for k in REFERENCE_VERSIONS if recorded.get(k) != REFERENCE_VERSIONS[k]})
+    assert _hash(entries["shim"]) == REFERENCE_H2_HASH
+
+
+def test_console_entry_point(entries):
+    assert _hash(entries["cli"]) == _hash(entries["shim"])
+
+
+def test_python_api(entries):
+    import qencode
+
+    entry = entries["api"]
+    assert qencode.entry_hash(entry) == _hash(entries["shim"])
     assert qencode.gap_mha(entry) is not None
 
 

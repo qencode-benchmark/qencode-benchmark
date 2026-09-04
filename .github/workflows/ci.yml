@@ -222,14 +222,29 @@ jobs:
       # while the CLI accepts only "hardware_efficient". This is 29 of 54 entries,
       # and before a298c51 every one of them failed at the first call.
       - name: HEA entry — regression for the ansatz vocabulary bug
-        run: python scripts/verify_entry.py releases/v4/db/HF_ccpvdz_JW_HEA_v4_tapered__sha256_94244108ad3c4f44.json
+        run: |
+          python scripts/verify_entry.py releases/v4/db/HF_ccpvdz_JW_HEA_v4_tapered__sha256_94244108ad3c4f44.json --dry-run \
+            | grep -q -- "--ansatz-type hardware_efficient" || { echo "verifier no longer maps hea -> hardware_efficient"; exit 1; }
+          python scripts/verify_entry.py releases/v4/db/HF_ccpvdz_JW_HEA_v4_tapered__sha256_94244108ad3c4f44.json
 
       # Regression for the max_iterations bug: entries recorded above the
       # generator's 500 default were silently re-run at 500 and landed elsewhere.
       # Every entry at 500 reproduced; all three above it failed. This is one of
       # the three, and the only one cheap enough for CI.
+      #
+      # Two checks, because neither alone is right. The plumbing check -- does the
+      # verifier reconstruct --max-iter 1000 from the entry -- is what the bug
+      # actually was, and it is deterministic on any machine. The energy is NOT:
+      # this is a COBYLA/UCCSD entry, and re-run on a different environment it moved
+      # 2.1e-3 Ha (while its gap improved to 9e-5 Ha and it certified comfortably).
+      # Held to the strict 1e-6 tolerance on GitHub's runners it passed one push in
+      # four, by CPU. So the energy is checked in certification mode, which is the
+      # property that holds across machines.
       - name: max_iterations=1000 entry — regression for the iteration-budget bug
-        run: python scripts/verify_entry.py releases/v4/db/H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_7606caf47ff39f40.json
+        run: |
+          python scripts/verify_entry.py releases/v4/db/H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_7606caf47ff39f40.json --dry-run \
+            | grep -q -- "--max-iter 1000" || { echo "verifier no longer passes the entry's max_iterations through"; exit 1; }
+          python scripts/verify_entry.py releases/v4/db/H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_7606caf47ff39f40.json --mode certification
 
       # One of each remaining ansatz family, so a change to circuit construction
       # is caught rather than only a change to argument plumbing.
