@@ -32,8 +32,8 @@ from typing import List, Optional
 
 
 def _repo_root() -> Path:
-    # scripts/check_all.py -> repo root
-    return Path(__file__).resolve().parents[1]
+    # scripts/legacy/check_all.py -> repo root
+    return Path(__file__).resolve().parents[2]
 
 
 def _py() -> str:
@@ -41,7 +41,8 @@ def _py() -> str:
 
 
 def _script(name: str) -> str:
-    return str(_repo_root() / "scripts" / name)
+    # The v1/v2 tooling this orchestrates moved to scripts/legacy/ on 2026-09-04.
+    return str(_repo_root() / "scripts" / "legacy" / name)
 
 
 def _run(cmd: List[str], cwd: Optional[Path] = None) -> None:

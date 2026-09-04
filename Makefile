@@ -1,4 +1,12 @@
-# qencode-db Makefile
+# qencode-db Makefile -- integrity tooling for the FROZEN v1 and v2 suites.
+#
+# Nothing here touches Suite v4. The current pipeline is scripts/generate_entry_v4.py,
+# scripts/verify_entry.py and scripts/export_leaderboard_v4.py; the v1/v2 tooling lives
+# in scripts/legacy/ and is kept so those releases remain checkable.
+#
+# `make check` WRITES into releases/v2/db (stamp_env_v2 --write, content hashes,
+# manifest). Run it only when you mean to regenerate that release's integrity files.
+#
 # Usage:
 #   make help
 #   make check
@@ -36,21 +44,21 @@ check: v1 v2 trusted supplychain
 	@echo "✅ make check: OK"
 
 v1:
-	$(PY) scripts/validate_schema.py --db-dir $(V1_DIR)
-	$(PY) scripts/build_index.py --db-dir $(V1_DIR)
-	$(PY) scripts/report_benchmarks.py --db-dir $(V1_DIR) --csv
-	$(PY) scripts/audit_db.py --db-dir $(V1_DIR) --gap-threshold $(GAP)
+	$(PY) scripts/legacy/validate_schema.py --db-dir $(V1_DIR)
+	$(PY) scripts/legacy/build_index.py --db-dir $(V1_DIR)
+	$(PY) scripts/legacy/report_benchmarks.py --db-dir $(V1_DIR) --csv
+	$(PY) scripts/legacy/audit_db.py --db-dir $(V1_DIR) --gap-threshold $(GAP)
 
 v2:
-	$(PY) scripts/migrate_v1_to_v2.py --in-dir $(V1_DIR) --out-dir $(V2_DIR) --gap-threshold $(GAP)
-	$(PY) scripts/stamp_env_v2.py --db-dir $(V2_DIR) --write
-	$(PY) scripts/validate_schema_v2.py --db-dir $(V2_DIR) --schema $(SCHEMA_V2)
-	$(PY) scripts/build_index_v2.py --db-dir $(V2_DIR)
-	$(PY) scripts/report_benchmarks_v2.py --db-dir $(V2_DIR) --csv
-	$(PY) scripts/audit_db_v2.py --db-dir $(V2_DIR) --gap-threshold $(GAP)
+	$(PY) scripts/legacy/migrate_v1_to_v2.py --in-dir $(V1_DIR) --out-dir $(V2_DIR) --gap-threshold $(GAP)
+	$(PY) scripts/legacy/stamp_env_v2.py --db-dir $(V2_DIR) --write
+	$(PY) scripts/legacy/validate_schema_v2.py --db-dir $(V2_DIR) --schema $(SCHEMA_V2)
+	$(PY) scripts/legacy/build_index_v2.py --db-dir $(V2_DIR)
+	$(PY) scripts/legacy/report_benchmarks_v2.py --db-dir $(V2_DIR) --csv
+	$(PY) scripts/legacy/audit_db_v2.py --db-dir $(V2_DIR) --gap-threshold $(GAP)
 
 trusted:
-	$(PY) scripts/export_trusted_v2.py --db-dir $(V2_DIR) --out-dir $(TRUSTED_DIR) --gap-threshold $(GAP) --require-gap-check --clean-out-dir
+	$(PY) scripts/legacy/export_trusted_v2.py --db-dir $(V2_DIR) --out-dir $(TRUSTED_DIR) --gap-threshold $(GAP) --require-gap-check --clean-out-dir
 	@test -f "$(TRUSTED_DIR)/trusted_index.json"
 	@test -f "$(TRUSTED_DIR)/trusted_benchmarks.csv"
 
@@ -59,10 +67,10 @@ trusted:
 # 2) build manifest.json (which includes that file)
 # 3) verify manifest + verify entry hashes
 supplychain:
-	$(PY) scripts/entry_content_hashes_v2.py --db-dir $(V2_DIR) --out-dir $(V2_DIR)
-	$(PY) scripts/build_manifest.py --root $(V2_DIR) --out $(MANIFEST) --only-json-entries
-	$(PY) scripts/verify_manifest.py --root $(V2_DIR) --manifest $(MANIFEST)
-	$(PY) scripts/verify_entry_hashes_v2.py --db-dir $(V2_DIR)
+	$(PY) scripts/legacy/entry_content_hashes_v2.py --db-dir $(V2_DIR) --out-dir $(V2_DIR)
+	$(PY) scripts/legacy/build_manifest.py --root $(V2_DIR) --out $(MANIFEST) --only-json-entries
+	$(PY) scripts/legacy/verify_manifest.py --root $(V2_DIR) --manifest $(MANIFEST)
+	$(PY) scripts/legacy/verify_entry_hashes_v2.py --db-dir $(V2_DIR)
 
 clean-trusted:
 	rm -rf "$(TRUSTED_DIR)"

@@ -22,9 +22,9 @@
 #   src/qencode/attestation.py       cryptography (Ed25519 signature verification),
 #                                    reached transitively by both leaderboard scripts
 #
-# Not listed here on purpose: qiskit is imported only by
-# src/qencode/dataset_loader.py, which is not on the import path of the leaderboard
-# scripts, so it is not required to run the tooling.
+# qiskit is not listed and not needed: the only module that imported it
+# (src/qencode/dataset_loader.py) was unreferenced scaffolding and was removed on
+# 2026-09-04.
 #
 # Verified on the pinned stack (Python 3.11): installing these leaves numpy 2.2.6
 # and scipy 1.13.1 untouched, and `python scripts/generate_leaderboard.py --help`

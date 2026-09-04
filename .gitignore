@@ -74,3 +74,11 @@ releases/v2/cache/
 *.egg-info/
 build/
 dist/
+
+# Editor and manual backup files. Seven of these were tracked until 2026-09-04.
+*.bak
+*.BAK
+*.bak[0-9]
+*.save
+*.save.[0-9]
+*.orig

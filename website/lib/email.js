@@ -1,6 +1,20 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Constructed on first send, not at import. The constructor throws without an API
+// key, and `next build` imports every route module while collecting page data, so
+// an import-time client made the whole site unbuildable on any machine without the
+// production mail secret -- a fresh checkout could not run `npm run build`. Nothing
+// about production changes: the first send still fails loudly if the key is unset.
+let _resend = null;
+function resend() {
+  if (_resend === null) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is not set; cannot send email");
+    }
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 const FROM_ADDRESS = "QEncode <noreply@qencode-benchmark.org>";
 
@@ -85,7 +99,7 @@ export async function sendCertificationComplete({ customerEmail, customerName, o
 </body>
 </html>`;
 
-  return resend.emails.send({
+  return resend().emails.send({
     from: FROM_ADDRESS,
     to: customerEmail,
     replyTo: SUPPORT_EMAIL,
@@ -195,7 +209,7 @@ export async function sendCustomerConfirmation({ customerEmail, customerName, or
 </html>
 `;
 
-  return resend.emails.send({
+  return resend().emails.send({
     from: FROM_ADDRESS,
     to: customerEmail,
     replyTo: SUPPORT_EMAIL,
@@ -249,7 +263,7 @@ python scripts/job_poller.py</pre>
 </html>
 `;
 
-  return resend.emails.send({
+  return resend().emails.send({
     from: FROM_ADDRESS,
     to: ADMIN_EMAIL,
     replyTo: customerEmail,
@@ -316,7 +330,7 @@ export async function sendApplyConfirmation({ contactName, workEmail, company, r
 </body>
 </html>`;
 
-  return resend.emails.send({
+  return resend().emails.send({
     from: FROM_ADDRESS,
     to: workEmail,
     replyTo: SUPPORT_EMAIL,
@@ -361,7 +375,7 @@ export async function sendApplyAdminNotification(fields) {
 </body>
 </html>`;
 
-  return resend.emails.send({
+  return resend().emails.send({
     from: FROM_ADDRESS,
     to: ADMIN_EMAIL,
     replyTo: workEmail,

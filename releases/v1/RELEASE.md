@@ -1,5 +1,8 @@
 # qencode-db — Release v1
 
+> **Note (2026-09-04).** The commands below are as published with this release. The v1/v2 tooling has since moved: `validate_schema.py`, `build_index.py` and `report_benchmarks.py` are in `scripts/legacy/` (driven by the top-level `Makefile`), and `query_index.py` is in `scripts/archive/`. The release data in `releases/v1/` is unchanged.
+
+
 This release contains a small, reproducible dataset of **molecule → qubit encodings**
 for quantum simulation workflows.
 
