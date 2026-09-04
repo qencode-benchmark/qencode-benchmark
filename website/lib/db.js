@@ -65,6 +65,19 @@ export async function ensureSchema() {
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS t_gate_estimate    BIGINT`;
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS non_clifford_gates BIGINT`;
 
+  // Certification margin and fragility (2026-09-04). Two entries certified at 9.98 and
+  // 0.001 mHa are both "certified" and only one survives being re-run on another
+  // machine; the leaderboard had been showing them identically. margin = 0.01 - gap.
+  // amplifies / at_risk come from tools/certification_margin.py; robustness is the
+  // measured cross-environment outcome where one exists ('robust' | 'marginal' | 'fragile').
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS optimizer        VARCHAR(50)`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS optimiser_family VARCHAR(20)`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS amplifies        BOOLEAN`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS margin           DOUBLE PRECISION`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS chem_accurate    BOOLEAN`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS robustness       VARCHAR(20)`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS at_risk          BOOLEAN`;
+
   await sql`
     CREATE TABLE IF NOT EXISTS leaderboard_metadata (
       key        VARCHAR(100) PRIMARY KEY,
@@ -242,7 +255,9 @@ export async function replaceEntries(category, entries) {
       INSERT INTO leaderboard_entries
         (category, rank, molecule, mapping, ansatz, entry_id, gap, depth, two_q_gates, balanced_score,
          baseline, beats_classical, ccsd_t_correlation, vqe_energy, casci_energy, hf_energy,
-         basis, orbital_opt, t_gate_estimate, non_clifford_gates, updated_at)
+         basis, orbital_opt, t_gate_estimate, non_clifford_gates,
+         optimizer, optimiser_family, amplifies, margin, chem_accurate, robustness, at_risk,
+         updated_at)
       VALUES
         (
           ${category},
@@ -265,6 +280,13 @@ export async function replaceEntries(category, entries) {
           ${e.orbital_opt        ?? null},
           ${e.t_gate_estimate    ?? null},
           ${e.non_clifford_gates ?? null},
+          ${e.optimizer          ?? null},
+          ${e.optimiser_family   ?? null},
+          ${e.amplifies          ?? null},
+          ${e.margin             ?? null},
+          ${e.chem_accurate      ?? null},
+          ${e.robustness         ?? null},
+          ${e.at_risk            ?? null},
           NOW()
         )
     `;

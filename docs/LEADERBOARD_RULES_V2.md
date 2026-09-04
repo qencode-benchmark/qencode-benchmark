@@ -82,6 +82,23 @@ It is not a failed or discarded run.
   of a fault-tolerant implementation. These are estimates from the pre-transpilation
   circuit, not compiled counts for a specific device, and they are suppressed for the
   symbolic circuits described above.
+- **Chemical accuracy** — whether the gap is below 1.6 mHa (1 kcal/mol). A marker, never
+  a criterion. *(Added 2026-09-04.)*
+- **Certification margin** — `0.01 Ha − gap`, shown as a share of the threshold; under
+  20% is flagged thin. *(Added 2026-09-04.)*
+- **Optimiser and family** — the classical optimiser the run used, and whether the
+  (optimiser, ansatz) pair amplifies last-bit arithmetic differences into a different
+  local minimum. Gradient-free on an unstructured ansatz does; ADAPT and gradient-based
+  runs do not. *(Added 2026-09-04.)*
+- **Measured robustness** — where an entry has been regenerated on another environment,
+  the outcome: *robust*, *marginal* (passed, but moved further than its own margin) or
+  *fragile* (no longer certifies). Where it has not, but the margin is thin and the
+  configuration amplifies, *at risk*. Source: `tools/certification_margin.py`, which is
+  also what the export reads, so the leaderboard cannot disagree with the tool.
+  *(Added 2026-09-04.)*
+
+None of these changes an entry's tier or rank; they are reported so that two entries
+with the same badge and very different stability are no longer shown identically.
 
 ---
 

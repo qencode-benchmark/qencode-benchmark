@@ -12,6 +12,28 @@ function num(v) {
  * UCCSD circuits often report symbolic metrics (depth=1, 2q=1) before
  * transpilation. We detect and nullify them so the UI shows "N/A".
  */
+function optBool(v) {
+  if (v === true || v === false) return v;
+  if (v === undefined || v === null || v === "" || v === "None" || v === "null") return null;
+  return String(v).toLowerCase() === "true";
+}
+
+/**
+ * Certification margin and fragility. Same shape from the DB and the CSV fallback;
+ * nulls where an older publish did not carry the columns.
+ */
+function marginFields(row) {
+  return {
+    optimizer:       row.optimizer || null,
+    optimiserFamily: row.optimiser_family || null,
+    amplifies:       optBool(row.amplifies),
+    margin:          num(row.margin),
+    chemAccurate:    optBool(row.chem_accurate),
+    robustness:      row.robustness || null,
+    atRisk:          optBool(row.at_risk),
+  };
+}
+
 function applySymbolicMetrics(row) {
   const ansatz = String(row.ansatz || "").toLowerCase();
   const depth  = num(row.depth);
@@ -68,6 +90,7 @@ async function loadFromDatabase() {
       vqeEnergy:          num(r.vqe_energy),
       casciEnergy:        num(r.casci_energy),
       hfEnergy:           num(r.hf_energy),
+      ...marginFields(r),
       ...applySymbolicMetrics(r),
     }));
 
@@ -118,6 +141,7 @@ function loadFromCsv() {
       vqeEnergy:          num(r.vqe_energy),
       casciEnergy:        num(r.casci_energy),
       hfEnergy:           num(r.hf_energy),
+      ...marginFields(r),
       ...applySymbolicMetrics({ ...r, two_q_gates: r["2q_gates"] }),
     }));
 

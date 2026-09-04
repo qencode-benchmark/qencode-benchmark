@@ -35,6 +35,7 @@ import csv
 import json
 import math
 import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -45,6 +46,36 @@ OUTPUT_DIR      = REPO / "website" / "public" / "data"
 DEFAULT_SUITE_VERSION = "4"
 LEADERBOARD_RULES     = "2"
 GAP_THRESHOLD         = 0.01   # Hartree — certified threshold
+CHEM_ACCURACY         = 1.6e-3 # Hartree — 1 kcal/mol; reported, never a criterion
+
+# Margin, optimiser family, amplification and the measured cross-environment results all
+# come from one place so the leaderboard cannot drift from the tool that defines them.
+sys.path.insert(0, str(REPO / "tools"))
+import certification_margin as _cm  # noqa: E402
+
+
+def _optimizer_label(s) -> str | None:
+    """Short, comma-free label for the row. The raw run_config string can contain
+    commas ("L-BFGS-B inner, statevector engine"), which the site's CSV fallback
+    parser would split on."""
+    s = str(s or "")
+    if not s or s == "None":
+        return None
+    inner = ("COBYLA" if "COBYLA" in s else "L-BFGS-B" if "BFGS" in s
+             else "Adam" if "Adam" in s else "SPSA" if "SPSA" in s else s)
+    return f"ADAPT-VQE/{inner}" if "ADAPT" in s else inner
+
+
+def _robustness(entry_id: str) -> str | None:
+    """Measured cross-environment outcome, if this entry has been re-run elsewhere."""
+    fn = f"{entry_id}.json"
+    if fn in _cm.MEASURED_FRAGILE:
+        return "fragile"
+    if fn in _cm.MEASURED_MARGINAL:
+        return "marginal"
+    if fn in _cm.MEASURED_ROBUST:
+        return "robust"
+    return None
 
 
 # ── Mapping / ansatz normalisation ────────────────────────────────────────────
@@ -125,8 +156,30 @@ def entry_to_row(entry: dict) -> dict | None:
         if gap is None:
             return None
 
+        # Margin and fragility. An entry certified at 9.98 mHa and one at 0.001 mHa are
+        # both "certified"; only one survives being re-run on another machine. The risk
+        # is the conjunction of a thin margin and an amplifying (gradient-free optimiser,
+        # unstructured ansatz) configuration -- measured, see tools/certification_margin.py.
+        entry_id     = entry.get("entry_id", "")
+        optimizer    = (entry.get("run_config") or {}).get("optimizer")
+        ansatz_raw   = entry["encoding"]["ansatz_type"]
+        family       = _cm._optimiser_family(optimizer)
+        amplifies    = _cm._amplifies(optimizer, ansatz_raw)
+        certified    = gap < GAP_THRESHOLD
+        margin       = (GAP_THRESHOLD - gap) if certified else None
+        robustness   = _robustness(entry_id)
+        thin         = certified and margin < GAP_THRESHOLD * _cm.THIN_MARGIN_FRACTION
+        at_risk      = bool(thin and amplifies and robustness is None)
+
         return {
-            "entry_id":           entry.get("entry_id", ""),
+            "entry_id":           entry_id,
+            "optimizer":          _optimizer_label(optimizer),
+            "optimiser_family":   family,
+            "amplifies":          amplifies,
+            "margin":             margin,
+            "chem_accurate":      gap < CHEM_ACCURACY,
+            "robustness":         robustness,
+            "at_risk":            at_risk,
             "molecule":           mol,
             "basis":              basis,
             "orbital_opt":        orbital_opt,
@@ -266,6 +319,13 @@ def main():
             "hf_energy":          r["hf_energy"],
             "baseline":           r["baseline"],
             "beats_classical":    r["beats_classical"],
+            "optimizer":          r["optimizer"],
+            "optimiser_family":   r["optimiser_family"],
+            "amplifies":          r["amplifies"],
+            "margin":             r["margin"],
+            "chem_accurate":      r["chem_accurate"],
+            "robustness":         r["robustness"],
+            "at_risk":            r["at_risk"],
         }
         for r in acc_rows
     ]
@@ -294,6 +354,13 @@ def main():
             "non_clifford_gates": r["non_clifford_gates"],
             "baseline":           r["baseline"],
             "beats_classical":    r["beats_classical"],
+            "optimizer":          r["optimizer"],
+            "optimiser_family":   r["optimiser_family"],
+            "amplifies":          r["amplifies"],
+            "margin":             r["margin"],
+            "chem_accurate":      r["chem_accurate"],
+            "robustness":         r["robustness"],
+            "at_risk":            r["at_risk"],
         }
         for r in cost_rows
     ]
@@ -336,6 +403,13 @@ def main():
             "non_clifford_gates": r["non_clifford_gates"],
             "baseline":           r["baseline"],
             "beats_classical":    r["beats_classical"],
+            "optimizer":          r["optimizer"],
+            "optimiser_family":   r["optimiser_family"],
+            "amplifies":          r["amplifies"],
+            "margin":             r["margin"],
+            "chem_accurate":      r["chem_accurate"],
+            "robustness":         r["robustness"],
+            "at_risk":            r["at_risk"],
         }
         for r in balanced_rows
     ]
@@ -360,6 +434,13 @@ def main():
             "hf_energy":          r["hf_energy"],
             "baseline":           r["baseline"],
             "beats_classical":    r["beats_classical"],
+            "optimizer":          r["optimizer"],
+            "optimiser_family":   r["optimiser_family"],
+            "amplifies":          r["amplifies"],
+            "margin":             r["margin"],
+            "chem_accurate":      r["chem_accurate"],
+            "robustness":         r["robustness"],
+            "at_risk":            r["at_risk"],
         }
         for r in res_rows
     ]
@@ -382,7 +463,15 @@ def main():
     print(f"  Cost:      {len(cost_csv):3} entries")
     print(f"  Balanced:  {len(balanced_csv):3} entries")
     print(f"  Research:  {len(research_csv):3} entries")
-    print(f"  Beats Classical: {beats_count}/{len(certified)} certified\n")
+    print(f"  Beats Classical: {beats_count}/{len(certified)} certified")
+    chem  = sum(1 for r in certified if r["chem_accurate"])
+    thin  = sum(1 for r in certified if r["margin"] is not None
+                and r["margin"] < GAP_THRESHOLD * _cm.THIN_MARGIN_FRACTION)
+    risk  = sum(1 for r in certified if r["at_risk"])
+    meas  = sum(1 for r in rows if r["robustness"])
+    print(f"  Chemical accuracy (<{CHEM_ACCURACY*1e3:.1f} mHa): {chem}/{len(certified)} certified")
+    print(f"  Thin margin: {thin}   at-risk (thin + amplifying, unmeasured): {risk}   "
+          f"measured across environments: {meas}\n")
 
     print("  Top 5 Balanced:")
     for r in balanced_csv[:5]:
@@ -392,9 +481,10 @@ def main():
     print()
 
     # ── 9. Write files ────────────────────────────────────────────────────────
-    ACC_FIELDS      = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","t_gate_estimate","non_clifford_gates","baseline","beats_classical"]
-    COST_FIELDS     = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"]
-    BALANCED_FIELDS = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","balanced_score","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"]
+    MARGIN_FIELDS   = ["optimizer","optimiser_family","amplifies","margin","chem_accurate","robustness","at_risk"]
+    ACC_FIELDS      = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","t_gate_estimate","non_clifford_gates","baseline","beats_classical"] + MARGIN_FIELDS
+    COST_FIELDS     = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"] + MARGIN_FIELDS
+    BALANCED_FIELDS = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","balanced_score","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"] + MARGIN_FIELDS
     RESEARCH_FIELDS = ACC_FIELDS
 
     _write_csv(OUTPUT_DIR / "leaderboard_accuracy.csv",      ACC_FIELDS,      acc_csv,      args.dry_run)

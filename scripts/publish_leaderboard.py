@@ -54,6 +54,12 @@ def intval(v):
     f = num(v)
     return None if f is None else int(f)
 
+def optbool(v):
+    """Nullable boolean: absent/empty stays None rather than collapsing to False."""
+    if v in (None, "", "None", "null"):
+        return None
+    return bool_val(v)
+
 def _base_row(r):
     """Common fields for all leaderboard rows (v3 + v4)."""
     return {
@@ -77,6 +83,15 @@ def _base_row(r):
         # than indexing — an older CSV publishes with these as null, not an error.
         "t_gate_estimate":    intval(r.get("t_gate_estimate")),
         "non_clifford_gates": intval(r.get("non_clifford_gates")),
+        # Certification margin and fragility, added 2026-09-04. Same .get() treatment:
+        # an older CSV publishes with these null rather than failing.
+        "optimizer":          r.get("optimizer") or None,
+        "optimiser_family":   r.get("optimiser_family") or None,
+        "amplifies":          optbool(r.get("amplifies")),
+        "margin":             num(r.get("margin")),
+        "chem_accurate":      optbool(r.get("chem_accurate")),
+        "robustness":         r.get("robustness") or None,
+        "at_risk":            optbool(r.get("at_risk")),
     }
 
 def parse_accuracy_csv(path):

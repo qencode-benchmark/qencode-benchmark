@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle, Copy, Check, Crown, Info, TrendingDown, Cpu, BarChart2, Zap, ExternalLink, Sparkles } from "lucide-react";
+import { CheckCircle, Copy, Check, Crown, Info, TrendingDown, Cpu, BarChart2, Zap, ExternalLink, Sparkles, Target, ShieldCheck, ShieldAlert, AlertTriangle } from "lucide-react";
 import {
   Tabs, TabsContent, TabsList, TabsTrigger,
 } from "@/components/ui/tabs";
@@ -175,6 +175,162 @@ function FilterChip({ label, active, onClick }) {
 
 // ── Main table renderer ────────────────────────────────────────────────────────
 
+// ── Certification margin and fragility ────────────────────────────────────────
+//
+// Two entries certified at 9.98 mHa and 0.001 mHa are both "certified", and the table
+// used to show them identically. Only one survives being re-run on another machine.
+// margin = 0.01 Ha − gap, shown as a share of the threshold. The risk is the conjunction
+// of a thin margin and an amplifying configuration (gradient-free optimiser on an
+// unstructured ansatz), and it is a prediction until an entry has actually been re-run.
+
+const CERT_THRESHOLD = 0.01;
+const THIN_FRACTION  = 0.2;
+
+function Tip({ children, content }) {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipContent className="max-w-xs text-xs space-y-1">{content}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+function MarginCell({ r }) {
+  if (r.margin == null || r.margin <= 0) {
+    return <span className="text-xs text-muted-foreground/60">—</span>;
+  }
+  const frac = r.margin / CERT_THRESHOLD;
+  const thin = frac < THIN_FRACTION;
+  const pct  = frac >= 0.1 ? `${Math.round(frac * 100)}%` : `${(frac * 100).toFixed(1)}%`;
+  const tone = thin
+    ? (r.amplifies && !r.robustness ? "text-amber-700 dark:text-amber-400" : "text-muted-foreground")
+    : "text-foreground";
+  return (
+    <Tip content={
+      <>
+        <p className="font-semibold">Certification margin</p>
+        <p>0.01 Ha − gap = <span className="font-mono">{fmtGap(r.margin)} Ha</span> — {pct} of the threshold.</p>
+        <p className="text-muted-foreground">
+          How far the energy can move before this entry stops certifying. Margin bounds how
+          far it <em>can</em> move, not how far it <em>will</em>: that depends on the optimiser
+          and ansatz.
+        </p>
+        {thin && (
+          <p className="text-amber-300 font-medium">
+            Thin margin (under {THIN_FRACTION * 100}% of the threshold).
+          </p>
+        )}
+      </>
+    }>
+      <span className={`inline-flex items-center gap-1 font-mono text-xs tabular-nums cursor-help ${tone}`}>
+        {pct}
+        {thin && r.amplifies && !r.robustness && <AlertTriangle className="h-3 w-3 shrink-0" />}
+      </span>
+    </Tip>
+  );
+}
+
+function OptimizerChip({ r }) {
+  if (!r.optimizer) return null;
+  const free = r.optimiserFamily === "gradient-free";
+  const tone = r.amplifies
+    ? "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
+    : "border-border bg-muted/40 text-muted-foreground";
+  return (
+    <Tip content={
+      <>
+        <p className="font-semibold">Optimiser: {r.optimizer}</p>
+        <p className="text-muted-foreground">
+          {free ? "Gradient-free." : "Gradient-based."}{" "}
+          {r.amplifies
+            ? "A gradient-free optimiser on an unstructured ansatz amplifies last-bit arithmetic differences into a different local minimum, so the energy can move by up to ~10⁻² Ha on another machine while still certifying. Measured: HEA/COBYLA entries moved 10³–10⁴× more across environments than ADAPT entries."
+            : r.optimiserFamily === "gradient-free"
+              ? "ADAPT-VQE selects its operators by analytic gradient, so the ansatz structure is gradient-determined and the inner optimiser only polishes a small, well-conditioned set. Measured to move ≤10⁻⁶ Ha across environments."
+              : "Effectively immune to the comparison-flipping that makes gradient-free runs environment-sensitive. Measured to move ≤10⁻⁶ Ha across environments."}
+        </p>
+      </>
+    }>
+      <span className={`inline-flex items-center rounded border px-1 py-0 text-[10px] font-mono leading-4 cursor-help ${tone}`}>
+        {r.optimizer}
+      </span>
+    </Tip>
+  );
+}
+
+function FragilityBadges({ r }) {
+  const out = [];
+  if (r.chemAccurate) {
+    out.push(
+      <Tip key="chem" content={
+        <>
+          <p className="font-semibold">Chemical accuracy</p>
+          <p className="text-muted-foreground">Gap below 1.6 × 10⁻³ Ha (1 kcal/mol) — accurate enough to make a chemical prediction with. Reported, not a certification criterion; 26 of 54 entries reach it.</p>
+        </>
+      }>
+        <Badge variant="outline" className="text-xs gap-1 cursor-help border-sky-400 text-sky-700 dark:text-sky-300">
+          <Target className="h-3 w-3 shrink-0" /> Chem. accuracy
+        </Badge>
+      </Tip>
+    );
+  }
+  if (r.robustness === "robust") {
+    out.push(
+      <Tip key="rob" content={
+        <>
+          <p className="font-semibold">Re-run on another environment: still certifies</p>
+          <p className="text-muted-foreground">Regenerated on a machine with drifted package versions and the energy moved far less than its own margin. Measured, not inferred.</p>
+        </>
+      }>
+        <Badge variant="outline" className="text-xs gap-1 cursor-help border-emerald-500 text-emerald-700 dark:text-emerald-300">
+          <ShieldCheck className="h-3 w-3 shrink-0" /> Re-run: robust
+        </Badge>
+      </Tip>
+    );
+  } else if (r.robustness === "marginal") {
+    out.push(
+      <Tip key="marg" content={
+        <>
+          <p className="font-semibold">Re-run on another environment: passed on the sign</p>
+          <p className="text-muted-foreground">It still certifies, but the energy moved <em>further than its own margin</em> and survived only because the movement happened to be toward the reference. The opposite sign would have failed it. Not evidence of stability.</p>
+        </>
+      }>
+        <Badge variant="outline" className="text-xs gap-1 cursor-help border-amber-500 text-amber-700 dark:text-amber-300">
+          <ShieldAlert className="h-3 w-3 shrink-0" /> Re-run: marginal
+        </Badge>
+      </Tip>
+    );
+  } else if (r.robustness === "fragile") {
+    out.push(
+      <Tip key="frag" content={
+        <>
+          <p className="font-semibold">Re-run on another environment: does not certify</p>
+          <p className="text-muted-foreground">Reproduces exactly on the reference pinned environment, which is what certification attests, but regenerates above 0.01 Ha on a machine with drifted package versions. Flagged, not withdrawn.</p>
+        </>
+      }>
+        <Badge variant="outline" className="text-xs gap-1 cursor-help border-red-500 text-red-700 dark:text-red-300">
+          <ShieldAlert className="h-3 w-3 shrink-0" /> Re-run: fragile
+        </Badge>
+      </Tip>
+    );
+  } else if (r.atRisk) {
+    out.push(
+      <Tip key="risk" content={
+        <>
+          <p className="font-semibold">Predicted fragile, not yet re-run</p>
+          <p className="text-muted-foreground">Thin margin <em>and</em> an amplifying configuration — the combination measured to fail re-certification elsewhere. A prediction until this entry is actually regenerated on another environment.</p>
+        </>
+      }>
+        <Badge variant="outline" className="text-xs gap-1 cursor-help border-amber-400 text-amber-700 dark:text-amber-300">
+          <AlertTriangle className="h-3 w-3 shrink-0" /> At risk
+        </Badge>
+      </Tip>
+    );
+  }
+  return out;
+}
+
 function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
   const includeBalanced  = category === "balanced";
   const includeHardware  = category === "cost" || category === "balanced";
@@ -224,6 +380,27 @@ function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
               </span>
             </TableHead>
             <TableHead className="w-20"></TableHead>
+            <TableHead className="text-right">
+              <span className="flex items-center justify-end gap-1">
+                Margin
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3 w-3 text-muted-foreground cursor-help shrink-0" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs text-xs space-y-1">
+                      <p className="font-semibold">Certification margin</p>
+                      <p>0.01 Ha − gap, as a share of the 0.01 Ha threshold. How much room the
+                        entry has before a re-run on another machine could push it over the line.</p>
+                      <p className="text-muted-foreground">Under 20% is thin. Whether thin is
+                        dangerous depends on the optimiser chip: a gradient-free optimiser on an
+                        unstructured ansatz can move ~10⁻² Ha across environments; ADAPT and
+                        gradient-based runs move ~10⁻⁶ Ha.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </span>
+            </TableHead>
             {includeClassical && (
               <TableHead className="text-right">
                 <span className="flex items-center justify-end gap-1">
@@ -337,9 +514,12 @@ function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
 
                 {/* Ansatz */}
                 <TableCell>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs text-muted-foreground">{ansatzLabel(r.ansatz)}</span>
-                    <CopyConfig text={configStr} />
+                  <div className="flex flex-col gap-0.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-muted-foreground">{ansatzLabel(r.ansatz)}</span>
+                      <CopyConfig text={configStr} />
+                    </div>
+                    <OptimizerChip r={r} />
                   </div>
                 </TableCell>
 
@@ -351,6 +531,11 @@ function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
                 {/* Gap bar */}
                 <TableCell>
                   <GapBar value={r.gap} minValue={minGap} maxValue={maxGap} />
+                </TableCell>
+
+                {/* Certification margin */}
+                <TableCell className="text-right">
+                  <MarginCell r={r} />
                 </TableCell>
 
                 {/* CCSD(T) correlation — classical baseline */}
@@ -436,6 +621,7 @@ function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
                         </Tooltip>
                       </TooltipProvider>
                     )}
+                    <FragilityBadges r={r} />
                     {r.beatsClassical && (
                       <TooltipProvider>
                         <Tooltip>
@@ -760,6 +946,26 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
               <Zap className="h-3 w-3 shrink-0" /> Beats CCSD(T)
             </Badge>
             VQE error &lt; CCSD(T) correlation energy — hover for details
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Badge variant="outline" className="text-xs gap-1 border-sky-400 text-sky-700 dark:text-sky-300">
+              <Target className="h-3 w-3 shrink-0" /> Chem. accuracy
+            </Badge>
+            Gap &lt; 1.6 × 10⁻³ Ha — reported, not a criterion
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="font-mono text-xs">Margin</span>
+            0.01 Ha − gap, as a share of the threshold; under 20% is thin
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="inline-flex items-center rounded border border-amber-300 bg-amber-50 text-amber-800 px-1 text-[10px] font-mono leading-4">COBYLA</span>
+            Amber optimiser chip = amplifying configuration (gradient-free on an unstructured ansatz)
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Badge variant="outline" className="text-xs gap-1 border-emerald-500 text-emerald-700 dark:text-emerald-300">
+              <ShieldCheck className="h-3 w-3 shrink-0" /> Re-run
+            </Badge>
+            Measured on another environment: robust / marginal / fragile — hover for details
           </span>
           <span className="flex items-center gap-1.5">
             <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">

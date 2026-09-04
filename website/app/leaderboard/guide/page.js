@@ -143,7 +143,52 @@ export default function GuidePage() {
               well-executed, reproducible calculation without having to also be chemically
               useful. An entry can be certified and still not be accurate enough to make a
               prediction with. The colour of the bar tells you which side of each line you
-              are on.
+              are on, and entries under 1.6 mHa carry a <strong>Chem. accuracy</strong> badge.
+            </p>
+          </Row>
+
+          <Row name="Margin" sub="0.01 Ha − gap">
+            <p>
+              How much room an entry has before it stops certifying, shown as a share of the
+              10 mHa threshold. An entry certified at 9.98 mHa and one certified at 0.001 mHa
+              are both &ldquo;certified&rdquo;; they are not the same. Under 20% is flagged as
+              thin.
+            </p>
+            <p>
+              <strong>Margin says how far the energy <em>can</em> move, not how far it
+              will.</strong> Re-running an entry on a machine with different package versions
+              moves the energy — by a median of 7 × 10⁻⁸ Ha across the suite, but by up to
+              1.4 × 10⁻² Ha for some configurations. Two entries certified at 6.1 and 9.6 mHa
+              regenerate at 20.5 and 19.0 mHa elsewhere. They still reproduce exactly on the
+              reference environment, which is what certification attests, so they are flagged
+              rather than withdrawn.
+            </p>
+          </Row>
+
+          <Row name="Optimiser chip" sub="under the ansatz">
+            <p>
+              The classical optimiser the run used, because it is what decides whether a thin
+              margin is dangerous. A <strong>gradient-free</strong> optimiser (COBYLA) chooses
+              its next step by comparing two nearly equal energies, so a difference in the
+              thirteenth decimal — threaded arithmetic, a different BLAS, a different NumPy —
+              can flip a comparison and send the run into a different local minimum. A
+              gradient-based one (L-BFGS-B) is effectively immune.
+            </p>
+            <p>
+              <strong>The ansatz matters as much as the optimiser.</strong> ADAPT-VQE selects
+              its operators by analytic gradient, so its structure is gradient-determined even
+              with a COBYLA inner optimiser. Measured on H₄, where both variants exist for the
+              same molecule and environment: ADAPT/COBYLA moved 3 × 10⁻⁸ Ha across
+              environments; HEA/COBYLA moved 9 × 10⁻⁴ Ha — twenty-five thousand times more.
+              The chip turns amber for the amplifying combination: gradient-free optimiser on
+              an unstructured ansatz.
+            </p>
+            <p>
+              Where an entry has actually been re-run on another environment, a{" "}
+              <strong>Re-run</strong> badge shows the measured outcome — robust, marginal (it
+              passed, but moved further than its own margin and survived on the sign), or
+              fragile. Where it has not, but the margin is thin and the configuration
+              amplifies, it shows <strong>At risk</strong>: a prediction, not a measurement.
             </p>
           </Row>
 
@@ -166,7 +211,8 @@ export default function GuidePage() {
                 |E<sub>VQE</sub> − E<sub>CASCI</sub>| &lt; |E<sub>corr</sub>(CCSD(T))|
               </code>. That says the VQE error is small on the scale of correlation energy.
               It is <em>not</em> a claim that VQE outperforms CCSD(T), and it is currently
-              true for every certified entry, so it does not discriminate between them.
+              true for every entry in the suite — certified or not — so it does not
+              discriminate between them, and it is not the certification criterion.
               Each entry carries this definition in its own{" "}
               <code className="font-mono text-xs bg-muted px-1 rounded">beats_classical_definition</code>{" "}
               field.
