@@ -266,7 +266,11 @@ active space, so the converged active orbitals are fixed only by the optimiser's
 which is fixed by rounding. Re-deriving the Hamiltonian today lands in a different orbital
 gauge: the coefficients differ from the stored ones by 3×10⁻⁵ Ha for N₂ (measured with
 the pipeline's own serialiser, under 1 and under 64 BLAS threads alike; LiH with canonical
-HF orbitals reproduces to 10⁻¹⁵). Verification re-optimises the VQE from scratch, and
+HF orbitals reproduces to 10⁻¹⁵). The cause was found later the same day and it is not
+rounding on a different day: it is the BLAS kernel, which OpenBLAS selects by processor.
+The generating run used the cluster's SkylakeX kernel; the workstation uses Haswell. With
+the kernel forced to the same value, PySCF's output is bit-identical on both machines,
+CASSCF included ([`CROSS_MACHINE.md`](CROSS_MACHINE.md)). Verification re-optimises the VQE from scratch, and
 energies are gauge-invariant, so it passes. Rebuilding the **stored circuit with the
 stored parameters** is not gauge-invariant: those parameters mean something only in the
 orbital basis they were optimised in.

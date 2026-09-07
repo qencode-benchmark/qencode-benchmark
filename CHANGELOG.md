@@ -33,7 +33,7 @@ All notable changes to QEncode are recorded here.
   shifting. New `_tapered_hf_state` and `_diagonal_energy` verify the reference state
   against the untapered Hartree–Fock energy.
 - **18 entries regenerated**; none changed trust level; superseded files kept in
-  `releases/v4/db_superseded/`. No Jordan–Wigner entry affected — 41 entries, including
+  `releases/v4/db_superseded/`. No Jordan–Wigner entry affected — 36 entries, including
   both hydrogen chains and every ADAPT result, are untouched.
 - Fifteen new tests parametrised over all three mappings; `docs/SECTOR_FIX.md`;
   `tools/compare_regenerated.py` and `tools/apply_regenerated.py`.

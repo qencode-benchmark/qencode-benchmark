@@ -2196,6 +2196,38 @@ def _required_versions() -> dict:
     return req
 
 
+def _openblas_core():
+    """Name of the OpenBLAS kernel numpy's BLAS is running, e.g. 'Haswell' or 'SkylakeX'.
+
+    Found by locating the OpenBLAS shared object the process has loaded and calling its
+    get_corename(). None if it cannot be determined; never raises.
+    """
+    import ctypes
+    import re
+    try:
+        import numpy  # noqa: F401  -- ensures the BLAS library is loaded
+        with open("/proc/self/maps") as fh:
+            libs = sorted({m.group(1) for m in re.finditer(r"(\S*openblas\S*\.so\S*)", fh.read())})
+    except Exception:
+        return None
+    for lib in libs:
+        try:
+            dll = ctypes.CDLL(lib)
+        except OSError:
+            continue
+        for sym in ("scipy_openblas_get_corename64_", "scipy_openblas_get_corename",
+                    "scipy_openblas64_get_corename", "openblas_get_corename64_",
+                    "openblas_get_corename", "gotoblas_corename"):
+            fn = getattr(dll, sym, None)
+            if fn is not None:
+                fn.restype = ctypes.c_char_p
+                try:
+                    return fn().decode()
+                except Exception:
+                    continue
+    return None
+
+
 def _machine_fingerprint():
     """What machine produced this entry, to the detail that decides its last bits.
 
@@ -2214,7 +2246,8 @@ def _machine_fingerprint():
     does not say where it ran cannot say where it reproduces exactly.
 
     Recorded, not enforced. Certification is a claim about the gap being under 0.01 Ha,
-    which survived the change of machine for 45 of 47 certified entries; bit-for-bit
+    which survived the change of machine for 38 of the 40 certified entries measured on a
+    second machine (7 were not measured); bit-for-bit
     reproduction is the stronger claim and it is machine-bound. See
     docs/CROSS_MACHINE.md and experiments/cross_machine/measurements.json.
     """
@@ -2224,6 +2257,13 @@ def _machine_fingerprint():
         "vector_isa": None,
         "libc": None,
         "os": platform.platform(terse=True),
+        # The BLAS kernel OpenBLAS selected for this CPU. Measured 2026-09-07 to be THE
+        # dominant source of cross-machine differences: with the kernel forced to the
+        # same value on an AVX2 and an AVX-512 machine, the qubit Hamiltonians, HF and
+        # CASCI energies agree to the last bit; only the VQE loop still differs, through
+        # libm. OPENBLAS_CORETYPE overrides the selection and is recorded when set.
+        "openblas_core": _openblas_core(),
+        "openblas_coretype_env": os.environ.get("OPENBLAS_CORETYPE"),
     }
     try:
         info["libc"] = " ".join(x for x in platform.libc_ver() if x) or None

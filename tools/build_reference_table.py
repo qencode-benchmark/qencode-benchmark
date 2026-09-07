@@ -22,7 +22,10 @@ stating because it is not numerical noise:
 
 A CASSCF energy is invariant under rotations inside the active space, so the converged
 orbitals -- and with them the last digits of every integral -- are fixed only by the
-optimiser path and by rounding. Two entries for the same molecule generated in different
+optimiser path and by rounding. The rounding in question was identified on 2026-09-07 as
+the BLAS kernel OpenBLAS selects for the processor (SkylakeX on the cluster, Haswell on the
+workstation): with the kernel forced to the same value, PySCF's output is bit-identical on
+both machines. See docs/CROSS_MACHINE.md. Two entries for the same molecule generated in different
 sessions therefore land in slightly different orbital gauges. Until 2026-09-07 every
 entry had been generated in one session and the spread was exactly 0.0 Ha; regenerating
 the parity entries that day made the CASSCF gauge difference visible. It is eight orders

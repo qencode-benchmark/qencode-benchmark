@@ -105,7 +105,7 @@ The target is the active-space CASCI energy, which the correct sector must repro
 
 Fifteen of fifteen agree with brute force after the fix, reproducing CASCI to 10⁻¹³ Ha.
 **All eight Jordan–Wigner cases are unchanged** in sector, in tapered Hartree–Fock state
-and in energy, which is why the 41 Jordan–Wigner entries in the suite are untouched.
+and in energy, which is why the 36 Jordan–Wigner entries in the suite are untouched.
 
 ---
 
@@ -168,7 +168,10 @@ sixteen molecules — is unchanged. Fourteen entries changed sector, eight chang
 Hartree–Fock reference state, and C₄H₄ under parity changed both its symmetry count
 (2 → 3, so 6 → 5 tapered qubits) and its reference state, because its CASSCF orbital gauge
 differs from the generating run's — the effect described under *Rebuild discipline* in
-[`NOISY_TIER.md`](NOISY_TIER.md), not the sector bug.
+[`NOISY_TIER.md`](NOISY_TIER.md), not the sector bug. That gauge difference is itself the
+BLAS kernel (the generating run used SkylakeX, the regeneration Haswell; see
+[`CROSS_MACHINE.md`](CROSS_MACHINE.md)), so regenerating C₄H₄ parity with the kernel forced
+to SkylakeX would recover the 6-qubit tapering.
 
 Most gaps improved, several by a large factor: NH₃ parity from 6.91 to 0.73 mHa, N₂ parity
 at ten layers from 9.50 to 4.40 mHa, BeH₂ parity UCCSD from 2.22 to 0.0024 mHa. Two got
@@ -193,7 +196,7 @@ an exact zero that meant nothing.
 
 ## What this does not change
 
-- **No Jordan–Wigner entry is affected.** 41 of the 54 published entries, including every
+- **No Jordan–Wigner entry is affected.** 36 of the 54 published entries, including every
   ADAPT-VQE result and both large hydrogen chains H₈ and H₁₀, are untouched: same sector,
   same reference state, same energies, same hashes.
 - **The threading and determinism results are unaffected.** Those concern the classical

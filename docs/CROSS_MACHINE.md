@@ -71,10 +71,59 @@ inferred from which one reproduces them bit-for-bit.
 
 ---
 
+## Where exactly it enters, and what fixes what
+
+Measured by forcing both machines onto the same BLAS kernel (`OPENBLAS_CORETYPE=Haswell`,
+the workstation's native kernel, with NumPy's AVX-512 dispatch disabled on the cluster) and
+regenerating the same entries on both.
+
+| stage | same kernel on both | result |
+|---|---|---|
+| PySCF: qubit Hamiltonian, HF energy, CASCI energy | yes | **bit-identical**, every coefficient, LiH and C₄H₄ (CASSCF) alike |
+| PySCF, native kernels (Haswell vs SkylakeX) | no | coefficients differ by up to 3 × 10⁻⁵ Ha (N₂ CASSCF), 10⁻¹⁵ (LiH) |
+| PennyLane: energy at a fixed parameter vector | either | **bit-identical** energy and statevector, across machines *and* across kernels |
+| COBYLA trajectory, identical Hamiltonian and energy function | yes | still diverges: LiH parameters 3 × 10⁻⁹ apart (energy 8 × 10⁻¹² Ha); C₄H₄ parameters 0.22 apart (energy 1.6 × 10⁻⁴ Ha) |
+
+Three things follow.
+
+**The electronic-structure half of the pipeline is fully deterministic once the kernel is
+pinned.** The "different orbital gauge" that [`NOISY_TIER.md`](NOISY_TIER.md) and
+[`SECTOR_FIX.md`](SECTOR_FIX.md) attribute to CASSCF converging differently on another day
+is the BLAS kernel and nothing else: force the kernel and the gauge is identical. The
+reference-energy spread of 4.2 × 10⁻¹⁰ Ha in the packaged table has the same cause.
+
+**The variational half is not, even then.** With the Hamiltonian identical and the energy
+function returning identical bits for the same input, the two machines' COBYLA runs still
+part ways. The energy function is not the culprit; something in the loop around it is. A
+direct probe of the C libraries shows `sin`, `cos`, `exp`, `log`, `sqrt` and `atan2`
+returning identical bits on both machines but `expm1` differing (glibc 2.34 against 2.39),
+so the two libraries are not identical, and NumPy's reductions can also group terms
+differently depending on where the allocator happens to place an array. Which of these
+moves COBYLA has not been isolated. What is established is that it is below the level of
+the energy evaluation.
+
+**So there are two fixes of different strength.** Pinning the kernel is cheap, makes the
+Hamiltonian portable across x86 machines, and shrinks the movement of well-conditioned
+runs to ~10⁻¹¹ Ha, which passes strict verification (10⁻⁶) across machines. It does not
+give bit-for-bit reproduction of a poorly conditioned gradient-free run. That needs
+identical arithmetic all the way down — the same C library as well as the same kernel —
+which in practice means a container image, and that is the right form for a reference
+environment that claims bit-for-bit.
+
+Neither fix is applied to the published suite here. Pinning the kernel would make the
+cluster's own entries, generated under SkylakeX, stop reproducing exactly on the cluster
+until regenerated, and a suite-wide regeneration is a decision, not a patch. The pipeline
+now records which kernel was selected, so every entry from today says which kernel it
+reproduces under.
+
+---
+
 ## What it does and does not change
 
-**Certification survives the change of machine for 45 of 47 certified entries.** The
-claim certification makes is that the gap is below 0.01 Ha, and that is 10⁴ times larger
+**Certification survives the change of machine for 38 of the 40 certified entries that
+were measured on a second machine.** Seven certified entries — the largest Jordan–Wigner
+ones — have not been, and are reported as unmeasured rather than counted as survivors. The
+claim certification makes is that the gap is below 0.01 Ha, which is 10⁴ times larger
 than most of the movement measured here. Two entries do not survive:
 
 | entry | published gap | on the other machine | |
@@ -98,7 +147,7 @@ pass whose sign was favourable is not evidence of stability.
 
 **Nothing about the physics changes**, no entry's energy is edited, and no hash is
 touched. What changes is what the leaderboard claims: robustness is now a measurement on
-41 entries rather than a prediction on 5.
+40 entries rather than a prediction on 5.
 
 ---
 
