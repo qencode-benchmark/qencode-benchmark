@@ -70,6 +70,7 @@ if _QENCODE_THREADS_PINNED:
 import argparse
 import copy
 import hashlib
+import itertools
 import json
 import subprocess
 import sys
@@ -436,56 +437,234 @@ def _sector_ground_energy(H_tap):
                               k=1, which="SA", return_eigenvectors=False)[0])
 
 
-def _find_optimal_sector(H, generators, paulixops, n_electrons=None):
+# Which Hartree-Fock bit-string convention each mapping uses. The HF determinant is a
+# computational basis state under all three encodings, but a DIFFERENT bit string in each.
+_HF_BASIS = {
+    "jordan_wigner": "occupation_number",
+    "parity":        "parity",
+    "bravyi_kitaev": "bravyi_kitaev",
+}
+_SECTOR_TOL = 1e-6      # tapered ground energy must reproduce the reference this closely
+_SCAN_LIMIT = 12        # brute-force at most 2**12 sectors in the fallback
+
+
+def _hf_qubit_bits(n_electrons: int, n_qubits: int, mapping: str):
+    """The Hartree-Fock determinant as a qubit bit string, in the mapping's own basis.
+
+    Indexed by wire label. Under Jordan-Wigner this is the occupation vector
+    [1]*n_electrons + [0]*rest; under parity and Bravyi-Kitaev it is not.
     """
-    Pick the Z2 symmetry sector containing the ground state.
+    from pennylane import qchem
+    basis = _HF_BASIS.get(mapping)
+    if basis is None:
+        raise ValueError(f"no HF basis known for mapping {mapping!r}")
+    return [int(b) for b in qchem.hf_state(n_electrons, n_qubits, basis=basis)]
 
-    Previously this brute-forced all 2^n_sym sectors, building a DENSE 2^n x 2^n
-    matrix for each: 1 GB/sector at 13 qubits (H8: ~40 min) and 275 GB at 17-18
-    qubits (H10), where the MemoryError was swallowed by a bare `except` and
-    resurfaced as the misleading "no valid sector found". This is the same dense
-    -allocation class of bug already fixed in the exact-diag step and in
-    of_bridge.verify_hamiltonian.
 
-    qchem.optimal_sector derives the sector from the HF occupation with no
-    diagonalization at all. Verified to return the IDENTICAL sector and identical
-    ground energy (dev 0.0e+00) as the brute force on H4 ([1,1,1]) and H6
-    ([1,-1,-1]); H6's sector is non-trivial, so this is a real check.
+def _sector_from_hf_bits(generators, hf_bits):
+    """Eigenvalue of each Z2 generator on the HF basis state, exactly.
 
-    The brute force is kept as a fallback for the small systems where it is cheap,
-    so existing <=12 qubit behaviour is preserved bit-for-bit if optimal_sector is
-    ever unavailable.
+    Two things this gets right that qchem.optimal_sector does not:
+
+    * the bit string is the HF state of THIS mapping, not the Jordan-Wigner one;
+    * the generator's support is matched by WIRE LABEL. A Hamiltonian's wire order is
+      insertion order and can be scrambled -- NH3 under Bravyi-Kitaev gives
+      [0,1,3,5,6,7,2,4] -- and optimal_sector aligns the support against
+      `qubit_op.wires.toset()`, an unordered set, which misaligns it.
+
+    The generator's own coefficient is carried through: tau = c * P has eigenvalue
+    c * (-1)^(number of occupied wires in P's support).
+    """
+    sectors = []
+    for tau in generators:
+        rep = tau.pauli_rep
+        if rep is None or len(rep) != 1:
+            raise RuntimeError(f"symmetry generator is not a single Pauli word: {tau}")
+        (word, coeff), = list(rep.items())
+        if any(p != "Z" for p in word.values()):
+            raise RuntimeError(f"symmetry generator is not Z-only, cannot read its "
+                               f"eigenvalue off a basis state: {tau}")
+        parity = sum(hf_bits[w] for w in word) % 2
+        eig = complex(coeff) * ((-1) ** parity)
+        if abs(eig.imag) > 1e-12 or abs(abs(eig.real) - 1.0) > 1e-12:
+            raise RuntimeError(f"generator eigenvalue is not +-1: {eig}")
+        sectors.append(int(round(eig.real)))
+    return sectors
+
+
+def _find_optimal_sector(H, generators, paulixops, n_electrons=None,
+                         mapping="jordan_wigner", e_reference=None):
+    """Pick the Z2 symmetry sector that contains the ground state, and VERIFY it.
+
+    Tapering restricts H to one joint eigenspace of its Z2 symmetries. Pick the wrong
+    eigenspace and the result is still a valid Hamiltonian -- just of a different
+    problem, whose ground energy sits above the one we are targeting.
+
+    Until 2026-09-07 this delegated to `qchem.optimal_sector`, which derives the sector
+    from `hf_str = arange(num_orbitals) < active_electrons`: the Jordan-Wigner
+    occupation string, hard-coded. Under parity and Bravyi-Kitaev the HF state is a
+    different bit string, so the sector was wrong for every non-JW entry in the suite --
+    13 of 54 -- placing the tapered ground state 0.30 to 0.76 Ha above CASCI. The
+    "constant correction" in apply_tapering then shifted the energies to match, which
+    hid it. See docs/SECTOR_FIX.md.
+
+    The sector is now derived from the HF state of the actual mapping and then CHECKED
+    against a reference energy; nothing is accepted on trust. Candidates are tried in
+    order, then a brute-force scan, and if none reproduces the reference this raises
+    rather than returning a plausible wrong answer.
     """
     import itertools
     from pennylane import qchem
 
+    def _energy(sectors):
+        try:
+            return _sector_ground_energy(qchem.taper(H, generators, paulixops, list(sectors)))
+        except Exception:
+            return None
+
+    candidates = []
     if n_electrons is not None:
         try:
-            sectors = list(qchem.optimal_sector(H, generators, n_electrons))
-            H_tap = qchem.taper(H, generators, paulixops, sectors)
-            e = _sector_ground_energy(H_tap)
-            if e is not None:
-                return sectors, e
+            hf_bits = _hf_qubit_bits(n_electrons, len(H.wires), mapping)
+            candidates.append(("hf-state (%s)" % mapping, _sector_from_hf_bits(generators, hf_bits)))
         except Exception as ex:
-            print(_warn(f"optimal_sector unavailable ({ex}); falling back to sector scan"))
-
-    n_sym = len(generators)
-    best_energy  = np.inf
-    best_sectors = None
-    for sectors in itertools.product([1, -1], repeat=n_sym):
+            print(_warn(f"HF-derived sector unavailable ({ex})"))
         try:
-            H_tap = qchem.taper(H, generators, paulixops, list(sectors))
-            e = _sector_ground_energy(H_tap)
-            if e is not None and e < best_energy:
-                best_energy  = e
-                best_sectors = list(sectors)
+            candidates.append(("qchem.optimal_sector",
+                               list(qchem.optimal_sector(H, generators, n_electrons))))
+        except Exception as ex:
+            print(_warn(f"optimal_sector unavailable ({ex})"))
+
+    tried = []
+    for label, sectors in candidates:
+        e = _energy(sectors)
+        if e is None:
+            continue
+        if e_reference is None:
+            print(_ok(f"Sector {sectors} from {label} (no reference energy to check against)"))
+            return list(sectors), e
+        dev = abs(e - e_reference)
+        tried.append((label, list(sectors), e, dev))
+        if dev <= _SECTOR_TOL:
+            print(_ok(f"Sector {sectors} from {label}: ground energy {e:.10f} Ha "
+                      f"reproduces the reference to {dev:.2e} Ha"))
+            return list(sectors), e
+
+    # Fallback: scan every sector and take the one that reproduces the reference.
+    n_sym = len(generators)
+    if n_sym <= _SCAN_LIMIT:
+        print(_warn(f"No candidate sector reproduced the reference; scanning {2 ** n_sym} sectors"))
+        best = None
+        for sectors in itertools.product([1, -1], repeat=n_sym):
+            e = _energy(sectors)
+            if e is None:
+                continue
+            if best is None or e < best[1]:
+                best = (list(sectors), e)
+            if e_reference is not None and abs(e - e_reference) <= _SECTOR_TOL:
+                print(_ok(f"Sector {list(sectors)} found by scan: {e:.10f} Ha"))
+                return list(sectors), e
+        if e_reference is None and best is not None:
+            return best
+
+    detail = "; ".join(f"{lab}={sec} -> {e:.10f} (off by {dev:.3e})" for lab, sec, e, dev in tried)
+    raise RuntimeError(
+        "no Z2 sector reproduces the reference energy %.10f Ha. Tried: %s. A wrong sector "
+        "is a different physical problem, so this is not corrected by shifting energies."
+        % (e_reference if e_reference is not None else float("nan"), detail or "none"))
+
+
+def _tapered_hf_state(H_tapered, generators, paulixops, sectors, n_electrons,
+                      n_qubits, mapping, H_full):
+    """The Hartree-Fock reference on the tapered qubits, for any mapping, verified.
+
+    `qchem.taper_hf` builds the reference with `qml.jordan_wigner` regardless of the
+    mapping actually used, so it is wrong for parity and Bravyi-Kitaev in the same way
+    the sector was. Here the HF basis state of the correct mapping is tapered by
+    transforming its stabilizers -- |b> is the unique joint +1 eigenstate of
+    {(-1)^b_i Z_i} -- and the answer is checked against the untapered HF energy.
+    """
+    import pennylane as qml
+    from pennylane import qchem
+
+    wires_tap = sorted(H_tapered.wires)
+    hf_bits = _hf_qubit_bits(n_electrons, n_qubits, mapping)
+    e_hf_full = _diagonal_energy(H_full, hf_bits)
+
+    def _check(state):
+        if state is None or len(state) != len(wires_tap):
+            return None
+        e = _diagonal_energy(H_tapered, {w: int(b) for w, b in zip(wires_tap, state)})
+        return e if abs(e - e_hf_full) <= _SECTOR_TOL else None
+
+    # 1. PennyLane's own routine, correct for Jordan-Wigner and kept so that every
+    #    previously generated JW entry reproduces bit-for-bit.
+    try:
+        cand = [int(b) for b in qchem.taper_hf(generators, paulixops, sectors,
+                                               num_electrons=n_electrons, num_wires=n_qubits)]
+        if _check(cand) is not None:
+            return np.array(cand, dtype=int)
+    except Exception as ex:
+        print(_warn(f"taper_hf unavailable ({ex})"))
+
+    # 2. Taper the stabilizers of |hf_bits> and solve for the tapered basis state.
+    n_tap = len(wires_tap)
+    if n_tap > 20:
+        raise RuntimeError("cannot determine the tapered HF state for %d qubits" % n_tap)
+    constraints = []
+    for i, b in enumerate(hf_bits):
+        stab = qml.Z(i) if not b else -1.0 * qml.Z(i)
+        try:
+            t = qchem.taper(stab, generators, paulixops, sectors)
         except Exception:
-            pass
+            continue
+        rep = getattr(t, "pauli_rep", None)
+        if rep is None or len(rep) != 1:
+            continue
+        (word, coeff), = list(rep.items())
+        if any(p != "Z" for p in word.values()):
+            continue
+        c = complex(coeff)
+        if abs(c.imag) > 1e-12 or abs(abs(c.real) - 1.0) > 1e-12:
+            continue
+        constraints.append((sorted(word.keys()), 0 if c.real > 0 else 1))
 
-    if best_sectors is None:
-        raise RuntimeError("_find_optimal_sector: no valid sector found")
+    solutions = []
+    for bits in itertools.product([0, 1], repeat=n_tap):
+        assign = dict(zip(wires_tap, bits))
+        if all(sum(assign[w] for w in supp) % 2 == want for supp, want in constraints):
+            solutions.append(list(bits))
+    if len(solutions) == 1 and _check(solutions[0]) is not None:
+        return np.array(solutions[0], dtype=int)
 
-    return best_sectors, best_energy
+    # 3. Last resort: the tapered basis state whose energy is the HF energy, if unique.
+    matches = [list(b) for b in itertools.product([0, 1], repeat=n_tap) if _check(list(b)) is not None]
+    if len(matches) == 1:
+        return np.array(matches[0], dtype=int)
+    raise RuntimeError(
+        "could not determine the tapered Hartree-Fock state for mapping %r: "
+        "%d stabilizer solutions, %d energy matches against E_HF = %.10f Ha"
+        % (mapping, len(solutions), len(matches), e_hf_full))
+
+
+def _diagonal_energy(H, bits):
+    """<b|H|b> for a computational basis state, exactly and without building a matrix.
+
+    `bits` is a dict {wire: 0/1} or a sequence indexed by wire label. Only Pauli terms
+    made of I and Z contribute; each contributes its coefficient times (-1)^(occupied
+    wires in its support).
+    """
+    rep = H.pauli_rep
+    if rep is None:
+        raise RuntimeError("Hamiltonian has no Pauli representation")
+    get = (lambda w: int(bits[w])) if not isinstance(bits, dict) else (lambda w: int(bits[w]))
+    total = 0.0
+    for word, coeff in rep.items():
+        if any(p != "Z" for p in word.values()):
+            continue
+        parity = sum(get(w) for w in word) % 2
+        total += float(np.real(coeff)) * ((-1) ** parity)
+    return total
 
 
 def apply_tapering(H, n_qubits: int, n_electrons: int, e_casci: float,
@@ -501,29 +680,36 @@ def apply_tapering(H, n_qubits: int, n_electrons: int, e_casci: float,
     paulixops  = qchem.paulix_ops(generators, n_qubits)
 
     sectors, e_tapered_gs = _find_optimal_sector(H, generators, paulixops,
-                                                 n_electrons=n_electrons)
+                                                 n_electrons=n_electrons,
+                                                 mapping=mapping,
+                                                 e_reference=e_casci)
 
     H_tapered  = qchem.taper(H, generators, paulixops, sectors)
-    hf_tapered = qchem.taper_hf(generators, paulixops, sectors,
-                                 num_electrons=n_electrons, num_wires=n_qubits)
+    hf_tapered = _tapered_hf_state(H_tapered, generators, paulixops, sectors,
+                                   n_electrons, n_qubits, mapping, H)
 
     n_tap = len(H_tapered.wires)
     n_sym = len(generators)
 
-    # ── BK constant-offset correction (same as v3) ────────────────────────────
+    # ── Sector check (replaces the "BK constant-offset correction") ───────────
+    # Until 2026-09-07 a shift of e_casci - e_tapered_gs was ADDED to every energy
+    # whenever it exceeded 0.1 Ha, on the belief that PennyLane's tapering drops a
+    # constant for parity and Bravyi-Kitaev. It does not: tapering restricts H to one
+    # symmetry sector and the spectrum of the restriction is a subset of the spectrum
+    # of H. A large shift meant the sector did not contain the ground state, and adding
+    # it back made a wrong-sector energy look like the right one. _find_optimal_sector
+    # now verifies the sector against e_casci, so this can only be a real failure.
     constant_correction = 0.0
     correction_applied  = False
-    CORRECTION_THRESHOLD = 0.1
 
     shift = e_casci - e_tapered_gs
-    if abs(shift) > CORRECTION_THRESHOLD:
-        constant_correction = shift
-        correction_applied  = True
-        print(_warn(
-            f"BK tapering constant correction: {constant_correction:+.6f} Ha"
-        ))
-    else:
-        print(_ok(f"Tapering constant check: shift={shift:.2e} Ha  (no correction needed)"))
+    if abs(shift) > _SECTOR_TOL:
+        raise RuntimeError(
+            f"tapered ground energy {e_tapered_gs:.10f} Ha differs from the CASCI "
+            f"reference {e_casci:.10f} Ha by {shift:+.3e} Ha. The tapered Hamiltonian "
+            f"is not the right symmetry sector; energies are not shifted to hide it."
+        )
+    print(_ok(f"Tapering sector check: |E_tapered - E_CASCI| = {abs(shift):.2e} Ha"))
 
     print(_ok(f"Z2 tapering: {n_qubits} -> {n_tap} qubits  ({n_sym} symmetries removed)"))
     print(_ok(f"Tapered HF state: {hf_tapered.tolist()}"))

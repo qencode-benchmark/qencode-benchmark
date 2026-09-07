@@ -138,8 +138,103 @@ def test_sector_search_fails_loudly_rather_than_returning_garbage(h4, monkeypatc
         raise MemoryError("simulated dense allocation failure")
 
     monkeypatch.setattr(qchem, "taper", boom)
-    with pytest.raises(RuntimeError, match="no valid sector"):
+    # Message changed on 2026-09-07 when the sector became verified rather than trusted;
+    # the guarantee under test -- raise, never return a default -- is unchanged.
+    with pytest.raises(RuntimeError, match="no Z2 sector"):
         ge._find_optimal_sector(h4["H"], h4["gens"], h4["px"], n_electrons=h4["ne"])
+
+
+# ── 1b. Z2 sector selection across mappings (fixed 2026-09-07) ────────────────
+#
+# qchem.optimal_sector derives the sector from `arange(n) < n_electrons`, the
+# Jordan-Wigner occupation string, and matches the generator support against
+# `wires.toset()`, an unordered set. Both are wrong for parity and Bravyi-Kitaev, which
+# put the suite's 13 non-JW entries in a symmetry sector that does not contain the
+# ground state. These tests pin the corrected behaviour for every mapping.
+
+@pytest.fixture(scope="module", params=["jordan_wigner", "parity", "bravyi_kitaev"])
+def h2_mapped(request):
+    """H2 built through the same path as main(), under each mapping."""
+    from pennylane import qchem
+    mapping = request.param
+    mol = ge.load_molecule("H2")
+    py = ge.run_pyscf_suite(mol, "cc-pvdz", orbital_opt="hf", run_classical=False)
+    symbols, coords = ge.pyscf_geom_to_symbols_coords(mol["geometry_pyscf"])
+    H, nq = ge.build_pl_hamiltonian(symbols, coords, "cc-pvdz", mapping,
+                                    py["n_electrons"], py["n_orbitals"], mf=py["_mf"],
+                                    use_of_bridge=True, e_casci=py["e_casci"],
+                                    mo_coeff=py.get("mo_coeff"))
+    return {"mapping": mapping, "H": H, "nq": nq, "ne": py["n_electrons"],
+            "e_casci": py["e_casci"], "gens": qchem.symmetry_generators(H),
+            "px": qchem.paulix_ops(qchem.symmetry_generators(H), nq)}
+
+
+def test_tapered_sector_contains_the_ground_state_for_every_mapping(h2_mapped):
+    """The tapered Hamiltonian's ground energy IS the CASCI energy, not a shifted one."""
+    H_t, _hf, _meta = ge.apply_tapering(h2_mapped["H"], h2_mapped["nq"], h2_mapped["ne"],
+                                        h2_mapped["e_casci"], mapping=h2_mapped["mapping"])
+    assert ge._sector_ground_energy(H_t) == pytest.approx(h2_mapped["e_casci"], abs=1e-8)
+
+
+def test_sector_matches_brute_force_scan_for_every_mapping(h2_mapped):
+    """The fast HF-derived sector agrees with scanning all 2^n sectors."""
+    import itertools
+    from pennylane import qchem
+    best = (float("inf"), None)
+    for sec in itertools.product([1, -1], repeat=len(h2_mapped["gens"])):
+        try:
+            e = ge._sector_ground_energy(
+                qchem.taper(h2_mapped["H"], h2_mapped["gens"], h2_mapped["px"], list(sec)))
+        except Exception:
+            continue
+        if e is not None and e < best[0]:
+            best = (e, list(sec))
+    fast, e_fast = ge._find_optimal_sector(
+        h2_mapped["H"], h2_mapped["gens"], h2_mapped["px"], n_electrons=h2_mapped["ne"],
+        mapping=h2_mapped["mapping"], e_reference=h2_mapped["e_casci"])
+    assert list(fast) == best[1]
+    assert e_fast == pytest.approx(best[0], abs=1e-10)
+
+
+def test_tapered_hf_state_reproduces_the_hartree_fock_energy(h2_mapped):
+    """The reference state the ansatz starts from must actually be Hartree-Fock.
+
+    qchem.taper_hf builds it with qml.jordan_wigner whatever the mapping, which for
+    parity and Bravyi-Kitaev gave a state that is not the HF determinant.
+    """
+    H_t, hf_t, _meta = ge.apply_tapering(h2_mapped["H"], h2_mapped["nq"], h2_mapped["ne"],
+                                         h2_mapped["e_casci"], mapping=h2_mapped["mapping"])
+    wires = sorted(H_t.wires)
+    e_tapered_hf = ge._diagonal_energy(H_t, {w: int(b) for w, b in zip(wires, hf_t)})
+    hf_bits = ge._hf_qubit_bits(h2_mapped["ne"], h2_mapped["nq"], h2_mapped["mapping"])
+    e_full_hf = ge._diagonal_energy(h2_mapped["H"], hf_bits)
+    assert e_tapered_hf == pytest.approx(e_full_hf, abs=1e-8)
+
+
+def test_wrong_sector_is_an_error_not_a_constant_shift(h2_mapped):
+    """A tapered ground energy far from the reference must raise. Until 2026-09-07 the
+    difference was added to every energy instead, which hid the wrong sector."""
+    with pytest.raises(RuntimeError, match="not the right symmetry sector|no Z2 sector"):
+        ge.apply_tapering(h2_mapped["H"], h2_mapped["nq"], h2_mapped["ne"],
+                          h2_mapped["e_casci"] - 0.5, mapping=h2_mapped["mapping"])
+
+
+def test_generator_eigenvalue_uses_wire_labels_not_positions():
+    """The scrambled-wire-order bug, in isolation: NH3 under Bravyi-Kitaev has
+    H.wires = [0,1,3,5,6,7,2,4], and matching a generator's support by position rather
+    than by label silently reads the wrong bits of the HF string."""
+    import pennylane as qml
+    gens = [qml.Z(0) @ qml.Z(3)]
+    hf_bits = [1, 0, 0, 1, 0]          # wires 0 and 3 occupied -> even parity -> +1
+    assert ge._sector_from_hf_bits(gens, hf_bits) == [1]
+    hf_bits = [1, 0, 0, 0, 0]          # only wire 0 occupied -> odd parity -> -1
+    assert ge._sector_from_hf_bits(gens, hf_bits) == [-1]
+
+
+def test_generator_coefficient_is_carried_into_the_eigenvalue():
+    import pennylane as qml
+    assert ge._sector_from_hf_bits([-1.0 * (qml.Z(0) @ qml.Z(1))], [0, 0]) == [-1]
+    assert ge._sector_from_hf_bits([1.0 * (qml.Z(0) @ qml.Z(1))], [0, 0]) == [1]
 
 
 # ── 2. ADAPT operator selection ───────────────────────────────────────────────
