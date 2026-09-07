@@ -214,8 +214,8 @@ export default function GuidePage() {
             <p>
               <strong>Measured, not certified.</strong> No entry&rsquo;s status depends on
               this column. It is absent for entries above ten qubits, where exact
-              density-matrix simulation is out of reach, and marked not measurable for the
-              four one-qubit entries whose tapered Hamiltonian is a single constant term.
+              density-matrix simulation is out of reach, and for two entries whose stored
+              circuit cannot be rebuilt from the record.
               Method, conventions and every record: <code>docs/NOISY_TIER.md</code>.
             </p>
           </Row>

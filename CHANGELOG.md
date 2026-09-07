@@ -17,6 +17,27 @@ All notable changes to QEncode are recorded here.
 
 ---
 
+## Unreleased — 2026-09-07 — Z₂ sector fault fixed, 18 entries regenerated
+
+- **Every non-Jordan–Wigner entry was tapered into the wrong symmetry sector.**
+  `pennylane.qchem.optimal_sector` hard-codes the Jordan–Wigner Hartree–Fock occupation
+  string and matches generator support against an unordered set of wires; both are wrong
+  for parity and Bravyi–Kitaev, and the two bugs cancelled for exactly one configuration
+  (NH₃ under Bravyi–Kitaev), which is why it looked fine there. The tapered ground state
+  sat 0.30–0.76 Ha above CASCI and the difference was added back as a "constant
+  correction", hiding it. `qchem.taper_hf` has the same assumption, so five further
+  entries had the right sector but a Hartree–Fock reference built with the wrong encoding.
+- **Fixed** in `_find_optimal_sector`, which now derives the sector from the mapping's own
+  Hartree–Fock state, matches support by wire label, verifies the result against CASCI,
+  and raises if nothing reproduces it. The constant-correction branch raises instead of
+  shifting. New `_tapered_hf_state` and `_diagonal_energy` verify the reference state
+  against the untapered Hartree–Fock energy.
+- **18 entries regenerated**; none changed trust level; superseded files kept in
+  `releases/v4/db_superseded/`. No Jordan–Wigner entry affected — 41 entries, including
+  both hydrogen chains and every ADAPT result, are untouched.
+- Fifteen new tests parametrised over all three mappings; `docs/SECTOR_FIX.md`;
+  `tools/compare_regenerated.py` and `tools/apply_regenerated.py`.
+
 ## Unreleased — 2026-09-04 — the hardware-penalty track
 
 - **Every entry at or below 10 tapered qubits now carries a measured hardware penalty**:

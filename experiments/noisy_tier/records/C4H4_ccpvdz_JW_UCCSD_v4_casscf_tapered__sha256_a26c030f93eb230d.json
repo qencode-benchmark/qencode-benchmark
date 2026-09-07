@@ -10,10 +10,10 @@
  "n_qubits_tapered": 6,
  "status": "failed",
  "reason": "RuntimeError: pipeline tapers to 5 qubits today (3 symmetries); the entry stores 6. The operator pool cannot be reconstructed in the stored gauge.",
- "seconds_total": 24.253,
+ "seconds_total": 19.357,
  "provenance": {
-  "computed_utc": "2026-09-07T07:49:31.355595+00:00",
-  "git_commit": "2484e2f",
+  "computed_utc": "2026-09-07T12:23:37.621611+00:00",
+  "git_commit": "ab7185b",
   "noise_models_sha256": "f7599b8e38be626fa8298c3ccb1edb5d3d24a7c83434cb7fa8a833000b1c4162",
   "tool_versions": {
    "python": "3.11.15",

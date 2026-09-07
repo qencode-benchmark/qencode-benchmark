@@ -9,11 +9,25 @@ inside the wheel, which is what lets `pip install qencode-benchmark` score a res
 no chemistry stack present.
 
 The table is safe to build this way because the reference is a property of the PROBLEM,
-not of the run. Measured across all 54 published entries: for every
-(molecule, basis, active space, orbital treatment) the recorded reference energy is
-identical to the last digit across every mapping and every ansatz -- spread 0.0 Ha, 16
-distinct configurations. If that ever stops being true the table is not well defined, so
-this refuses to write rather than pick one.
+not of the run: across all 54 published entries, the recorded reference energy for a given
+(molecule, basis, active space, orbital treatment) agrees across every mapping and every
+ansatz. If that ever stops being true the table is not well defined, so this refuses to
+write rather than pick one.
+
+How closely they agree depends on the orbital treatment, and the distinction is worth
+stating because it is not numerical noise:
+
+  canonical Hartree-Fock orbitals   spread <= 2.3e-13 Ha over 8 configurations
+  CASSCF orbitals                   spread 1.4e-10 Ha (C4H4), 4.2e-10 Ha (N2)
+
+A CASSCF energy is invariant under rotations inside the active space, so the converged
+orbitals -- and with them the last digits of every integral -- are fixed only by the
+optimiser path and by rounding. Two entries for the same molecule generated in different
+sessions therefore land in slightly different orbital gauges. Until 2026-09-07 every
+entry had been generated in one session and the spread was exactly 0.0 Ha; regenerating
+the parity entries that day made the CASSCF gauge difference visible. It is eight orders
+of magnitude below the certification threshold and does not affect any reported result,
+but it is the reason REFERENCE_AGREEMENT_HA is 1e-9 and not machine epsilon.
 
     python tools/build_reference_table.py            # write src/qencode/data/references_v4.json
     python tools/build_reference_table.py --check    # exit 1 if the file is out of date
@@ -37,8 +51,9 @@ OUT = REPO / "src" / "qencode" / "data" / "references_v4.json"
 CERT_THRESHOLD_HA = 0.01
 CHEMICAL_ACCURACY_HA = 1.6e-3
 
-# The reference must be identical across every encoding of the same problem. This is the
-# tolerance for calling two recorded values the same number; measured spread is 0.0.
+# The reference must agree across every encoding of the same problem. This is the
+# tolerance for calling two recorded values the same number. Measured spread: <= 2.3e-13 Ha
+# for Hartree-Fock orbitals, up to 4.2e-10 Ha for CASSCF ones (orbital gauge, see above).
 REFERENCE_AGREEMENT_HA = 1e-9
 
 

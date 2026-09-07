@@ -325,6 +325,20 @@ Evidence: `experiments/verification_sweep/cross_environment/H4_cross_env_check.t
 **Caveat.** n = 5 measured entries, resting on two ADAPT measurements. Stated as what has
 been measured, not as a proven law.
 
+### 2026-09-07 — 18 entries regenerated after a Z₂ tapering fault
+
+Entries using parity or Bravyi–Kitaev were tapered into a symmetry sector that does not
+contain the ground state; the discrepancy was masked by a "constant correction". Five more
+had the right sector but the wrong Hartree–Fock reference. All 18 were regenerated at the
+configuration each records, so only the tapering changed.
+
+**No entry changed tier.** 47 certified and 2 research, as before. Fourteen sectors and
+eight reference states changed; most gaps improved and two worsened, all recorded as they
+came out. Superseded files are kept, not deleted, in `releases/v4/db_superseded/` with a
+README naming the fault and the replacement. Rankings shift where gaps moved, which is the
+intended consequence of publishing a corrected number. Full account:
+[`SECTOR_FIX.md`](SECTOR_FIX.md).
+
 ### 2026-09-04 — the hardware-penalty track (the "noisy tier")
 
 Certification measures an algorithm in the absence of device error. A second question —

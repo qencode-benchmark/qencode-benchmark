@@ -21,8 +21,10 @@
 >    Hamiltonian, and it holds for every record in the noisy tier.
 >
 > The reason H₂ and HF "could not be rebuilt" is also now known and is not what this
-> document guessed: their parity-mapped tapered Hamiltonian is a single constant term.
-> See *What the measurement exposed* in `NOISY_TIER.md`.
+> document guessed: their parity-mapped tapered Hamiltonian was a single constant term,
+> because the tapering had selected a symmetry sector that does not contain the ground
+> state. That fault is fixed and those entries are regenerated — see
+> [`SECTOR_FIX.md`](SECTOR_FIX.md).
 
 Every certified QEncode entry is an exact statevector result. That is the right way to
 measure an *algorithm*, and it is not what a device returns. This measures the difference,

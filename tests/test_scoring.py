@@ -23,6 +23,9 @@ from pathlib import Path
 
 import pytest
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+import build_reference_table as btable  # noqa: E402
+
 REPO = Path(__file__).resolve().parents[1]
 DB = REPO / "releases" / "v4" / "db"
 TABLE = REPO / "src" / "qencode" / "data" / "references_v4.json"
@@ -65,7 +68,11 @@ def test_scoring_a_published_energy_reproduces_its_published_gap(entry_path):
                       d["problem"]["active_space"]["num_spatial_orbitals"]),
     )
     stored_gap = d["results"]["quality"]["abs_vqe_exact_gap"]
-    assert abs(s.gap_ha - stored_gap) < 1e-12
+    # Bounded by the agreement tolerance of the packaged table, not by machine epsilon:
+    # the reference energy of a CASSCF active space is defined only up to the orbital
+    # gauge, and entries generated in different sessions differ by up to 4.2e-10 Ha.
+    # See the docstring of tools/build_reference_table.py.
+    assert abs(s.gap_ha - stored_gap) < btable.REFERENCE_AGREEMENT_HA
     assert s.meets_certification_threshold == d["results"]["quality"]["trusted"]
 
 

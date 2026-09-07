@@ -131,8 +131,9 @@ this rather than hiding it.
 1×10⁻², `device-sc` adds amplitude and phase damping at 10⁻³. Penalties in mHa; the
 certification bar is 10 mHa. "gap" is the certified noiseless gap. "ε_eff/ε" is under the
 current model. "after ZNE" is whether the Richardson-extrapolated gap is under the bar.
-† tapered Hamiltonian is a single constant term (not measurable, see below). ‡ entry
-carries a constant correction (see below). HEA depth is `r`.
+HEA depth is `r`. (Two legend marks used here before the 2026-09-07 sector fix are gone
+with the fault they described: no entry now has a constant tapered Hamiltonian, and no
+entry carries a constant correction.)
 
 The table is generated from the records by `python tools/noisy_tier.py --table`;
 `tests/test_noisy_tier.py` fails if this copy and the records disagree.
@@ -140,49 +141,49 @@ The table is generated from the records by `python tools/noisy_tier.py --table`;
 <!-- TABLE:BEGIN -->
 | entry | q | 1q | 2q | gap | opt | **current** | pess | device-sc | ε_eff/ε | ZNE resid. | under noise | after ZNE |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| H2 BK HEA r2 ‡ | 1 | 3 | 0 | 0.000 | 0.0 | **0.1** | 0.2 | 0.4 | 1.00 | +0.00 | yes | yes |
+| H2 BK HEA r2 | 1 | 3 | 0 | 0.000 | 0.2 | **1.2** | 2.3 | 4.6 | 1.00 | +0.00 | yes | yes |
 | H2 JW HEA r2 | 1 | 3 | 0 | 0.000 | 0.2 | **1.2** | 2.3 | 4.6 | 1.00 | +0.00 | yes | yes |
-| H2 PAR HEA r2 ‡ † | 1 | 3 | 0 | 0.000 | — | — | — | — | — | — | n/a | n/a |
-| H2 BK UCCSD ‡ | 1 | 1 | 0 | 0.000 | 0.0 | **0.0** | 0.1 | 0.1 | 1.00 | +0.00 | yes | yes |
+| H2 PAR HEA r2 | 1 | 3 | 0 | 0.000 | 0.2 | **1.2** | 2.3 | 4.6 | 1.00 | +0.00 | yes | yes |
+| H2 BK UCCSD | 1 | 1 | 0 | 0.000 | 0.1 | **0.4** | 0.8 | 1.5 | 1.00 | +0.00 | yes | yes |
 | H2 JW UCCSD | 1 | 1 | 0 | 0.000 | 0.1 | **0.4** | 0.8 | 1.5 | 1.00 | +0.00 | yes | yes |
-| H2 PAR UCCSD ‡ † | 1 | 1 | 0 | 0.000 | — | — | — | — | — | — | n/a | n/a |
-| HF BK HEA r2 ‡ | 1 | 3 | 0 | 0.000 | 0.0 | **0.0** | 0.0 | 0.0 | 1.00 | +0.00 | yes | yes |
+| H2 PAR UCCSD | 1 | 1 | 0 | 0.000 | 0.1 | **0.4** | 0.8 | 1.5 | 1.00 | +0.00 | yes | yes |
+| HF BK HEA r2 | 1 | 3 | 0 | 0.000 | 0.3 | **1.4** | 2.8 | 5.7 | 1.00 | +0.00 | yes | yes |
 | HF JW HEA r2 | 1 | 3 | 0 | 0.000 | 0.3 | **1.4** | 2.8 | 5.7 | 1.00 | +0.00 | yes | yes |
-| HF PAR HEA r2 ‡ † | 1 | 3 | 0 | 0.000 | — | — | — | — | — | — | n/a | n/a |
-| HF BK UCCSD ‡ | 1 | 1 | 0 | 0.000 | 0.0 | **0.0** | 0.0 | 0.0 | 1.00 | +0.00 | yes | yes |
+| HF PAR HEA r2 | 1 | 3 | 0 | 0.000 | 0.3 | **1.4** | 2.8 | 5.7 | 1.00 | +0.00 | yes | yes |
+| HF BK UCCSD | 1 | 1 | 0 | 0.000 | 0.1 | **0.5** | 0.9 | 1.9 | 1.00 | +0.00 | yes | yes |
 | HF JW UCCSD | 1 | 1 | 0 | 0.000 | 0.1 | **0.5** | 0.9 | 1.9 | 1.00 | +0.00 | yes | yes |
-| HF PAR UCCSD ‡ † | 1 | 1 | 0 | 0.000 | — | — | — | — | — | — | n/a | n/a |
+| HF PAR UCCSD | 1 | 1 | 0 | 0.000 | 0.1 | **0.5** | 0.9 | 1.9 | 1.00 | +0.00 | yes | yes |
 | BeH2 JW HEA r2 | 3 | 9 | 4 | 0.000 | 6.9 | **34.4** | 67.9 | 45.4 | 0.47 | +0.04 | no | yes |
-| BeH2 PAR HEA r2 ‡ | 3 | 9 | 4 | 0.000 | 4.4 | **22.0** | 43.3 | 27.0 | 0.58 | +0.02 | no | yes |
+| BeH2 PAR HEA r2 | 3 | 9 | 4 | 0.000 | 6.9 | **34.4** | 67.9 | 45.4 | 0.47 | +0.04 | no | yes |
 | BeH2 JW UCCSD | 3 | 54 | 32 | 0.007 | 57.9 | **263.1** | 468.9 | 320.1 | 0.56 | +13.75 | no | no |
-| BeH2 PAR UCCSD ‡ | 3 | 110 | 64 | 2.223 | 90.7 | **343.8** | 506.2 | 399.0 | 0.87 | +96.41 | no | no |
+| BeH2 PAR UCCSD | 3 | 110 | 64 | 0.002 | 112.2 | **466.4** | 755.1 | 556.3 | 0.61 | +71.40 | no | no |
 | C4H6 JW ADAPT | 4 | 10 | 12 | 2.829 | 16.2 | **77.8** | 148.4 | 94.0 | 0.51 | +0.86 | no | yes |
 | H2CO JW ADAPT | 4 | 14 | 8 | 1.124 | 16.9 | **81.7** | 156.4 | 99.1 | 0.51 | +0.68 | no | yes |
 | H2O JW HEA r2 | 4 | 12 | 6 | 0.403 | 10.9 | **53.7** | 106.0 | 72.7 | 0.34 | +0.05 | no | yes |
-| H2O PAR HEA r2 | 4 | 12 | 6 | 0.296 | 13.6 | **67.0** | 131.7 | 92.7 | 0.43 | +0.12 | no | yes |
+| H2O PAR HEA r2 | 4 | 12 | 6 | 0.399 | 18.7 | **91.4** | 177.9 | 115.2 | 0.58 | +0.33 | no | yes |
 | H2O JW UCCSD | 4 | 170 | 120 | 0.000 | 238.4 | **893.4** | 1331.9 | 1027.9 | 0.58 | +253.17 | no | no |
+| C4H4 PAR HEA r2 | 5 | 15 | 8 | 3.834 | 16.4 | **79.5** | 153.3 | 93.8 | 0.61 | +0.50 | no | yes |
 | H4 JW ADAPT | 5 | 14 | 16 | 9.942 | 26.6 | **126.2** | 237.1 | 150.5 | 0.49 | +2.27 | no | no |
 | H4 JW HEA r4 | 5 | 25 | 16 | 9.283 | 26.7 | **126.8** | 238.5 | 160.8 | 0.48 | +2.15 | no | no |
-| H4 PAR HEA r4 | 5 | 25 | 16 | 5.621 | 32.3 | **152.1** | 283.1 | 186.6 | 0.57 | +3.33 | no | yes |
+| H4 PAR HEA r4 | 5 | 25 | 16 | 4.492 | 27.4 | **130.3** | 245.4 | 160.9 | 0.49 | +2.12 | no | yes |
 | H4 JW UCCSD | 5 | 713 | 576 | 2.222 | 670.8 | **1222.7** | 1292.5 | 1281.5 | 0.94 | +1091.28 | no | no |
 | LiH JW HEA r2 | 5 | 15 | 8 | 0.096 | 17.7 | **87.2** | 171.6 | 119.8 | 0.25 | +0.18 | no | yes |
-| LiH PAR HEA r2 | 5 | 15 | 8 | 5.181 | 20.1 | **99.2** | 195.0 | 132.9 | 0.28 | +0.17 | no | yes |
+| LiH PAR HEA r2 | 5 | 15 | 8 | 3.370 | 19.4 | **95.6** | 187.8 | 131.2 | 0.27 | +0.23 | no | yes |
 | LiH JW UCCSD | 5 | 662 | 560 | 0.003 | 1047.5 | **2719.7** | 3129.5 | 2995.6 | 0.85 | +1971.75 | no | no |
 | NH3 JW HEA r2 | 5 | 15 | 8 | 1.880 | 13.8 | **67.3** | 130.4 | 84.3 | 0.42 | +0.37 | no | yes |
-| NH3 PAR HEA r2 ‡ | 5 | 15 | 8 | 6.911 | 10.6 | **51.9** | 100.8 | 69.2 | 0.43 | +0.23 | no | yes |
+| NH3 PAR HEA r2 | 5 | 15 | 8 | 0.734 | 16.4 | **80.0** | 155.3 | 98.1 | 0.49 | +0.38 | no | yes |
 | NH3 JW UCCSD | 5 | 713 | 576 | 0.032 | 671.6 | **1316.2** | 1439.3 | 1409.1 | 0.90 | +1093.14 | no | no |
 | water_dimer JW ADAPT | 5 | 6 | 8 | 0.111 | 13.5 | **65.9** | 127.6 | 79.0 | 0.41 | +0.33 | no | yes |
 | water_dimer JW HEA r2 | 5 | 15 | 8 | 0.332 | 12.7 | **62.5** | 122.6 | 83.0 | 0.37 | +0.14 | no | yes |
-| water_dimer PAR HEA r2 | 5 | 15 | 8 | 0.156 | 17.7 | **86.4** | 167.4 | 109.6 | 0.51 | +0.42 | no | yes |
+| water_dimer PAR HEA r2 | 5 | 15 | 8 | 0.114 | 16.6 | **81.0** | 157.0 | 102.1 | 0.48 | +0.39 | no | yes |
 | water_dimer JW UCCSD | 5 | 657 | 528 | 0.002 | 578.8 | **1332.4** | 1490.3 | 1429.0 | 0.88 | +1044.32 | no | no |
 | C4H4 JW HEA r2 | 6 | 18 | 10 | 9.637 | 20.2 | **97.3** | 186.0 | 120.4 | 0.62 | +0.89 | no | no |
-| C4H4 PAR HEA r2 | 6 | 18 | 10 | 6.109 | 22.9 | **110.0** | 209.5 | 136.0 | 0.69 | +1.16 | no | yes |
 | N2 JW ADAPT | 8 | 326 | 368 | 8.831 | 1608.7 | **3210.0** | 3416.3 | 3254.6 | 0.90 | +2868.97 | no | no |
 | N2 JW HEA r10 | 8 | 88 | 70 | 4.513 | 318.1 | **1306.9** | 2093.2 | 1526.6 | 0.58 | +220.31 | no | no |
 | N2 JW HEA r6 | 8 | 56 | 42 | 48.450 | 262.9 | **1127.8** | 1885.1 | 1324.1 | 0.70 | +126.63 | no | no |
 | N2 JW HEA r4 | 8 | 40 | 28 | 138.646 | 131.4 | **601.2** | 1081.2 | 727.2 | 0.53 | +27.23 | no | no |
-| N2 PAR HEA r10 ‡ | 8 | 88 | 70 | 9.504 | 343.0 | **1330.7** | 2006.7 | 1515.2 | 0.74 | +328.98 | no | no |
-| N2 PAR HEA r4 ‡ | 8 | 40 | 28 | 79.753 | 135.7 | **613.7** | 1088.6 | 740.9 | 0.67 | +33.56 | no | no |
+| N2 PAR HEA r4 | 8 | 40 | 28 | 103.522 | 116.0 | **540.2** | 990.5 | 633.4 | 0.47 | +16.42 | no | no |
+| N2 PAR HEA r10 | 8 | 88 | 70 | 4.404 | 329.2 | **1352.9** | 2167.2 | 1575.8 | 0.60 | +227.36 | no | no |
 | N2 JW UCCSD | 8 | 5108 | 5712 | 10.832 | 3559.5 | **3590.2** | 3590.3 | 3624.0 | 1.00 | +3590.23 | no | no |
 | H6 JW ADAPT | 9 | 400 | 424 | 9.273 | 1112.9 | **2301.0** | 2536.6 | 2373.6 | 0.86 | +1909.93 | no | no |
 | H6 JW HEA r4 | 9 | 45 | 32 | 105.377 | 119.9 | **542.7** | 963.3 | 648.9 | 0.57 | +29.25 | no | no |
@@ -199,12 +200,12 @@ Not measured (rebuild gate failed):
 ### What the numbers say
 
 - **Under noise near current hardware no multi-qubit entry stays under the bar.** The
-  smallest multi-qubit penalty is 22.0 mHa (BeH₂, parity, HEA, 4 two-qubit gates), the
-  largest 3590 mHa (N₂ Jordan–Wigner UCCSD, 5712 two-qubit gates), where ε = 1.000 to
-  three decimals: the state is maximally mixed and the energy is c_I. The only entries
-  under the bar with noise are the eight one-qubit H₂ and HF circuits, with one to three
-  gates and no two-qubit gate. That is a statement about circuit size, not about
-  robustness.
+  smallest multi-qubit penalty is 34.4 mHa (BeH₂, HEA, 4 two-qubit gates — the same to
+  three figures under Jordan–Wigner and parity, as it should be), the largest 3590 mHa
+  (N₂ Jordan–Wigner UCCSD, 5712 two-qubit gates), where ε = 1.000 to three decimals: the
+  state is maximally mixed and the energy is c_I. The only entries under the bar with
+  noise are the twelve one-qubit H₂ and HF circuits, with one to three gates and no
+  two-qubit gate. That is a statement about circuit size, not about robustness.
 - **The penalty is set by the two-qubit gate count, and it saturates.** Along each
   molecule's entries the penalty tracks N₂; for the eight circuits above a few hundred
   two-qubit gates (the [4,4] and [6,6] UCCSD entries, N₂ and H₆ and benzene ADAPT) ε
@@ -213,17 +214,17 @@ Not measured (rebuild gate failed):
   70 for the ten-layer hardware-efficient entry on the same molecule. UCCSD's certified
   gaps of a few µHa are bought with circuits that a device turns into a random state.
 - **An error event carries the energy about half way to the mixed value** in shallow
-  circuits (ε_eff/ε from 0.25 for LiH HEA to 0.69), and nearly all the way (0.83–1.00) in
+  circuits (ε_eff/ε from 0.25 for LiH HEA to 0.62), and nearly all the way (0.83–1.00) in
   deep ones, where later gates spread each local error across the register. This is the
   quantitative form of the locality argument the first probe made, now against the correct
   ε.
 - **Zero-noise extrapolation recovers the shallow circuits and not the deep ones.** For
   HEA and ADAPT circuits with up to 16 two-qubit gates (ε ≲ 0.2) the extrapolated
-  residual is 0.02–3.3 mHa and the extrapolated gap is under the bar wherever the
+  residual is 0.04–2.3 mHa and the extrapolated gap is under the bar wherever the
   noiseless gap left room for it. Where it does not — H₄ JW HEA and ADAPT at 9.3 and
   9.9 mHa noiseless, C₄H₄ JW HEA at 9.6 — the failure after extrapolation is the thin
   certification margin, not the noise: the same entries the margin column already flags.
-  Beyond that the residual grows with depth without interruption: 14 to 329 mHa for the
+  Beyond that the residual grows with depth without interruption: 14 to 274 mHa for the
   circuits between 17 and 100 two-qubit gates, and 253 mHa to 3590 mHa above 100, where
   the three-point polynomial is extrapolating a curve that saturated long before λ = 1.
   At N₂ UCCSD the extrapolation returns the noisy energy unchanged to two decimals,
@@ -295,10 +296,10 @@ against the stored sectors and HF state before the pool is built. Two consequenc
 ## What the measurement exposed
 
 Two things came out of the rebuild gate that are about the published entries rather than
-about noise. Neither entry set has been modified; both are reported so the record is
-honest and the decision is the maintainers'.
+about noise. The first has since been fixed and the affected entries regenerated; the
+second is a property of the schema that is now documented rather than changed.
 
-### 1. The parity and Bravyi–Kitaev entries are tapered in a sector that does not contain the ground state
+### 1. The parity and Bravyi–Kitaev entries were tapered in the wrong sector — fixed 2026-09-07
 
 Every one of the 13 entries with a non-Jordan–Wigner mapping (H₂ ×4, HF ×4, BeH₂ ×2,
 N₂ ×2, NH₃ ×1) carries a field `bk_constant_correction_ha` of −0.30 to −0.76 Ha. The
@@ -324,29 +325,22 @@ first orbitals. Under parity and Bravyi–Kitaev the HF state is a different bit
 the same derivation lands in a different sector. The "constant correction" then shifts a
 wrong-sector energy until it matches CASCI.
 
-Consequences for those 13 entries, stated plainly:
+At the time this was written the consequence was that those entries' gaps measured the
+distance to the wrong sector's own minimum rather than to the molecular ground state, and
+that the four one-qubit H₂ and HF parity entries had a tapered Hamiltonian consisting of a
+single identity term — the VQE optimised nothing and their gap of exactly 0.000 mHa was
+vacuous.
 
-- Their **gap is a real property of the wrong-sector Hamiltonian**: VQE minus that
-  sector's own minimum. It is not the distance to the molecular ground state. Their
-  ranking against Jordan–Wigner entries of the same molecule compares different problems.
-- For the **four one-qubit H₂ and HF parity entries the tapered Hamiltonian is a single
-  identity term** (−0.720495·I for H₂, −99.576616·I for HF). The VQE optimised nothing;
-  every state has the same energy; the gap of exactly 0.000 mHa is vacuous. They are the
-  four entries the leaderboard marks *not measurable* under noise: no circuit and no noise
-  can change the energy of a constant. The two Bravyi–Kitaev one-qubit entries have a
-  two-term Hamiltonian (c·I + 0.056·X for H₂, c·I + 0.010·X for HF) in the same wrong
-  sector.
-- The noisy-tier numbers for the other nine are correct measurements *of the published
-  circuit on the published Hamiltonian*, marked ‡ in the table. They should be read with
-  the above in mind.
+**This is fixed.** The sector is now derived from the Hartree–Fock state of the mapping
+actually in use and verified against CASCI before anything is built on it, the "constant
+correction" branch raises instead of shifting, and all 18 affected entries — 13 with the
+wrong sector, plus 5 more that had the right sector but the wrong Hartree–Fock reference
+state — were regenerated. No entry changed trust level. Full account, evidence and the
+before/after table: [`SECTOR_FIX.md`](SECTOR_FIX.md). Superseded entries are kept in
+`releases/v4/db_superseded/`.
 
-The fix is in the pipeline, not in the entries: choose the sector by projecting the
-mapping's own HF bit string onto the generators, or by the dense sector scan already used
-for H₈ and H₁₀, and retire the "constant correction" path, which cannot be reached once
-the sector is right. Regenerating the 13 entries is a change to the published suite and is
-not done here. Until it is, the four constant-Hamiltonian entries are certified at gap
-zero on a problem with no content, and that fact is now recorded in three places: this
-document, the records, and the leaderboard's *Noise* column.
+The numbers in this document's results table are from the corrected suite. Nothing in the
+noise measurement itself changed: the same tool, run against corrected entries.
 
 ### 2. CASSCF entries' stored parameters are gauge-specific
 

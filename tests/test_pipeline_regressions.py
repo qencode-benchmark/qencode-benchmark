@@ -420,11 +420,13 @@ def test_verifier_and_pipeline_agree_on_which_fields_are_volatile():
 
 # Fast entries that cover all three mappings, both UCCSD and ADAPT, and tapering on a
 # 1-qubit and a 5-qubit system. Each is a full regeneration through the real verifier.
+# The three non-Jordan-Wigner names were repinned on 2026-09-07 when those entries were
+# regenerated after the Z2 sector fix (docs/SECTOR_FIX.md); the JW ones are unchanged.
 PINNED = [
     "H2_ccpvdz_JW_UCCSD_v4_tapered__sha256_93a0f8a8604d9aed.json",
-    "H2_ccpvdz_BK_UCCSD_v4_tapered__sha256_d3f280f5c8f32ccc.json",
-    "H2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_b321a0331d6d13eb.json",
-    "HF_ccpvdz_BK_UCCSD_v4_tapered__sha256_42ad3163dd5bcf87.json",
+    "H2_ccpvdz_BK_UCCSD_v4_tapered__sha256_ffcf6a5b220b54b6.json",
+    "H2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_f208cd1e8667c4bc.json",
+    "HF_ccpvdz_BK_UCCSD_v4_tapered__sha256_9175dd737dc93bed.json",
     "H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_39f9134a722ad612.json",
 ]
 

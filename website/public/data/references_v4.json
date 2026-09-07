@@ -81,11 +81,11 @@
    "active_electrons": 2,
    "active_orbitals": 2,
    "orbital_optimization": "hf",
-   "casci_ground_energy_hartree": -1.1312865112742876,
-   "exact_qubit_ground_energy_hartree": -1.1312865112742876,
-   "hf_energy_hartree": -1.128622769926591,
+   "casci_ground_energy_hartree": -1.1312865112742867,
+   "exact_qubit_ground_energy_hartree": -1.1312865112742867,
+   "hf_energy_hartree": -1.1286227699265905,
    "ccsd_t_energy_hartree": -1.1632095635626496,
-   "ccsd_t_correlation": -0.034586793636058655,
+   "ccsd_t_correlation": -0.0345867936360591,
    "n_published_entries": 6
   },
   {
@@ -177,11 +177,11 @@
    "active_electrons": 2,
    "active_orbitals": 2,
    "orbital_optimization": "hf",
-   "casci_ground_energy_hartree": -100.01948279623346,
-   "exact_qubit_ground_energy_hartree": -100.01948279623346,
-   "hf_energy_hartree": -100.01941126917356,
-   "ccsd_t_energy_hartree": -100.23009134571582,
-   "ccsd_t_correlation": -0.2106800765422605,
+   "casci_ground_energy_hartree": -100.01948279623367,
+   "exact_qubit_ground_energy_hartree": -100.01948279623366,
+   "hf_energy_hartree": -100.01941126917373,
+   "ccsd_t_energy_hartree": -100.23009134591027,
+   "ccsd_t_correlation": -0.2106800767365371,
    "n_published_entries": 6
   },
   {
@@ -269,20 +269,29 @@
   {
    "molecule": "BeH2",
    "orbital_optimization": "hf",
-   "mapping": "parity",
-   "ansatz": "hea",
-   "optimizer": "COBYLA",
-   "gap_ha": 1.188751674874311e-08,
-   "entry_id": "BeH2_ccpvdz_PAR_HEA_v4_tapered__sha256_f1deabb249cd79ee"
-  },
-  {
-   "molecule": "BeH2",
-   "orbital_optimization": "hf",
    "mapping": "jordan_wigner",
    "ansatz": "hea",
    "optimizer": "COBYLA",
    "gap_ha": 5.4250097747399195e-08,
    "entry_id": "BeH2_ccpvdz_JW_HEA_v4_tapered__sha256_3a0217702318b7e5"
+  },
+  {
+   "molecule": "BeH2",
+   "orbital_optimization": "hf",
+   "mapping": "parity",
+   "ansatz": "hea",
+   "optimizer": "COBYLA",
+   "gap_ha": 5.425012261639495e-08,
+   "entry_id": "BeH2_ccpvdz_PAR_HEA_v4_tapered__sha256_c3c5a76f6786a95b"
+  },
+  {
+   "molecule": "BeH2",
+   "orbital_optimization": "hf",
+   "mapping": "parity",
+   "ansatz": "uccsd_tapered",
+   "optimizer": "COBYLA",
+   "gap_ha": 2.40350748370588e-06,
+   "entry_id": "BeH2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_fee27caf9110d47f"
   },
   {
    "molecule": "BeH2",
@@ -294,13 +303,13 @@
    "entry_id": "BeH2_ccpvdz_JW_UCCSD_v4_tapered__sha256_31f7be8f2f7d9f00"
   },
   {
-   "molecule": "BeH2",
-   "orbital_optimization": "hf",
+   "molecule": "C4H4",
+   "orbital_optimization": "casscf",
    "mapping": "parity",
-   "ansatz": "uccsd_tapered",
+   "ansatz": "hea",
    "optimizer": "COBYLA",
-   "gap_ha": 0.0022225178804085033,
-   "entry_id": "BeH2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_f71541a4f8d3e964"
+   "gap_ha": 0.003834127348710581,
+   "entry_id": "C4H4_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_8b12a22329451c03"
   },
   {
    "molecule": "C4H4",
@@ -310,15 +319,6 @@
    "optimizer": "ADAPT-VQE (COBYLA inner)",
    "gap_ha": 0.005963395686137574,
    "entry_id": "C4H4_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_c9726695d8bdde1d"
-  },
-  {
-   "molecule": "C4H4",
-   "orbital_optimization": "casscf",
-   "mapping": "parity",
-   "ansatz": "hea",
-   "optimizer": "COBYLA",
-   "gap_ha": 0.006109140670162105,
-   "entry_id": "C4H4_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_0de79dd1611d708a"
   },
   {
    "molecule": "C4H4",
@@ -359,38 +359,11 @@
   {
    "molecule": "H2",
    "orbital_optimization": "hf",
-   "mapping": "parity",
-   "ansatz": "uccsd_tapered",
-   "optimizer": "COBYLA",
-   "gap_ha": 0.0,
-   "entry_id": "H2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_b321a0331d6d13eb"
-  },
-  {
-   "molecule": "H2",
-   "orbital_optimization": "hf",
-   "mapping": "parity",
-   "ansatz": "hea",
-   "optimizer": "COBYLA",
-   "gap_ha": 2.220446049250313e-16,
-   "entry_id": "H2_ccpvdz_PAR_HEA_v4_tapered__sha256_47f0004357aeddae"
-  },
-  {
-   "molecule": "H2",
-   "orbital_optimization": "hf",
    "mapping": "bravyi_kitaev",
    "ansatz": "uccsd_tapered",
    "optimizer": "COBYLA",
-   "gap_ha": 7.920997191490642e-11,
-   "entry_id": "H2_ccpvdz_BK_UCCSD_v4_tapered__sha256_d3f280f5c8f32ccc"
-  },
-  {
-   "molecule": "H2",
-   "orbital_optimization": "hf",
-   "mapping": "bravyi_kitaev",
-   "ansatz": "hea",
-   "optimizer": "COBYLA",
-   "gap_ha": 1.8946177959833221e-10,
-   "entry_id": "H2_ccpvdz_BK_HEA_v4_tapered__sha256_6e206ec6f1f02ea4"
+   "gap_ha": 1.0478180545447913e-09,
+   "entry_id": "H2_ccpvdz_BK_UCCSD_v4_tapered__sha256_ffcf6a5b220b54b6"
   },
   {
    "molecule": "H2",
@@ -400,6 +373,33 @@
    "optimizer": "COBYLA",
    "gap_ha": 1.0478180545447913e-09,
    "entry_id": "H2_ccpvdz_JW_UCCSD_v4_tapered__sha256_93a0f8a8604d9aed"
+  },
+  {
+   "molecule": "H2",
+   "orbital_optimization": "hf",
+   "mapping": "parity",
+   "ansatz": "uccsd_tapered",
+   "optimizer": "COBYLA",
+   "gap_ha": 1.0478180545447913e-09,
+   "entry_id": "H2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_f208cd1e8667c4bc"
+  },
+  {
+   "molecule": "H2",
+   "orbital_optimization": "hf",
+   "mapping": "bravyi_kitaev",
+   "ansatz": "hea",
+   "optimizer": "COBYLA",
+   "gap_ha": 8.591151123837903e-09,
+   "entry_id": "H2_ccpvdz_BK_HEA_v4_tapered__sha256_aa7360a68d23f35c"
+  },
+  {
+   "molecule": "H2",
+   "orbital_optimization": "hf",
+   "mapping": "parity",
+   "ansatz": "hea",
+   "optimizer": "COBYLA",
+   "gap_ha": 8.591151123837903e-09,
+   "entry_id": "H2_ccpvdz_PAR_HEA_v4_tapered__sha256_ffbef22125a8b6c9"
   },
   {
    "molecule": "H2",
@@ -434,8 +434,8 @@
    "mapping": "parity",
    "ansatz": "hea",
    "optimizer": "COBYLA",
-   "gap_ha": 0.0002957753042949207,
-   "entry_id": "H2O_ccpvdz_PAR_HEA_v4_tapered__sha256_442576f5b48d4354"
+   "gap_ha": 0.00039920839618901027,
+   "entry_id": "H2O_ccpvdz_PAR_HEA_v4_tapered__sha256_b50cee1c91dc0410"
   },
   {
    "molecule": "H2O",
@@ -461,8 +461,8 @@
    "mapping": "parity",
    "ansatz": "hea",
    "optimizer": "COBYLA",
-   "gap_ha": 0.00562139336459877,
-   "entry_id": "H4_ccpvdz_PAR_HEA_v4_tapered__sha256_22ff67c44e248590"
+   "gap_ha": 0.00449225835122169,
+   "entry_id": "H4_ccpvdz_PAR_HEA_v4_tapered__sha256_45b7b6da4d0a0e63"
   },
   {
    "molecule": "H4",
@@ -521,42 +521,6 @@
   {
    "molecule": "HF",
    "orbital_optimization": "hf",
-   "mapping": "parity",
-   "ansatz": "uccsd_tapered",
-   "optimizer": "COBYLA",
-   "gap_ha": 1.4210854715202004e-14,
-   "entry_id": "HF_ccpvdz_PAR_UCCSD_v4_tapered__sha256_17bfa6743a814ba6"
-  },
-  {
-   "molecule": "HF",
-   "orbital_optimization": "hf",
-   "mapping": "parity",
-   "ansatz": "hea",
-   "optimizer": "COBYLA",
-   "gap_ha": 2.842170943040401e-14,
-   "entry_id": "HF_ccpvdz_PAR_HEA_v4_tapered__sha256_007a1905c579328a"
-  },
-  {
-   "molecule": "HF",
-   "orbital_optimization": "hf",
-   "mapping": "bravyi_kitaev",
-   "ansatz": "hea",
-   "optimizer": "COBYLA",
-   "gap_ha": 3.907985046680551e-12,
-   "entry_id": "HF_ccpvdz_BK_HEA_v4_tapered__sha256_0d0d66a5769d58ec"
-  },
-  {
-   "molecule": "HF",
-   "orbital_optimization": "hf",
-   "mapping": "bravyi_kitaev",
-   "ansatz": "uccsd_tapered",
-   "optimizer": "COBYLA",
-   "gap_ha": 1.4424017535930034e-11,
-   "entry_id": "HF_ccpvdz_BK_UCCSD_v4_tapered__sha256_42ad3163dd5bcf87"
-  },
-  {
-   "molecule": "HF",
-   "orbital_optimization": "hf",
    "mapping": "jordan_wigner",
    "ansatz": "uccsd_tapered",
    "optimizer": "COBYLA",
@@ -571,6 +535,42 @@
    "optimizer": "COBYLA",
    "gap_ha": 4.762256367030204e-09,
    "entry_id": "HF_ccpvdz_JW_HEA_v4_tapered__sha256_94244108ad3c4f44"
+  },
+  {
+   "molecule": "HF",
+   "orbital_optimization": "hf",
+   "mapping": "bravyi_kitaev",
+   "ansatz": "uccsd_tapered",
+   "optimizer": "COBYLA",
+   "gap_ha": 5.848576734024391e-09,
+   "entry_id": "HF_ccpvdz_BK_UCCSD_v4_tapered__sha256_9175dd737dc93bed"
+  },
+  {
+   "molecule": "HF",
+   "orbital_optimization": "hf",
+   "mapping": "parity",
+   "ansatz": "uccsd_tapered",
+   "optimizer": "COBYLA",
+   "gap_ha": 5.848576734024391e-09,
+   "entry_id": "HF_ccpvdz_PAR_UCCSD_v4_tapered__sha256_b7153d9bdf4c7b85"
+  },
+  {
+   "molecule": "HF",
+   "orbital_optimization": "hf",
+   "mapping": "bravyi_kitaev",
+   "ansatz": "hea",
+   "optimizer": "COBYLA",
+   "gap_ha": 1.272304928079393e-08,
+   "entry_id": "HF_ccpvdz_BK_HEA_v4_tapered__sha256_0ac7d9bfa8215995"
+  },
+  {
+   "molecule": "HF",
+   "orbital_optimization": "hf",
+   "mapping": "parity",
+   "ansatz": "hea",
+   "optimizer": "COBYLA",
+   "gap_ha": 1.272304928079393e-08,
+   "entry_id": "HF_ccpvdz_PAR_HEA_v4_tapered__sha256_5b2d8909e49305a9"
   },
   {
    "molecule": "LiH",
@@ -596,8 +596,17 @@
    "mapping": "parity",
    "ansatz": "hea",
    "optimizer": "COBYLA",
-   "gap_ha": 0.005181378991047758,
-   "entry_id": "LiH_ccpvdz_PAR_HEA_v4_tapered__sha256_e94da71e7eb3b98e"
+   "gap_ha": 0.0033701612450824925,
+   "entry_id": "LiH_ccpvdz_PAR_HEA_v4_tapered__sha256_b4373017ff3b1438"
+  },
+  {
+   "molecule": "N2",
+   "orbital_optimization": "casscf",
+   "mapping": "parity",
+   "ansatz": "hea",
+   "optimizer": "L-BFGS-B",
+   "gap_ha": 0.004403958606530978,
+   "entry_id": "N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_1092269e3f92c847"
   },
   {
    "molecule": "N2",
@@ -616,15 +625,6 @@
    "optimizer": "ADAPT-VQE (COBYLA inner)",
    "gap_ha": 0.008830610582577947,
    "entry_id": "N2_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_850d9d253b878943"
-  },
-  {
-   "molecule": "N2",
-   "orbital_optimization": "casscf",
-   "mapping": "parity",
-   "ansatz": "hea",
-   "optimizer": "L-BFGS-B",
-   "gap_ha": 0.009504032052447542,
-   "entry_id": "N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_1a06482cb89e4a67"
   },
   {
    "molecule": "N2",
@@ -650,8 +650,8 @@
    "mapping": "parity",
    "ansatz": "hea",
    "optimizer": "COBYLA",
-   "gap_ha": 0.07975301298726833,
-   "entry_id": "N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_9eb43e15f4eea410"
+   "gap_ha": 0.10352211251903043,
+   "entry_id": "N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_0b03cbea39d46669"
   },
   {
    "molecule": "N2",
@@ -674,20 +674,20 @@
   {
    "molecule": "NH3",
    "orbital_optimization": "hf",
+   "mapping": "parity",
+   "ansatz": "hea",
+   "optimizer": "COBYLA",
+   "gap_ha": 0.0007340705941061287,
+   "entry_id": "NH3_ccpvdz_PAR_HEA_v4_tapered__sha256_985901ca28fa7f97"
+  },
+  {
+   "molecule": "NH3",
+   "orbital_optimization": "hf",
    "mapping": "jordan_wigner",
    "ansatz": "hea",
    "optimizer": "COBYLA",
    "gap_ha": 0.0018800185149174808,
    "entry_id": "NH3_ccpvdz_JW_HEA_v4_tapered__sha256_07291783190d6a4e"
-  },
-  {
-   "molecule": "NH3",
-   "orbital_optimization": "hf",
-   "mapping": "parity",
-   "ansatz": "hea",
-   "optimizer": "COBYLA",
-   "gap_ha": 0.006911462344646679,
-   "entry_id": "NH3_ccpvdz_PAR_HEA_v4_tapered__sha256_aa3769fb20846ec5"
   },
   {
    "molecule": "benzene",
@@ -740,8 +740,8 @@
    "mapping": "parity",
    "ansatz": "hea",
    "optimizer": "COBYLA",
-   "gap_ha": 0.0001562353416204587,
-   "entry_id": "water_dimer_ccpvdz_PAR_HEA_v4_tapered__sha256_f4a38868cf406997"
+   "gap_ha": 0.00011416853590162646,
+   "entry_id": "water_dimer_ccpvdz_PAR_HEA_v4_tapered__sha256_f69363eea8e031ae"
   },
   {
    "molecule": "water_dimer",

@@ -151,6 +151,16 @@ Every entry, either tier, carries:
 
 ## History
 
+**2026-09-07 — 18 entries regenerated after a tapering fault.** Every entry using a
+mapping other than Jordan–Wigner was tapered into a Z₂ symmetry sector that does not
+contain the ground state, and the resulting 0.30–0.76 Ha discrepancy was added back to the
+energies as a "constant correction" rather than reported. Five further entries had the
+right sector but a Hartree–Fock reference state built with the wrong encoding. The
+pipeline now derives the sector from the mapping's own Hartree–Fock state and verifies it
+against CASCI, raising rather than shifting on a mismatch. All 18 were regenerated; none
+changed trust level; the superseded files are kept in `releases/v4/db_superseded/`. No
+Jordan–Wigner entry was affected. See [`SECTOR_FIX.md`](SECTOR_FIX.md).
+
 **Suite v3.1 documents stated the criterion as `|E_VQE − E_CASCI| < |E_CCSD(T) − E_HF|`.**
 That was never what the code applied. `scripts/generate_entry_v3.py` set `trusted` from
 `abs_gap < 0.01` and `scripts/export_leaderboard_v3.py` split tiers at `GAP_THRESHOLD =
