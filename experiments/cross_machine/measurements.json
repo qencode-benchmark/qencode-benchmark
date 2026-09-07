@@ -1,6 +1,6 @@
 {
  "schema": "qencode-cross-machine/1",
- "generated_utc": "2026-09-07T16:23:07.993930+00:00",
+ "generated_utc": "2026-09-07T18:18:44.728453+00:00",
  "threshold_ha": 0.01,
  "machines": {
   "workstation": {
@@ -107,6 +107,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 5.3
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 5.425e-08,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 48.1
     }
    ],
    "molecule": "BeH2",
@@ -162,6 +171,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 3.1
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 1.272e-08,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 6.2
     }
    ],
    "molecule": "HF",
@@ -185,6 +203,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 6.3
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 2.404e-06,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 49.7
     }
    ],
    "molecule": "BeH2",
@@ -368,6 +395,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 6.9
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 0.0003992,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 53.1
     }
    ],
    "molecule": "H2O",
@@ -391,6 +427,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 3.4
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 1.048e-09,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 44.5
     }
    ],
    "molecule": "H2",
@@ -446,6 +491,15 @@
      "certifies": false,
      "same_machine": false,
      "seconds": 1496.5
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 0.004404,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 2900.4
     }
    ],
    "molecule": "N2",
@@ -492,6 +546,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 9.2
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 0.004492,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 21.4
     }
    ],
    "molecule": "H4",
@@ -515,6 +578,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 10.1
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 0.00337,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 22.5
     }
    ],
    "molecule": "LiH",
@@ -602,6 +674,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 3.5
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 8.591e-09,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 44.5
     }
    ],
    "molecule": "H2",
@@ -726,6 +807,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 3.3
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 8.591e-09,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 44.5
     }
    ],
    "molecule": "H2",
@@ -781,6 +871,15 @@
      "certifies": false,
      "same_machine": false,
      "seconds": 486.4
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 0.1035,
+     "certifies": false,
+     "same_machine": true,
+     "seconds": 1050.0
     }
    ],
    "molecule": "N2",
@@ -891,6 +990,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 20.7
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 0.0007341,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 39.7
     }
    ],
    "molecule": "NH3",
@@ -1033,6 +1141,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 3.3
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 1.048e-09,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 44.5
     }
    ],
    "molecule": "H2",
@@ -1157,6 +1274,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 3.3
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 5.849e-09,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 6.1
     }
    ],
    "molecule": "HF",
@@ -1235,6 +1361,15 @@
      "certifies": false,
      "same_machine": false,
      "seconds": 70.5
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 0.003834,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 123.5
     }
    ],
    "molecule": "C4H4",
@@ -1313,6 +1448,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 3.5
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 1.272e-08,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 6.2
     }
    ],
    "molecule": "HF",
@@ -1455,6 +1599,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 3.3
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 5.849e-09,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 6.2
     }
    ],
    "molecule": "HF",
@@ -1478,6 +1631,15 @@
      "certifies": true,
      "same_machine": false,
      "seconds": 12.2
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 0.0,
+     "regenerated_gap_ha": 0.0001142,
+     "certifies": true,
+     "same_machine": true,
+     "seconds": 26.4
     }
    ],
    "molecule": "water_dimer",

@@ -1,0 +1,16 @@
+{
+ "entry_id": "C4H4_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_8b12a22329451c03",
+ "file": "C4H4_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_8b12a22329451c03.json",
+ "molecule": "C4H4",
+ "mapping": "parity",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 0.003834127348710581,
+ "mode": "strict",
+ "seconds": 123.5,
+ "returncode": 0,
+ "energy_diff_ha": 0.0,
+ "regenerated_gap_ha": 0.003834,
+ "verdict": "PASS"
+}

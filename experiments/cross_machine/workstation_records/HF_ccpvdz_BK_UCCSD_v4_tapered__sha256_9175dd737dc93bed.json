@@ -1,0 +1,16 @@
+{
+ "entry_id": "HF_ccpvdz_BK_UCCSD_v4_tapered__sha256_9175dd737dc93bed",
+ "file": "HF_ccpvdz_BK_UCCSD_v4_tapered__sha256_9175dd737dc93bed.json",
+ "molecule": "HF",
+ "mapping": "bravyi_kitaev",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 5.848576734024391e-09,
+ "mode": "strict",
+ "seconds": 6.2,
+ "returncode": 0,
+ "energy_diff_ha": 0.0,
+ "regenerated_gap_ha": 5.849e-09,
+ "verdict": "PASS"
+}
