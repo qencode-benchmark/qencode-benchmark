@@ -143,12 +143,32 @@ def main():
     ap.add_argument("--entries", nargs="*", default=[], help="filename substrings")
     ap.add_argument("--force", action="store_true", help="re-verify entries that already have a record")
     ap.add_argument("--summarise", action="store_true")
+    ap.add_argument("--allow-dirty-out", action="store_true",
+                    help="permit --out-dir inside the repo (see the check below for why not)")
     a = ap.parse_args()
 
-    out_dir = Path(a.out_dir)
+    out_dir = Path(a.out_dir).resolve()
     if a.summarise:
         summarise(out_dir)
         return 0
+
+    # The sweep must not write inside the repository while it runs. Every verification
+    # regenerates an entry through the pipeline, and the pipeline's reproducibility guard
+    # refuses to write when the working tree has uncommitted changes to tracked files.
+    # Records land on paths that are themselves tracked (the previous sweep committed
+    # its records), so the first record written makes the tree dirty and every remaining
+    # entry then fails the guard with "working tree has uncommitted changes" -- a sweep
+    # that reports 53 spurious failures. Measured on the cluster, 2026-09-07. Write
+    # somewhere outside the tree and copy the results in once the run is finished.
+    inside = REPO in out_dir.parents or out_dir == REPO
+    if inside and not a.allow_dirty_out:
+        print("ERROR: --out-dir %s is inside the repository at %s.\n"
+              "       The pipeline's reproducibility guard refuses to write when the tree\n"
+              "       is dirty, so records written here would fail every later entry.\n"
+              "       Use a directory outside the tree, e.g. --out-dir ~/sweep_runs/vsweep,\n"
+              "       then copy records/ back in and commit. --allow-dirty-out overrides."
+              % (out_dir, REPO), file=sys.stderr)
+        return 2
 
     files = sorted(Path(a.db_dir).glob("*.json"))
     if a.entries:
