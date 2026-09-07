@@ -97,6 +97,15 @@ It is not a failed or discarded run.
   also what the export reads, so the leaderboard cannot disagree with the tool.
   *(Added 2026-09-04.)*
 
+- **Hardware penalty** — how far the certified energy rises when the same circuit,
+  with the same parameters, is re-evaluated under a named gate-noise model
+  (`depolarizing-current/v1`: depolarizing after every gate, 1q 5×10⁻⁴, 2q 5×10⁻³),
+  in mHa; with the gap under noise and the residual after zero-noise extrapolation on
+  hover. Measured by exact density-matrix simulation, gated on the rebuilt circuit
+  reproducing the stored energy. Absent above 10 tapered qubits and marked *not
+  measurable* where the tapered Hamiltonian is a constant. Source:
+  `tools/noisy_tier.py`; method in [`NOISY_TIER.md`](NOISY_TIER.md). *(Added 2026-09-04.)*
+
 None of these changes an entry's tier or rank; they are reported so that two entries
 with the same badge and very different stability are no longer shown identically.
 
@@ -315,6 +324,42 @@ Evidence: `experiments/verification_sweep/cross_environment/H4_cross_env_check.t
 
 **Caveat.** n = 5 measured entries, resting on two ADAPT measurements. Stated as what has
 been measured, not as a proven law.
+
+### 2026-09-04 — the hardware-penalty track (the "noisy tier")
+
+Certification measures an algorithm in the absence of device error. A second question —
+what the same circuit would return on a device — is now answered per entry as a
+**measurement track**, not as a second pass/fail tier, for the reason given in
+[`GATE_NOISE.md`](GATE_NOISE.md) when it was first probed: at realistic error rates every
+multi-qubit entry fails the 10 mHa bar, so a pass/fail tier would mark everything failed
+and discriminate nothing. What discriminates is *how much* is lost, and whether standard
+mitigation recovers it.
+
+**What is reported.** For every entry at or below 10 tapered qubits, under each named
+model in `tools/noise_models.py`: the penalty ΔE = E_noisy − E_certified, the gap under
+noise, whether that gap is still under the bar, the exact error probability ε of the
+decomposed circuit, the measured fraction ε_eff = ΔE / (c_I − E), a rigorous bound, and
+for `depolarizing-current/v1` a Richardson zero-noise extrapolation over noise scales
+1, 2, 3 with its residual against the certified energy. The leaderboard shows the
+current-model penalty; the rest is in the record.
+
+**What it does not do.** It does not change any entry's tier, rank or hash. It does not
+model a device: no topology, no transpilation, no readout error, no correlated noise.
+It is absent for H₈ and H₁₀ (13 and 18 tapered qubits: exact density-matrix simulation
+is out of reach) and stated as absent, not zero.
+
+**Rebuild discipline.** A noisy number is reported only when the noiseless rebuild of
+the stored circuit reproduces the stored energy to 10⁻⁶ Ha and the decomposed
+density-matrix evaluation reproduces that to 10⁻⁸ Ha. The Hamiltonian is taken from the
+entry's own serialised Pauli terms — the certified, hashed object — because a CASSCF
+energy is invariant under rotations inside the active space, so re-deriving the
+Hamiltonian on another day lands in a different orbital gauge in which the stored
+parameters are meaningless (measured: 3×10⁻⁵ Ha per coefficient for N₂). The UCCSD and
+ADAPT operator pools, which depend only on the symmetry structure, are regenerated and
+checked against the stored sectors and tapered HF state.
+
+**Conventions are pinned by tests** (`tests/test_noisy_tier.py`), including the
+depolarizing convention q = 4p/3 that the first probe got wrong.
 
 ### 2026-08-27 — suite stability during publication
 

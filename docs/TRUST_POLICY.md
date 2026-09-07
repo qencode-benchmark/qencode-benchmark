@@ -72,9 +72,11 @@ A certified entry carries four guarantees, each of them checkable:
 ## What certification does not attest
 
 - **Not a hardware result.** Every entry is an exact statevector simulation. The
-  same circuit on a device returns a different, noise-biased energy; measured
-  penalties on this suite start at 34 mHa, above the bar — see
-  [`GATE_NOISE.md`](GATE_NOISE.md).
+  same circuit on a device returns a different, noise-biased energy. That penalty is
+  now measured per entry under named noise models and shown as the leaderboard's
+  *Noise* column — 22 mHa is the smallest multi-qubit penalty at rates near current
+  hardware, above the bar — see [`NOISY_TIER.md`](NOISY_TIER.md). It is reported, not
+  certified.
 - **Not bit-identical energies across machines.** For gradient-free optimisers the
   energy can move by up to ~10⁻² Ha on a different machine while still certifying,
   because a last-bit arithmetic difference can steer the optimiser into a different local

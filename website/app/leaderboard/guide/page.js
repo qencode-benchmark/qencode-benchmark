@@ -192,6 +192,34 @@ export default function GuidePage() {
             </p>
           </Row>
 
+          <Row name="Noise" sub="hardware penalty, mHa">
+            <p>
+              Every certified energy is an exact statevector result: the algorithm&rsquo;s
+              quality with no device error at all. The Noise column measures what the same
+              circuit &mdash; same parameters, nothing re-optimised &mdash; returns as a
+              density matrix with a depolarizing channel after every gate, at rates near good
+              current superconducting hardware (5 × 10⁻⁴ per one-qubit gate, 5 × 10⁻³ per two-qubit gate).
+              It is a penalty in millihartree: how far the energy rose.
+            </p>
+            <p>
+              <strong>It is a bias, not a variance.</strong> Shot noise averages away with more
+              samples. Gate noise drives the state toward the maximally mixed state, whose
+              energy is the mean of the spectrum, so it can only push the energy up and no
+              number of shots removes it. On this suite the smallest penalty for a
+              multi-qubit circuit is 22 mHa against a 10 mHa bar, and deep UCCSD circuits
+              lose more than a hartree. Hover a value for the gap under noise and for the
+              residual after zero-noise extrapolation, the standard mitigation, which
+              recovers the shallow circuits and not the deep ones.
+            </p>
+            <p>
+              <strong>Measured, not certified.</strong> No entry&rsquo;s status depends on
+              this column. It is absent for entries above ten qubits, where exact
+              density-matrix simulation is out of reach, and marked not measurable for the
+              four one-qubit entries whose tapered Hamiltonian is a single constant term.
+              Method, conventions and every record: <code>docs/NOISY_TIER.md</code>.
+            </p>
+          </Row>
+
           <Row name="CCSD(T)" sub="classical baseline">
             <p>
               The correlation energy that CCSD(T) — the classical gold standard for

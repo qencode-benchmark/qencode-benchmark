@@ -54,6 +54,54 @@ sys.path.insert(0, str(REPO / "tools"))
 import certification_margin as _cm  # noqa: E402
 
 
+NOISE_SUMMARY = REPO / "experiments" / "noisy_tier" / "summary.json"
+NOISE_MODEL = "depolarizing-current/v1"
+_noise_rows: dict[str, dict] | None = None
+
+
+def _noise_fields(entry_id: str, n_qubits_tapered) -> dict:
+    """Hardware-penalty track (2026-09-04): measured, not certified. Values in Ha to
+    match `gap` and `margin`. noise_status says why a value is absent:
+      measured             the circuit was rebuilt, gated and simulated (tools/noisy_tier.py)
+      constant_hamiltonian rebuilt and simulated, but the entry's tapered Hamiltonian is a
+                           single identity term, so noise cannot move its energy; the
+                           zero penalty is not evidence of robustness
+      absent               above 10 tapered qubits: density-matrix simulation is 4^n
+      rebuild_failed       the stored circuit could not be reconstructed; reason in the record
+      unmeasured           no summary present (export run without the records)
+    """
+    global _noise_rows
+    if _noise_rows is None:
+        _noise_rows = {}
+        if NOISE_SUMMARY.exists():
+            with open(NOISE_SUMMARY) as f:
+                for row in json.load(f)["rows"]:
+                    _noise_rows[row["entry_id"]] = row
+    empty = {"noise_penalty": None, "noisy_gap": None, "zne_residual": None, "noise_model": None}
+    row = _noise_rows.get(entry_id)
+    if row is None:
+        if not NOISE_SUMMARY.exists():
+            return {"noise_status": "unmeasured", **empty}
+        if n_qubits_tapered is not None and n_qubits_tapered > 10:
+            return {"noise_status": "absent", **empty}
+        return {"noise_status": "unmeasured", **empty}
+    if row.get("status") != "ok":
+        return {"noise_status": "rebuild_failed", **empty}
+    flags = (row.get("flags") or "").split(";")
+    if "constant_hamiltonian" in flags:
+        # Measured, but the entry's tapered Hamiltonian is a single identity term, so the
+        # penalty is zero for a reason that says nothing about the entry. Reported as
+        # absent rather than as a number a reader would mistake for robustness.
+        return {"noise_status": "constant_hamiltonian", **empty}
+    return {
+        "noise_status": "measured",
+        "noise_penalty": row["penalty_current_mHa"] / 1e3,
+        "noisy_gap":     row["noisy_gap_current_mHa"] / 1e3,
+        "zne_residual":  row["zne_residual_mHa"] / 1e3 if row.get("zne_residual_mHa") is not None else None,
+        "noise_model":   NOISE_MODEL,
+    }
+
+
 def _optimizer_label(s) -> str | None:
     """Short, comma-free label for the row. The raw run_config string can contain
     commas ("L-BFGS-B inner, statevector engine"), which the site's CSV fallback
@@ -180,6 +228,7 @@ def entry_to_row(entry: dict) -> dict | None:
             "chem_accurate":      gap < CHEM_ACCURACY,
             "robustness":         robustness,
             "at_risk":            at_risk,
+            **_noise_fields(entry_id, cs.get("num_qubits_tapered")),
             "molecule":           mol,
             "basis":              basis,
             "orbital_opt":        orbital_opt,
@@ -326,6 +375,11 @@ def main():
             "chem_accurate":      r["chem_accurate"],
             "robustness":         r["robustness"],
             "at_risk":            r["at_risk"],
+            "noise_status":       r["noise_status"],
+            "noise_penalty":      r["noise_penalty"],
+            "noisy_gap":          r["noisy_gap"],
+            "zne_residual":       r["zne_residual"],
+            "noise_model":        r["noise_model"],
         }
         for r in acc_rows
     ]
@@ -361,6 +415,11 @@ def main():
             "chem_accurate":      r["chem_accurate"],
             "robustness":         r["robustness"],
             "at_risk":            r["at_risk"],
+            "noise_status":       r["noise_status"],
+            "noise_penalty":      r["noise_penalty"],
+            "noisy_gap":          r["noisy_gap"],
+            "zne_residual":       r["zne_residual"],
+            "noise_model":        r["noise_model"],
         }
         for r in cost_rows
     ]
@@ -410,6 +469,11 @@ def main():
             "chem_accurate":      r["chem_accurate"],
             "robustness":         r["robustness"],
             "at_risk":            r["at_risk"],
+            "noise_status":       r["noise_status"],
+            "noise_penalty":      r["noise_penalty"],
+            "noisy_gap":          r["noisy_gap"],
+            "zne_residual":       r["zne_residual"],
+            "noise_model":        r["noise_model"],
         }
         for r in balanced_rows
     ]
@@ -441,6 +505,11 @@ def main():
             "chem_accurate":      r["chem_accurate"],
             "robustness":         r["robustness"],
             "at_risk":            r["at_risk"],
+            "noise_status":       r["noise_status"],
+            "noise_penalty":      r["noise_penalty"],
+            "noisy_gap":          r["noisy_gap"],
+            "zne_residual":       r["zne_residual"],
+            "noise_model":        r["noise_model"],
         }
         for r in res_rows
     ]
@@ -482,6 +551,8 @@ def main():
 
     # ── 9. Write files ────────────────────────────────────────────────────────
     MARGIN_FIELDS   = ["optimizer","optimiser_family","amplifies","margin","chem_accurate","robustness","at_risk"]
+    NOISE_FIELDS    = ["noise_status","noise_penalty","noisy_gap","zne_residual","noise_model"]
+    MARGIN_FIELDS   = MARGIN_FIELDS + NOISE_FIELDS
     ACC_FIELDS      = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","t_gate_estimate","non_clifford_gates","baseline","beats_classical"] + MARGIN_FIELDS
     COST_FIELDS     = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"] + MARGIN_FIELDS
     BALANCED_FIELDS = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","balanced_score","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"] + MARGIN_FIELDS

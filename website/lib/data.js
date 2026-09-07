@@ -31,6 +31,13 @@ function marginFields(row) {
     chemAccurate:    optBool(row.chem_accurate),
     robustness:      row.robustness || null,
     atRisk:          optBool(row.at_risk),
+    // Hardware-penalty track (2026-09-04): measured under a named gate-noise model,
+    // reported beside the gap. noiseStatus explains an absent value.
+    noiseStatus:     row.noise_status || null,
+    noisePenalty:    num(row.noise_penalty),
+    noisyGap:        num(row.noisy_gap),
+    zneResidual:     num(row.zne_residual),
+    noiseModel:      row.noise_model || null,
   };
 }
 

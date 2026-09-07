@@ -63,6 +63,12 @@ STUDIES = [
     ("experiments/shot_allocation_opt/early_stopping_numbers",
      "Termination point, count and scipy reason against noise level.",
      "python tools/shot_allocation_optimize.py <mol> <opt> <scheme> <total> <per_eval> <seed> <outdir>"),
+    ("experiments/noisy_tier/records",
+     "Hardware-penalty track: every entry <= 10 tapered qubits rebuilt from its own "
+     "serialised Hamiltonian and stored parameters, gated on reproducing the stored "
+     "energy, then evaluated as a density matrix under each named gate-noise model, "
+     "with a Richardson zero-noise extrapolation. Deterministic (no sampling).",
+     "python tools/noisy_tier.py --workers 12 && python tools/noisy_tier.py --summarise"),
     ("experiments/shot_allocation_opt/spsa_calibration",
      "SPSA gain sweep at zero noise. Produced before a fix to final-parameter "
      "tracking, so gap_final is unreliable in these records; the ranking used gap_best.",
@@ -80,7 +86,7 @@ def sha256(path):
 
 def main():
     manifest = {
-        "description": ("Content hashes and provenance for the shot-allocation studies. "
+        "description": ("Content hashes and provenance for the experiment studies (shot allocation, noisy tier). "
                         "Every JSON record is hashed individually in the SHA256SUMS file "
                         "inside its own directory; the aggregate below is the SHA-256 of "
                         "those per-file digests in sorted filename order."),

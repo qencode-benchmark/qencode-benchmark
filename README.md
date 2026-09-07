@@ -88,6 +88,8 @@ as a problem with your setup, not as a good result.
 
 **Meeting the threshold is not certification** — that requires the pipeline, with recorded
 provenance, a content hash and a signature. See [`docs/TRUST_POLICY.md`](docs/TRUST_POLICY.md).
+And certification is a noiseless statement: what the same circuit loses on a device is
+measured separately, per entry, in [`docs/NOISY_TIER.md`](docs/NOISY_TIER.md).
 
 Walkthrough: **[notebooks/score_your_vqe_result.ipynb](notebooks/score_your_vqe_result.ipynb)**.
 

@@ -17,6 +17,30 @@ All notable changes to QEncode are recorded here.
 
 ---
 
+## Unreleased — 2026-09-04 — the hardware-penalty track
+
+- **Every entry at or below 10 tapered qubits now carries a measured hardware penalty**:
+  the same circuit, same parameters, re-evaluated as a density matrix with a named
+  gate-noise model's channels after every gate. Reported on the leaderboard as the
+  *Noise* column, with the gap under noise and a Richardson zero-noise extrapolation on
+  hover. A measurement track, not a certification criterion; no entry's tier, rank or
+  hash changes. `tools/noisy_tier.py`, `experiments/noisy_tier/`, `docs/NOISY_TIER.md`.
+- **Corrected the depolarizing convention** in `docs/GATE_NOISE.md` and
+  `tools/predict_gate_noise_bias.py`: PennyLane's channel fully depolarizes with
+  probability 4p/3, not p, so the earlier ε was understated by 4/3 per channel, and the
+  "upper bound" there was an estimate. The rigorous bound ε·(λ_max − E) is now recorded
+  and checked per entry.
+- **Two findings recorded, not hidden.** (1) Every parity- and Bravyi-Kitaev-mapped
+  entry (13 of 54) carries a "constant correction" of 0.3–0.76 Ha because the tapering
+  selects a symmetry sector that does not contain the ground state; for the four
+  one-qubit H₂/HF parity entries the tapered Hamiltonian is a single constant term, so
+  their gap of exactly zero is vacuous. (2) CASSCF entries cannot have their stored
+  circuits rebuilt from a re-derived Hamiltonian, because the converged active orbitals
+  are fixed only by rounding; the tool rebuilds from the entry's own serialised terms.
+  Both are documented in `docs/NOISY_TIER.md`; neither entry set has been modified.
+- `tests/test_noisy_tier.py` (conventions, extrapolation, exponential splitting, and the
+  internal consistency of every committed record).
+
 ## v4.5.0 — 2026-09-04 — first PyPI release
 
 **The package version now moves independently of the suite version.** Suite v4.4 (the

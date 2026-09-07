@@ -1,5 +1,5 @@
 {
- "description": "Content hashes and provenance for the shot-allocation studies. Every JSON record is hashed individually in the SHA256SUMS file inside its own directory; the aggregate below is the SHA-256 of those per-file digests in sorted filename order.",
+ "description": "Content hashes and provenance for the experiment studies (shot allocation, noisy tier). Every JSON record is hashed individually in the SHA256SUMS file inside its own directory; the aggregate below is the SHA-256 of those per-file digests in sorted filename order.",
  "provenance": {
   "tool_versions": {
    "python": "3.11.15",
@@ -68,6 +68,13 @@
    "regenerate": "python tools/shot_allocation_optimize.py <mol> <opt> <scheme> <total> <per_eval> <seed> <outdir>"
   },
   {
+   "path": "experiments/noisy_tier/records",
+   "description": "Hardware-penalty track: every entry <= 10 tapered qubits rebuilt from its own serialised Hamiltonian and stored parameters, gated on reproducing the stored energy, then evaluated as a density matrix under each named gate-noise model, with a Richardson zero-noise extrapolation. Deterministic (no sampling).",
+   "runs": 52,
+   "aggregate_sha256": "f6923c6a0b2acfa62fcb0e9ec9eb3d0e8228e3c00a26021767b8451461a12fa2",
+   "regenerate": "python tools/noisy_tier.py --workers 12 && python tools/noisy_tier.py --summarise"
+  },
+  {
    "path": "experiments/shot_allocation_opt/spsa_calibration",
    "description": "SPSA gain sweep at zero noise. Produced before a fix to final-parameter tracking, so gap_final is unreliable in these records; the ranking used gap_best.",
    "runs": 18,
@@ -76,7 +83,7 @@
   }
  ],
  "totals": {
-  "runs": 4888,
-  "studies": 8
+  "runs": 4940,
+  "studies": 9
  }
 }

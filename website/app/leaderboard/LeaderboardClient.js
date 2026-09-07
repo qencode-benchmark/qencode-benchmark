@@ -232,6 +232,71 @@ function MarginCell({ r }) {
   );
 }
 
+const NOISE_THRESHOLD_MHA = 10;
+
+function fmtMilli(v, signed = false) {
+  if (v == null || isNaN(v)) return "—";
+  const m = v * 1e3;
+  const s = Math.abs(m) >= 100 ? m.toFixed(0) : m.toFixed(1);
+  return signed && m > 0 ? `+${s}` : s;
+}
+
+function NoiseCell({ r }) {
+  const status = r.noiseStatus;
+  if (status !== "measured") {
+    const why = {
+      constant_hamiltonian:
+        "Not measurable. This entry's tapered Hamiltonian is a single identity term, so no circuit and no noise can change its energy. A zero penalty here would say nothing about robustness.",
+      absent: "Not measured: above 10 tapered qubits, where exact density-matrix simulation is out of reach.",
+      rebuild_failed: "Not measured: the stored circuit could not be reconstructed in the pipeline's current state (reason recorded in experiments/noisy_tier/records).",
+      unmeasured: "Not measured.",
+    }[status] || "Not measured.";
+    return (
+      <Tip content={<><p className="font-semibold">Hardware penalty</p><p className="text-muted-foreground">{why}</p></>}>
+        <span className="text-xs text-muted-foreground/60 cursor-help">—</span>
+      </Tip>
+    );
+  }
+  const noisyGapM = r.noisyGap != null ? r.noisyGap * 1e3 : null;
+  const underNoise = noisyGapM != null && noisyGapM < NOISE_THRESHOLD_MHA;
+  const zneGapM = r.zneResidual != null && r.gap != null ? Math.abs(r.zneResidual * 1e3 + r.gap * 1e3) : null;
+  const afterZne = zneGapM != null && zneGapM < NOISE_THRESHOLD_MHA;
+  const tone = underNoise
+    ? "text-emerald-700 dark:text-emerald-300"
+    : afterZne ? "text-sky-700 dark:text-sky-300" : "text-foreground";
+  return (
+    <Tip content={
+      <>
+        <p className="font-semibold">Hardware penalty: {fmtMilli(r.noisePenalty, true)} mHa</p>
+        <p>
+          The same circuit, same parameters, re-evaluated as a density matrix with a
+          depolarizing channel after every gate at rates near current superconducting
+          hardware (1q 5×10⁻⁴, 2q 5×10⁻³; model <span className="font-mono">{r.noiseModel}</span>).
+        </p>
+        <p>
+          Gap under noise: <span className="font-mono">{fmtMilli(r.noisyGap)} mHa</span>
+          {" — "}{underNoise ? "still under the 10 mHa bar." : "over the 10 mHa bar."}
+        </p>
+        {r.zneResidual != null && (
+          <p>
+            After zero-noise extrapolation (Richardson, noise ×1, ×2, ×3):
+            residual <span className="font-mono">{fmtMilli(r.zneResidual, true)} mHa</span>
+            {" — "}{afterZne ? "under the bar." : "still over the bar."}
+          </p>
+        )}
+        <p className="text-muted-foreground">
+          Measured, not certified. Gate noise is a bias, not a variance: it pushes the
+          energy up and more shots do not remove it. No transpilation, no readout error.
+        </p>
+      </>
+    }>
+      <span className={`font-mono text-xs tabular-nums cursor-help ${tone}`}>
+        {fmtMilli(r.noisePenalty, true)}
+      </span>
+    </Tip>
+  );
+}
+
 function OptimizerChip({ r }) {
   if (!r.optimizer) return null;
   const free = r.optimiserFamily === "gradient-free";
@@ -401,6 +466,28 @@ function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
                 </TooltipProvider>
               </span>
             </TableHead>
+            <TableHead className="text-right">
+              <span className="flex items-center justify-end gap-1">
+                Noise
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3 w-3 text-muted-foreground cursor-help shrink-0" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs text-xs space-y-1">
+                      <p className="font-semibold">Hardware penalty (mHa)</p>
+                      <p>How far the certified energy rises when the same circuit runs with a
+                        depolarizing channel after every gate at rates near current
+                        superconducting hardware. Measured by exact density-matrix simulation
+                        of the published circuit; not a certification criterion.</p>
+                      <p className="text-muted-foreground">Green: still under the 10 mHa bar
+                        with noise. Blue: over it, but under after zero-noise extrapolation.
+                        Hover a value for the gap under noise and the extrapolated residual.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </span>
+            </TableHead>
             {includeClassical && (
               <TableHead className="text-right">
                 <span className="flex items-center justify-end gap-1">
@@ -536,6 +623,11 @@ function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
                 {/* Certification margin */}
                 <TableCell className="text-right">
                   <MarginCell r={r} />
+                </TableCell>
+
+                {/* Hardware penalty under gate noise (measured, not certified) */}
+                <TableCell className="text-right">
+                  <NoiseCell r={r} />
                 </TableCell>
 
                 {/* CCSD(T) correlation — classical baseline */}
@@ -956,6 +1048,10 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
           <span className="flex items-center gap-1.5">
             <span className="font-mono text-xs">Margin</span>
             0.01 Ha − gap, as a share of the threshold; under 20% is thin
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="font-mono text-xs">Noise</span>
+            Hardware penalty in mHa under depolarizing noise near current hardware — measured, hover for the gap under noise and after extrapolation
           </span>
           <span className="flex items-center gap-1.5">
             <span className="inline-flex items-center rounded border border-amber-300 bg-amber-50 text-amber-800 px-1 text-[10px] font-mono leading-4">COBYLA</span>

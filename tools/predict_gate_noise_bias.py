@@ -1,15 +1,29 @@
 """Test a derived prediction for the gate-noise bias, not a fitted one.
 
-Depolarizing noise takes rho toward (1-eps)|psi><psi| + eps*I/2^n, so
+SUPERSEDED on 2026-09-04 by tools/noisy_tier.py, which measures every entry (all three
+ansatze, every mapping) and records the exact epsilon, a rigorous bound and the
+full-mixing estimate per record. Kept because docs/GATE_NOISE.md cites it. The formula
+below is corrected; the version that produced the table in that document was not.
 
-    dE = eps * (Tr(H)/2^n - E_psi)
+Depolarizing noise takes rho toward (1-eps)|psi><psi| + eps*sigma for some state sigma.
+Assuming sigma = I/2^n (every error event fully mixes the register) gives the estimate
 
-and Tr(H)/2^n is exactly the identity coefficient of the Pauli decomposition, because
-every other Pauli string is traceless. With per-gate error probabilities,
+    dE ~ eps * (Tr(H)/2^n - E_psi)
 
-    eps ~ 1 - (1-p1)^N1q * (1-p2)^(2*N2q)
+where Tr(H)/2^n is exactly the identity coefficient of the Pauli decomposition, because
+every other Pauli string is traceless. This is an estimate, not a bound in either
+direction; the rigorous bound replaces Tr(H)/2^n by the largest eigenvalue of H.
 
-No free parameters, and every quantity is already stored in a published entry.
+CONVENTION. PennyLane's DepolarizingChannel(p) is (1 - 4p/3) rho + (4p/3) I/2, so the
+probability that a channel replaces its qubit by the maximally mixed state is q = 4p/3,
+not p. With N1q one-qubit and N2q two-qubit gates (one channel per wire per gate),
+
+    eps = 1 - (1 - 4*p1/3)^N1q * (1 - 4*p2/3)^(2*N2q)
+
+The earlier version of this file used (1-p1)^N1q (1-p2)^(2 N2q), understating eps by a
+factor 4/3 per channel. Gate counts here are the untapered standard-decomposition counts
+from circuit_stats, not the counts of the circuit the channels are inserted into; the
+noisy tier uses the latter.
 """
 import os
 for v in ("OMP_NUM_THREADS","OPENBLAS_NUM_THREADS","MKL_NUM_THREADS"): os.environ[v]="1"
@@ -71,7 +85,7 @@ for m in ("depolarizing-opt/v1","depolarizing-current/v1","depolarizing-pessimis
         if abs(e0-r["e_pub"])>1e-6: continue
         e1=energy(r,dev,a1,a2)
         meas=(e1-e0)*1000.0
-        eps=1.0-(1.0-p1)**r["n1q"]*(1.0-p2)**(2*r["n2q"])
+        eps=1.0-(1.0-4.0*p1/3.0)**r["n1q"]*(1.0-4.0*p2/3.0)**(2*r["n2q"])   # q = 4p/3, PennyLane convention
         pred=eps*(r["c_I"]-e0)*1000.0
         rows.append(meas/pred if pred else np.nan)
         print("%-10s %5d %5d %5d %11.4f %11.2f %11.2f %11.3f %8s"%(k,r["n"],r["n1q"],r["n2q"],r["c_I"],meas,pred,meas/pred if pred else float("nan"),m.replace("depolarizing-","").replace("/v1","")))

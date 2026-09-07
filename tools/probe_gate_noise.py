@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 """What would a published QEncode entry look like on noisy hardware?
 
+SUPERSEDED on 2026-09-04 by tools/noisy_tier.py, which covers every ansatz and mapping,
+rebuilds the Hamiltonian from the entry itself, and records a zero-noise extrapolation.
+Kept because docs/GATE_NOISE.md describes its results. Hardware-efficient entries only.
+
 Every certified entry is an exact statevector result. That is the right way to measure an
 algorithm, and it is not what a device would return. This takes each published
 hardware-efficient entry, rebuilds its circuit from the optimal parameters it recorded,

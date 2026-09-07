@@ -80,6 +80,11 @@ const repoDocs = [
     href: `${REPO}/blob/HEAD/docs/VERIFICATION_SWEEP.md`,
   },
   {
+    title: "Noisy tier",
+    desc: "What every certified circuit loses on a device: the measured hardware penalty under named gate-noise models, the gap under noise, zero-noise extrapolation, the corrected depolarizing convention, and two findings about the published entries the measurement exposed.",
+    href: `${REPO}/blob/HEAD/docs/NOISY_TIER.md`,
+  },
+  {
     title: "requirements-v4.txt",
     desc: "Pinned environment: PySCF 2.6.2, PennyLane 0.45.0, openfermion 1.6.1, NumPy 2.2.6, SciPy 1.13.1. Exact pins, not lower bounds — a VQE result is only reproducible if the stack is.",
     href: `${REPO}/blob/HEAD/requirements-v4.txt`,

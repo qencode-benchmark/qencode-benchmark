@@ -1,0 +1,28 @@
+{
+ "record_version": "1",
+ "entry_id": "C4H4_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_c9726695d8bdde1d",
+ "molecule": "C4H4",
+ "basis": "cc-pvdz",
+ "orbital_optimization": "casscf",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (COBYLA inner)",
+ "n_qubits_tapered": 6,
+ "status": "failed",
+ "reason": "RuntimeError: pipeline tapers to 5 qubits today (3 symmetries); the entry stores 6. The operator pool cannot be reconstructed in the stored gauge.",
+ "seconds_total": 20.862,
+ "provenance": {
+  "computed_utc": "2026-09-07T07:49:27.963384+00:00",
+  "git_commit": "2484e2f",
+  "noise_models_sha256": "f7599b8e38be626fa8298c3ccb1edb5d3d24a7c83434cb7fa8a833000b1c4162",
+  "tool_versions": {
+   "python": "3.11.15",
+   "numpy": "2.2.6",
+   "scipy": "1.13.1",
+   "pennylane": "0.45.0",
+   "pyscf": "2.6.2"
+  },
+  "blas_threads": "1",
+  "simulator": "pennylane default.mixed (density matrix, no sampling)"
+ }
+}

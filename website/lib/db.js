@@ -77,6 +77,14 @@ export async function ensureSchema() {
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS chem_accurate    BOOLEAN`;
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS robustness       VARCHAR(20)`;
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS at_risk          BOOLEAN`;
+  // Hardware-penalty track (2026-09-04). The energy of the same circuit under a named
+  // gate-noise model, measured by density-matrix simulation (tools/noisy_tier.py).
+  // Reported next to the certified gap; not a certification criterion. Values in Ha.
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS noise_status     VARCHAR(24)`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS noise_penalty    DOUBLE PRECISION`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS noisy_gap        DOUBLE PRECISION`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS zne_residual     DOUBLE PRECISION`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS noise_model      VARCHAR(40)`;
 
   await sql`
     CREATE TABLE IF NOT EXISTS leaderboard_metadata (
@@ -257,6 +265,7 @@ export async function replaceEntries(category, entries) {
          baseline, beats_classical, ccsd_t_correlation, vqe_energy, casci_energy, hf_energy,
          basis, orbital_opt, t_gate_estimate, non_clifford_gates,
          optimizer, optimiser_family, amplifies, margin, chem_accurate, robustness, at_risk,
+         noise_status, noise_penalty, noisy_gap, zne_residual, noise_model,
          updated_at)
       VALUES
         (
@@ -287,6 +296,11 @@ export async function replaceEntries(category, entries) {
           ${e.chem_accurate      ?? null},
           ${e.robustness         ?? null},
           ${e.at_risk            ?? null},
+          ${e.noise_status       ?? null},
+          ${e.noise_penalty      ?? null},
+          ${e.noisy_gap          ?? null},
+          ${e.zne_residual       ?? null},
+          ${e.noise_model        ?? null},
           NOW()
         )
     `;

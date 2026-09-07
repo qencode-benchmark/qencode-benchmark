@@ -1,5 +1,29 @@
 # Gate noise: what a published entry would look like on hardware
 
+> **Superseded and corrected, 2026-09-04.** The measurement this document describes has
+> been redone for every entry — all three ansätze, every mapping, H₂ and HF included —
+> with a zero-noise extrapolation, and published as the leaderboard's *Noise* column.
+> Method, conventions and the full table: [`NOISY_TIER.md`](NOISY_TIER.md). Records:
+> `experiments/noisy_tier/records/`.
+>
+> Two things below were wrong and are corrected in place, with the original wording
+> struck rather than removed:
+>
+> 1. **The depolarizing convention.** PennyLane's `DepolarizingChannel(p)` is
+>    (1 − 4p/3)·ρ + (4p/3)·**I**/2, so the probability that a channel replaces its qubit by
+>    the maximally mixed state is **q = 4p/3**, not p. The formula in Step 3 used (1 − p),
+>    understating ε by a factor 4/3 per channel. The measured penalties in the table are
+>    unaffected — they were simulated, not computed from the formula — but every
+>    "measured / predicted" ratio was computed against the wrong ε.
+> 2. **"A reliable upper bound".** ε·(c_I − E) assumes every error event leaves the
+>    register maximally mixed. It is an *estimate*, not a bound in either direction. The
+>    rigorous bound is ε·(λ_max − E), with λ_max the largest eigenvalue of the tapered
+>    Hamiltonian, and it holds for every record in the noisy tier.
+>
+> The reason H₂ and HF "could not be rebuilt" is also now known and is not what this
+> document guessed: their parity-mapped tapered Hamiltonian is a single constant term.
+> See *What the measurement exposed* in `NOISY_TIER.md`.
+
 Every certified QEncode entry is an exact statevector result. That is the right way to
 measure an *algorithm*, and it is not what a device returns. This measures the difference,
 by taking each published hardware-efficient entry, rebuilding its circuit from the optimal
@@ -109,19 +133,29 @@ Density-matrix simulation costs 4ⁿ rather than 2ⁿ. Benzene at 9 qubits takes
 seconds per point; 13 qubits would take hours, and the 18-qubit H₁₀ entry is out of reach
 entirely. So a formula would be worth having.
 
-**Derived, not fitted.** Depolarizing noise takes ρ toward (1−ε)|ψ⟩⟨ψ| + ε·**I**/2ⁿ, so
+**Derived, not fitted.** Depolarizing noise takes ρ toward (1−ε)|ψ⟩⟨ψ| + ε·σ for some
+state σ; *assuming* σ = **I**/2ⁿ gives
 
 ```
-ΔE  =  ε · ( Tr(H)/2ⁿ  −  E )        with   ε ≈ 1 − (1−p₁)^N₁q · (1−p₂)^(2·N₂q)
+ΔE  ≈  ε · ( Tr(H)/2ⁿ  −  E )        with   ε = 1 − (1 − 4p₁/3)^N₁q · (1 − 4p₂/3)^(2·N₂q)
 ```
+
+> *Corrected 2026-09-04.* The original read `ε ≈ 1 − (1−p₁)^N₁q · (1−p₂)^(2·N₂q)`, which
+> is the wrong convention for PennyLane's channel (q = 4p/3, see the notice at the top).
 
 and `Tr(H)/2ⁿ` is exactly the **identity coefficient** of the Pauli decomposition, because
 every other Pauli string is traceless. Every quantity is already stored in a published
 entry. No free parameters.
 
-**Result: it is a reliable upper bound, not an equality.** Measured / predicted across all
+~~**Result: it is a reliable upper bound, not an equality.** Measured / predicted across all
 30 cells is **0.32 to 0.84, median 0.62** — always below 1, so it never under-states the
-penalty.
+penalty.~~
+
+> *Corrected 2026-09-04.* Those ratios were computed against an ε understated by 4/3 per
+> channel; against the correct ε they are smaller, roughly 0.3 to 0.6. More importantly
+> the estimate is not a bound: nothing forces σ to be the maximally mixed state. The
+> rigorous statement is ΔE ≤ ε·(λ_max − E), recorded and checked per entry in the noisy
+> tier. The physical explanation in the next paragraph stands.
 
 It over-predicts for a physical reason. The derivation assumes the state moves toward the
 *globally* maximally mixed state, but a single-qubit depolarizing channel only mixes the
@@ -167,6 +201,9 @@ entries. That is another reason the predictive formula matters.
 ---
 
 ## What this suggests next
+
+> *2026-09-04:* items 1–3 below are done, in the form of a measured track rather than a
+> predicted column — see [`NOISY_TIER.md`](NOISY_TIER.md).
 
 Not a "Noisy-Sim" certified tier yet. The finding is that noise moves every entry by far
 more than the threshold, so a naive noisy tier would simply mark everything as failing,

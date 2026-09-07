@@ -92,6 +92,13 @@ def _base_row(r):
         "chem_accurate":      optbool(r.get("chem_accurate")),
         "robustness":         r.get("robustness") or None,
         "at_risk":            optbool(r.get("at_risk")),
+        # Hardware-penalty track, added 2026-09-04. Measured under a named noise model;
+        # null where the entry was not measured (see noise_status).
+        "noise_status":       r.get("noise_status") or None,
+        "noise_penalty":      num(r.get("noise_penalty")),
+        "noisy_gap":          num(r.get("noisy_gap")),
+        "zne_residual":       num(r.get("zne_residual")),
+        "noise_model":        r.get("noise_model") or None,
     }
 
 def parse_accuracy_csv(path):

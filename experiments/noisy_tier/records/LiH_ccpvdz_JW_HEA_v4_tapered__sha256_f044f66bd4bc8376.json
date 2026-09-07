@@ -1,0 +1,182 @@
+{
+ "record_version": "1",
+ "entry_id": "LiH_ccpvdz_JW_HEA_v4_tapered__sha256_f044f66bd4bc8376",
+ "molecule": "LiH",
+ "basis": "cc-pvdz",
+ "orbital_optimization": "hf",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "n_qubits_tapered": 5,
+ "status": "ok",
+ "flags": [],
+ "rebuild": {
+  "E_stored_Ha": -7.983677145721803,
+  "E_rebuild_Ha": -7.983677145721807,
+  "rebuild_deviation_Ha": 4.440892098500626e-15,
+  "E_decomposed_mixed_Ha": -7.983677145721812,
+  "decomposition_deviation_Ha": 4.440892098500626e-15,
+  "E_exact_Ha": -7.983772976961489,
+  "gap_Ha": 9.583123968148755e-05,
+  "constant_correction_Ha": 0.0,
+  "checks": {
+   "hamiltonian_source": "entry artifacts.qubit_hamiltonian.pauli_terms",
+   "constant_correction_Ha": 0.0,
+   "operator_pool_source": null,
+   "n_params": 15
+  }
+ },
+ "hamiltonian": {
+  "n_qubits": 5,
+  "c_I_Ha": -4.769474141605379,
+  "lambda_min_Ha": -7.98377297696149,
+  "lambda_max_Ha": 0.9922072704749999,
+  "mixed_minus_E_Ha": 3.2142030041164285,
+  "tapered_sector_offset_Ha": 0.0
+ },
+ "gate_counts": {
+  "n_1q": 15,
+  "n_2q": 8,
+  "n_ops_total": 24
+ },
+ "gate_set": [
+  "BasisState",
+  "CNOT",
+  "CZ",
+  "GlobalPhase",
+  "Hadamard",
+  "PauliX",
+  "PauliY",
+  "PauliZ",
+  "PhaseShift",
+  "RX",
+  "RY",
+  "RZ",
+  "S",
+  "StatePrep",
+  "T"
+ ],
+ "state_preparation": "noiseless (BasisState), consistent with circuit_stats",
+ "models": {
+  "depolarizing-opt/v1": {
+   "params": {
+    "p_1q": 0.0001,
+    "p_2q": 0.001,
+    "channels": [
+     "depolarizing"
+    ]
+   },
+   "n_channels": 31,
+   "E_noisy_Ha": -7.966008927803045,
+   "penalty_mHa": 17.668217918762608,
+   "noisy_gap_mHa": 17.764049158444095,
+   "meets_threshold_under_noise": false,
+   "eps_eff": 0.00549692035510356,
+   "eps_model": 0.023077252845439378,
+   "eps_ratio": 0.23819647823418827,
+   "bound_mHa": 207.13875418401273,
+   "full_mixing_estimate_mHa": 74.17497542256564,
+   "seconds": 0.203
+  },
+  "depolarizing-current/v1": {
+   "params": {
+    "p_1q": 0.0005,
+    "p_2q": 0.005,
+    "channels": [
+     "depolarizing"
+    ]
+   },
+   "n_channels": 31,
+   "E_noisy_Ha": -7.89649077839506,
+   "penalty_mHa": 87.18636732674679,
+   "noisy_gap_mHa": 87.28219856642826,
+   "meets_threshold_under_noise": false,
+   "eps_eff": 0.02712534560358734,
+   "eps_model": 0.11043895450200347,
+   "eps_ratio": 0.24561392966731913,
+   "bound_mHa": 991.2872906556012,
+   "full_mixing_estimate_mHa": 354.9732193318171,
+   "seconds": 0.117
+  },
+  "depolarizing-pessimistic/v1": {
+   "params": {
+    "p_1q": 0.001,
+    "p_2q": 0.01,
+    "channels": [
+     "depolarizing"
+    ]
+   },
+   "n_channels": 31,
+   "E_noisy_Ha": -7.8121084624434,
+   "penalty_mHa": 171.56868327840692,
+   "noisy_gap_mHa": 171.6645145180884,
+   "meets_threshold_under_noise": false,
+   "eps_eff": 0.053378297219770804,
+   "eps_model": 0.20925652659813931,
+   "eps_ratio": 0.2550854594001726,
+   "bound_mHa": 1878.2623960797114,
+   "full_mixing_estimate_mHa": 672.5929564227087,
+   "seconds": 0.139
+  },
+  "device-sc/v1": {
+   "params": {
+    "p_1q": 0.0005,
+    "p_2q": 0.005,
+    "gamma_amplitude": 0.001,
+    "gamma_phase": 0.001,
+    "channels": [
+     "depolarizing",
+     "amplitude_damping",
+     "phase_damping"
+    ]
+   },
+   "n_channels": 93,
+   "E_noisy_Ha": -7.863830958886189,
+   "penalty_mHa": 119.84618683561798,
+   "noisy_gap_mHa": 119.94201807529947,
+   "meets_threshold_under_noise": false,
+   "eps_eff": 0.037286439805491754,
+   "eps_model": null,
+   "eps_ratio": null,
+   "bound_mHa": null,
+   "full_mixing_estimate_mHa": null,
+   "seconds": 0.111
+  }
+ },
+ "seconds_total": 1.352,
+ "provenance": {
+  "computed_utc": "2026-09-07T07:49:18.970268+00:00",
+  "git_commit": "2484e2f",
+  "noise_models_sha256": "f7599b8e38be626fa8298c3ccb1edb5d3d24a7c83434cb7fa8a833000b1c4162",
+  "tool_versions": {
+   "python": "3.11.15",
+   "numpy": "2.2.6",
+   "scipy": "1.13.1",
+   "pennylane": "0.45.0",
+   "pyscf": "2.6.2"
+  },
+  "blas_threads": "1",
+  "simulator": "pennylane default.mixed (density matrix, no sampling)"
+ },
+ "zne": {
+  "model": "depolarizing-current/v1",
+  "scaling": "each channel applied lambda times in succession (exact composition)",
+  "scales": [
+   1,
+   2,
+   3
+  ],
+  "energies_Ha": [
+   -7.89649077839506,
+   -7.812619461434403,
+   -7.731880287183312
+  ],
+  "E_linear_Ha": -7.980362095355717,
+  "E_quadratic_Ha": -7.983494238065275,
+  "E_zne_Ha": -7.983494238065275,
+  "residual_mHa": 0.18290765653183882,
+  "zne_gap_mHa": 0.27873889621332637,
+  "meets_threshold_after_zne": true,
+  "seconds": 0.364
+ }
+}
