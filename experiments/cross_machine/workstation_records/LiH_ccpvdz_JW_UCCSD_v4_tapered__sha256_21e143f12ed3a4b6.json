@@ -1,0 +1,17 @@
+{
+ "entry_id": "LiH_ccpvdz_JW_UCCSD_v4_tapered__sha256_21e143f12ed3a4b6",
+ "file": "LiH_ccpvdz_JW_UCCSD_v4_tapered__sha256_21e143f12ed3a4b6.json",
+ "molecule": "LiH",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 2.86281920214293e-06,
+ "mode": "strict",
+ "seconds": 70.3,
+ "returncode": 1,
+ "energy_diff_ha": 7.803e-06,
+ "regenerated_gap_ha": 1.067e-05,
+ "verdict": "FAIL",
+ "reason": "    pyscf: 2.6.2\n    pennylane: 0.45.0\n    openfermion: 1.6.1\n    numpy: 2.2.6\n    scipy: 1.13.1\n    git_commit: e1f44cd"
+}

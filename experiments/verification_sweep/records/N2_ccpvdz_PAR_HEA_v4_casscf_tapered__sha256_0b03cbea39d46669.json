@@ -1,0 +1,17 @@
+{
+ "entry_id": "N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_0b03cbea39d46669",
+ "file": "N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_0b03cbea39d46669.json",
+ "molecule": "N2",
+ "mapping": "parity",
+ "ansatz_type": "hea",
+ "optimizer": "COBYLA",
+ "trust": "validated",
+ "stored_gap_ha": 0.10352211251903043,
+ "mode": "strict",
+ "seconds": 486.4,
+ "returncode": 1,
+ "energy_diff_ha": 0.001825,
+ "regenerated_gap_ha": 0.1017,
+ "verdict": "FAIL",
+ "reason": "    pyscf: 2.6.2\n    pennylane: 0.45.0\n    openfermion: 1.6.1\n    numpy: 2.2.6\n    scipy: 1.13.1\n    git_commit: ab7185b"
+}

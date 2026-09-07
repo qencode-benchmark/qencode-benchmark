@@ -1,0 +1,17 @@
+{
+ "entry_id": "H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_7606caf47ff39f40",
+ "file": "H4_ccpvdz_JW_UCCSD_v4_tapered__sha256_7606caf47ff39f40.json",
+ "molecule": "H4",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 0.002221794896831053,
+ "mode": "strict",
+ "seconds": 144.1,
+ "returncode": 1,
+ "energy_diff_ha": 0.0004957,
+ "regenerated_gap_ha": 0.001726,
+ "verdict": "FAIL",
+ "reason": "    pyscf: 2.6.2\n    pennylane: 0.45.0\n    openfermion: 1.6.1\n    numpy: 2.2.6\n    scipy: 1.13.1\n    git_commit: e1f44cd"
+}

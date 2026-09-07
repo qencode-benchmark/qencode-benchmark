@@ -55,6 +55,59 @@ THIN_MARGIN_FRACTION = 0.20
 
 # Entries measured on a different environment and still certified. Recorded so that a thin
 # margin is not read as a problem where it has actually been checked and survived.
+# ── Measured cross-machine outcomes (2026-09-07) ──────────────────────────────
+#
+# The dicts below this block are the ORIGINAL hand-recorded measurements, against a
+# DRIFTED PACKAGE STACK. They are kept because they are what the earlier findings were
+# based on, but they are no longer what the leaderboard reads.
+#
+# On 2026-09-07 the whole suite was re-verified on two machines running the SAME pinned
+# stack, and the result was sharper than the package-drift axis: every entry reproduces
+# bit-for-bit on the machine that generated it and moves on the other one. The table in
+# experiments/cross_machine/measurements.json holds those measurements and the
+# classification derived from them; `measured_robustness()` reads it.
+
+_CROSS_MACHINE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                   "experiments", "cross_machine", "measurements.json")
+_cross_machine_cache = None
+
+
+def cross_machine_table():
+    """The measured cross-machine table, or None if it has not been built."""
+    global _cross_machine_cache
+    if _cross_machine_cache is None:
+        try:
+            with open(_CROSS_MACHINE_PATH) as fh:
+                _cross_machine_cache = json.load(fh)
+        except (OSError, ValueError):
+            _cross_machine_cache = {}
+    return _cross_machine_cache or None
+
+
+def measured_robustness(entry_id):
+    """'robust' | 'marginal' | 'fragile' | None for an entry, from measurement only.
+
+    None covers both "never verified on a second machine" and "research tier, so
+    certification robustness does not apply": in neither case has anything been shown,
+    and the leaderboard should say nothing rather than imply an outcome.
+    """
+    t = cross_machine_table()
+    if not t:
+        return None
+    rec = (t.get("entries") or {}).get(entry_id)
+    if not rec:
+        return None
+    cls = rec.get("classification")
+    return cls if cls in ("robust", "marginal", "fragile") else None
+
+
+def cross_machine_evidence(entry_id):
+    t = cross_machine_table()
+    if not t:
+        return None
+    return (t.get("entries") or {}).get(entry_id)
+
+
 MEASURED_ROBUST = {
     "H10_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_d2701c2be739db5f.json": {
         "published_gap_ha": 9.977e-03,
@@ -197,6 +250,8 @@ def collect(repo):
             "optimiser_family": family,
             "amplifies": amplifies,
             "at_risk": at_risk,
+            "cross_machine": measured_robustness(entry_id),
+            "cross_machine_evidence": cross_machine_evidence(entry_id),
             "measured_robust": name in MEASURED_ROBUST,
             "robustness_evidence": MEASURED_ROBUST.get(name),
             "measured_marginal": name in MEASURED_MARGINAL,

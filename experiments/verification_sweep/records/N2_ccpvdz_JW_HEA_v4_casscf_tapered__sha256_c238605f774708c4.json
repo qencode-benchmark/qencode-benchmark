@@ -7,8 +7,10 @@
  "optimizer": "L-BFGS-B",
  "trust": "validated",
  "stored_gap_ha": 0.0484495925004893,
- "verdict": "PASS",
- "energy_diff_ha": null,
- "seconds": 1909,
- "returncode": 0
+ "mode": "strict",
+ "seconds": 1883.4,
+ "returncode": 0,
+ "energy_diff_ha": 0.0,
+ "regenerated_gap_ha": 0.04845,
+ "verdict": "PASS"
 }

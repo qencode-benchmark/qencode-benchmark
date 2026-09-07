@@ -1,0 +1,17 @@
+{
+ "entry_id": "NH3_ccpvdz_JW_UCCSD_v4_tapered__sha256_bff85ae0c8311f46",
+ "file": "NH3_ccpvdz_JW_UCCSD_v4_tapered__sha256_bff85ae0c8311f46.json",
+ "molecule": "NH3",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "uccsd_tapered",
+ "optimizer": "COBYLA",
+ "trust": "certified",
+ "stored_gap_ha": 3.244514518740971e-05,
+ "mode": "strict",
+ "seconds": 70.1,
+ "returncode": 1,
+ "energy_diff_ha": 0.000114,
+ "regenerated_gap_ha": 0.0001464,
+ "verdict": "FAIL",
+ "reason": "    pyscf: 2.6.2\n    pennylane: 0.45.0\n    openfermion: 1.6.1\n    numpy: 2.2.6\n    scipy: 1.13.1\n    git_commit: e1f44cd"
+}

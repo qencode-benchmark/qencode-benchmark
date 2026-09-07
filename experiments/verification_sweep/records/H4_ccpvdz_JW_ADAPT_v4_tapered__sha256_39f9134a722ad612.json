@@ -7,8 +7,10 @@
  "optimizer": "ADAPT-VQE (COBYLA inner)",
  "trust": "certified",
  "stored_gap_ha": 0.009941708740167421,
- "verdict": "PASS",
- "energy_diff_ha": null,
- "seconds": 5,
- "returncode": 0
+ "mode": "strict",
+ "seconds": 3.7,
+ "returncode": 0,
+ "energy_diff_ha": 0.0,
+ "regenerated_gap_ha": 0.009942,
+ "verdict": "PASS"
 }

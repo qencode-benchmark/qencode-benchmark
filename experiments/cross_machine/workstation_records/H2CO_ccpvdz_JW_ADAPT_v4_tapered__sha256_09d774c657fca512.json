@@ -1,0 +1,16 @@
+{
+ "entry_id": "H2CO_ccpvdz_JW_ADAPT_v4_tapered__sha256_09d774c657fca512",
+ "file": "H2CO_ccpvdz_JW_ADAPT_v4_tapered__sha256_09d774c657fca512.json",
+ "molecule": "H2CO",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (COBYLA inner)",
+ "trust": "certified",
+ "stored_gap_ha": 0.0011239470076560565,
+ "mode": "strict",
+ "seconds": 9.3,
+ "returncode": 0,
+ "energy_diff_ha": 1.705e-13,
+ "regenerated_gap_ha": 0.001124,
+ "verdict": "PASS"
+}

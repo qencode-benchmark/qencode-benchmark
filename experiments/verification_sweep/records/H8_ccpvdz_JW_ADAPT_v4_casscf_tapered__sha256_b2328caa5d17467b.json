@@ -7,8 +7,10 @@
  "optimizer": "ADAPT-VQE (L-BFGS-B inner, statevector engine)",
  "trust": "certified",
  "stored_gap_ha": 0.009796656115030444,
- "verdict": "PASS",
- "energy_diff_ha": null,
- "seconds": 876,
- "returncode": 0
+ "mode": "strict",
+ "seconds": 868.9,
+ "returncode": 0,
+ "energy_diff_ha": 0.0,
+ "regenerated_gap_ha": 0.009797,
+ "verdict": "PASS"
 }

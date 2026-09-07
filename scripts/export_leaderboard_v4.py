@@ -115,7 +115,17 @@ def _optimizer_label(s) -> str | None:
 
 
 def _robustness(entry_id: str) -> str | None:
-    """Measured cross-environment outcome, if this entry has been re-run elsewhere."""
+    """Measured cross-machine outcome, if this entry has been re-run on another machine.
+
+    Reads experiments/cross_machine/measurements.json, built by
+    tools/build_cross_machine_table.py from full verification sweeps. That table covers
+    the whole suite on two machines; the legacy hand-recorded dicts in
+    certification_margin.py measured a different axis (drifted packages) on five entries
+    and are consulted only where the table has nothing to say.
+    """
+    measured = _cm.measured_robustness(entry_id)
+    if measured:
+        return measured
     fn = f"{entry_id}.json"
     if fn in _cm.MEASURED_FRAGILE:
         return "fragile"

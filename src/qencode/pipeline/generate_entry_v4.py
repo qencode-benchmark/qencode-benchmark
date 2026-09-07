@@ -2069,6 +2069,8 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
                 # An entry is only reproducible if this is 1.
                 "blas_threads": os.environ.get("OMP_NUM_THREADS"),
                 "threads_pinned": _QENCODE_THREADS_PINNED,
+                # Bit-for-bit reproduction is machine-bound: see _machine_fingerprint.
+                "machine": _machine_fingerprint(),
             },
         },
 
@@ -2192,6 +2194,58 @@ def _required_versions() -> dict:
     except Exception:
         pass
     return req
+
+
+def _machine_fingerprint():
+    """What machine produced this entry, to the detail that decides its last bits.
+
+    Added 2026-09-07. The suite records its software stack exactly -- python, PennyLane,
+    NumPy, PySCF, SciPy, OpenFermion, the git commit, and that BLAS ran single-threaded --
+    and that was believed to pin reproducibility. A full re-verification of all 54 entries
+    on a second machine showed it does not. Every entry reproduced bit-for-bit on the
+    machine that generated it and moved on the other, by between 1e-16 and 8e-3 Ha, which
+    cost two entries their certification. Same versions, same pins, same seed, one thread.
+
+    The cause is below the packages: OpenBLAS selects kernels by CPU at run time, so an
+    AVX-512 machine and an AVX2 machine sum in a different order, and the two systems'
+    libm differ as well. The differences are last-bit, and a gradient-free optimiser --
+    or a multistart loop deciding whether to stop -- turns them into a different local
+    minimum. This is the machine-level analogue of the threading result: an entry that
+    does not say where it ran cannot say where it reproduces exactly.
+
+    Recorded, not enforced. Certification is a claim about the gap being under 0.01 Ha,
+    which survived the change of machine for 45 of 47 certified entries; bit-for-bit
+    reproduction is the stronger claim and it is machine-bound. See
+    docs/CROSS_MACHINE.md and experiments/cross_machine/measurements.json.
+    """
+    import platform
+    info = {
+        "cpu_model": None,
+        "vector_isa": None,
+        "libc": None,
+        "os": platform.platform(terse=True),
+    }
+    try:
+        info["libc"] = " ".join(x for x in platform.libc_ver() if x) or None
+    except Exception:
+        pass
+    try:
+        with open("/proc/cpuinfo") as fh:
+            model, flags = None, set()
+            for line in fh:
+                if model is None and line.startswith("model name"):
+                    model = line.split(":", 1)[1].strip()
+                elif not flags and line.startswith("flags"):
+                    flags = set(line.split(":", 1)[1].split())
+                if model and flags:
+                    break
+        info["cpu_model"] = model or platform.processor() or None
+        if flags:
+            interesting = ("avx512f", "avx2", "fma", "avx")
+            info["vector_isa"] = [f for f in interesting if f in flags] or None
+    except Exception:
+        info["cpu_model"] = platform.processor() or None
+    return info
 
 
 def check_reproducibility_guard(allow_dirty: bool = False,

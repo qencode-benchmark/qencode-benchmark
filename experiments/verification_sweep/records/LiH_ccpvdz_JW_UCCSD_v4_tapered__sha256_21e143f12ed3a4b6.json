@@ -7,8 +7,10 @@
  "optimizer": "COBYLA",
  "trust": "certified",
  "stored_gap_ha": 2.86281920214293e-06,
- "verdict": "PASS",
- "energy_diff_ha": null,
- "seconds": 40,
- "returncode": 0
+ "mode": "strict",
+ "seconds": 38.1,
+ "returncode": 0,
+ "energy_diff_ha": 0.0,
+ "regenerated_gap_ha": 2.863e-06,
+ "verdict": "PASS"
 }
