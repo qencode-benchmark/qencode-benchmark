@@ -183,6 +183,21 @@ export async function markApplicationEmail(id, status, errorMessage) {
   `;
 }
 
+/**
+ * Delete one application by id. Returns the deleted row, or null if there was none.
+ *
+ * For removing a test submission or an obvious junk one. It returns what it deleted so
+ * the caller can show what was removed rather than reporting a bare count.
+ */
+export async function deleteApplication(id) {
+  const sql = getDb();
+  const rows = await sql`
+    DELETE FROM applications WHERE id = ${Number(id)}
+    RETURNING id, company, work_email, created_at
+  `;
+  return rows[0] ?? null;
+}
+
 /** Newest applications first. */
 export async function listApplications(limit = 100) {
   const sql = getDb();
