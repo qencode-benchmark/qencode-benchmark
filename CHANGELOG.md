@@ -17,6 +17,52 @@ All notable changes to QEncode are recorded here.
 
 ---
 
+## Unreleased — 2026-09-09 — reproduction is machine-bound, and the noisy tier completes
+
+- **An entry reproduces bit-for-bit only on the machine that generated it.** The whole
+  suite was re-verified on a second machine with the same pinned stack, the same seeds and
+  one BLAS thread on both: 54 entries on an Intel Xeon 4316 cluster node and 41 on an AMD
+  Threadripper workstation. Every entry reproduced exactly on its own machine and moved on
+  the other, by between 10⁻¹⁶ and 8 × 10⁻³ Ha. Certification survives on **38 of the 40
+  certified entries measured on a second machine**; seven were measured on one machine only
+  and are reported as unmeasured, not as survivors. Two entries lose certification off their
+  home machine (C₄H₄ and N₂ parity, hardware-efficient) and two more pass only because the
+  movement happened to shrink the gap. The leaderboard now shows robustness as a measurement
+  on 40 entries instead of a prediction on 5. `docs/CROSS_MACHINE.md`,
+  `experiments/cross_machine/`, `scripts/verification_sweep.py`.
+- **The cause is the BLAS kernel, and it was located rather than guessed.** OpenBLAS picks
+  kernels by processor at run time. Forcing both machines onto the same kernel makes PySCF
+  bit-identical across machines — Hamiltonian, Hartree–Fock and CASCI alike, CASSCF
+  included — which retires the "CASSCF converged differently on another day" explanation
+  that `docs/NOISY_TIER.md`, `docs/SECTOR_FIX.md` and the reference table had carried. The
+  variational half is not deterministic even then: from an identical Hamiltonian and an
+  energy function returning identical bits, the two machines' COBYLA runs still part ways.
+  A probe of the two C libraries finds only `expm1` differing. Which residue moves the
+  optimiser is not isolated, and the documents say so.
+- **The optimiser rule is corrected.** A run amplifies if *any* comparison it makes steers
+  control flow — the optimiser step or a multistart loop's stopping test — not only if the
+  optimiser is gradient-free. An L-BFGS-B entry lost certification across machines because
+  its multistart loop stops at the first attempt that certifies.
+- **Entries record the machine they ran on**: processor, vector instruction sets, the BLAS
+  kernel selected at run time, C library and operating system, in
+  `provenance.environment.machine`. It is recorded and **not hashed** — hashing it would
+  mean a regeneration on another machine changed the entry's hash even when every number
+  was identical, which is the comparison the hash exists to support. All 54 published
+  entries predate the field and their hashes are unchanged.
+- **The noisy tier is complete: all 52 entries at or below 10 tapered qubits are measured.**
+  The last two, the C₄H₄ Jordan–Wigner UCCSD and ADAPT entries, could not be rebuilt on the
+  workstation at all: under its kernel the pipeline finds a third Z₂ symmetry and tapers
+  cyclobutadiene to five qubits where the generating run found two and stored six. Run on
+  the machine whose kernel matches the stored gauge, the re-derived Hamiltonian matches the
+  stored coefficients exactly and both entries measure. The kernel can therefore change the
+  qubit count, not only the last bit.
+- **Two test faults found and fixed.** The saturated zero-noise-extrapolation check assumed
+  that ε ≈ 1 means the state is already maximally mixed; ε counts *at least one*
+  depolarizing event, and one event leaves the other wires correlated. And the reference H₂
+  hash pin, once the fingerprint stopped being hashed, now asserts something stronger than
+  before: two machines differing in processor, instruction sets and C library produce that
+  entry identically, because H₂ converges rather than stopping on a comparison.
+
 ## Unreleased — 2026-09-07 — Z₂ sector fault fixed, 18 entries regenerated
 
 - **Every non-Jordan–Wigner entry was tapered into the wrong symmetry sector.**
