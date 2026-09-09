@@ -301,6 +301,23 @@ export async function getOrdersByEmail(email) {
 }
 
 /** List all non-completed jobs (for the admin API). */
+/**
+ * Every order, newest first. listActiveJobs answers "what is the queue doing"; this
+ * answers "who has ever bought something", which is the question you need after an
+ * outbound-mail outage, when an order may have been fulfilled while its confirmation
+ * email failed.
+ */
+export async function listAllOrders(limit = 200) {
+  const sql = getDb();
+  return sql`
+    SELECT id, ls_order_number, customer_email, customer_name, product_label,
+           status, created_at, completed_at, error_message
+    FROM   orders
+    ORDER  BY created_at DESC
+    LIMIT  ${Math.min(Number(limit) || 200, 1000)}
+  `;
+}
+
 export async function listActiveJobs() {
   const sql = getDb();
   return sql`

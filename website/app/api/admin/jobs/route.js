@@ -1,10 +1,11 @@
-import { ensureSchema, listActiveJobs, claimNextJob } from "@/lib/db";
+import { ensureSchema, listActiveJobs, listAllOrders, claimNextJob } from "@/lib/db";
 
 /**
  * Admin jobs API — used by the Ubuntu job poller.
  * All endpoints require: Authorization: Bearer <LEADERBOARD_PUBLISH_SECRET>
  *
  * GET  /api/admin/jobs        — list pending + running jobs
+ * GET  /api/admin/jobs?all=1  — list every order, newest first
  * POST /api/admin/jobs/claim  — atomically claim the oldest pending job
  */
 
@@ -22,6 +23,11 @@ export async function GET(request) {
   }
   try {
     await ensureSchema();
+    const all = new URL(request.url).searchParams.get("all");
+    if (all === "1" || all === "true") {
+      const orders = await listAllOrders();
+      return Response.json({ count: orders.length, orders });
+    }
     const jobs = await listActiveJobs();
     return Response.json({ jobs });
   } catch (err) {
