@@ -460,3 +460,33 @@ def test_cli_mapping_aliases_resolve_to_canonical_names():
         assert canon in ge._HF_BASIS
     with pytest.raises(ValueError):
         ge.canonical_mapping("not_a_mapping")
+
+
+def test_adapt_inner_optimizer_is_honoured_and_defaults_per_engine():
+    """--adapt-inner used to be accepted and ignored.
+
+    The QNode engine hardcoded COBYLA and labelled the result "ADAPT-VQE (COBYLA
+    inner)" whatever the caller asked for, and the auto engine choice routes everything at 12 tapered
+    qubits or fewer to that engine -- eight of the ten published ADAPT entries. The
+    flag's default was already "bfgs", so a plain ADAPT run promised gradients and
+    delivered COBYLA, with provenance that told the truth about an optimiser nobody
+    had chosen. Found 2026-09-09.
+
+    Both engines must keep reproducing from what they recorded, and their histories
+    differ, so the default is per engine rather than global.
+    """
+    import inspect
+
+    assert ge.resolve_adapt_inner(None, use_statevector=False) == "cobyla"
+    assert ge.resolve_adapt_inner(None, use_statevector=True) == "bfgs"
+    for explicit in ("bfgs", "BFGS", "l-bfgs-b"):
+        assert ge.resolve_adapt_inner(explicit, use_statevector=False) in ("bfgs", "l-bfgs-b")
+    assert ge.resolve_adapt_inner("cobyla", use_statevector=True) == "cobyla"
+    with pytest.raises(ValueError):
+        ge.resolve_adapt_inner("newton", use_statevector=False)
+
+    # the QNode engine takes the choice rather than ignoring it, and defaults to the
+    # optimiser the published entries used
+    sig = inspect.signature(ge.run_vqe_adapt)
+    assert "inner_optimizer" in sig.parameters
+    assert sig.parameters["inner_optimizer"].default == "cobyla"

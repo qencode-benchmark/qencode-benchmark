@@ -1212,16 +1212,44 @@ def _run_vqe_bfgs(energy_fn, n_params, max_iter, multistart, seed,
     }
 
 
+def resolve_adapt_inner(explicit, use_statevector):
+    """Which inner optimiser an ADAPT run should use.
+
+    The two engines have different histories and both have to keep reproducing from
+    their recorded configuration: the statevector engine has always used gradients
+    (H8 and H10), the QNode engine has always used COBYLA (the other eight ADAPT
+    entries). So there is no single default, and `--adapt-inner` defaults to None
+    meaning "whatever this engine has always done". An explicit value overrides both.
+    """
+    if explicit:
+        v = str(explicit).lower()
+        if v not in ("cobyla", "bfgs", "l-bfgs-b"):
+            raise ValueError("unknown ADAPT inner optimizer %r; expected cobyla or bfgs"
+                             % (explicit,))
+        return v
+    return "bfgs" if use_statevector else "cobyla"
+
+
 def run_vqe_adapt(H_tapered, adapt_meta, max_iter=500, seed=42,
                   backend="default.qubit", e_target=None, early_stop=True,
-                  checkpoint_path=None, grad_method="commutator"):
+                  checkpoint_path=None, grad_method="commutator",
+                  inner_optimizer="cobyla"):
     """
     Run ADAPT-VQE: iteratively add the operator with the largest gradient,
     then optimize all current parameters. Stop when max |gradient| over the
     remaining pool drops below the threshold, or when certified.
 
-    The inner optimization uses COBYLA on the current accumulated parameters.
-    Each outer iteration adds at most one operator.
+    `inner_optimizer` is "cobyla" or "bfgs" and chooses how the accumulated
+    parameters are optimised once an operator has been added. Each outer iteration
+    adds at most one operator.
+
+    Until 2026-09-09 this engine ignored the choice: it always ran COBYLA and
+    labelled the result "ADAPT-VQE (COBYLA inner)" even when the caller asked for
+    gradients, and since `auto` sends everything at 12 tapered qubits or fewer here,
+    that covered eight of the ten published ADAPT entries and every small molecule.
+    The flag was accepted, the run succeeded, and the provenance was truthful about
+    an optimiser the user had not asked for. The default stays "cobyla" so those
+    eight entries still reproduce from their recorded configuration.
 
     Returns the same dict shape as run_vqe() so assemble_entry() can consume it.
     """
@@ -1235,6 +1263,12 @@ def run_vqe_adapt(H_tapered, adapt_meta, max_iter=500, seed=42,
     threshold     = adapt_meta["gradient_threshold"]
     max_operators = adapt_meta["max_operators"]
     n_pool        = adapt_meta["n_pool"]
+
+    _inner = str(inner_optimizer or "cobyla").lower()
+    if _inner not in ("cobyla", "bfgs", "l-bfgs-b"):
+        raise ValueError("unknown ADAPT inner optimizer %r" % (inner_optimizer,))
+    _inner_is_gradient = _inner in ("bfgs", "l-bfgs-b")
+    _inner_label = "L-BFGS-B" if _inner_is_gradient else "COBYLA"
 
     dev = qml.device(backend, wires=wires)
 
@@ -1353,10 +1387,23 @@ def run_vqe_adapt(H_tapered, adapt_meta, max_iter=500, seed=42,
             full_circuit(p, wires=wires)
             return qml.expval(H_tapered)
 
-        result = minimize(lambda p: float(energy_fn(p)),
-                          np.array(params, dtype=float),
-                          method="COBYLA",
-                          options={"maxiter": max_iter, "rhobeg": 0.5})
+        if _inner_is_gradient:
+            # Analytic gradients through the QNode, the same quantity the operator
+            # screening already uses, not a finite-difference stand-in.
+            def _fun(p):
+                return float(energy_fn(pnp.array(p, requires_grad=True)))
+
+            def _jac(p):
+                g = qml.grad(energy_fn)(pnp.array(p, requires_grad=True))
+                return np.asarray(g, dtype=float).ravel()
+
+            result = minimize(_fun, np.array(params, dtype=float), jac=_jac,
+                              method="L-BFGS-B", options={"maxiter": max_iter})
+        else:
+            result = minimize(lambda p: float(energy_fn(p)),
+                              np.array(params, dtype=float),
+                              method="COBYLA",
+                              options={"maxiter": max_iter, "rhobeg": 0.5})
 
         params      = result.x.tolist()
         e_current   = float(result.fun)
@@ -1421,7 +1468,7 @@ def run_vqe_adapt(H_tapered, adapt_meta, max_iter=500, seed=42,
         "optimal_params":      params,
         "num_params":          len(selected_ops),
         "nfev":                total_nfev,
-        "optimizer":           "ADAPT-VQE (COBYLA inner)",
+        "optimizer":           "ADAPT-VQE (%s inner)" % _inner_label,
         "multistart_runs":     1,
         "stopped_early":       stopped_early,
         "computed_utc":        _utcnow(),
@@ -2455,7 +2502,7 @@ def main() -> None:
                          "(qml.expval per energy; infeasible >12q -- H10 is ~40s "
                          "per energy, ~17 days per run). statevector: sparse "
                          "<psi|H|psi>, verified equivalent to 4e-16.")
-    ap.add_argument("--adapt-inner", default="bfgs",
+    ap.add_argument("--adapt-inner", default=None,
                     choices=["cobyla","bfgs"],
                     help="Inner optimizer for the statevector ADAPT engine: "
                          "bfgs (default, adjoint analytic gradients) or cobyla "
@@ -2670,8 +2717,13 @@ def main() -> None:
             n_tap_qubits = len(adapt_meta["wires"])
             use_sv = (args.adapt_engine == "statevector" or
                       (args.adapt_engine == "auto" and n_tap_qubits > 12))
+            # Historical defaults differ by engine and both must keep reproducing:
+            # the statevector engine has always used gradients (H8, H10), the QNode
+            # engine has always used COBYLA (the other eight ADAPT entries). An
+            # explicit --adapt-inner overrides either.
+            adapt_inner = resolve_adapt_inner(args.adapt_inner, use_sv)
             if use_sv:
-                inner = "L-BFGS-B" if args.adapt_inner in ("bfgs", "l-bfgs-b") else "COBYLA"
+                inner = "L-BFGS-B" if adapt_inner in ("bfgs", "l-bfgs-b") else "COBYLA"
                 print(_step(f"Step 5: ADAPT-VQE  (statevector engine, "
                             f"threshold={args.adapt_threshold:.0e}, "
                             f"max_ops={args.adapt_max_ops}, inner {inner} {args.max_iter} iters)"))
@@ -2682,10 +2734,11 @@ def main() -> None:
                     e_target=e_casci_target,
                     early_stop=early_stop,
                     checkpoint_path=ckpt_path,
-                    inner_optimizer=args.adapt_inner)
+                    inner_optimizer=adapt_inner)
             else:
+                inner = "L-BFGS-B" if adapt_inner in ("bfgs", "l-bfgs-b") else "COBYLA"
                 print(_step(f"Step 5: ADAPT-VQE  (threshold={args.adapt_threshold:.0e}, "
-                            f"max_ops={args.adapt_max_ops}, inner COBYLA {args.max_iter} iters)"))
+                            f"max_ops={args.adapt_max_ops}, inner {inner} {args.max_iter} iters)"))
                 vqe_res = run_vqe_adapt(H_vqe, adapt_meta,
                                         max_iter=args.max_iter,
                                         seed=args.seed,
@@ -2693,7 +2746,8 @@ def main() -> None:
                                         e_target=e_casci_target,
                                         early_stop=early_stop,
                                         checkpoint_path=ckpt_path,
-                                        grad_method=args.adapt_grad_method)
+                                        grad_method=args.adapt_grad_method,
+                                        inner_optimizer=adapt_inner)
             n_params = vqe_res["num_params"]   # ADAPT picks its own count
         else:
             print(_step(f"Step 5: VQE  ({args.optimizer.upper()}, {args.multistart} restarts x {args.max_iter} iters)"))
