@@ -1,0 +1,17 @@
+{
+ "entry_id": "benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_6c49b2e94f84aa30",
+ "file": "benzene_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_6c49b2e94f84aa30.json",
+ "molecule": "benzene",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "L-BFGS-B",
+ "trust": "certified",
+ "stored_gap_ha": 0.008740936411612665,
+ "mode": "strict",
+ "seconds": 4158.7,
+ "returncode": 1,
+ "energy_diff_ha": 0.0001099,
+ "regenerated_gap_ha": 0.008851,
+ "verdict": "FAIL",
+ "reason": "    pyscf: 2.6.2\n    pennylane: 0.45.0\n    openfermion: 1.6.1\n    numpy: 2.2.6\n    scipy: 1.13.1\n    git_commit: e1f44cd"
+}

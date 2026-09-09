@@ -1,6 +1,6 @@
 {
  "schema": "qencode-cross-machine/1",
- "generated_utc": "2026-09-07T18:18:44.728453+00:00",
+ "generated_utc": "2026-09-09T13:14:03.106047+00:00",
  "threshold_ha": 0.01,
  "machines": {
   "workstation": {
@@ -33,10 +33,9 @@
  },
  "counts": {
   "research": 7,
-  "robust": 36,
+  "robust": 42,
   "marginal": 2,
-  "fragile": 2,
-  "unmeasured": 7
+  "fragile": 3
  },
  "entries": {
   "H6_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_254551c7b5295e51": {
@@ -523,6 +522,15 @@
      "certifies": true,
      "same_machine": true,
      "seconds": 730.1
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 5.099e-08,
+     "regenerated_gap_ha": 0.009273,
+     "certifies": true,
+     "same_machine": false,
+     "seconds": 1825.6
     }
    ],
    "molecule": "H6",
@@ -530,8 +538,8 @@
    "ansatz_type": "adapt",
    "optimizer": "ADAPT-VQE (COBYLA inner)",
    "margin_ha": 0.0007271696609423197,
-   "classification": "unmeasured",
-   "max_energy_moved_ha": null
+   "classification": "robust",
+   "max_energy_moved_ha": 5.099e-08
   },
   "H4_ccpvdz_PAR_HEA_v4_tapered__sha256_45b7b6da4d0a0e63": {
    "file": "H4_ccpvdz_PAR_HEA_v4_tapered__sha256_45b7b6da4d0a0e63.json",
@@ -729,6 +737,15 @@
      "certifies": true,
      "same_machine": true,
      "seconds": 753.6
+    },
+    {
+     "machine": "workstation",
+     "verdict": "FAIL",
+     "energy_moved_ha": 0.01585,
+     "regenerated_gap_ha": 0.02037,
+     "certifies": false,
+     "same_machine": false,
+     "seconds": 1565.3
     }
    ],
    "molecule": "N2",
@@ -736,8 +753,8 @@
    "ansatz_type": "hea",
    "optimizer": "L-BFGS-B",
    "margin_ha": 0.005486792847756874,
-   "classification": "unmeasured",
-   "max_energy_moved_ha": null
+   "classification": "fragile",
+   "max_energy_moved_ha": 0.01585
   },
   "H6_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_fa91a2bc19cff218": {
    "file": "H6_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_fa91a2bc19cff218.json",
@@ -935,6 +952,15 @@
      "certifies": true,
      "same_machine": true,
      "seconds": 329.6
+    },
+    {
+     "machine": "workstation",
+     "verdict": "FAIL",
+     "energy_moved_ha": 0.0009357,
+     "regenerated_gap_ha": 0.009766,
+     "certifies": true,
+     "same_machine": false,
+     "seconds": 963.1
     }
    ],
    "molecule": "N2",
@@ -942,8 +968,8 @@
    "ansatz_type": "adapt",
    "optimizer": "ADAPT-VQE (COBYLA inner)",
    "margin_ha": 0.0011693894174220534,
-   "classification": "unmeasured",
-   "max_energy_moved_ha": null
+   "classification": "robust",
+   "max_energy_moved_ha": 0.0009357
   },
   "H2_ccpvdz_JW_HEA_v4_tapered__sha256_67c3022f966367ed": {
    "file": "H2_ccpvdz_JW_HEA_v4_tapered__sha256_67c3022f966367ed.json",
@@ -1173,6 +1199,15 @@
      "certifies": true,
      "same_machine": true,
      "seconds": 868.9
+    },
+    {
+     "machine": "workstation",
+     "verdict": "PASS",
+     "energy_moved_ha": 1.066e-14,
+     "regenerated_gap_ha": 0.009797,
+     "certifies": true,
+     "same_machine": false,
+     "seconds": 1884.1
     }
    ],
    "molecule": "H8",
@@ -1180,8 +1215,8 @@
    "ansatz_type": "adapt",
    "optimizer": "ADAPT-VQE (L-BFGS-B inner, statevector engine)",
    "margin_ha": 0.0002033438849695559,
-   "classification": "unmeasured",
-   "max_energy_moved_ha": null
+   "classification": "robust",
+   "max_energy_moved_ha": 1.066e-14
   },
   "H10_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_d2701c2be739db5f": {
    "file": "H10_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_d2701c2be739db5f.json",
@@ -1196,6 +1231,15 @@
      "certifies": true,
      "same_machine": true,
      "seconds": 7151.6
+    },
+    {
+     "machine": "workstation",
+     "verdict": "FAIL",
+     "energy_moved_ha": 1.005e-06,
+     "regenerated_gap_ha": 0.009976,
+     "certifies": true,
+     "same_machine": false,
+     "seconds": 15559.4
     }
    ],
    "molecule": "H10",
@@ -1203,8 +1247,8 @@
    "ansatz_type": "adapt",
    "optimizer": "ADAPT-VQE (L-BFGS-B inner, statevector engine)",
    "margin_ha": 2.252250142852595e-05,
-   "classification": "unmeasured",
-   "max_energy_moved_ha": null
+   "classification": "robust",
+   "max_energy_moved_ha": 1.005e-06
   },
   "benzene_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_6a02a889695ff913": {
    "file": "benzene_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_6a02a889695ff913.json",
@@ -1219,6 +1263,15 @@
      "certifies": true,
      "same_machine": true,
      "seconds": 589.3
+    },
+    {
+     "machine": "workstation",
+     "verdict": "FAIL",
+     "energy_moved_ha": 0.0003515,
+     "regenerated_gap_ha": 0.009188,
+     "certifies": true,
+     "same_machine": false,
+     "seconds": 801.5
     }
    ],
    "molecule": "benzene",
@@ -1226,8 +1279,8 @@
    "ansatz_type": "adapt",
    "optimizer": "ADAPT-VQE (COBYLA inner)",
    "margin_ha": 0.00046028539322605887,
-   "classification": "unmeasured",
-   "max_energy_moved_ha": null
+   "classification": "robust",
+   "max_energy_moved_ha": 0.0003515
   },
   "H2_ccpvdz_JW_UCCSD_v4_tapered__sha256_93a0f8a8604d9aed": {
    "file": "H2_ccpvdz_JW_UCCSD_v4_tapered__sha256_93a0f8a8604d9aed.json",
@@ -1306,6 +1359,15 @@
      "certifies": true,
      "same_machine": true,
      "seconds": 1951.4
+    },
+    {
+     "machine": "workstation",
+     "verdict": "FAIL",
+     "energy_moved_ha": 0.0001099,
+     "regenerated_gap_ha": 0.008851,
+     "certifies": true,
+     "same_machine": false,
+     "seconds": 4158.7
     }
    ],
    "molecule": "benzene",
@@ -1313,8 +1375,8 @@
    "ansatz_type": "hea",
    "optimizer": "L-BFGS-B",
    "margin_ha": 0.0012590635883873349,
-   "classification": "unmeasured",
-   "max_energy_moved_ha": null
+   "classification": "robust",
+   "max_energy_moved_ha": 0.0001099
   },
   "H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_39f9134a722ad612": {
    "file": "H4_ccpvdz_JW_ADAPT_v4_tapered__sha256_39f9134a722ad612.json",

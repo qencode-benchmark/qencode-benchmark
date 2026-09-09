@@ -1,0 +1,16 @@
+{
+ "entry_id": "H6_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_def5987c2958af93",
+ "file": "H6_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_def5987c2958af93.json",
+ "molecule": "H6",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "adapt",
+ "optimizer": "ADAPT-VQE (COBYLA inner)",
+ "trust": "certified",
+ "stored_gap_ha": 0.00927283033905768,
+ "mode": "strict",
+ "seconds": 1825.6,
+ "returncode": 0,
+ "energy_diff_ha": 5.099e-08,
+ "regenerated_gap_ha": 0.009273,
+ "verdict": "PASS"
+}

@@ -154,21 +154,30 @@ unchanged.
 
 ## What it does and does not change
 
-**Certification survives the change of machine for 38 of the 40 certified entries that
-were measured on a second machine.** Seven certified entries — the largest Jordan–Wigner
-ones — have not been, and are reported as unmeasured rather than counted as survivors. The
-claim certification makes is that the gap is below 0.01 Ha, which is 10⁴ times larger
-than most of the movement measured here. Two entries do not survive:
+**Certification survives the change of machine for 44 of the 47 certified entries.**
+Every one of them has now been measured on both machines: the last seven, the largest
+Jordan–Wigner entries, were re-verified on 2026-09-09, the slowest of them taking four and
+a half hours. The claim certification makes is that the gap is below 0.01 Ha, which is 10⁴
+times larger than most of the movement measured here. Three entries do not survive:
 
-| entry | published gap | on the other machine | |
-|---|---|---|---|
-| C₄H₄ parity HEA | 3.83 mHa | 11.83 mHa | does not certify |
-| N₂ parity HEA, 10 layers | 4.40 mHa | 10.94 mHa | does not certify |
+| entry | published gap | on the other machine | moved | |
+|---|---|---|---|---|
+| C₄H₄ parity HEA | 3.83 mHa | 11.83 mHa | 7.99 mHa | does not certify |
+| N₂ parity HEA, 10 layers | 4.40 mHa | 10.94 mHa | 6.54 mHa | does not certify |
+| N₂ Jordan–Wigner HEA, 10 layers | 4.51 mHa | 20.37 mHa | 15.85 mHa | does not certify |
 
-Both are hardware-efficient parity entries, and both moved further than their own margin.
-They are flagged **fragile** on the leaderboard rather than withdrawn, because each
-reproduces exactly on the machine that generated it, which is what its provenance
-describes.
+All three are hardware-efficient, and each moved further than its own margin. They are
+flagged **fragile** on the leaderboard rather than withdrawn, because each reproduces
+exactly on the machine that generated it, which is what its provenance describes.
+
+The third was found in the last batch and is the largest movement measured anywhere in
+this work: 15.85 mHa, three times its own margin, on an entry whose optimiser is
+**L-BFGS-B**. That is the second L-BFGS-B entry to lose certification across machines, and
+both are N₂ at ten layers with `multistart_requested: 5`, `multistart: 1` and
+`early_stopped: true` — the loop stopped at the first attempt that cleared the bar. The
+gradient-free/gradient-based distinction does not explain either of them; the stopping test
+does. See "The optimiser rule, corrected" below, which now rests on two independent
+instances rather than one.
 
 Two more certify on both machines but moved further than their own margin, so they passed
 only because the movement happened to shrink the gap. They are flagged **marginal**: a
@@ -181,16 +190,36 @@ pass whose sign was favourable is not evidence of stability.
 
 **Nothing about the physics changes**, no entry's energy is edited, and no hash is
 touched. What changes is what the leaderboard claims: robustness is now a measurement on
-40 entries rather than a prediction on 5.
+all 47 certified entries rather than a prediction on 5. The final counts are 42 robust,
+2 marginal, 3 fragile.
 
-One label was withdrawn on 2026-09-09 as part of that. H₁₀ was shown as robust, which came
-from an older study of a different perturbation — the same entry re-run under drifted
-package versions — because the export consulted that study whenever the cross-machine table
-had no verdict. But "no verdict" here means the entry was never re-run on a second machine,
-and that is worth saying rather than papering over, particularly for H₁₀: its certification
-margin is 0.02 mHa, the smallest in the suite. The table now takes precedence whenever it
-knows an entry at all, including when what it knows is that nothing has been measured. Six
-other entries were already blank for the same reason; H₁₀ is the seventh.
+The seven entries measured last are worth reading as a group, because they are the ones
+the earlier text had to call unmeasured:
+
+| entry | moved | margin | |
+|---|---|---|---|
+| H₈ Jordan–Wigner ADAPT | 0.00000001 mHa | 0.20 mHa | robust |
+| H₆ Jordan–Wigner ADAPT | 0.0001 mHa | 0.73 mHa | robust |
+| H₁₀ Jordan–Wigner ADAPT | 0.001 mHa | 0.02 mHa | robust |
+| benzene Jordan–Wigner HEA | 0.11 mHa | 1.26 mHa | robust |
+| benzene Jordan–Wigner ADAPT | 0.35 mHa | 0.46 mHa | robust |
+| N₂ Jordan–Wigner ADAPT | 0.94 mHa | 1.17 mHa | robust |
+| N₂ Jordan–Wigner HEA, 10 layers | 15.85 mHa | 5.49 mHa | fragile |
+
+**H₁₀ has the smallest certification margin in the suite, 0.02 mHa, and it survived.** It
+moved 0.001 mHa, a twentieth of its margin, on an 18-qubit ADAPT circuit with 300 selected
+operators that takes four and a half hours to re-verify. Size and tightness of margin are
+not what predicts fragility here. The three that failed are all hardware-efficient
+ansätze; the six largest ADAPT entries in the suite are among the steadiest things in it.
+
+A label was also withdrawn on 2026-09-09, before that measurement existed. H₁₀ had been
+shown as robust on the strength of an older study of a different perturbation — the same
+entry re-run under drifted package versions — because the export consulted that study
+whenever the cross-machine table had no verdict. "No verdict" meant the entry had never
+been re-run on a second machine, which is a thing to say rather than to fill in. The table
+now takes precedence whenever it knows an entry at all. H₁₀ has since earned the label it
+was being given for the wrong reason, which is the order those two things should happen
+in.
 
 ---
 
@@ -231,6 +260,7 @@ one.
 3. **Do not treat bit-for-bit reproduction as the definition of a reproducible benchmark.**
    It is achievable, it is worth recording, and it is a property of a machine rather than
    of a result. Certification is the portable claim.
-4. **The 7 unmeasured entries** — H₆, H₈, H₁₀, N₂ and benzene under Jordan–Wigner — have
-   only been verified on the machine that made them, because verifying them on the other
-   takes hours each. They are reported as unmeasured, not as robust.
+4. **DONE 2026-09-09.** The seven entries that had only been verified on the machine
+   that made them — H₆, H₈, H₁₀, N₂ and benzene under Jordan–Wigner — were re-verified on
+   the second machine, 15,559 s for H₁₀ alone. Six are robust; N₂ Jordan–Wigner HEA is
+   fragile. No entry in the suite is now classified without a measurement behind it.

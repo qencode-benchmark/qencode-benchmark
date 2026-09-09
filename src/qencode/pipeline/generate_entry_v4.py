@@ -2255,8 +2255,8 @@ def _machine_fingerprint():
     does not say where it ran cannot say where it reproduces exactly.
 
     Recorded, not enforced. Certification is a claim about the gap being under 0.01 Ha,
-    which survived the change of machine for 38 of the 40 certified entries measured on a
-    second machine (7 were not measured); bit-for-bit
+    which survived the change of machine for 44 of the 47 certified entries, all of which
+    have now been measured on a second machine; bit-for-bit
     reproduction is the stronger claim and it is machine-bound. See
     docs/CROSS_MACHINE.md and experiments/cross_machine/measurements.json.
     """

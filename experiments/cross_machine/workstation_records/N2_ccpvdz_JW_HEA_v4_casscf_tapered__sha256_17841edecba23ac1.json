@@ -1,0 +1,17 @@
+{
+ "entry_id": "N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_17841edecba23ac1",
+ "file": "N2_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_17841edecba23ac1.json",
+ "molecule": "N2",
+ "mapping": "jordan_wigner",
+ "ansatz_type": "hea",
+ "optimizer": "L-BFGS-B",
+ "trust": "certified",
+ "stored_gap_ha": 0.004513207152243126,
+ "mode": "strict",
+ "seconds": 1565.3,
+ "returncode": 1,
+ "energy_diff_ha": 0.01585,
+ "regenerated_gap_ha": 0.02037,
+ "verdict": "FAIL",
+ "reason": "    pyscf: 2.6.2\n    pennylane: 0.45.0\n    openfermion: 1.6.1\n    numpy: 2.2.6\n    scipy: 1.13.1\n    git_commit: e1f44cd"
+}
