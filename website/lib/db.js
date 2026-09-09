@@ -119,6 +119,81 @@ export async function ensureSchema() {
     ALTER TABLE orders
     ADD COLUMN IF NOT EXISTS certification_token UUID UNIQUE
   `;
+
+  // Access applications. Added 2026-09-09 because /api/apply used to send two emails
+  // and store nothing: a failed send lost the application with no record anywhere, and
+  // the applicant still saw a success screen. The row is now the record of truth and
+  // the email is a notification about it.
+  await sql`
+    CREATE TABLE IF NOT EXISTS applications (
+      id                      SERIAL PRIMARY KEY,
+      company                 VARCHAR(255) NOT NULL,
+      contact_name            VARCHAR(255) NOT NULL,
+      work_email              VARCHAR(255) NOT NULL,
+      role                    VARCHAR(255),
+      molecule_scope          TEXT         NOT NULL,
+      timeline                VARCHAR(255) NOT NULL,
+      monthly_runs            VARCHAR(50),
+      needs_certification     VARCHAR(10),
+      needs_private_benchmark VARCHAR(10),
+      notes                   TEXT,
+      recommendation          VARCHAR(50),
+      email_status            VARCHAR(20)  NOT NULL DEFAULT 'pending',
+      email_error             TEXT,
+      created_at              TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    )
+  `;
+}
+
+// ─── Applications ─────────────────────────────────────────────────────────────
+
+/**
+ * Record an access application. Returns the new row id.
+ *
+ * Called before any email is attempted, so that a mail outage cannot lose an
+ * application. email_status is updated afterwards with what actually happened.
+ */
+export async function insertApplication(fields) {
+  const sql = getDb();
+  const rows = await sql`
+    INSERT INTO applications
+      (company, contact_name, work_email, role, molecule_scope, timeline,
+       monthly_runs, needs_certification, needs_private_benchmark, notes,
+       recommendation, email_status)
+    VALUES
+      (${fields.company}, ${fields.contactName}, ${fields.workEmail},
+       ${fields.role || null}, ${fields.moleculeScope}, ${fields.timeline},
+       ${fields.monthlyRuns || null}, ${fields.needsCertification || null},
+       ${fields.needsPrivateBenchmark || null}, ${fields.notes || null},
+       ${fields.recommendation || null}, 'pending')
+    RETURNING id
+  `;
+  return rows[0]?.id ?? null;
+}
+
+/** Record what happened to the notification emails for one application. */
+export async function markApplicationEmail(id, status, errorMessage) {
+  if (!id) return;
+  const sql = getDb();
+  await sql`
+    UPDATE applications
+    SET email_status = ${status},
+        email_error  = ${errorMessage ? String(errorMessage).slice(0, 2000) : null}
+    WHERE id = ${id}
+  `;
+}
+
+/** Newest applications first. */
+export async function listApplications(limit = 100) {
+  const sql = getDb();
+  return await sql`
+    SELECT id, company, contact_name, work_email, role, molecule_scope, timeline,
+           monthly_runs, needs_certification, needs_private_benchmark, notes,
+           recommendation, email_status, email_error, created_at
+    FROM applications
+    ORDER BY created_at DESC
+    LIMIT ${Math.min(Number(limit) || 100, 500)}
+  `;
 }
 
 // ─── Orders ───────────────────────────────────────────────────────────────────
