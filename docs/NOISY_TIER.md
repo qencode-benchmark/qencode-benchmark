@@ -242,12 +242,58 @@ One column, **Noise**: the `depolarizing-current/v1` penalty in mHa, green if th
 noise is still under the bar, blue if it is over but the extrapolated gap is under, plain
 otherwise. Hovering gives the gap under noise, the extrapolated residual, and the model.
 It is `—` for entries above 10 qubits (absent, not zero) and for the four
-constant-Hamiltonian entries (not measurable, below). All 52 entries at or below 10 qubits
+constant-Hamiltonian entries (not measurable, below). The ten-qubit ceiling was measured on
+2026-09-09 rather than assumed, on H₈, and the reason is not the one the ceiling was
+originally set for (see below). All 52 entries at or below 10 qubits
 are measured; the two C₄H₄ CASSCF entries whose circuit only rebuilds under the kernel
 they were generated with were measured on that machine (below). Export: `scripts/export_leaderboard_v4.py` reads
 `experiments/noisy_tier/summary.json`; the CSVs and the database carry `noise_status`,
 `noise_penalty`, `noisy_gap`, `zne_residual` and `noise_model`, in Ha like `gap` and
 `margin`.
+
+---
+
+## Why the tier stops at ten qubits, measured on H₈
+
+The ceiling was first set because a density matrix grows as 4ⁿ, and it was assumed that
+memory was the binding constraint. It is not. A 13-qubit density matrix is 2²⁶ complex
+numbers, 1.07 GB, and the cluster node has 250 GB. H₈ was therefore attempted on
+2026-09-09. Three things came out of it.
+
+**A bug that had never been reached.** Z₂ tapering maps a Pauli word to ± the identity
+when the word is supported only on removed qubits, and the ADAPT pool is built after
+tapering. H₈ removes three symmetries where every other entry removes at most two, and
+all 196 of its selected operators carry an identity term. Splitting the exponential then
+produces exp(iθI) — an `Exp` on zero wires, which PennyLane cannot decompose. Identity
+terms are now dropped, which is exact: exp(iθI) is a global phase and changes no
+expectation value. Two tests cover it.
+
+**The circuit is sixty times larger than any other in the tier.** Decomposed, H₈ carries
+11,712 one-qubit and 12,928 two-qubit gates, against 154 and 176 for the largest entry
+that is measured (benzene, ADAPT-VQE, 9 qubits). At 13 qubits each operation on the
+density matrix costs 2.3 s, so one noise model is about 40 hours and the four models with
+the zero-noise extrapolation are about 363 hours. Time, not memory, is the wall.
+
+**And the answer is already known in closed form, which is why that time would be
+wasted.** With N₁ = 11,712 and N₂ = 12,928 the probability that no depolarizing event
+occurs anywhere is
+
+| model | surviving coherent fraction |
+|---|---|
+| optimistic | 2 × 10⁻¹⁶ |
+| current | 3 × 10⁻⁷⁹ |
+| pessimistic | 3 × 10⁻¹⁵⁸ |
+
+Even the optimistic model leaves a coherent fraction at machine epsilon. The state is the
+maximally mixed one to far beyond any precision a simulation could report, so E_noisy is
+c_I exactly, and for H₈ that gives a penalty of **3658 mHa** and a gap under noise of
+**3668 mHa**, with zero-noise extrapolation meaningless because every scale returns the
+same c_I. Fifteen days of simulation would reproduce those two numbers.
+
+They are stated here rather than recorded as a measurement, because they are not one. The
+tier reports simulated values, and H₈ keeps its `—`. What changed is that the ceiling is
+now a measured limit with a reason attached, and the reason is the gate count, not the
+memory.
 
 ---
 
