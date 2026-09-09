@@ -440,3 +440,23 @@ def test_pinned_entry_regenerates_to_its_stored_energy(name):
         cwd=str(REPO), env=env, capture_output=True, text=True, timeout=900)
     assert proc.returncode == 0, proc.stdout[-3000:] + proc.stderr[-1000:]
     assert "PASS" in proc.stdout
+
+
+def test_cli_mapping_aliases_resolve_to_canonical_names():
+    """The CLI advertises short aliases (jw, bk, p). They have to be resolved before
+    anything looks the mapping up, because _HF_BASIS and the tapering code are keyed by
+    the canonical name only.
+
+    Passing --mapping jw used to run Hartree-Fock, CASCI and the Hamiltonian build and
+    then die in _hf_qubit_bits with "no HF basis known for mapping 'jw'" -- two of the
+    three documented aliases were unusable. Found 2026-09-09.
+    """
+    for alias, canon in [("jw", "jordan_wigner"), ("JW", "jordan_wigner"),
+                         ("bk", "bravyi_kitaev"), ("p", "parity"),
+                         ("jordan_wigner", "jordan_wigner"), ("parity", "parity")]:
+        assert ge.canonical_mapping(alias) == canon
+    # every canonical name the CLI can produce has an HF basis
+    for canon in set(ge.MAPPING_ALIASES.values()):
+        assert canon in ge._HF_BASIS
+    with pytest.raises(ValueError):
+        ge.canonical_mapping("not_a_mapping")

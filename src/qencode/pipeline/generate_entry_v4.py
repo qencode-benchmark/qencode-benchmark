@@ -371,14 +371,7 @@ def build_pl_hamiltonian(symbols, coords_bohr, basis, mapping,
                           n_electrons, n_orbitals, mf=None,
                           use_of_bridge=False, e_casci=None,
                           mo_coeff=None):
-    _MAPPING_ALIASES = {
-        "jordan_wigner": "jordan_wigner", "jw": "jordan_wigner",
-        "bravyi_kitaev": "bravyi_kitaev", "bk": "bravyi_kitaev",
-        "parity":        "parity",        "p":  "parity",
-    }
-    canon_mapping = _MAPPING_ALIASES.get(mapping.lower())
-    if canon_mapping is None:
-        raise ValueError(f"Unsupported mapping '{mapping}'.")
+    canon_mapping = canonical_mapping(mapping)
 
     # When CASSCF MO coefficients are provided, update the PySCF mf object so
     # that of_bridge reads integrals in the CASSCF orbital basis.  PL 0.45's
@@ -444,6 +437,26 @@ _HF_BASIS = {
     "parity":        "parity",
     "bravyi_kitaev": "bravyi_kitaev",
 }
+
+# The CLI accepts short aliases. They have to be resolved before anything downstream
+# looks a mapping up, because _HF_BASIS and the tapering code are keyed by the
+# canonical name only. Passing --mapping jw used to reach _hf_qubit_bits as "jw" and
+# fail there with "no HF basis known for mapping 'jw'", after the Hartree-Fock and
+# CASCI steps had already run. Found 2026-09-09 while generating rebalancing entries.
+MAPPING_ALIASES = {
+    "jordan_wigner": "jordan_wigner", "jw": "jordan_wigner",
+    "bravyi_kitaev": "bravyi_kitaev", "bk": "bravyi_kitaev",
+    "parity":        "parity",        "p":  "parity",
+}
+
+
+def canonical_mapping(mapping: str) -> str:
+    """The canonical mapping name, or raise. Accepts the CLI's short aliases."""
+    canon = MAPPING_ALIASES.get(str(mapping).lower())
+    if canon is None:
+        raise ValueError("Unsupported mapping %r; expected one of %s"
+                         % (mapping, sorted(set(MAPPING_ALIASES.values()))))
+    return canon
 _SECTOR_TOL = 1e-6      # tapered ground energy must reproduce the reference this closely
 _SCAN_LIMIT = 12        # brute-force at most 2**12 sectors in the fallback
 
@@ -2489,6 +2502,9 @@ def main() -> None:
     ap.add_argument("--dry-run",       action="store_true")
     ap.add_argument("--no-colour",     action="store_true")
     args = ap.parse_args()
+    # Resolve the mapping alias here and nowhere else: every later consumer, the entry
+    # id and the recorded provenance included, then sees the canonical name.
+    args.mapping = canonical_mapping(args.mapping)
 
     if args.no_colour:
         global GREEN, YELLOW, RED, RESET, BOLD
