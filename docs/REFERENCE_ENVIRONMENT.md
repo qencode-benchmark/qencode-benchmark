@@ -107,6 +107,39 @@ So this is a decision, not a patch, and it belongs after the paper rather than b
 Option 3 is available immediately and costs nothing, and it is what the image is for until
 the suite is unfrozen.
 
+## Using it
+
+The image is published to the GitHub container registry and built by
+`.github/workflows/publish-reference-image.yml`, which refuses to push it if the
+determinism settings did not survive the build or if generating the same entry twice
+inside it gives two different hashes.
+
+    docker pull ghcr.io/qencode-benchmark/qencode-reference:v4
+
+`scripts/verify_in_reference.sh` wraps the two things a third party would want to do.
+
+**Check that a published entry still certifies.**
+
+    scripts/verify_in_reference.sh releases/v4/db/<entry>.json
+
+This runs in certification mode, which is the honest question for a published entry: it
+was generated on bare metal before this image existed, so it will not reproduce bit for
+bit inside it. Example output for LiH UCCSD — the energy moves 7.8 × 10⁻⁶ Ha and the entry
+still certifies by three orders of magnitude.
+
+**Check the bit-for-bit claim yourself.**
+
+    scripts/verify_in_reference.sh --regenerate H2 jordan_wigner uccsd hf
+
+Generate an entry inside the image. Anyone who runs that command inside the same image
+gets the same entry hash, on any x86-64 processor. That is the reproducibility claim, and
+it is checkable by running it rather than by trusting the claim.
+
+The distinction matters and it is the whole reason this document exists. "Reproducible"
+in this project now means two different things with two different guarantees: a published
+entry reproduces bit for bit **on the machine that made it** and certifies anywhere, and
+an entry generated in the image reproduces bit for bit **anywhere**.
+
 ## Reproducing this
 
     docker build -f Dockerfile.reference -t qencode-reference:v4 .

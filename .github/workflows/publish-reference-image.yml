@@ -1,0 +1,137 @@
+name: Publish reference environment image
+
+# The reference environment is the image in which two different machines produce the same
+# entry bit for bit. That is not a claim a package list can support: measured on 2026-09-09,
+# six entries generated on an AMD AVX2 machine and an Intel AVX-512 machine agreed on none
+# of six outside this image and on six of six inside it, with differences up to 6 mHa.
+# See docs/REFERENCE_ENVIRONMENT.md.
+#
+# Publishing it is therefore part of the benchmark, not packaging convenience: without a
+# published image, "reproducible" means "reproducible by us".
+#
+# No credential is involved. GITHUB_TOKEN is minted for this workflow run, scoped by the
+# permissions block below, and expires with the job. Same reasoning as the PyPI workflow,
+# which uses Trusted Publishing for the same reason.
+#
+# ONE-TIME SETUP by a project owner, after the first successful run:
+#   https://github.com/orgs/qencode-benchmark/packages  ->  qencode-reference
+#     -> Package settings -> Change visibility -> Public
+# GitHub creates new container packages private. Until that is flipped, `docker pull`
+# needs a login and the image is not usable by a third party, which defeats the point.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "Dockerfile.reference"
+      - "requirements-v4.txt"
+      - "pyproject.toml"
+      - "src/**"
+      - "tools/reference_fingerprint.py"
+      - ".github/workflows/publish-reference-image.yml"
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE: ${{ github.repository_owner }}/qencode-reference
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to the container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the image
+        run: |
+          docker build -f Dockerfile.reference \
+            -t "$REGISTRY/$IMAGE:v4" \
+            -t "$REGISTRY/$IMAGE:sha-${GITHUB_SHA::12}" .
+
+      # An image that cannot say what it is has no business being called a reference.
+      # This is the same fingerprint the cross-machine measurement compared.
+      - name: Report what the image contains
+        run: |
+          docker run --rm --entrypoint python "$REGISTRY/$IMAGE:v4" \
+            /work/tools/reference_fingerprint.py | tee fingerprint.json
+
+      # The two settings that make this image the reference rather than merely pinned.
+      # If either is missing the image is still usable and no longer reproducible across
+      # processors, which is exactly the failure this workflow exists to prevent.
+      - name: Check the determinism settings survived the build
+        run: |
+          python - <<'PY'
+          import json, sys
+          fp = json.load(open("fingerprint.json"))
+          blas = fp["blas"]
+          problems = []
+          if blas.get("openblas_core") != "Haswell":
+              problems.append("BLAS kernel is %r, expected Haswell" % blas.get("openblas_core"))
+          if blas.get("threads") != "1":
+              problems.append("OMP_NUM_THREADS is %r, expected 1" % blas.get("threads"))
+          if "AVX512F" not in (blas.get("NPY_DISABLE_CPU_FEATURES") or ""):
+              problems.append("NumPy AVX-512 dispatch is not disabled")
+          if fp["python"] != "3.11.15":
+              problems.append("python is %s, expected 3.11.15" % fp["python"])
+          if problems:
+              sys.exit("reference image is not deterministic:\n  " + "\n  ".join(problems))
+          print("determinism settings present:", json.dumps(blas))
+          PY
+
+      # Generating the same entry twice in the image must give the same hash. This only
+      # proves determinism on one machine -- the cross-machine half was measured by hand
+      # on two processors and is recorded in experiments/reference_env -- but a same-machine
+      # failure here means the image is broken and must not be published.
+      - name: Generate one entry twice and compare
+        run: |
+          mkdir -p out/a out/b
+          for d in a b; do
+            docker run --rm -v "$PWD/out/$d:/work/out" "$REGISTRY/$IMAGE:v4" \
+              --molecule LiH --mapping jordan_wigner --ansatz-type uccsd \
+              --orbital-opt hf --out-dir /work/out > "out/$d.log" 2>&1
+          done
+          python - <<'PY'
+          import glob, json, sys
+          def h(d):
+              f = glob.glob("out/%s/*.json" % d)
+              if not f:
+                  sys.exit("no entry written in run %s" % d)
+              return json.load(open(f[0]))["provenance"]["entry_hash_sha256"]
+          a, b = h("a"), h("b")
+          print("run a:", a)
+          print("run b:", b)
+          if a != b:
+              sys.exit("the image is not deterministic on a single machine")
+          print("identical")
+          PY
+
+      - name: Push
+        run: |
+          docker push "$REGISTRY/$IMAGE:v4"
+          docker push "$REGISTRY/$IMAGE:sha-${GITHUB_SHA::12}"
+          echo "digest: $(docker inspect --format '{{index .RepoDigests 0}}' "$REGISTRY/$IMAGE:v4")"
+
+      - name: Summary
+        run: |
+          {
+            echo "## Reference environment published"
+            echo
+            echo '```'
+            echo "docker pull $REGISTRY/$IMAGE:v4"
+            echo '```'
+            echo
+            echo "Pin by digest for a reproducibility claim:"
+            echo '```'
+            docker inspect --format '{{index .RepoDigests 0}}' "$REGISTRY/$IMAGE:v4"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
