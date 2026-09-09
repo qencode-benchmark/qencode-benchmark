@@ -214,6 +214,59 @@ def test_records_exist_for_every_entry_at_or_below_ten_qubits():
     assert expected <= have, "missing records: %s" % sorted(expected - have)
 
 
+def test_identity_terms_are_dropped_and_are_only_a_global_phase():
+    """Tapering can leave an identity term inside an ADAPT operator, and exp(i*t*I) is a
+    global phase. The splitter drops those terms. This checks both halves of that claim:
+    that they are dropped, and that dropping them changes no observable.
+
+    H8 is the entry that forced this. All 196 of its selected operators carry an identity
+    term, and an Exp on zero wires has no decomposition -- PennyLane tries to build a
+    MultiRZ on an empty wire set and raises. Before the fix the H8 measurement could not
+    run at all.
+    """
+    import numpy as np
+    import pennylane as qml
+
+    theta = 0.37
+    base = qml.X(0) @ qml.Z(1) + 2.5 * qml.I()      # one real term, one identity
+
+    def circuit():
+        qml.Hadamard(0)
+        qml.CNOT([0, 1])
+        qml.exp(base, coeff=1j * theta)
+        return qml.expval(qml.Z(0) @ qml.Z(1))
+
+    tape = qml.tape.make_qscript(circuit)()
+    split = nt._split_commuting_exponentials(tape)
+
+    # the identity term is gone, the Pauli-word term is not
+    assert all(len(op.wires) > 0 for op in split.operations)
+    assert sum(1 for op in split.operations if op.name == "Exp") == 1
+
+    # and the observable is unchanged against the unsplit exponential
+    dev = qml.device("default.qubit", wires=2)
+    got = float(qml.execute([split], dev)[0])
+    want = float(qml.execute([tape], dev)[0])
+    assert got == pytest.approx(want, abs=1e-12)
+
+    # the dropped factor really is a phase: exp(i*t*c*I) = exp(i*t*c) * I
+    phase = np.exp(1j * theta * 2.5) * np.eye(4)
+    assert np.allclose(phase.conj().T @ phase, np.eye(4))
+
+
+def test_splitter_still_refuses_non_commuting_terms():
+    """The identity change must not weaken the commutation check it sits next to."""
+    import pennylane as qml
+
+    def circuit():
+        qml.exp(qml.X(0) + qml.Z(0), coeff=1j * 0.1)
+        return qml.expval(qml.Z(0))
+
+    tape = qml.tape.make_qscript(circuit)()
+    with pytest.raises(RuntimeError, match="non-commuting"):
+        nt._split_commuting_exponentials(tape)
+
+
 # Entries whose stored circuit the current pipeline cannot reconstruct, and why. A record
 # may be "failed" only if it is listed here with the recorded reason; anything else
 # failing is a regression. See docs/NOISY_TIER.md, "What the measurement exposed".

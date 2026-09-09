@@ -296,15 +296,30 @@ def rebuild_circuit(entry):
 def _split_commuting_exponentials(tape):
     """Replace every Exp whose base is a sum of Pauli words by the product of the
     exponentials of its terms. Exact when the terms commute pairwise, which is
-    verified for every term pair; raises otherwise."""
+    verified for every term pair; raises otherwise.
+
+    Terms proportional to the identity are dropped. Z2 tapering maps a Pauli word to
+    +/- the identity whenever the word is supported only on removed qubits, and the
+    ADAPT operator pool is built after tapering, so a selected operator can carry such
+    a term. exp(i * theta * I) is a global phase: it multiplies the state by a scalar of
+    modulus one and changes no expectation value, no density matrix, and no gate count.
+    Dropping it is exact arithmetic, not an approximation.
+
+    It also has to be dropped rather than kept, because an Exp on zero wires has no
+    valid decomposition: PennyLane tries to build a MultiRZ on an empty wire set and
+    raises "MultiRZ: wrong number of wires". Found on H8 (2026-09-09), the first entry
+    with 13 tapered qubits and three removed symmetries, where every one of the 196
+    selected ADAPT operators carried an identity term. Smaller entries in the suite
+    remove two symmetries and produced none, which is why this went unseen.
+    """
     import pennylane as qml
-    new_ops = []
+    new_ops, dropped = [], 0
     for op in tape.operations:
         if op.name != "Exp":
             new_ops.append(op)
             continue
         coeffs, terms = op.base.terms()
-        if len(terms) == 1:
+        if len(terms) == 1 and len(op.wires) > 0:
             new_ops.append(op)
             continue
         for a in range(len(terms)):
@@ -312,7 +327,12 @@ def _split_commuting_exponentials(tape):
                 if not qml.is_commuting(terms[a], terms[b]):
                     raise RuntimeError("Exp of non-commuting terms cannot be split exactly")
         for c, t in zip(coeffs, terms):
+            if len(t.wires) == 0:          # global phase
+                dropped += 1
+                continue
             new_ops.append(qml.exp(t, coeff=op.coeff * c))
+    if dropped:
+        print("  dropped %d identity (global-phase) terms from the ansatz" % dropped)
     return qml.tape.QuantumScript(new_ops, tape.measurements, shots=tape.shots)
 
 
