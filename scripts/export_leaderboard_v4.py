@@ -123,10 +123,14 @@ def _robustness(entry_id: str) -> str | None:
     certification_margin.py measured a different axis (drifted packages) on five entries
     and are consulted only where the table has nothing to say.
     """
-    measured = _cm.measured_robustness(entry_id)
-    if measured:
-        return measured
     fn = f"{entry_id}.json"
+    if _cm.cross_machine_evidence(entry_id) is not None:
+        # The table knows this entry, so it is the answer -- including when the answer is
+        # "nothing has been shown". H10 is why this matters: the sweep never re-ran it on
+        # a second machine, and falling through to the legacy dict labelled it robust on
+        # the strength of a package-drift study, for the entry with the smallest
+        # certification margin in the suite (0.02 mHa).
+        return _cm.measured_robustness(entry_id)
     if fn in _cm.MEASURED_FRAGILE:
         return "fragile"
     if fn in _cm.MEASURED_MARGINAL:

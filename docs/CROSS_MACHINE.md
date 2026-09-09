@@ -183,6 +183,15 @@ pass whose sign was favourable is not evidence of stability.
 touched. What changes is what the leaderboard claims: robustness is now a measurement on
 40 entries rather than a prediction on 5.
 
+One label was withdrawn on 2026-09-09 as part of that. H₁₀ was shown as robust, which came
+from an older study of a different perturbation — the same entry re-run under drifted
+package versions — because the export consulted that study whenever the cross-machine table
+had no verdict. But "no verdict" here means the entry was never re-run on a second machine,
+and that is worth saying rather than papering over, particularly for H₁₀: its certification
+margin is 0.02 mHa, the smallest in the suite. The table now takes precedence whenever it
+knows an entry at all, including when what it knows is that nothing has been measured. Six
+other entries were already blank for the same reason; H₁₀ is the seventh.
+
 ---
 
 ## The optimiser rule, corrected
