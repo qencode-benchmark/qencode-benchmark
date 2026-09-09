@@ -42,6 +42,7 @@ variable changed.
 
 | molecule | mapping | COBYLA gap | L-BFGS-B gap | improvement |
 |---|---|---|---|---|
+| **N₂** | Jordan–Wigner | **10.832 mHa** | **0.049 mHa** | **×223, and it changes tier** |
 | C₄H₄ | Jordan–Wigner | 7.917 mHa | 0.0000001 mHa | ×74,000 |
 | H₄ | Jordan–Wigner | 2.222 mHa | 0.052 mHa | ×42 |
 | NH₃ | Jordan–Wigner | 0.032 mHa | 0.012 mHa | ×2.8 |
@@ -52,9 +53,16 @@ variable changed.
 | H₂O | Jordan–Wigner | 0.00014 mHa | 0.000034 mHa | ×4 |
 | H₂, HF (6 entries) | all three | already exact | exact | — |
 
-**The gradient-based run is better on all 14 pairs and worse on none.** Twelve of the
-fourteen land below one microhartree, against seven of the fourteen for COBYLA. The whole
-set took ninety seconds of wall time on 5 cores.
+**The gradient-based run is better on all 15 pairs and worse on none.** Twelve land below
+one microhartree, against seven for COBYLA. Every pair but one took ninety seconds of wall
+time on 5 cores; N₂, at 404 parameters, took about half an hour.
+
+**One of them changes tier.** N₂ with UCCSD is published as a research entry because its
+gap, 10.832 mHa, is above the 10 mHa certification bar. With gradients the same ansatz on
+the same Hamiltonian reaches 0.049 mHa and certifies by a factor of 200. It is not a
+research entry because the method cannot certify N₂; it is a research entry because COBYLA
+could not optimise 404 parameters. That is the clearest single statement of the problem in
+this document.
 
 ## What that means, and it is not a tidiness argument
 
