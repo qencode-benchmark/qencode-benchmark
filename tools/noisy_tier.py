@@ -594,8 +594,22 @@ def provenance():
                           "scipy": scipy.__version__, "pennylane": pennylane.__version__,
                           "pyscf": pyscf_v},
         "blas_threads": os.environ.get("OMP_NUM_THREADS"),
+        # Which machine measured this. Not decoration: the rebuild gate itself is
+        # machine-bound. The two C4H4 Jordan-Wigner entries taper to six qubits under
+        # the SkylakeX BLAS kernel, which is the gauge they were generated in and store,
+        # and to five under Haswell, where the rebuild cannot be gated at all. See
+        # docs/CROSS_MACHINE.md.
+        "machine": _machine(),
         "simulator": "pennylane default.mixed (density matrix, no sampling)",
     }
+
+
+def _machine():
+    try:
+        from qencode.pipeline.generate_entry_v4 import _machine_fingerprint
+        return _machine_fingerprint()
+    except Exception:
+        return None
 
 
 # ── driver ────────────────────────────────────────────────────────────────────

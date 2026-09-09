@@ -218,10 +218,15 @@ def test_records_exist_for_every_entry_at_or_below_ten_qubits():
 # may be "failed" only if it is listed here with the recorded reason; anything else
 # failing is a regression. See docs/NOISY_TIER.md, "What the measurement exposed".
 EXPECTED_REBUILD_FAILURES = {
-    # CASSCF on cyclobutadiene: today's orbital gauge exposes a third Z2 symmetry (5
-    # tapered qubits) where the generating run found two (6). The UCCSD/ADAPT operator
-    # pool lives in the stored gauge and cannot be regenerated. The two HEA entries of
-    # the same molecule need no pool and are measured.
+    # CASSCF on cyclobutadiene: the orbital gauge is machine-bound. Under the Haswell
+    # BLAS kernel the pipeline finds a third Z2 symmetry (5 tapered qubits) where the
+    # generating run found two (6), and the UCCSD/ADAPT operator pool, which lives in
+    # the stored gauge, cannot be regenerated. Under SkylakeX -- the kernel these two
+    # entries were generated with -- it reproduces the stored Hamiltonian to the last
+    # bit and both rebuild, which is how the published records were measured
+    # (2026-09-09, cluster; see docs/CROSS_MACHINE.md). The names stay here so that a
+    # re-run on an AVX2 machine is a known limitation rather than a silent regression.
+    # The two HEA entries of the same molecule need no pool and rebuild on either.
     "C4H4_ccpvdz_JW_UCCSD_v4_casscf_tapered": "pipeline tapers to 5 qubits today",
     "C4H4_ccpvdz_JW_ADAPT_v4_casscf_tapered": "pipeline tapers to 5 qubits today",
 }
