@@ -272,14 +272,22 @@ def test_record_is_internally_consistent(rec):
         e = z["energies_Ha"]
         assert e[0] == rec["models"][z["model"]]["E_noisy_Ha"]
         if 1.0 - rec["models"][z["model"]]["eps_model"] < 1e-9:
-            # Saturated. The surviving coherent fraction 1 - eps is below the numerical
-            # noise floor (1e-35 for the 5712-two-qubit-gate N2 UCCSD circuit), so the
-            # state is maximally mixed at every scale, all three energies are c_I, and no
-            # ordering exists between them to assert. What is checkable is that they agree
-            # with each other and with c_I: measured spread 6.2e-6 Ha over ~5e4 channel
-            # applications on a Hamiltonian with |E| ~ 105 Ha, against a c_I - E of 3.6 Ha.
-            assert max(e) - min(e) < 1e-4
-            assert abs(sum(e) / 3 - hm["c_I_Ha"]) < 1e-4
+            # Saturated: the probability that NO depolarizing event occurred anywhere is
+            # below 1e-9, so the coherent part of the state is gone and the energy sits at
+            # the fully mixed value c_I. It does not sit there exactly at lambda = 1, and
+            # an earlier version of this test wrongly assumed it did. eps counts "at least
+            # one event", not "fully mixed": one depolarizing event on one wire leaves the
+            # other wires correlated, and the residue decays only as the channel set is
+            # applied again. Both saturated entries show that decay -- C4H4 UCCSD sits
+            # 2.8e-3 of the mixing range below c_I at lambda = 1, 5.4e-5 at 2, 1.3e-6 at 3;
+            # N2 UCCSD, four times the gate count, starts at 1.8e-6 and is at the numerical
+            # floor by lambda = 2, where the last digits no longer order. So: near c_I on
+            # the variational side at every scale, and no further away at the end than at
+            # the start. No ZNE claim is made in this regime; the record's residual (1.16 Ha
+            # for C4H4) says so itself.
+            for x in e:
+                assert abs(hm["c_I_Ha"] - x) <= 1e-2 * hm["mixed_minus_E_Ha"]
+            assert abs(hm["c_I_Ha"] - e[2]) <= abs(hm["c_I_Ha"] - e[0]) + 1e-6
         else:
             assert e[0] <= e[1] + TOL_HA and e[1] <= e[2] + TOL_HA   # more noise, higher energy
         # The recorded value comes from a least-squares polynomial fit; the closed forms

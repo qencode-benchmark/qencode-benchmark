@@ -177,7 +177,9 @@ The table is generated from the records by `python tools/noisy_tier.py --table`;
 | water_dimer JW HEA r2 | 5 | 15 | 8 | 0.332 | 12.7 | **62.5** | 122.6 | 83.0 | 0.37 | +0.14 | no | yes |
 | water_dimer PAR HEA r2 | 5 | 15 | 8 | 0.114 | 16.6 | **81.0** | 157.0 | 102.1 | 0.48 | +0.39 | no | yes |
 | water_dimer JW UCCSD | 5 | 657 | 528 | 0.002 | 578.8 | **1332.4** | 1490.3 | 1429.0 | 0.88 | +1044.32 | no | no |
+| C4H4 JW ADAPT | 6 | 28 | 24 | 5.963 | 35.9 | **167.9** | 309.5 | 199.4 | 0.50 | +4.54 | no | no |
 | C4H4 JW HEA r2 | 6 | 18 | 10 | 9.637 | 20.2 | **97.3** | 186.0 | 120.4 | 0.62 | +0.89 | no | no |
+| C4H4 JW UCCSD | 6 | 2012 | 1664 | 7.917 | 990.7 | **1163.7** | 1166.9 | 1186.7 | 1.00 | +1157.44 | no | no |
 | N2 JW ADAPT | 8 | 326 | 368 | 8.831 | 1608.7 | **3210.0** | 3416.3 | 3254.6 | 0.90 | +2868.97 | no | no |
 | N2 JW HEA r10 | 8 | 88 | 70 | 4.513 | 318.1 | **1306.9** | 2093.2 | 1526.6 | 0.58 | +220.31 | no | no |
 | N2 JW HEA r6 | 8 | 56 | 42 | 48.450 | 262.9 | **1127.8** | 1885.1 | 1324.1 | 0.70 | +126.63 | no | no |
@@ -191,10 +193,6 @@ The table is generated from the records by `python tools/noisy_tier.py --table`;
 | benzene JW ADAPT | 9 | 154 | 176 | 9.540 | 611.0 | **1737.8** | 2069.4 | 1821.2 | 0.83 | +1147.70 | no | no |
 | benzene JW HEA r6 | 9 | 63 | 48 | 127.956 | 170.5 | **719.1** | 1180.8 | 847.9 | 0.67 | +96.02 | no | no |
 | benzene JW HEA r10 | 9 | 99 | 80 | 8.741 | 193.4 | **794.3** | 1276.7 | 936.7 | 0.51 | +135.29 | no | no |
-
-Not measured (rebuild gate failed):
-- `C4H4_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_c9726695d8bdde1d`: RuntimeError: pipeline tapers to 5 qubits today (3 symmetries); the entry stores 6. The operator pool cannot be reconstructed in the stored gauge.
-- `C4H4_ccpvdz_JW_UCCSD_v4_casscf_tapered__sha256_a26c030f93eb230d`: RuntimeError: pipeline tapers to 5 qubits today (3 symmetries); the entry stores 6. The operator pool cannot be reconstructed in the stored gauge.
 <!-- TABLE:END -->
 
 ### What the numbers say
@@ -243,9 +241,10 @@ Not measured (rebuild gate failed):
 One column, **Noise**: the `depolarizing-current/v1` penalty in mHa, green if the gap under
 noise is still under the bar, blue if it is over but the extrapolated gap is under, plain
 otherwise. Hovering gives the gap under noise, the extrapolated residual, and the model.
-It is `—` for entries above 10 qubits (absent, not zero), for the two entries whose stored
-circuit cannot be rebuilt (below), and for the four constant-Hamiltonian entries (not
-measurable, below). Export: `scripts/export_leaderboard_v4.py` reads
+It is `—` for entries above 10 qubits (absent, not zero) and for the four
+constant-Hamiltonian entries (not measurable, below). All 52 entries at or below 10 qubits
+are measured; the two C₄H₄ CASSCF entries whose circuit only rebuilds under the kernel
+they were generated with were measured on that machine (below). Export: `scripts/export_leaderboard_v4.py` reads
 `experiments/noisy_tier/summary.json`; the CSVs and the database carry `noise_status`,
 `noise_penalty`, `noisy_gap`, `zne_residual` and `noise_model`, in Ha like `gap` and
 `margin`.
@@ -282,12 +281,20 @@ structure of the untapered Hamiltonian (its Z₂ generators, Pauli-X operators a
 not on the coefficients, so that structure is regenerated through PySCF and checked
 against the stored sectors and HF state before the pool is built. Two consequences:
 
-- **C₄H₄ UCCSD and ADAPT cannot be measured.** Today's CASSCF gauge for cyclobutadiene
-  exposes a third Z₂ symmetry (5 tapered qubits) where the generating run found two (6);
-  the CASCI energy agrees to 2×10⁻¹⁰ Ha, so this is a symmetry-detection tolerance
-  deciding, not the physics. The pool for the stored 6-qubit gauge cannot be regenerated,
-  so both records say so and the leaderboard shows `—`. The two C₄H₄ HEA entries need no
-  pool and are measured.
+- **C₄H₄ UCCSD and ADAPT can be measured only on the machine that generated them.**
+  Under the workstation's Haswell BLAS kernel the CASSCF gauge for cyclobutadiene exposes
+  a third Z₂ symmetry (5 tapered qubits) where the generating run found two (6); the CASCI
+  energy agrees to 2×10⁻¹⁰ Ha, so this is a symmetry-detection tolerance deciding, not the
+  physics, and the pool for the stored 6-qubit gauge cannot be regenerated there. On the
+  cluster, whose SkylakeX kernel is the one these two entries were generated with, the
+  re-derived Hamiltonian matches the stored coefficients exactly (maximum deviation 0.0),
+  the pipeline tapers to six qubits, and both entries rebuild to 3×10⁻¹³ Ha. **That is how
+  the two published records were measured** (2026-09-09); their provenance names the
+  machine, as every noisy-tier record now does. The two C₄H₄ HEA entries need no pool and
+  are measured on either machine. The general statement is the one in
+  [`CROSS_MACHINE.md`](CROSS_MACHINE.md): reusing a CASSCF entry's stored circuit is bound
+  to the kernel it was generated under, and here that binding is visible as a whole qubit
+  rather than as a last bit.
 - **The stored parameters of a CASSCF entry are gauge-specific and the gauge is not
   stored.** `verify_entry.py` remains the right instrument for certification, because it
   re-optimises. Anything that wants to *reuse* a CASSCF entry's parameters — this tool,

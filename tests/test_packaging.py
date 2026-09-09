@@ -40,6 +40,16 @@ REPO = Path(__file__).resolve().parents[1]
 # The hash the shim produces on the reference environment: Linux, and exactly the
 # versions in requirements-v4.txt with Python 3.11.15. Measured in a venv built the way
 # CI builds one. Only asserted when the generated entry records those versions.
+#
+# 2026-09-09: this pin briefly broke and the reason is worth keeping. Nothing in the
+# physics moved -- the H2 entry regenerated on a second machine, an AVX2 workstation,
+# reproduces this value exactly. What had changed was the entry itself: the machine
+# fingerprint added on 2026-09-07 went into hashed provenance, so every new entry hashed
+# differently from every old one regardless of its numbers. The fingerprint is now
+# excluded from the hash (_HASH_EXCLUDE in the pipeline and in verify_entry.py) and still
+# recorded. So this line now asserts something stronger than a pin: on the reference
+# stack, two machines that differ in processor, vector instruction sets and C library
+# produce the same H2 entry to the last bit.
 REFERENCE_H2_HASH = "375960cd1eb599cba7452d036b850a85e468f5e0ae1b62c76dccc1447cedd77e"
 REFERENCE_VERSIONS = {"python": "3.11.15", "pyscf": "2.6.2", "pennylane": "0.45.0",
                       "openfermion": "1.6.1", "numpy": "2.2.6", "scipy": "1.13.1"}

@@ -118,6 +118,40 @@ reproduces under.
 
 ---
 
+## Two more measurements, 2026-09-09
+
+**The kernel can change the number of qubits, not only the last bit.** Cyclobutadiene's
+CASSCF active orbitals are fixed only by the optimiser's path, so the two kernels converge
+to different orbital gauges of the same energy — and the two gauges do not have the same
+Z₂ symmetry structure. Under Haswell the pipeline finds three symmetries and tapers C₄H₄
+to five qubits; under SkylakeX it finds two and tapers to six, which is what the two
+published C₄H₄ Jordan–Wigner entries store. The CASCI energies agree to 2 × 10⁻¹⁰ Ha, so
+this is a symmetry-detection tolerance landing on opposite sides of a threshold, not
+different physics. The consequence is sharp: on the workstation those two entries' UCCSD
+and ADAPT operator pools cannot be rebuilt at all, and the noisy tier recorded them as
+failed. Re-run on the cluster, whose kernel is the one they were generated under, the
+re-derived Hamiltonian matches the stored coefficients exactly (maximum deviation 0.0), the
+rebuild gate passes at 3 × 10⁻¹³ Ha, and both are measured. That is how the published
+records were produced, and every noisy-tier record now carries the machine fingerprint that
+says so ([`NOISY_TIER.md`](NOISY_TIER.md)).
+
+**An entry that converges exactly reproduces across machines to the last bit.** The
+packaging suite regenerates H₂ and pins its hash. H₂ tapers to one qubit and its
+optimisation converges rather than stopping on a tolerance, and the entry regenerated on
+the AVX2 workstation hashes to the same value as the one recorded on the reference
+machine: `375960cd...`, every number in the file identical. Machine-boundness is a property
+of runs that stop on a comparison, not of the arithmetic in general.
+
+**The machine fingerprint is recorded but not hashed.** Adding it on 2026-09-07 put it
+inside the hashed part of provenance, which meant a regeneration on a different machine
+produced a different entry hash even when every number was identical — destroying exactly
+the comparison the hash exists to support. It is now in `_HASH_EXCLUDE`, in the pipeline
+and in `scripts/verify_entry.py` alike, alongside the timestamps and the git commit. No
+published entry is affected: all 54 predate the field, and their hashes recompute
+unchanged.
+
+---
+
 ## What it does and does not change
 
 **Certification survives the change of machine for 38 of the 40 certified entries that

@@ -1848,6 +1848,15 @@ _HASH_EXCLUDE = {
     "created_utc", "entry_id", "entry_hash_sha256",
     "git_commit", "computed_utc", "certified_utc",
     "signature_b64", "signing_key_id",
+    # provenance.environment.machine, added 2026-09-07, is context and not content.
+    # Hashing it would mean that regenerating an entry on another machine changes its
+    # hash even when every number in the entry is identical, which is exactly the
+    # comparison the hash exists to make. Measured: the reference H2 entry hashes to
+    # 375960cd... on the recording machine and, with this key hashed, to cf15666f... on
+    # the workstation -- same energy to the last bit, different identity. Excluded, so
+    # "same numbers, same hash" holds across machines and every published entry (none of
+    # which carries the block) keeps the hash it was certified under.
+    "machine",
 }
 
 

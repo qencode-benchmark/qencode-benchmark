@@ -71,7 +71,7 @@
    "path": "experiments/noisy_tier/records",
    "description": "Hardware-penalty track: every entry <= 10 tapered qubits rebuilt from its own serialised Hamiltonian and stored parameters, gated on reproducing the stored energy, then evaluated as a density matrix under each named gate-noise model, with a Richardson zero-noise extrapolation. Deterministic (no sampling).",
    "runs": 52,
-   "aggregate_sha256": "e6c7b40593aa689af76083da6837e3de4ea00ddc0eab77c5ab7222dffb513ec9",
+   "aggregate_sha256": "1b4d38c607dcfe9d197295a5f8c5da088592eb16556910934b88352d7ef55c2e",
    "regenerate": "python tools/noisy_tier.py --workers 12 && python tools/noisy_tier.py --summarise"
   },
   {

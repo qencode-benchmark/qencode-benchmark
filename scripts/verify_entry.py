@@ -56,11 +56,14 @@ def _fail(msg): return f"{RED}  [FAIL]{RESET}  {msg}"
 def _warn(msg): return f"{YELLOW}  [INFO]{RESET}  {msg}"
 def _info(msg): return f"  {BOLD}···{RESET}  {msg}"
 
-# Must match _HASH_EXCLUDE in generate_entry_v3.py
+# Must match _HASH_EXCLUDE in the pipeline; test_verifier_and_pipeline_agree_on_which
+# _fields_are_volatile enforces it. "machine" is provenance.environment.machine: recorded
+# so an entry says where it ran, excluded from the hash so that the same numbers hash the
+# same on any machine.
 _HASH_EXCLUDE = {
     "created_utc", "entry_id", "entry_hash_sha256",
     "git_commit", "computed_utc", "certified_utc",
-    "signature_b64", "signing_key_id",
+    "signature_b64", "signing_key_id", "machine",
 }
 
 def _strip_volatile(obj):
