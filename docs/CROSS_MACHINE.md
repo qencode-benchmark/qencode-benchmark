@@ -102,6 +102,13 @@ differently depending on where the allocator happens to place an array. Which of
 moves COBYLA has not been isolated. What is established is that it is below the level of
 the energy evaluation.
 
+**Measured since: a container image does close it.** Built once and moved to both
+machines, with the kernel forced and the C library fixed, the same six entries that differ
+by up to 6 mHa on bare metal are bit-identical across the two processors -- zero of six
+reproduce without it, six of six with it. The prediction in this paragraph held, and the
+cost is that the published suite would have to be regenerated inside the image to
+reproduce there. See [REFERENCE_ENVIRONMENT.md](REFERENCE_ENVIRONMENT.md).
+
 **So there are two fixes of different strength.** Pinning the kernel is cheap, makes the
 Hamiltonian portable across x86 machines, and shrinks the movement of well-conditioned
 runs to ~10⁻¹¹ Ha, which passes strict verification (10⁻⁶) across machines. It does not

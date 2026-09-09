@@ -1,0 +1,73 @@
+# QEncode reference environment — the bit-for-bit image.
+#
+# The ordinary Dockerfile pins the Python packages. That is not enough to make a
+# variational result reproduce on another processor, and we measured why: with an
+# identical pinned stack, identical seeds and one BLAS thread, every entry in the suite
+# reproduces exactly on the machine that generated it and on no other (docs/CROSS_MACHINE.md).
+# Two things below the packages differ between machines and both had to be fixed here:
+#
+#   1. OpenBLAS selects its kernel from the CPU at run time. An AVX-512 machine and an
+#      AVX2 machine sum in a different order. Forcing OPENBLAS_CORETYPE removes it.
+#      Measured: with the kernel forced, PySCF's Hamiltonian, Hartree-Fock and CASCI
+#      energies agree to the last bit across the two machines. The variational loop
+#      still did not, which is what this image exists to test.
+#
+#   2. The C library. The workstation runs glibc 2.39 and the cluster glibc 2.34, and a
+#      direct probe found expm1 differing between them. A container fixes it; a list of
+#      package versions cannot.
+#
+# Haswell is chosen as the kernel because it is the highest both target machines can
+# execute: the workstation is AVX2-only. NumPy's own AVX-512 dispatch is disabled for the
+# same reason, and is harmless on a CPU that has no AVX-512.
+#
+#   docker build -f Dockerfile.reference -t qencode-reference .
+#   docker save qencode-reference | ssh other 'podman load'
+#
+# Build it once and move the image. Building the same Dockerfile twice can still pick up
+# different Debian package builds, and the point here is to remove variables, not to
+# assume they are absent.
+
+# python:3.11.15-slim, by digest. 3.11.15 is the interpreter every published entry
+# records; the tag would drift, the digest cannot.
+FROM python@sha256:90744cff8f32887f075c47d747a173ff333e9e98801667af93c357fa9f5e28ff
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends libgomp1 \
+ && rm -rf /var/lib/apt/lists/*
+
+# Threads: one. See the blog post on the threading bug — multi-threaded BLAS combines
+# partial sums in whatever order threads finish, and a gradient-free optimiser turns that
+# into a different local minimum.
+ENV OMP_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1 \
+    NUMEXPR_NUM_THREADS=1 \
+    VECLIB_MAXIMUM_THREADS=1 \
+    PYTHONUNBUFFERED=1
+
+# The two additions that make this the reference image rather than merely a pinned one.
+ENV OPENBLAS_CORETYPE=Haswell \
+    NPY_DISABLE_CPU_FEATURES="AVX512F AVX512CD AVX512_SKX AVX512_CLX AVX512_CNL AVX512_ICL" \
+    PYTHONHASHSEED=0
+
+WORKDIR /work
+
+COPY requirements-v4.txt .
+RUN pip install --no-cache-dir -r requirements-v4.txt
+
+COPY pyproject.toml README.md ./
+COPY src/ src/
+COPY scripts/ scripts/
+COPY tools/ tools/
+COPY molecules_v4.json molecules_v3.json ./
+COPY schema/ schema/
+RUN pip install --no-cache-dir --no-deps .
+
+ENV QENCODE_REPO=/work
+RUN mkdir -p /work/out
+
+# What this image is, so a result can say what produced it.
+COPY tools/reference_fingerprint.py /work/tools/reference_fingerprint.py
+
+ENTRYPOINT ["qencode", "run"]
+CMD ["--help"]

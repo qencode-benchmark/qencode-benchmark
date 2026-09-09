@@ -1,0 +1,158 @@
+{
+  "entries": [
+    {
+      "ansatz": "uccsd_tapered",
+      "molecule": "C4H4",
+      "optimizer": "COBYLA",
+      "run": "C4H4_jw_uccsd",
+      "with_container": {
+        "energy_cluster_ha": -153.6715170919503,
+        "energy_difference_ha": 0.0,
+        "energy_workstation_ha": -153.6715170919503,
+        "hash_cluster": "0649a296a7788d483bd692fc20c88e9134cecacf61de6334bac09830c805fba0",
+        "hash_workstation": "0649a296a7788d483bd692fc20c88e9134cecacf61de6334bac09830c805fba0",
+        "identical": true
+      },
+      "without_container": {
+        "energy_cluster_ha": -153.66550979254464,
+        "energy_difference_ha": 0.006007299405666799,
+        "energy_workstation_ha": -153.6715170919503,
+        "hash_cluster": "b52e62ed88272d0a08fc50753323543afecb37e76703a7e47b680d5b884a33f2",
+        "hash_workstation": "0649a296a7788d483bd692fc20c88e9134cecacf61de6334bac09830c805fba0",
+        "identical": false
+      }
+    },
+    {
+      "ansatz": "uccsd_tapered",
+      "molecule": "H2",
+      "optimizer": "COBYLA",
+      "run": "H2_jw_uccsd",
+      "with_container": {
+        "energy_cluster_ha": -1.1312865102264686,
+        "energy_difference_ha": 0.0,
+        "energy_workstation_ha": -1.1312865102264686,
+        "hash_cluster": "375960cd1eb599cba7452d036b850a85e468f5e0ae1b62c76dccc1447cedd77e",
+        "hash_workstation": "375960cd1eb599cba7452d036b850a85e468f5e0ae1b62c76dccc1447cedd77e",
+        "identical": true
+      },
+      "without_container": {
+        "energy_cluster_ha": -1.131286510226469,
+        "energy_difference_ha": 4.440892098500626e-16,
+        "energy_workstation_ha": -1.1312865102264686,
+        "hash_cluster": "3adf7b0d98c5f865e2fa08f26c82f39d16e0d11fa247656885b03bc2245f4942",
+        "hash_workstation": "375960cd1eb599cba7452d036b850a85e468f5e0ae1b62c76dccc1447cedd77e",
+        "identical": false
+      }
+    },
+    {
+      "ansatz": "hea",
+      "molecule": "H4",
+      "optimizer": "COBYLA",
+      "run": "H4_jw_hea",
+      "with_container": {
+        "energy_cluster_ha": -2.1773213030085175,
+        "energy_difference_ha": 0.0,
+        "energy_workstation_ha": -2.1773213030085175,
+        "hash_cluster": "a3bcb15234c41ceba8386fa17e798c223145a2d72e42626b89fd3635b57f5055",
+        "hash_workstation": "a3bcb15234c41ceba8386fa17e798c223145a2d72e42626b89fd3635b57f5055",
+        "identical": true
+      },
+      "without_container": {
+        "energy_cluster_ha": -2.177288322492887,
+        "energy_difference_ha": 3.298051563049853e-05,
+        "energy_workstation_ha": -2.1773213030085175,
+        "hash_cluster": "58ac53f04d4cec68decd63c18798180c45b088b4c43e9d092bf88e7206ed64ab",
+        "hash_workstation": "a3bcb15234c41ceba8386fa17e798c223145a2d72e42626b89fd3635b57f5055",
+        "identical": false
+      }
+    },
+    {
+      "ansatz": "uccsd_tapered",
+      "molecule": "LiH",
+      "optimizer": "COBYLA",
+      "run": "LiH_jw_uccsd",
+      "with_container": {
+        "energy_cluster_ha": -7.983762311459725,
+        "energy_difference_ha": 0.0,
+        "energy_workstation_ha": -7.983762311459725,
+        "hash_cluster": "5f0333b03bbf3cf48d4cc3ada844f06ead7278254d51102e8dd04740d3453714",
+        "hash_workstation": "5f0333b03bbf3cf48d4cc3ada844f06ead7278254d51102e8dd04740d3453714",
+        "identical": true
+      },
+      "without_container": {
+        "energy_cluster_ha": -7.9837701141422865,
+        "energy_difference_ha": 7.80268256139749e-06,
+        "energy_workstation_ha": -7.983762311459725,
+        "hash_cluster": "b5fbc2d58ffd4fb6beac65e5a3e12d5ac9188a65ad55e28d5fde67c25aae16f1",
+        "hash_workstation": "5f0333b03bbf3cf48d4cc3ada844f06ead7278254d51102e8dd04740d3453714",
+        "identical": false
+      }
+    },
+    {
+      "ansatz": "uccsd_tapered",
+      "molecule": "NH3",
+      "optimizer": "COBYLA",
+      "run": "NH3_jw_uccsd",
+      "with_container": {
+        "energy_cluster_ha": -56.19774216477889,
+        "energy_difference_ha": 0.0,
+        "energy_workstation_ha": -56.19774216477889,
+        "hash_cluster": "1725cbe15be7d8c5cd3a12ac3f4d2f85fbf88a032955ac43a5e09fe13d8ca7fe",
+        "hash_workstation": "1725cbe15be7d8c5cd3a12ac3f4d2f85fbf88a032955ac43a5e09fe13d8ca7fe",
+        "identical": true
+      },
+      "without_container": {
+        "energy_cluster_ha": -56.197856143514386,
+        "energy_difference_ha": 0.00011397873549867654,
+        "energy_workstation_ha": -56.19774216477889,
+        "hash_cluster": "feab29fb8861f7c6b8f127bc2081c491f8d52d473569cea6ab9d0a013e652e70",
+        "hash_workstation": "1725cbe15be7d8c5cd3a12ac3f4d2f85fbf88a032955ac43a5e09fe13d8ca7fe",
+        "identical": false
+      }
+    },
+    {
+      "ansatz": "hea",
+      "molecule": "water_dimer",
+      "optimizer": "COBYLA",
+      "run": "wd_jw_hea",
+      "with_container": {
+        "energy_cluster_ha": -152.0623875127701,
+        "energy_difference_ha": 0.0,
+        "energy_workstation_ha": -152.0623875127701,
+        "hash_cluster": "20d460b390b055b8f2fdd814927719bc47649dfa648283b0ae7898c306302607",
+        "hash_workstation": "20d460b390b055b8f2fdd814927719bc47649dfa648283b0ae7898c306302607",
+        "identical": true
+      },
+      "without_container": {
+        "energy_cluster_ha": -152.06238751289956,
+        "energy_difference_ha": 1.2946088645549025e-10,
+        "energy_workstation_ha": -152.0623875127701,
+        "hash_cluster": "9b4ef918ae1e98f0062b504aa2e55cf612973f715c6d5cfb32a04dff197a003f",
+        "hash_workstation": "20d460b390b055b8f2fdd814927719bc47649dfa648283b0ae7898c306302607",
+        "identical": false
+      }
+    }
+  ],
+  "git_commit": "f3d2c94f",
+  "image": {
+    "base": "python@sha256:90744cff8f32887f075c47d747a173ff333e9e98801667af93c357fa9f5e28ff",
+    "built_once_and_transferred": true,
+    "dockerfile": "Dockerfile.reference",
+    "libc": "glibc 2.41",
+    "npy_disable_cpu_features": "AVX512F AVX512CD AVX512_SKX AVX512_CLX AVX512_CNL AVX512_ICL",
+    "openblas_coretype": "Haswell",
+    "python": "3.11.15"
+  },
+  "machines": {
+    "cluster": "Intel Xeon Silver 4316, AVX-512, host glibc 2.34, rootless podman",
+    "workstation": "AMD Ryzen Threadripper 2990WX, AVX2, host glibc 2.39, Docker"
+  },
+  "measured_utc": "2026-09-09T16:10:01.702418+00:00",
+  "question": "Does a container image close the cross-machine gap that a pinned package list does not? Measured by generating the same entries on both machines with and without the image, same commit, same seeds, one BLAS thread.",
+  "record_version": 1,
+  "summary": {
+    "identical_with_container": 6,
+    "identical_without_container": 0,
+    "n": 6
+  }
+}
