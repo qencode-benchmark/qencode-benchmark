@@ -66,8 +66,6 @@ RUN pip install --no-cache-dir --no-deps .
 ENV QENCODE_REPO=/work
 RUN mkdir -p /work/out
 
-# What this image is, so a result can say what produced it.
-COPY tools/reference_fingerprint.py /work/tools/reference_fingerprint.py
 
 ENTRYPOINT ["qencode", "run"]
 CMD ["--help"]

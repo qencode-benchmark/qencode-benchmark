@@ -116,6 +116,17 @@ inside it gives two different hashes.
 
     docker pull ghcr.io/qencode-benchmark/qencode-reference:v4
 
+For a reproducibility claim, pin the digest rather than the tag:
+
+    ghcr.io/qencode-benchmark/qencode-reference@sha256:76a012bb30b0e6a1405299993635a7f333813979ff5472ecf9e44a657e2b5c22
+
+**That digest is the one that was measured.** The six-entry cross-machine comparison in
+this document was first run on an image built by hand and moved between the machines. The
+published image is a separate build, by CI, so it was pulled onto both machines and the six
+entries were generated again inside it: six of six identical across the two processors, and
+identical to the hand-built image's results as well. The claim attaches to the digest
+above, not to a build someone would have to trust.
+
 `scripts/verify_in_reference.sh` wraps the two things a third party would want to do.
 
 **Check that a published entry still certifies.**

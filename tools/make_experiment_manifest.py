@@ -69,6 +69,29 @@ STUDIES = [
      "energy, then evaluated as a density matrix under each named gate-noise model, "
      "with a Richardson zero-noise extrapolation. Deterministic (no sampling).",
      "python tools/noisy_tier.py --workers 12 && python tools/noisy_tier.py --summarise"),
+    ("experiments/verification_sweep/records",
+     "Full-suite re-verification on the cluster, strict mode: every published entry "
+     "regenerated and compared to its stored energy. One record per entry.",
+     "python scripts/verification_sweep.py --mode strict --out-dir <outside the repo>"),
+    ("experiments/cross_machine/workstation_records",
+     "The same re-verification on the workstation. Together with the cluster records "
+     "this is the evidence behind docs/CROSS_MACHINE.md: every certified entry measured "
+     "on both machines.",
+     "python scripts/verification_sweep.py --mode strict --out-dir <outside the repo>"),
+    ("experiments/rebalance/candidates",
+     "Suite rebalancing, phase 1: a gradient-based (L-BFGS-B) counterpart to every UCCSD "
+     "entry, one variable changed. STAGED, not part of the published suite. See "
+     "docs/SUITE_BALANCE.md.",
+     "python scripts/generate_entry_v4.py --molecule <mol> --mapping <map> --orbital-opt <orb> --ansatz-type uccsd --optimizer bfgs --out-dir <outside the repo>"),
+    ("experiments/rebalance/candidates_adapt",
+     "Suite rebalancing, phase 2: ADAPT-VQE with the gradient inner optimiser for the "
+     "eight COBYLA-inner entries, and both inner optimisers for the six molecules that "
+     "had no ADAPT entry. STAGED. Files are named by run tag, not entry id.",
+     "python scripts/generate_entry_v4.py --molecule <mol> --mapping jordan_wigner --orbital-opt <orb> --ansatz-type adapt --adapt-inner <cobyla|bfgs> --out-dir <outside the repo>"),
+    ("experiments/reference_env/records",
+     "The container measurement: six entries generated on two processors with and "
+     "without the reference image. docs/REFERENCE_ENVIRONMENT.md.",
+     "see docs/REFERENCE_ENVIRONMENT.md, 'Reproducing this'"),
     ("experiments/shot_allocation_opt/spsa_calibration",
      "SPSA gain sweep at zero noise. Produced before a fix to final-parameter "
      "tracking, so gap_final is unreliable in these records; the ranking used gap_best.",

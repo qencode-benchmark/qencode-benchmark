@@ -75,6 +75,41 @@
    "regenerate": "python tools/noisy_tier.py --workers 12 && python tools/noisy_tier.py --summarise"
   },
   {
+   "path": "experiments/verification_sweep/records",
+   "description": "Full-suite re-verification on the cluster, strict mode: every published entry regenerated and compared to its stored energy. One record per entry.",
+   "runs": 54,
+   "aggregate_sha256": "5189127211c687e269807cff0f704bb1153c22179f95e621e5348c87d892f3fd",
+   "regenerate": "python scripts/verification_sweep.py --mode strict --out-dir <outside the repo>"
+  },
+  {
+   "path": "experiments/cross_machine/workstation_records",
+   "description": "The same re-verification on the workstation. Together with the cluster records this is the evidence behind docs/CROSS_MACHINE.md: every certified entry measured on both machines.",
+   "runs": 48,
+   "aggregate_sha256": "64bfa7024df13cf14ce2578925f5e89052018e9442084e2624991dd02f4ce708",
+   "regenerate": "python scripts/verification_sweep.py --mode strict --out-dir <outside the repo>"
+  },
+  {
+   "path": "experiments/rebalance/candidates",
+   "description": "Suite rebalancing, phase 1: a gradient-based (L-BFGS-B) counterpart to every UCCSD entry, one variable changed. STAGED, not part of the published suite. See docs/SUITE_BALANCE.md.",
+   "runs": 15,
+   "aggregate_sha256": "8759ed8f4d4d02b454d05eeade4ca374467ff400da7fb1715400c9711cebdc17",
+   "regenerate": "python scripts/generate_entry_v4.py --molecule <mol> --mapping <map> --orbital-opt <orb> --ansatz-type uccsd --optimizer bfgs --out-dir <outside the repo>"
+  },
+  {
+   "path": "experiments/rebalance/candidates_adapt",
+   "description": "Suite rebalancing, phase 2: ADAPT-VQE with the gradient inner optimiser for the eight COBYLA-inner entries, and both inner optimisers for the six molecules that had no ADAPT entry. STAGED. Files are named by run tag, not entry id.",
+   "runs": 20,
+   "aggregate_sha256": "8f6875bced4b97c2d1836c2a25644dd89a0747a2b22c1474f59c9ffb6164dbfb",
+   "regenerate": "python scripts/generate_entry_v4.py --molecule <mol> --mapping jordan_wigner --orbital-opt <orb> --ansatz-type adapt --adapt-inner <cobyla|bfgs> --out-dir <outside the repo>"
+  },
+  {
+   "path": "experiments/reference_env/records",
+   "description": "The container measurement: six entries generated on two processors with and without the reference image. docs/REFERENCE_ENVIRONMENT.md.",
+   "runs": 1,
+   "aggregate_sha256": "82a48b0d5e822e60d8756b95fa9bc9fc6d5a1e08ce018ad371e269284a910ec1",
+   "regenerate": "see docs/REFERENCE_ENVIRONMENT.md, 'Reproducing this'"
+  },
+  {
    "path": "experiments/shot_allocation_opt/spsa_calibration",
    "description": "SPSA gain sweep at zero noise. Produced before a fix to final-parameter tracking, so gap_final is unreliable in these records; the ranking used gap_best.",
    "runs": 18,
@@ -83,7 +118,7 @@
   }
  ],
  "totals": {
-  "runs": 4940,
-  "studies": 9
+  "runs": 5078,
+  "studies": 14
  }
 }

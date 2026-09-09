@@ -43,13 +43,13 @@ variable changed.
 | molecule | mapping | COBYLA gap | L-BFGS-B gap | improvement |
 |---|---|---|---|---|
 | **N₂** | Jordan–Wigner | **10.832 mHa** | **0.049 mHa** | **×223, and it changes tier** |
-| C₄H₄ | Jordan–Wigner | 7.917 mHa | 0.0000001 mHa | ×74,000 |
+| C₄H₄ | Jordan–Wigner | 7.917 mHa | 0.0000001 mHa | ×7 × 10⁷ |
 | H₄ | Jordan–Wigner | 2.222 mHa | 0.052 mHa | ×42 |
 | NH₃ | Jordan–Wigner | 0.032 mHa | 0.012 mHa | ×2.8 |
 | BeH₂ | Jordan–Wigner | 0.0067 mHa | 0.00008 mHa | ×85 |
 | LiH | Jordan–Wigner | 0.0029 mHa | 0.0000025 mHa | ×1,100 |
 | water dimer | Jordan–Wigner | 0.0019 mHa | 0.000024 mHa | ×80 |
-| BeH₂ | parity | 0.0024 mHa | 0.0000003 mHa | ×7,800 |
+| BeH₂ | parity | 0.0024 mHa | 0.0000003 mHa | ×8 × 10⁶ |
 | H₂O | Jordan–Wigner | 0.00014 mHa | 0.000034 mHa | ×4 |
 | H₂, HF (6 entries) | all three | already exact | exact | — |
 
@@ -86,8 +86,11 @@ margin. An optimiser stopping early on a flat landscape is exactly the configura
 where last-bit differences choose a different stopping point. The gradient-based
 counterpart converges to 10⁻¹⁰ Ha, where there is no room left to move.
 
-**It is cheap.** Ninety seconds bought a 74,000-fold accuracy improvement on the entry
-that most looked like a physics limit.
+**It is cheap.** Ninety seconds bought a seventy-million-fold accuracy improvement on the
+entry that most looked like a physics limit. (An earlier version of this document said
+74,000; the ratio of 7.9 × 10⁻³ Ha to 1.1 × 10⁻¹⁰ Ha is 7 × 10⁷, and the same slip
+understated BeH₂ parity by the same factor. Both were caught in a same-day recheck of
+every figure against the source files.)
 
 ## ADAPT-VQE: the optimiser is not the limit, the stopping rule is
 
