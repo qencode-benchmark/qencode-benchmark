@@ -13,8 +13,9 @@ import { ensureSchema, getEntries, getMetadata } from "@/lib/db";
  *
  * Response:
  * {
- *   "version": "v2",
- *   "generated": "2026-04-26T...",
+ *   "version": "4",
+ *   "rules": "2",
+ *   "generated": "2026-09-09T...",
  *   "categories": {
  *     "accuracy": [...],
  *     "cost":     [...],

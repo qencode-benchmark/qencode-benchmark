@@ -70,7 +70,7 @@ export async function GET(request, { params }) {
 
     // Shorten product label for badge display
     const message = cert.product_type === "full_suite"
-      ? "Suite v2 certified ✓"
+      ? "Suite v4 certified ✓"
       : "certified ✓";
 
     return new Response(

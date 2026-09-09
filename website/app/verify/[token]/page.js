@@ -12,7 +12,7 @@ function formatDate(ts) {
 }
 
 function formatType(type) {
-  if (type === "full_suite") return "Full Suite v2 (5 molecules)";
+  if (type === "full_suite") return "Full Suite v4 (16 molecules)";
   if (type === "single_molecule") return "Single Molecule";
   return type ?? "—";
 }

@@ -26,7 +26,7 @@ function resolveProduct(attrs) {
   const productName = attrs.first_order_item?.product_name ?? "";
 
   if (total >= 390000 || /full suite/i.test(productName)) {
-    return { label: "Full Suite v2 Certification", type: "full_suite" };
+    return { label: "Full Suite v4 Certification", type: "full_suite" };
   }
   if (total >= 140000 || /single.?molecule/i.test(productName)) {
     return { label: "Single-Molecule Certification", type: "single_molecule" };

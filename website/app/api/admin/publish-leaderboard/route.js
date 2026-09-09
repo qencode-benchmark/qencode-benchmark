@@ -18,10 +18,10 @@ import { ensureSchema, replaceEntries, upsertMetadata } from "@/lib/db";
  *   "cost":     [ ... same shape ... ],
  *   "balanced": [ ... same shape + "balanced_score": 0.197 ... ],
  *   "metadata": {
- *     "suite_version": "v2",
- *     "leaderboard_rules": "v1",
- *     "generation_date": "2026-04-23",
- *     "entries_included": 17,
+ *     "suite_version": "4",
+ *     "leaderboard_rules": "2",
+ *     "generation_date": "2026-09-09",
+ *     "entries_included": 47,
  *     "trust_filter": "certified_only"
  *   }
  * }
