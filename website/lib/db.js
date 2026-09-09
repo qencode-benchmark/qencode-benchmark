@@ -86,6 +86,14 @@ export async function ensureSchema() {
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS zne_residual     DOUBLE PRECISION`;
   await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS noise_model      VARCHAR(40)`;
 
+  // Where the stopping rule fired (2026-09-09). Every certified entry halted as soon as
+  // its gap cleared the threshold; the cell shows how much budget was left when it did.
+  // The gap of such a run is not the smallest the configuration can reach.
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS early_stopped      BOOLEAN`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS restarts_used      INTEGER`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS restarts_requested INTEGER`;
+  await sql`ALTER TABLE leaderboard_entries ADD COLUMN IF NOT EXISTS n_params           INTEGER`;
+
   await sql`
     CREATE TABLE IF NOT EXISTS leaderboard_metadata (
       key        VARCHAR(100) PRIMARY KEY,
@@ -373,6 +381,7 @@ export async function replaceEntries(category, entries) {
          basis, orbital_opt, t_gate_estimate, non_clifford_gates,
          optimizer, optimiser_family, amplifies, margin, chem_accurate, robustness, at_risk,
          noise_status, noise_penalty, noisy_gap, zne_residual, noise_model,
+         early_stopped, restarts_used, restarts_requested, n_params,
          updated_at)
       VALUES
         (
@@ -408,6 +417,10 @@ export async function replaceEntries(category, entries) {
           ${e.noisy_gap          ?? null},
           ${e.zne_residual       ?? null},
           ${e.noise_model        ?? null},
+          ${e.early_stopped      ?? null},
+          ${e.restarts_used      ?? null},
+          ${e.restarts_requested ?? null},
+          ${e.n_params           ?? null},
           NOW()
         )
     `;

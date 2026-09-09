@@ -297,6 +297,55 @@ function NoiseCell({ r }) {
   );
 }
 
+function StopCell({ r }) {
+  if (r.earlyStopped == null) {
+    return <span className="text-xs text-muted-foreground/60">—</span>;
+  }
+  const adapt = String(r.ansatz || "").toLowerCase().includes("adapt");
+  const used = r.restartsUsed, req = r.restartsRequested, ops = r.nParams;
+  if (!r.earlyStopped) {
+    return (
+      <Tip content={
+        <>
+          <p className="font-semibold">Ran its full budget</p>
+          <p className="text-muted-foreground">
+            {req != null ? `All ${req} restarts were used` : "Every restart was used"} and the
+            gap never cleared the threshold. This is the one kind of entry whose gap is the
+            best this configuration reached.
+          </p>
+        </>
+      }>
+        <span className="font-mono text-xs text-muted-foreground cursor-help">full</span>
+      </Tip>
+    );
+  }
+  const label = adapt
+    ? (ops != null ? `${ops} op${ops === 1 ? "" : "s"}` : "stopped")
+    : (used != null && req != null ? `${used}/${req}` : "stopped");
+  return (
+    <Tip content={
+      <>
+        <p className="font-semibold">Stopped at the bar</p>
+        <p>
+          This run halted as soon as its gap cleared 0.01 Ha —{" "}
+          {adapt
+            ? `after adding ${ops} operator${ops === 1 ? "" : "s"}.`
+            : `after ${used} of ${req} requested restarts.`}
+        </p>
+        <p className="text-muted-foreground">
+          So the gap is where the stopping rule fired, not the smallest this configuration
+          can reach. Measured: H₄ ADAPT certifies with one operator at 9.94 mHa and reaches
+          0.05 mHa with twenty-two; every UCCSD entry re-run with a gradient-based optimiser
+          improved, C₄H₄ from 7.9 mHa to 10⁻⁷ mHa. Two entries in the accuracy column are
+          not two points on one scale if one stopped early and the other ran out.
+        </p>
+      </>
+    }>
+      <span className="font-mono text-xs tabular-nums text-muted-foreground cursor-help">{label}</span>
+    </Tip>
+  );
+}
+
 function OptimizerChip({ r }) {
   if (!r.optimizer) return null;
   const free = r.optimiserFamily === "gradient-free";
@@ -312,8 +361,8 @@ function OptimizerChip({ r }) {
           {r.amplifies
             ? "A gradient-free optimiser on an unstructured ansatz amplifies last-bit arithmetic differences into a different local minimum, so the energy can move by up to ~10⁻² Ha on another machine while still certifying. Measured: HEA/COBYLA entries moved 10³–10⁴× more across environments than ADAPT entries."
             : r.optimiserFamily === "gradient-free"
-              ? "ADAPT-VQE selects its operators by analytic gradient, so the ansatz structure is gradient-determined and the inner optimiser only polishes a small, well-conditioned set. Measured to move ≤10⁻⁶ Ha across environments."
-              : "Effectively immune to the comparison-flipping that makes gradient-free runs environment-sensitive. Measured to move ≤10⁻⁶ Ha across environments."}
+              ? "ADAPT-VQE selects its operators by analytic gradient, so the ansatz structure is gradient-determined and the inner optimiser only polishes a small, well-conditioned set. Measured across two machines on all ten ADAPT entries: every one robust. H₈ moved 10⁻¹⁴ Ha; H₁₀, with the smallest margin in the suite, 10⁻⁹ Ha."
+              : "Gradients remove the comparison inside the optimiser step, but not the one in a multistart loop that halts at the first attempt to certify. Measured: two L-BFGS-B hardware-efficient entries — N₂ at ten layers, parity and Jordan–Wigner — moved 6.5 and 15.9 mHa across machines and lost certification. The other five gradient-based entries are robust."}
         </p>
       </>
     }>
@@ -459,8 +508,31 @@ function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
                         entry has before a re-run on another machine could push it over the line.</p>
                       <p className="text-muted-foreground">Under 20% is thin. Whether thin is
                         dangerous depends on the optimiser chip: a gradient-free optimiser on an
-                        unstructured ansatz can move ~10⁻² Ha across environments; ADAPT and
-                        gradient-based runs move ~10⁻⁶ Ha.</p>
+                        unstructured ansatz can move ~10⁻² Ha across environments. ADAPT runs
+                        moved at most 10⁻⁶ Ha; gradient-based hardware-efficient runs whose
+                        multistart stops at the first certifying attempt moved up to
+                        1.6 × 10⁻² Ha. Hover the optimiser chip.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </span>
+            </TableHead>
+            <TableHead className="text-right">
+              <span className="flex items-center justify-end gap-1">
+                Stop
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3 w-3 text-muted-foreground cursor-help shrink-0" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs text-xs space-y-1">
+                      <p className="font-semibold">Where the run stopped</p>
+                      <p>Every certified entry halted as soon as its gap cleared the threshold.
+                        The cell shows how much budget was used when it did: restarts for UCCSD
+                        and hardware-efficient runs, operators for ADAPT-VQE.</p>
+                      <p className="text-muted-foreground">The gap of such a run is where the
+                        rule fired, not the best the configuration can do. Research entries show
+                        &ldquo;full&rdquo;: they used everything and never certified.</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -623,6 +695,11 @@ function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
                 {/* Certification margin */}
                 <TableCell className="text-right">
                   <MarginCell r={r} />
+                </TableCell>
+
+                {/* Where the stopping rule fired */}
+                <TableCell className="text-right">
+                  <StopCell r={r} />
                 </TableCell>
 
                 {/* Hardware penalty under gate noise (measured, not certified) */}
@@ -1048,6 +1125,10 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
           <span className="flex items-center gap-1.5">
             <span className="font-mono text-xs">Margin</span>
             0.01 Ha − gap, as a share of the threshold; under 20% is thin
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="font-mono text-xs">Stop</span>
+            Budget used when the run halted at the threshold — restarts, or operators for ADAPT; &ldquo;full&rdquo; means it never certified
           </span>
           <span className="flex items-center gap-1.5">
             <span className="font-mono text-xs">Noise</span>

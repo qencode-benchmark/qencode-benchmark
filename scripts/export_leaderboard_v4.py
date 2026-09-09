@@ -232,6 +232,17 @@ def entry_to_row(entry: dict) -> dict | None:
         robustness   = _robustness(entry_id)
         thin         = certified and margin < GAP_THRESHOLD * _cm.THIN_MARGIN_FRACTION
         at_risk      = bool(thin and amplifies and robustness is None)
+        # Where the stopping rule fired. Every certified entry in the suite halted as
+        # soon as its gap cleared the threshold (run_config.early_stopped); the seven
+        # research entries ran their whole budget and never did. So the flag alone says
+        # nothing -- what discriminates is how much budget was left: restarts for UCCSD
+        # and hardware-efficient runs, operators (n_params) for ADAPT. The gap of an
+        # early-stopped run is where the rule fired, not the smallest the configuration
+        # can reach; measured in docs/SUITE_BALANCE.md.
+        rc           = entry.get("run_config") or {}
+        early_stop   = rc.get("early_stopped")
+        restarts     = rc.get("multistart")
+        restarts_req = rc.get("multistart_requested")
 
         return {
             "entry_id":           entry_id,
@@ -242,6 +253,9 @@ def entry_to_row(entry: dict) -> dict | None:
             "chem_accurate":      gap < CHEM_ACCURACY,
             "robustness":         robustness,
             "at_risk":            at_risk,
+            "early_stopped":      early_stop,
+            "restarts_used":      restarts,
+            "restarts_requested": restarts_req,
             **_noise_fields(entry_id, cs.get("num_qubits_tapered")),
             "molecule":           mol,
             "basis":              basis,
@@ -394,6 +408,10 @@ def main():
             "noisy_gap":          r["noisy_gap"],
             "zne_residual":       r["zne_residual"],
             "noise_model":        r["noise_model"],
+            "early_stopped":      r["early_stopped"],
+            "restarts_used":      r["restarts_used"],
+            "restarts_requested": r["restarts_requested"],
+            "n_params":           r["n_params"],
         }
         for r in acc_rows
     ]
@@ -434,6 +452,10 @@ def main():
             "noisy_gap":          r["noisy_gap"],
             "zne_residual":       r["zne_residual"],
             "noise_model":        r["noise_model"],
+            "early_stopped":      r["early_stopped"],
+            "restarts_used":      r["restarts_used"],
+            "restarts_requested": r["restarts_requested"],
+            "n_params":           r["n_params"],
         }
         for r in cost_rows
     ]
@@ -488,6 +510,10 @@ def main():
             "noisy_gap":          r["noisy_gap"],
             "zne_residual":       r["zne_residual"],
             "noise_model":        r["noise_model"],
+            "early_stopped":      r["early_stopped"],
+            "restarts_used":      r["restarts_used"],
+            "restarts_requested": r["restarts_requested"],
+            "n_params":           r["n_params"],
         }
         for r in balanced_rows
     ]
@@ -524,6 +550,10 @@ def main():
             "noisy_gap":          r["noisy_gap"],
             "zne_residual":       r["zne_residual"],
             "noise_model":        r["noise_model"],
+            "early_stopped":      r["early_stopped"],
+            "restarts_used":      r["restarts_used"],
+            "restarts_requested": r["restarts_requested"],
+            "n_params":           r["n_params"],
         }
         for r in res_rows
     ]
@@ -566,7 +596,9 @@ def main():
     # ── 9. Write files ────────────────────────────────────────────────────────
     MARGIN_FIELDS   = ["optimizer","optimiser_family","amplifies","margin","chem_accurate","robustness","at_risk"]
     NOISE_FIELDS    = ["noise_status","noise_penalty","noisy_gap","zne_residual","noise_model"]
-    MARGIN_FIELDS   = MARGIN_FIELDS + NOISE_FIELDS
+    # Where the stopping rule fired (2026-09-09): see docs/SUITE_BALANCE.md.
+    STOP_FIELDS     = ["early_stopped","restarts_used","restarts_requested","n_params"]
+    MARGIN_FIELDS   = MARGIN_FIELDS + NOISE_FIELDS + STOP_FIELDS
     ACC_FIELDS      = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","ccsd_t_correlation","vqe_energy","casci_energy","hf_energy","t_gate_estimate","non_clifford_gates","baseline","beats_classical"] + MARGIN_FIELDS
     COST_FIELDS     = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"] + MARGIN_FIELDS
     BALANCED_FIELDS = ["rank","entry_id","molecule","basis","orbital_opt","mapping","ansatz","gap","depth","2q_gates","balanced_score","ccsd_t_correlation","t_gate_estimate","non_clifford_gates","baseline","beats_classical"] + MARGIN_FIELDS

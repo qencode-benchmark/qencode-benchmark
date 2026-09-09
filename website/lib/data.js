@@ -38,6 +38,11 @@ function marginFields(row) {
     noisyGap:        num(row.noisy_gap),
     zneResidual:     num(row.zne_residual),
     noiseModel:      row.noise_model || null,
+    // Where the stopping rule fired (2026-09-09).
+    earlyStopped:      optBool(row.early_stopped),
+    restartsUsed:      num(row.restarts_used),
+    restartsRequested: num(row.restarts_requested),
+    nParams:           num(row.n_params),
   };
 }
 

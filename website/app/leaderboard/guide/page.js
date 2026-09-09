@@ -156,12 +156,36 @@ export default function GuidePage() {
             </p>
             <p>
               <strong>Margin says how far the energy <em>can</em> move, not how far it
-              will.</strong> Re-running an entry on a machine with different package versions
-              moves the energy — by a median of 7 × 10⁻⁸ Ha across the suite, but by up to
-              1.4 × 10⁻² Ha for some configurations. Two entries certified at 6.1 and 9.6 mHa
-              regenerate at 20.5 and 19.0 mHa elsewhere. They still reproduce exactly on the
-              reference environment, which is what certification attests, so they are flagged
-              rather than withdrawn.
+              will.</strong> Every certified entry has been re-run on a second machine with
+              the identical pinned software, seeds and thread count. Most move by less than a
+              microhartree; the largest movement is 1.6 × 10⁻² Ha. Three entries certified at
+              3.8, 4.4 and 4.5 mHa regenerate at 11.8, 10.9 and 20.4 mHa on the other
+              processor and no longer certify. Each still reproduces exactly on the machine
+              that made it, which is what its provenance attests, so they are flagged
+              <em>fragile</em> rather than withdrawn. The full table and the cause:{" "}
+              <code>docs/CROSS_MACHINE.md</code>.
+            </p>
+          </Row>
+
+          <Row name="Stop" sub="where the run halted">
+            <p>
+              Every certified entry in the suite stopped the moment its gap cleared the
+              threshold. For UCCSD and hardware-efficient runs that is a multistart loop
+              halting at the first restart that certifies — most used one restart of ten. For
+              ADAPT-VQE it is the operator loop halting at the first operator count that
+              certifies. The cell shows how much budget was used when it stopped. The seven
+              research entries show <em>full</em>: they used everything and never certified.
+            </p>
+            <p>
+              <strong>This changes what the accuracy column means.</strong> The gap of an
+              early-stopped run is where the rule fired, not the smallest the configuration
+              can reach. Measured: H₄ under ADAPT-VQE certifies with a single operator at
+              9.94 mHa and stops; run to convergence it reaches 0.05 mHa with twenty-two.
+              Every UCCSD entry re-run with a gradient-based optimiser improved, C₄H₄ from
+              7.9 mHa to 10⁻⁷ mHa, and N₂ from a research entry at 10.8 mHa to a certified one
+              at 0.05 mHa. An ADAPT entry at 9.94 mHa and a UCCSD entry at 10⁻⁴ mHa are
+              therefore not two points on one scale, and this column is here so that a reader
+              comparing them knows it. The measurements: <code>docs/SUITE_BALANCE.md</code>.
             </p>
           </Row>
 
@@ -172,7 +196,13 @@ export default function GuidePage() {
               its next step by comparing two nearly equal energies, so a difference in the
               thirteenth decimal — threaded arithmetic, a different BLAS, a different NumPy —
               can flip a comparison and send the run into a different local minimum. A
-              gradient-based one (L-BFGS-B) is effectively immune.
+              gradient-based one (L-BFGS-B) removes that comparison from the optimiser step,
+              and this was believed to make it immune. It does not. Two L-BFGS-B entries lost
+              certification across machines, because their multistart loop stops at the first
+              attempt that certifies, and &ldquo;is this attempt good enough&rdquo; is itself
+              a comparison of nearly equal numbers. What matters is whether <em>any</em>
+              decision the run makes compares near-equal quantities, not whether the
+              optimiser consumes gradients.
             </p>
             <p>
               <strong>The ansatz matters as much as the optimiser.</strong> ADAPT-VQE selects

@@ -99,6 +99,11 @@ def _base_row(r):
         "noisy_gap":          num(r.get("noisy_gap")),
         "zne_residual":       num(r.get("zne_residual")),
         "noise_model":        r.get("noise_model") or None,
+        # Where the stopping rule fired (2026-09-09). See docs/SUITE_BALANCE.md.
+        "early_stopped":      optbool(r.get("early_stopped")),
+        "restarts_used":      intval(r.get("restarts_used")),
+        "restarts_requested": intval(r.get("restarts_requested")),
+        "n_params":           intval(r.get("n_params")),
     }
 
 def parse_accuracy_csv(path):
