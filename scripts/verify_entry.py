@@ -2,26 +2,33 @@
 """
 QEncode Entry Verifier
 ======================
-Re-runs a benchmark entry and verifies the VQE energy matches the stored value.
+Checks a stored entry, then re-runs it and compares the result with what was published.
 
-The primary check is an energy tolerance comparison. COBYLA optimization is not
-bit-for-bit reproducible across runs (nfev and optimal_params vary slightly due
-to floating-point non-determinism), so the SHA-256 hash cannot be used as a
-reliable reproduction test. The hash serves as tamper-detection only — it proves
-a stored JSON has not been modified.
+Checks that need no re-run come first, and each one fails the verification:
 
-Default tolerance: 1e-6 Ha (1 million times stricter than the 0.01 Ha
-certification threshold, and 100x stricter than chemical accuracy).
+  content hash   the SHA-256 recomputed from the stored JSON must equal the stored hash.
+                 This detects an edit made without recomputing the hash. It is a
+                 checksum, not a signature: anyone can edit an entry and recompute it,
+                 so it does not show who produced the entry.
+  consistency    the stored gap must equal |E_VQE - E_exact| from the stored energies,
+                 and the stored tier (certified / research) must follow from that gap.
+
+Then the generator is re-run with the entry's recorded settings and seed:
+
+  strict         (default) the regenerated energy must match the stored one to
+                 --tolerance (default 1e-6 Ha). This is the determinism guarantee and it
+                 holds on the reference pinned environment.
+  certification  the regenerated entry must reach the SAME outcome as the published one:
+                 a certified entry must still certify, a research-tier entry must still
+                 not. Energy movement is reported but not gated on. Use this across
+                 machines, where gradient-free trajectories are not bit-identical.
 
 Usage:
-  # Energy check (default, recommended)
-  python scripts/verify_entry.py releases/v3.1/db/H2_631g_JW_UCCSD_v3_tapered__sha256_c311a3dfdda0df10.json
+  python scripts/verify_entry.py releases/v4/db/<entry>.json
+  python scripts/verify_entry.py <entry>.json --mode certification
+  python scripts/verify_entry.py <entry>.json --hash-only     # no re-run, seconds
 
-  # Tighter tolerance
-  python scripts/verify_entry.py <entry>.json --tolerance 1e-8
-
-  # Hash tamper-check (verifies JSON has not been edited, does not re-run)
-  python scripts/verify_entry.py <entry>.json --hash-only
+Supports schema 3.x and 4.x entries (releases/v3*, releases/v4).
 
 Exit codes:
   0  Verification passed
@@ -85,6 +92,56 @@ def tamper_check(entry: dict) -> tuple[bool, str, str]:
     return computed == stored_hash, stored_hash, computed
 
 
+# The pipeline writes the gap as abs(E_VQE - E_exact) from the same two stored floats, so
+# a faithful entry recomputes it exactly; the tolerance only absorbs JSON round-tripping.
+_GAP_RECOMPUTE_TOL_HA = 1e-12
+
+
+def consistency_check(entry: dict) -> tuple[bool, list[str]]:
+    """Do the stored numbers agree with each other? Returns (ok, report lines).
+
+    v4 entries measure the gap against the exact ground state of the tapered qubit
+    Hamiltonian; v3 entries, which do not store that energy, against CASCI.
+    """
+    res = entry.get("results") or {}
+    q   = res.get("quality") or {}
+    ref = res.get("reference") or {}
+    e_vqe = (res.get("vqe") or {}).get("best_energy_hartree")
+    gap   = q.get("abs_vqe_exact_gap")
+    trusted = q.get("trusted")
+    if ref.get("exact_qubit_ground_energy_hartree") is not None:
+        e_ref, ref_name = ref["exact_qubit_ground_energy_hartree"], "exact qubit ground state"
+    else:
+        e_ref, ref_name = ref.get("casci_ground_energy_hartree"), "CASCI"
+
+    missing = [n for n, v in (("VQE energy", e_vqe), ("reference energy", e_ref),
+                              ("gap", gap), ("trusted flag", trusted)) if v is None]
+    if missing:
+        return False, [f"stored entry is missing: {', '.join(missing)}"]
+
+    lines, ok = [], True
+    recomputed = abs(e_vqe - e_ref)
+    if abs(recomputed - gap) <= _GAP_RECOMPUTE_TOL_HA:
+        lines.append(f"gap {gap:.3e} Ha = |E_VQE - E_ref| against the {ref_name}")
+    else:
+        ok = False
+        lines.append(f"stored gap {gap:.6e} Ha but |E_VQE - E_ref| = {recomputed:.6e} Ha "
+                     f"against the {ref_name}")
+    if trusted == (gap < CERT_THRESHOLD_HA):
+        lines.append(f"tier {'certified' if trusted else 'research'} follows from the gap "
+                     f"(threshold {CERT_THRESHOLD_HA:.0e} Ha)")
+    else:
+        ok = False
+        lines.append(f"stored tier says trusted={trusted}, but a gap of {gap:.3e} Ha is "
+                     f"{'below' if gap < CERT_THRESHOLD_HA else 'not below'} the "
+                     f"{CERT_THRESHOLD_HA:.0e} Ha threshold")
+    level = (entry.get("trust") or {}).get("level")
+    if level is not None and (level == "certified") != bool(trusted):
+        ok = False
+        lines.append(f"trust.level is '{level}' but results.quality.trusted is {trusted}")
+    return ok, lines
+
+
 def main():
     ap = argparse.ArgumentParser(description="Verify a QEncode benchmark entry.")
     ap.add_argument("entry_json", help="Path to the stored .json artifact")
@@ -95,10 +152,17 @@ def main():
     )
     ap.add_argument(
         "--hash-only", action="store_true",
-        help="Only check the stored SHA-256 hash for tampering (no re-run)",
+        help="Only run the checks that need no re-run: the content hash and the "
+             "consistency of the stored numbers. Takes seconds.",
     )
-    ap.add_argument("--seed", type=int, default=42,
-                    help="Random seed for VQE (default: 42)")
+    ap.add_argument(
+        "--ignore-hash", action="store_true",
+        help="Report a content-hash mismatch but continue. For diagnosing an entry you "
+             "edited on purpose; a verification run this way has not checked the hash.",
+    )
+    ap.add_argument("--seed", type=int, default=None,
+                    help="Random seed for the re-run (default: the seed the entry "
+                         "records in run_config.seed, else 42)")
     # The generator refuses to write an entry when the tree is dirty or the installed
     # packages differ from the pins. That is right when producing an entry, and it also
     # made the verifier unusable for anyone whose environment is not byte-identical to
@@ -160,33 +224,71 @@ def main():
     print(f"  Entry:    {entry_path.name}")
     print(f"  Molecule: {molecule}  |  Basis: {basis}  |  Mapping: {mapping}  |  Ansatz: {ansatz}")
 
-    # ── Hash tamper-check (always shown, no re-run needed) ────────────────────
-    ok, stored_h, computed_h = tamper_check(stored)
-    if ok:
-        print(f"  Hash:     {stored_h[:16]}…  {GREEN}✓ not tampered{RESET}")
+    # The content-hash recipe and the generator flags below are those of schema 3.x and
+    # 4.x. Older entries (releases/v1, v2) were hashed differently and cannot be re-run
+    # by the current generators, so the verifier says so instead of failing obscurely.
+    schema_ver = str(stored.get("schema_version", ""))
+    if not schema_ver.startswith(("3.", "4.")):
+        print(_fail(f"Schema version '{schema_ver}' is not supported; this verifier "
+                    f"handles schema 3.x and 4.x entries."))
+        sys.exit(1)
+
+    # ── Checks that need no re-run. Each one fails the verification. ──────────
+    hash_ok, stored_h, computed_h = tamper_check(stored)
+    if hash_ok:
+        print(f"  Hash:     {stored_h[:16]}…  {GREEN}✓ matches the stored content{RESET}")
     else:
-        print(f"  Hash:     {stored_h[:16]}…  {RED}✗ MISMATCH — file may have been edited{RESET}")
+        print(f"  Hash:     {stored_h[:16]}…  {RED}✗ MISMATCH — the file was edited "
+              f"after it was hashed{RESET}")
+        print(f"            stored   {stored_h}")
+        print(f"            computed {computed_h}")
+
+    cons_ok, cons_lines = consistency_check(stored)
+    mark = f"{GREEN}✓{RESET}" if cons_ok else f"{RED}✗{RESET}"
+    for i, line in enumerate(cons_lines):
+        print(f"  {'Numbers:' if i == 0 else '         '} {mark} {line}")
+
+    trust = stored.get("trust") or {}
+    if trust.get("signature_b64"):
+        print(f"  Signed:   present (key {trust.get('signing_key_id')}), NOT checked by "
+              f"this verifier")
+    else:
+        print(f"  Signed:   no — this entry carries no signature")
+
+    if not hash_ok and not args.ignore_hash:
+        print()
+        print(_fail("Content hash does not match: the stored entry was modified after it "
+                    "was hashed. Not re-running. (--ignore-hash to continue anyway.)"))
+        sys.exit(1)
+    if not cons_ok:
+        print()
+        print(_fail("The stored numbers are inconsistent with each other; see above."))
+        sys.exit(1)
 
     if args.hash_only:
         print()
-        if ok:
-            print(_ok("Hash tamper-check passed — stored JSON is unmodified"))
-        else:
-            print(_fail("Hash tamper-check FAILED"))
-            print(f"  Stored:   {stored_h}")
-            print(f"  Computed: {computed_h}")
-        sys.exit(0 if ok else 1)
+        if not hash_ok:
+            print(_fail("Content hash does not match the stored entry"))
+            sys.exit(1)
+        print(_ok("Stored entry is internally consistent and matches its hash"))
+        return
+
+    stored_trusted = bool((stored.get("results") or {}).get("quality", {}).get("trusted"))
+    seed = args.seed
+    if seed is None:
+        seed = (stored.get("run_config") or {}).get("seed")
+    if seed is None:
+        seed = 42
 
     if args.mode == "certification":
-        print(f"  Mode:     certification — regenerated gap must stay below "
-              f"{CERT_THRESHOLD_HA:.0e} Ha")
+        print(f"  Mode:     certification — the regenerated entry must reach the published "
+              f"outcome ({'certified' if stored_trusted else 'research tier'})")
     else:
         print(f"  Mode:     strict — energy must match to ± {args.tolerance:.0e} Ha "
               f"(reference pinned environment only)")
     print()
 
     # ── Re-run the generator ──────────────────────────────────────────────────
-    schema_ver = stored.get("schema_version", "3.0.0")
     if schema_ver.startswith("4."):
         generator = REPO / "scripts" / "generate_entry_v4.py"
     else:
@@ -208,7 +310,7 @@ def main():
             "--mapping",     mapping,
             "--ansatz-type", ansatz,
             "--multistart",  str(multistart),
-            "--seed",        str(args.seed),
+            "--seed",        str(seed),
             "--out-dir",     tmpdir,
             "--no-colour",
         ]
@@ -305,22 +407,38 @@ def main():
     #
     # So bit-level energy agreement is a property of the reference pinned environment, not
     # of the method. Across machines the meaningful question is whether the entry still
-    # satisfies the criterion it was certified under. This mode asks that instead, and
-    # reports the energy movement without gating on it.
+    # reaches the outcome it was published with. This mode asks that instead, and reports
+    # the energy movement without gating on it.
+    #
+    # "The published outcome" covers both tiers. The first version asked only "does it
+    # certify?", so a research-tier entry -- published precisely because it does not --
+    # failed every run: N2 JW/UCCSD (10.83 mHa) was the one failure in the weekly job of
+    # 2026-09-06, and it was correct behaviour by the entry, not a regression.
     if args.mode == "certification":
         if new_gap is None:
             print(_fail("Regenerated entry has no gap; cannot check certification."))
             sys.exit(1)
-        print(f"  Mode:     certification — does the regenerated entry still certify?")
+        new_trusted = new_gap < CERT_THRESHOLD_HA
+        published = "certified" if stored_trusted else "research tier"
+        regenerated = "certifies" if new_trusted else "does not certify"
+        print(f"  Mode:     certification — published as {published}; "
+              f"the regenerated entry {regenerated}.")
         print(f"            energy movement is reported, not gated on.")
         print()
-        if new_gap < CERT_THRESHOLD_HA:
-            print(_ok(f"PASS — regenerated gap {new_gap:.3e} Ha is within the "
-                      f"{CERT_THRESHOLD_HA:.0e} Ha certification threshold "
+        if new_trusted == stored_trusted:
+            print(_ok(f"PASS — published outcome reproduced: regenerated gap "
+                      f"{new_gap:.3e} Ha, threshold {CERT_THRESHOLD_HA:.0e} Ha "
                       f"(energy moved {diff:.3e} Ha)"))
+        elif stored_trusted:
+            print(_fail(f"FAIL — published as certified, but the regenerated gap "
+                        f"{new_gap:.3e} Ha exceeds the {CERT_THRESHOLD_HA:.0e} Ha "
+                        f"threshold (energy moved {diff:.3e} Ha)"))
+            sys.exit(1)
         else:
-            print(_fail(f"FAIL — regenerated gap {new_gap:.3e} Ha exceeds the "
-                        f"{CERT_THRESHOLD_HA:.0e} Ha certification threshold"))
+            print(_fail(f"FAIL — published as research tier, but the regenerated gap "
+                        f"{new_gap:.3e} Ha is below the {CERT_THRESHOLD_HA:.0e} Ha "
+                        f"threshold (energy moved {diff:.3e} Ha): the published tier "
+                        f"does not hold on this machine"))
             sys.exit(1)
         return
 
