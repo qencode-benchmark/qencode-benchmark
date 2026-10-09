@@ -13,3 +13,22 @@ is `scripts/verify_entry.py`, and the v3 reproduction path is `scripts/generate_
 with `requirements-v3.txt`.
 
 Moved here from `scripts/` (and one from the repo root) on 2026-09-04.
+
+## 2026-10-09 — the v2 fulfilment and publish chain
+
+`job_poller.py`, `generate_leaderboard.py` and `publish_leaderboard_live.py` were the
+automated path from a paid order to a published result. By Suite v4 none of it worked, and
+part of it was dangerous:
+
+* `job_poller.py` ran `scripts/run_standard_suite.py` against the v2 suite. That script no
+  longer exists, so every claimed order was marked failed, and the admin email said no
+  action was required.
+* Had a run succeeded, the next two steps would have rebuilt the leaderboard from
+  `releases/v2/db` (STO-3G) and published it over the live v4 table, dropping the
+  entry_id, margin, robustness, noise and stop columns. Three keys this chain wrote on an
+  earlier run (`research_entries_included`, `certified_receipts_count`,
+  `min_trust_level`) were still in the live metadata on 2026-10-08.
+
+Paid checkout is paused and orders start with an application (`/certify`). The live
+leaderboard is published only by `scripts/export_leaderboard_v4.py` followed by
+`scripts/publish_leaderboard.py`.

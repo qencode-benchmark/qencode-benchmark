@@ -2,12 +2,15 @@ import Link from "next/link";
 import { CheckCircle2, Clock3, ShieldCheck, FlaskConical, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LS_FULL_SUITE_CHECKOUT_URL, LS_SINGLE_MOLECULE_CHECKOUT_URL } from "@/lib/payments";
+
+// Direct checkout is paused: until fulfilment is rebuilt for Suite v4, every order starts
+// with an application, so nothing is sold that cannot be delivered. lib/payments.js keeps
+// the Lemon Squeezy URLs for when checkout returns.
 
 export const metadata = {
   title: "Get Certified — QEncode",
   description:
-    "Purchase QEncode managed quantum benchmark certification for a single molecule or full Suite v4 and receive signed artifacts for publications, grants, and hardware evaluations.",
+    "Apply for QEncode managed quantum benchmark certification for a single molecule or full Suite v4 and receive signed artifacts for publications, grants, and hardware evaluations.",
   keywords: [
     "quantum benchmark certification",
     "QEncode certification",
@@ -36,10 +39,10 @@ export default function CertifyPage() {
 
       {/* Apply-first callout */}
       <div className="rounded-lg border border-primary/30 bg-primary/5 p-5 mb-10">
-        <p className="font-medium mb-1">New here? Start with the application.</p>
+        <p className="font-medium mb-1">Certification starts with a short application.</p>
         <p className="text-sm text-muted-foreground mb-3">
-          If this is your first certification, apply first so we can confirm molecule scope,
-          active space requirements, timeline, and the right plan for your use case.
+          Tell us the molecules, active space requirements and timeline. We confirm the scope and
+          the right plan with you, and agree payment, before any run starts.
           The application takes 2 minutes and we respond within 1–2 business days.
         </p>
         <Link
@@ -78,9 +81,9 @@ export default function CertifyPage() {
               </li>
             </ul>
             <Button asChild className="w-full">
-              <a href={LS_SINGLE_MOLECULE_CHECKOUT_URL} target="_blank" rel="noopener noreferrer" data-track="certify_single_checkout_click">
-                Purchase — Single Molecule
-              </a>
+              <Link href="/apply" data-track="certify_single_apply_click">
+                Apply — Single Molecule
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -109,9 +112,9 @@ export default function CertifyPage() {
               </li>
             </ul>
             <Button asChild className="w-full">
-              <a href={LS_FULL_SUITE_CHECKOUT_URL} target="_blank" rel="noopener noreferrer" data-track="certify_full_checkout_click">
-                Purchase — Full Suite v4
-              </a>
+              <Link href="/apply" data-track="certify_full_apply_click">
+                Apply — Full Suite v4
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -125,7 +128,7 @@ export default function CertifyPage() {
             <div className="flex items-center gap-2 font-medium mb-1">
               <Clock3 className="h-4 w-4 text-primary shrink-0" /> Intake confirmation
             </div>
-            <p className="text-muted-foreground">Within 1 business day after payment and request details.</p>
+            <p className="text-muted-foreground">Within 1–2 business days of your application.</p>
           </div>
           <div className="rounded-md bg-muted/50 p-3">
             <div className="flex items-center gap-2 font-medium mb-1">
@@ -182,7 +185,7 @@ export default function CertifyPage() {
 
       <div className="flex flex-wrap gap-3">
         <Link href="/apply" className="text-sm text-primary hover:underline" data-track="certify_apply_link_bottom">
-          Apply first →
+          Apply for certification →
         </Link>
         <span className="text-sm text-muted-foreground">or</span>
         <a href={`mailto:${supportEmail}`} className="text-sm text-primary hover:underline">

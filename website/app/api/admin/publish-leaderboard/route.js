@@ -1,11 +1,12 @@
 import { revalidatePath } from "next/cache";
-import { ensureSchema, replaceEntries, upsertMetadata } from "@/lib/db";
+import { ensureSchema, replaceEntries, replaceMetadata } from "@/lib/db";
 
 /**
  * POST /api/admin/publish-leaderboard
  *
- * Replaces all leaderboard entries in Postgres and busts the /leaderboard cache.
- * Called from the Ubuntu pipeline after a new certified run completes.
+ * Replaces all leaderboard entries AND all metadata in Postgres, and busts the
+ * /leaderboard cache. Called by scripts/publish_leaderboard.py with the files written by
+ * scripts/export_leaderboard_v4.py; that is the only publisher.
  *
  * Auth: Authorization: Bearer <LEADERBOARD_PUBLISH_SECRET>
  *
@@ -91,7 +92,7 @@ export async function POST(request) {
     ]);
 
     if (metadata && typeof metadata === "object") {
-      await upsertMetadata(metadata);
+      await replaceMetadata(metadata);
     }
 
     console.log(
