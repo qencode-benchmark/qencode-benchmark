@@ -7,9 +7,11 @@ what a successful verification does and does not prove.
 python scripts/verify_entry.py releases/v4/db/<entry_id>.json
 ```
 
-That re-runs the complete pipeline from the entry's own recorded configuration and compares
-the result against the stored energy, and checks the SHA-256 content hash for tampering.
-No flags are needed on the reference environment.
+Before re-running anything it checks the stored entry: the SHA-256 content hash must match
+the content, the stored gap and tier must follow from the stored energies, and the Ed25519
+signature must verify under the project's published key. Any failure stops it there. It
+then re-runs the complete pipeline from the entry's own recorded configuration and seed and
+compares the result with the stored one. No flags are needed on the reference environment.
 
 ---
 
@@ -23,7 +25,7 @@ python scripts/verify_entry.py <entry>.json --mode certification
 | mode | asserts | holds where |
 |---|---|---|
 | `strict` | the regenerated energy matches the published one to `--tolerance` (default 10⁻⁶ Ha) | the reference pinned environment |
-| `certification` | the regenerated entry still meets the 10 mHa threshold; energy movement is reported but not gated on | any machine |
+| `certification` | the regenerated entry reaches the published outcome — a certified entry still meets the 10 mHa threshold, a research-tier entry still does not; energy movement is reported but not gated on | any machine |
 
 **This distinction is not bureaucratic — it is the honest limit of the numerics.** A
 gradient-free optimiser picks its next step by comparing two nearly equal energies, so a
@@ -68,19 +70,32 @@ python scripts/verify_entry.py <entry>.json --dry-run
 
 ---
 
-## Hash-only check
-
-The content hash proves the JSON has not been edited since publication. It re-runs nothing,
-so it is instant:
+## Checks that need no re-run
 
 ```bash
 python scripts/verify_entry.py <entry>.json --hash-only
+python scripts/verify_entry.py <entry>.json --hash-only --require-signature
 ```
 
-The hash covers the canonical entry with volatile fields stripped — timestamps, the entry
-id, the hash itself, the git commit and the signature. A test asserts that the verifier's
-exclusion set matches the pipeline's, because two copies of that list drifting apart would
-make the tamper check silently check a different hash.
+These take a second, need nothing installed beyond Python, and each one fails the
+verification:
+
+| check | what it shows |
+|---|---|
+| content hash | the stored JSON is the JSON that was hashed. The hash covers the canonical entry with volatile fields stripped — timestamps, the entry id, the hash itself, the git commit, the machine name and the signature. |
+| consistency | the stored gap equals \|E_VQE − E_exact\| from the stored energies, and the stored tier (certified / research) follows from that gap. |
+| signature | the Ed25519 signature over the content hash verifies under the project key published in [`keys/qencode_ed25519_public.pem`](../keys/qencode_ed25519_public.pem). Every entry in `releases/v4/db/` is signed; `--require-signature` also fails an unsigned entry. |
+
+**The hash alone is a checksum, not proof of origin.** Anyone can edit an entry, rewrite
+the dependent numbers consistently and recompute the hash, and the first two checks will
+pass. The signature is what such an edit cannot reproduce without the project's private
+key. The signed message is `qencode/entry-sha256/v1:` followed by the 64-character hash;
+the recipe is in [`src/qencode/signing.py`](../src/qencode/signing.py), and the verifier
+uses only the standard library, checked against the RFC 8032 test vectors.
+
+A test asserts that the verifier's hash-exclusion set matches the pipeline's, because two
+copies of that list drifting apart would make the tamper check silently check a different
+hash.
 
 ---
 
@@ -105,11 +120,13 @@ to verify at all. The full account is in [VERIFICATION_SWEEP.md](VERIFICATION_SW
 Verification now runs continuously: a six-entry regression subset on every push, and 40
 entries weekly in certification mode. See `.github/workflows/ci.yml`.
 
-**Two entries are known not to re-certify on a drifted environment** —
-`C4H4_ccpvdz_PAR_HEA` and `C4H4_ccpvdz_JW_HEA`, published at 6.1 and 9.6 mHa, regenerate at
-20.5 and 19.0 mHa. Both reproduce exactly on the reference environment, which is what
-certification attests. They are flagged rather than withdrawn, and the weekly job knows
-about them. See the dated amendments in [LEADERBOARD_RULES_V2.md](LEADERBOARD_RULES_V2.md).
+**Four certified entries are known not to re-certify on another machine**: the three the
+cross-machine measurement classifies as fragile (C₄H₄ PAR/HEA, N₂ PAR/HEA, N₂ JW/HEA — see
+[CROSS_MACHINE.md](CROSS_MACHINE.md)) and C₄H₄ JW/HEA, which failed on a drifted package
+stack. Each reproduces exactly on the machine that generated it. They are flagged rather
+than withdrawn; the weekly job reads the list from
+`python tools/certification_margin.py --list-measured-fragile` and reports them as
+warnings, so any *other* entry that stops certifying fails the job.
 
 ---
 

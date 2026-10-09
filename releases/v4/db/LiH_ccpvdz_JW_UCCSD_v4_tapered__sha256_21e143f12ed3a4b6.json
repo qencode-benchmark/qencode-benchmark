@@ -808,8 +808,8 @@
   "trust": {
     "level": "certified",
     "certified_utc": "2026-07-15T13:21:57.904916+00:00",
-    "signature_b64": null,
-    "signing_key_id": null
+    "signature_b64": "QQdiBsKIB/oeNc8oqYoeKu1VmaobTwSN5kN50xE+L7MDpDKMF2TYDsaUIKaM/+PalxTCjT2I6HIXbjK+MwP4Dg==",
+    "signing_key_id": "ed25519:85d603a74774d0ac"
   },
   "run_config": {
     "optimizer": "COBYLA",

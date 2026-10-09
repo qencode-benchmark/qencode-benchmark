@@ -1933,35 +1933,11 @@ def stable_hash(d: dict) -> str:
     return hashlib.sha256(canonical.encode()).hexdigest()
 
 
-def try_sign_hash(entry_hash: str):
-    import base64, os
-    key_paths = [
-        REPO / "keys" / "signing_key.pem",
-        REPO / "keys" / "private_key.pem",
-        Path.home() / ".qencode" / "signing_key.pem",
-    ]
-    key_data = None
-    key_id   = "env"
-    for p in key_paths:
-        if p.exists():
-            key_data = p.read_bytes()
-            key_id   = p.stem
-            break
-    if not key_data:
-        env_b64 = os.environ.get("QENCODE_SIGNING_KEY_B64", "")
-        if env_b64:
-            key_data = base64.b64decode(env_b64)
-            key_id   = "env_key"
-    if not key_data:
-        return None, None
-    try:
-        from cryptography.hazmat.primitives.serialization import load_pem_private_key
-        key = load_pem_private_key(key_data, password=None)
-        sig = key.sign(entry_hash.encode())
-        return base64.b64encode(sig).decode(), key_id
-    except Exception as ex:
-        print(_warn(f"Signing skipped: {ex}"))
-        return None, None
+# The pipeline does not sign. It used to look for a private key in several places and sign
+# the bare hex hash if one turned up, silently skipping otherwise; no published entry was
+# ever signed that way. Signing is now a separate step by the key holder, in a separate
+# environment (scripts/sign_entries.py, recipe in qencode/signing.py), so the key and the
+# signing dependency stay out of the pinned environment that produces results.
 
 
 # ─── Entry assembly ───────────────────────────────────────────────────────────
@@ -2180,12 +2156,11 @@ def assemble_entry(mol_config, basis, mapping, ansatz_type, ansatz_reps,
         },
     }
 
-    h               = stable_hash(_strip_volatile(entry))
-    sig_b64, key_id = try_sign_hash(h)
-
+    # trust.signature_b64 / signing_key_id stay null here and are filled in by
+    # scripts/sign_entries.py. Both are excluded from the hash, so signing changes neither
+    # the hash nor the entry_id.
+    h = stable_hash(_strip_volatile(entry))
     entry["provenance"]["entry_hash_sha256"] = h
-    entry["trust"]["signature_b64"]          = sig_b64
-    entry["trust"]["signing_key_id"]         = key_id
 
     mol_safe   = mol_name.replace(" ", "_")
     basis_safe = basis.replace("-", "").replace("_", "")

@@ -145,7 +145,7 @@ order, and a gradient-free optimiser turns that into a different local minimum.
 |---|---|
 | `level` | `"certified"` or research tier |
 | `certified_utc` | When the tier was assigned |
-| `signature_b64`, `signing_key_id` | Ed25519 signature over the content hash. `null` on entries generated without the signing key present — the hash is still verifiable. |
+| `signature_b64`, `signing_key_id` | Ed25519 signature (base64) over `qencode/entry-sha256/v1:<entry_hash_sha256>`, and the id of the key that made it (`ed25519:` + the first 16 hex digits of the SHA-256 of the raw public key). The pipeline writes both as `null`; the key holder fills them with `scripts/sign_entries.py`. Every entry in `releases/v4/db/` is signed by the key in `keys/qencode_ed25519_public.pem`. Both fields are excluded from the hash, so signing changes neither the hash nor the `entry_id`. |
 
 ---
 

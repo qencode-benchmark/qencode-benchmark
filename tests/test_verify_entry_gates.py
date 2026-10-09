@@ -54,6 +54,16 @@ def _rehash(entry):
     return entry
 
 
+def _as_own_unsigned_entry(entry):
+    """An edited entry re-hashed and stripped of the project signature: what someone who
+    generated their own entry would hold. Its signature would no longer verify, which is
+    the point of signing, so tests of other behaviour must remove it."""
+    _rehash(entry)
+    entry["trust"]["signature_b64"] = None
+    entry["trust"]["signing_key_id"] = None
+    return entry
+
+
 @pytest.fixture
 def entry():
     return json.loads(SOURCE.read_text())
@@ -108,7 +118,9 @@ def test_a_tampered_entry_fails(entry, tmp_path, case, edit, rehash):
     d = copy.deepcopy(entry)
     _edit(edit)(d)
     if rehash:
-        _rehash(d)
+        # Unsigned, so the case is caught by the consistency check alone, not by the
+        # signature (tests/test_signing.py covers that path).
+        _as_own_unsigned_entry(d)
     r = _run(d, tmp_path, "--hash-only")
     assert r.returncode == 1, f"{case}: verifier exited {r.returncode}\n{r.stdout}"
 
@@ -119,6 +131,12 @@ def test_certification_mode_refuses_a_hash_mismatch_before_re_running(entry, tmp
     r = _run(d, tmp_path, "--mode", "certification")
     assert r.returncode == 1
     assert "Running:" not in r.stdout, "the generator was started on a tampered entry"
+
+
+def test_an_unsigned_entry_passes_unless_a_signature_is_required(entry, tmp_path):
+    d = _as_own_unsigned_entry(copy.deepcopy(entry))
+    assert _run(d, tmp_path, "--hash-only").returncode == 0
+    assert _run(d, tmp_path, "--hash-only", "--require-signature").returncode == 1
 
 
 def test_unsupported_schema_is_refused(entry, tmp_path):
@@ -132,7 +150,7 @@ def test_unsupported_schema_is_refused(entry, tmp_path):
 def test_dry_run_takes_the_seed_from_the_entry(entry, tmp_path):
     d = copy.deepcopy(entry)
     d["run_config"]["seed"] = 7
-    _rehash(d)
+    _as_own_unsigned_entry(d)
     r = _run(d, tmp_path, "--dry-run")
     assert r.returncode == 0, r.stdout
     assert "--seed 7" in r.stdout

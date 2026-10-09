@@ -126,9 +126,13 @@ export default function MethodologyPage() {
           <div>
             <p className="font-medium text-foreground mb-1">6. Provenance and signing</p>
             <p>
-              Each entry is assigned a compound ID containing molecule, basis, mapping, ansatz, and a
-              16-character SHA-256 hash of the full JSON payload. Certified entries are signed with an
-              Ed25519 key. The JSON entry includes all PySCF energies, VQE trajectory, circuit metrics,
+              Each entry carries a SHA-256 content hash over its canonical JSON, with the volatile
+              fields (timestamps, git commit, machine, signature) left out, and an ID made of the
+              molecule, basis, mapping, ansatz and the first 16 characters of that hash. Every entry
+              is signed: an Ed25519 signature over the content hash by the project key published in
+              the repository at{" "}
+              <code className="font-mono text-xs bg-muted px-1 rounded">keys/qencode_ed25519_public.pem</code>.
+              The JSON entry includes all PySCF energies, VQE trajectory, circuit metrics,
               FCIDUMP integrals (base64), run config, and the signature. Entries are stored in{" "}
               <code className="font-mono text-xs bg-muted px-1 rounded">releases/v4/db/</code> in the
               public GitHub repository.

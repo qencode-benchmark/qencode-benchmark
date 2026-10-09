@@ -83,3 +83,12 @@ dist/
 *.save.[0-9]
 *.orig
 .venv*/
+
+# Signing keys. Only the public key is published; the private key lives outside the
+# repository (~/.qencode/qencode_ed25519_private.pem). These catch it if it is ever
+# copied in by mistake.
+keys/*
+!keys/qencode_ed25519_public.pem
+!keys/README.md
+*private*.pem
+signing_key.pem

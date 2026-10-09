@@ -12,6 +12,10 @@ Checks that need no re-run come first, and each one fails the verification:
                  so it does not show who produced the entry.
   consistency    the stored gap must equal |E_VQE - E_exact| from the stored energies,
                  and the stored tier (certified / research) must follow from that gap.
+  signature      if the entry is signed, the Ed25519 signature over its content hash
+                 must verify under the project key published in
+                 keys/qencode_ed25519_public.pem. This is what shows the content is the
+                 one QEncode published. --require-signature also fails unsigned entries.
 
 Then the generator is re-run with the entry's recorded settings and seed:
 
@@ -46,6 +50,20 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
+
+
+def _load_signing():
+    # Loaded by path rather than `import qencode.signing`, so the verifier runs from a bare
+    # checkout with nothing installed. The module is standard-library only.
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "qencode_signing", REPO / "src" / "qencode" / "signing.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+SIGNING = _load_signing()
 
 GREEN  = "\033[92m"
 RED    = "\033[91m"
@@ -160,6 +178,12 @@ def main():
         help="Report a content-hash mismatch but continue. For diagnosing an entry you "
              "edited on purpose; a verification run this way has not checked the hash.",
     )
+    ap.add_argument(
+        "--require-signature", action="store_true",
+        help="Fail if the entry is not signed by the project key published in "
+             "keys/qencode_ed25519_public.pem. Every entry under releases/v4/db is. "
+             "A signature that is present but invalid fails with or without this flag.",
+    )
     ap.add_argument("--seed", type=int, default=None,
                     help="Random seed for the re-run (default: the seed the entry "
                          "records in run_config.seed, else 42)")
@@ -246,14 +270,31 @@ def main():
     cons_ok, cons_lines = consistency_check(stored)
     mark = f"{GREEN}✓{RESET}" if cons_ok else f"{RED}✗{RESET}"
     for i, line in enumerate(cons_lines):
-        print(f"  {'Numbers:' if i == 0 else '         '} {mark} {line}")
+        print(f"  {'Numbers:' if i == 0 else '':<9} {mark} {line}")
 
+    # A signature is checked against the public key published in this repository, never
+    # against a key the entry names for itself.
     trust = stored.get("trust") or {}
+    sig_ok = None                       # None: unsigned
     if trust.get("signature_b64"):
-        print(f"  Signed:   present (key {trust.get('signing_key_id')}), NOT checked by "
-              f"this verifier")
+        published_key = SIGNING.load_public_key()
+        if published_key is None:
+            sig_ok, sig_why = False, (f"entry is signed, but there is no published key at "
+                                      f"{SIGNING.PUBLIC_KEY_PATH.relative_to(REPO)}")
+        else:
+            sig_ok, sig_why = SIGNING.verify_entry_signature(stored, published_key)
+        print(f"  Signed:   {GREEN + '✓' if sig_ok else RED + '✗'}{RESET} {sig_why}")
     else:
         print(f"  Signed:   no — this entry carries no signature")
+
+    if sig_ok is False:
+        print()
+        print(_fail("The entry's signature does not verify under the published key."))
+        sys.exit(1)
+    if sig_ok is None and args.require_signature:
+        print()
+        print(_fail("The entry is not signed, and --require-signature was given."))
+        sys.exit(1)
 
     if not hash_ok and not args.ignore_hash:
         print()
