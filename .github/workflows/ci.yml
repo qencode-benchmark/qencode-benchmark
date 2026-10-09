@@ -256,10 +256,10 @@ jobs:
 
       # Non-Jordan-Wigner mappings, which have their own tapering paths.
       - name: Parity mapping entry
-        run: python scripts/verify_entry.py releases/v4/db/HF_ccpvdz_PAR_HEA_v4_tapered__sha256_007a1905c579328a.json
+        run: python scripts/verify_entry.py releases/v4/db/HF_ccpvdz_PAR_HEA_v4_tapered__sha256_5b2d8909e49305a9.json
 
       - name: Bravyi-Kitaev mapping entry
-        run: python scripts/verify_entry.py releases/v4/db/H2_ccpvdz_BK_HEA_v4_tapered__sha256_6e206ec6f1f02ea4.json
+        run: python scripts/verify_entry.py releases/v4/db/H2_ccpvdz_BK_HEA_v4_tapered__sha256_aa7360a68d23f35c.json
 
   # ── v4 reproducibility: the whole database, weekly ────────────────────────
   #

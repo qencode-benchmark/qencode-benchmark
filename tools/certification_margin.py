@@ -153,6 +153,12 @@ MEASURED_MARGINAL = {
 # from an energy movement, because |dE| does not predict the direction: an entry whose
 # energy moves toward the reference has its gap SHRINK. Two entries that looked like
 # failures by arithmetic passed when actually tested.
+#
+# The C4H4 PAR/HEA key below is the entry superseded by the 2026-09-07 sector fix
+# (releases/v4/db_superseded/). Its record stays because it is what the 6.1 -> 20.5 mHa
+# finding was measured on; its replacement, ..._8b12a22329451c03, is fragile in the
+# cross-machine table on its own measurement. measured_fragile_files() skips keys whose
+# file is no longer published.
 MEASURED_FRAGILE = {
     "C4H4_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_0de79dd1611d708a.json": {
         "published_gap_ha": 6.109e-03,
@@ -165,6 +171,25 @@ MEASURED_FRAGILE = {
         "environment": "drifted packages (pyscf 2.5.0, scipy 1.17.0)",
     },
 }
+
+
+def measured_fragile_files(repo):
+    """Published entry files measured to fail re-certification on another environment.
+
+    The union of the cross-machine table (authoritative, whole suite, same pinned stack)
+    and the legacy drifted-package record, restricted to files that are still published.
+    A name that is not in releases/v4/db must never reach CI: the weekly job would exempt
+    a file that does not exist and leave the real one unprotected, which is what happened
+    after the sector fix renamed C4H4 PAR/HEA.
+    """
+    published = {os.path.basename(f)
+                 for f in glob.glob(os.path.join(repo, "releases/v4/db/*.json"))}
+    t = cross_machine_table() or {}
+    names = {rec.get("file") or f"{eid}.json"
+             for eid, rec in (t.get("entries") or {}).items()
+             if rec.get("classification") == "fragile"}
+    names |= set(MEASURED_FRAGILE)
+    return sorted(n for n in names if n in published)
 
 
 def _optimiser_family(optimizer):
@@ -272,12 +297,13 @@ def main():
                          "re-certification on another environment; consumed by CI")
     args = ap.parse_args()
 
+    repo = os.environ.get("QENCODE_REPO", os.getcwd())
+
     if args.list_measured_fragile:
-        for n in sorted(MEASURED_FRAGILE):
+        for n in measured_fragile_files(repo):
             print(n)
         return 0
 
-    repo = os.environ.get("QENCODE_REPO", os.getcwd())
     rows = collect(repo)
     cert = [r for r in rows if r["certified"]]
 
