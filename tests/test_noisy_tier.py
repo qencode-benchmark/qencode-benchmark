@@ -85,7 +85,7 @@ def test_single_gate_single_qubit_penalty_is_exactly_the_full_mixing_estimate():
         qml.RY(p[0], wires=0)
 
     decomposed, counts = nt.prepare_tape(circuit_fn, np.array([theta]), H, wires)
-    assert counts == {"n_1q": 1, "n_2q": 0, "n_ops_total": 2}
+    assert counts == {"n_1q": 1, "n_2q": 0, "n_ops_total": 2, "duplicate_exponentials_fused": 0}
     dev = qml.device("default.mixed", wires=wires)
     e0 = nt._execute(decomposed, dev)
     _, a1, a2, spec = nm.get("depolarizing-current/v1")
@@ -160,6 +160,71 @@ def test_split_commuting_exponentials_is_exact():
     U_full = qml.matrix(tape.operations[0], wire_order=[0, 1])
     U_split = qml.matrix(split.operations[1], wire_order=[0, 1]) @ qml.matrix(split.operations[0], wire_order=[0, 1])
     assert np.max(np.abs(U_full - U_split)) < 1e-12
+
+
+def test_the_pipeline_applies_each_multi_qubit_operator_twice():
+    """Documents the circuit the noisy tier is given. generate_entry_v4._apply_tapered_op
+    calls qml.apply(qml.exp(...)) inside a circuit, and qml.exp has already queued itself,
+    so the tape carries the exponential twice. If the pipeline is ever changed to queue it
+    once, this test fails and the fusion below becomes a no-op -- update both together,
+    because the stored parameters assume the doubled unitary."""
+    from qencode.pipeline import generate_entry_v4 as ge
+    op = qml.exp(qml.PauliX(0) @ qml.PauliY(1), coeff=1j)
+    tape = qml.tape.make_qscript(lambda: ge._apply_tapered_op(op, 0.3))()
+    assert [o.name for o in tape.operations] == ["Exp", "Exp"]
+
+
+def test_duplicated_exponential_is_fused_to_one_at_twice_the_angle():
+    """exp(i t G) exp(i t G) = exp(2 i t G): one exponential, the same unitary, half the
+    gates once decomposed."""
+    G = qml.PauliX(0) @ qml.PauliY(1) @ qml.PauliZ(2)
+    t = 0.41
+    twice = qml.tape.QuantumScript([qml.exp(G, coeff=1j * t), qml.exp(G, coeff=1j * t)],
+                                   [qml.expval(qml.PauliZ(0))])
+    fused, n = nt._fuse_duplicated_exponentials(twice)
+    assert n == 1 and len(fused.operations) == 1
+    U_twice = qml.matrix(twice.operations[1], wire_order=[0, 1, 2]) @ qml.matrix(twice.operations[0], wire_order=[0, 1, 2])
+    U_fused = qml.matrix(fused.operations[0], wire_order=[0, 1, 2])
+    assert np.max(np.abs(U_twice - U_fused)) < 1e-12
+
+
+def test_only_exact_adjacent_duplicates_are_fused_and_only_in_pairs():
+    """Two different ansatz operators that share a Pauli word stay two gates; four copies
+    of one operator are two doubled applications, so two fusions, not one."""
+    G = qml.PauliX(0) @ qml.PauliY(1)
+    a, b = qml.exp(G, coeff=0.3j), qml.exp(G, coeff=0.5j)
+    m = [qml.expval(qml.PauliZ(0))]
+    _, n = nt._fuse_duplicated_exponentials(qml.tape.QuantumScript([a, b], m))
+    assert n == 0
+    _, n = nt._fuse_duplicated_exponentials(qml.tape.QuantumScript([a, a, a, a], m))
+    assert n == 2
+    _, n = nt._fuse_duplicated_exponentials(qml.tape.QuantumScript([a, qml.RZ(0.1, 0), a], m))
+    assert n == 0
+
+
+def test_fusion_halves_the_two_qubit_count_of_a_doubled_circuit():
+    """The doubled circuit and its fused form give the same energy; the gate count the
+    noise acts on is that of a single application."""
+    H = qml.Hamiltonian([0.5, -0.3], [qml.PauliZ(0), qml.PauliX(1) @ qml.PauliY(2)])
+    wires = [0, 1, 2]
+    G = qml.PauliX(0) @ qml.PauliY(1) @ qml.PauliZ(2)
+
+    def doubled(p):
+        qml.BasisState(np.array([1, 0, 0]), wires=wires)
+        qml.apply(qml.exp(G, coeff=1j * p[0]))      # queues the exponential twice
+
+    def single(p):
+        qml.BasisState(np.array([1, 0, 0]), wires=wires)
+        qml.exp(G, coeff=2j * p[0])                 # the same unitary, once
+
+    params = np.array([0.41])
+    dec_d, counts_d = nt.prepare_tape(doubled, params, H, wires)
+    dec_s, counts_s = nt.prepare_tape(single, params, H, wires)
+    assert counts_d["duplicate_exponentials_fused"] == 1
+    assert counts_s["duplicate_exponentials_fused"] == 0
+    assert counts_d["n_2q"] == counts_s["n_2q"] > 0
+    dev = qml.device("default.mixed", wires=wires)
+    assert nt._execute(dec_d, dev) == pytest.approx(nt._execute(dec_s, dev), abs=1e-12)
 
 
 def test_split_refuses_non_commuting_terms():
