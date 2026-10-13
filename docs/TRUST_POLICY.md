@@ -66,7 +66,10 @@ A certified entry carries four guarantees, each of them checkable:
    returns the stored energy to 10⁻⁶ Ha. Every one of the 54 published entries has been
    re-run this way — see [`VERIFICATION_SWEEP.md`](VERIFICATION_SWEEP.md).
 3. **The entry has not been altered.** `entry_hash_sha256` covers the canonical JSON with
-   volatile fields stripped, and the hash is Ed25519-signed by the project key.
+   volatile fields stripped, and the hash is Ed25519-signed by the project key, published
+   in [`keys/qencode_ed25519_public.pem`](../keys/qencode_ed25519_public.pem).
+   `python scripts/verify_entry.py <entry>.json --hash-only --require-signature` checks
+   both in a second, with nothing installed — see [VERIFY.md](VERIFY.md).
 4. **The gap is below 0.01 Ha** on that reproduced result.
 
 ## What certification does not attest

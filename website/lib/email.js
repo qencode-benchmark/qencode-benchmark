@@ -25,6 +25,14 @@ const FROM_ADDRESS = "QEncode <noreply@qencode-benchmark.org>";
 const SUPPORT_EMAIL = "support@qencode-benchmark.org";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || SUPPORT_EMAIL;
 
+// Customer- and payload-supplied strings go into HTML mail; escape them so a name or a
+// webhook field cannot inject markup into the admin inbox.
+function esc(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 /**
  * Send a payment confirmation email to the customer.
  * Called immediately after a verified order_created webhook event.
@@ -176,19 +184,8 @@ export async function sendCustomerConfirmation({ customerEmail, customerName, or
             </tr>
           </table>
 
-          <!-- Dashboard CTA -->
-          <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;">
-            <tr><td align="center">
-              <a href="https://www.qencode-benchmark.org/dashboard"
-                 style="display:inline-block;background:#185FA5;color:#ffffff;font-size:14px;font-weight:500;padding:12px 28px;border-radius:6px;text-decoration:none;">
-                View order status →
-              </a>
-            </td></tr>
-          </table>
-          <p style="margin:12px 0 0;text-align:center;font-size:12px;color:#9ca3af;">
-            Sign in with this email address to access your dashboard.
-          </p>
-
+          <!-- No dashboard link: /dashboard is a placeholder with no sign-in, so the order
+               status comes by email from a person, as step 1 says. -->
           <p style="margin:24px 0 0;font-size:13px;color:#6b7280;">
             Questions? Reply to this email or contact
             <a href="mailto:${SUPPORT_EMAIL}" style="color:#030712;font-weight:500;">${SUPPORT_EMAIL}</a>.
@@ -220,9 +217,12 @@ export async function sendCustomerConfirmation({ customerEmail, customerName, or
 
 /**
  * Send an internal admin notification when a new order comes in.
- * Informational only — the order row is written with status 'pending' by the
- * webhook and job_poller.py claims it automatically. No manual step is needed
- * unless the poller is down.
+ *
+ * Fulfilment is manual. The automated job poller was retired on 2026-10-09: it ran a
+ * v2-suite script that no longer existed, so every order it claimed failed, while this
+ * email said no action was needed. Direct checkout is paused (/certify sends buyers to
+ * the application form), so an order arriving here came through a checkout URL that is
+ * still live in Lemon Squeezy, and needs a person.
  */
 export async function sendAdminNotification({ customerEmail, customerName, orderId, orderNumber, productLabel, totalFormatted, rawPayload }) {
   const subject = `[QEncode] New certification order #${orderNumber} — ${productLabel}`;
@@ -233,31 +233,28 @@ export async function sendAdminNotification({ customerEmail, customerName, order
 <body style="font-family:monospace;padding:24px;background:#fff;">
   <h2 style="margin:0 0 16px;font-size:16px;">New certification order received</h2>
   <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:13px;">
-    <tr><td style="padding:4px 12px 4px 0;color:#666;">Order #</td><td style="padding:4px 0;font-weight:600;">${orderNumber}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666;">Order ID</td><td style="padding:4px 0;">${orderId}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666;">Customer</td><td style="padding:4px 0;">${customerName || "(not provided)"}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666;">Email</td><td style="padding:4px 0;"><a href="mailto:${customerEmail}">${customerEmail}</a></td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666;">Product</td><td style="padding:4px 0;font-weight:600;">${productLabel}</td></tr>
-    <tr><td style="padding:4px 12px 4px 0;color:#666;">Amount</td><td style="padding:4px 0;">${totalFormatted}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;">Order #</td><td style="padding:4px 0;font-weight:600;">${esc(orderNumber)}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;">Order ID</td><td style="padding:4px 0;">${esc(orderId)}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;">Customer</td><td style="padding:4px 0;">${esc(customerName || "(not provided)")}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;">Email</td><td style="padding:4px 0;"><a href="mailto:${esc(customerEmail)}">${esc(customerEmail)}</a></td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;">Product</td><td style="padding:4px 0;font-weight:600;">${esc(productLabel)}</td></tr>
+    <tr><td style="padding:4px 12px 4px 0;color:#666;">Amount</td><td style="padding:4px 0;">${esc(totalFormatted)}</td></tr>
   </table>
 
-  <h3 style="margin:24px 0 8px;font-size:14px;">No action required</h3>
+  <h3 style="margin:24px 0 8px;font-size:14px;color:#b45309;">Action required — fulfil manually</h3>
   <p style="margin:0 0 8px;font-size:13px;color:#666;">
-    This order was saved with status <strong>pending</strong>. The job poller claims it
-    automatically within ~60 seconds, runs the benchmark, publishes the leaderboard, and
-    emails the customer their certificate.
+    The order is stored with status <strong>pending</strong>. Nothing runs it automatically:
+    the job poller was retired on 2026-10-09 and direct checkout is paused, so this order
+    came through a checkout link that is still live in Lemon Squeezy.
   </p>
   <p style="margin:0 0 8px;font-size:13px;color:#666;">
-    Only act if this order is still <strong>pending</strong> after a few minutes — that means
-    the poller is not running. Start it on the execution machine:
+    Reply to the customer (this email's reply-to is their address) to confirm the molecules
+    and timeline, or refund the order from the Lemon Squeezy dashboard.
   </p>
-  <pre style="background:#f4f4f4;padding:12px;border-radius:4px;font-size:12px;overflow-x:auto;">cd ~/qencode-db
-conda activate qencode
-python scripts/job_poller.py</pre>
 
   <details style="margin-top:16px;">
     <summary style="cursor:pointer;font-size:12px;color:#666;">Full webhook payload (expand)</summary>
-    <pre style="background:#f4f4f4;padding:12px;border-radius:4px;font-size:11px;overflow-x:auto;margin-top:8px;">${rawPayload}</pre>
+    <pre style="background:#f4f4f4;padding:12px;border-radius:4px;font-size:11px;overflow-x:auto;margin-top:8px;">${esc(rawPayload)}</pre>
   </details>
 </body>
 </html>

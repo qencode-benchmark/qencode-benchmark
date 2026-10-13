@@ -428,16 +428,21 @@ export async function replaceEntries(category, entries) {
 }
 
 /**
- * Upsert metadata key/value pairs.
+ * Replace the leaderboard metadata with exactly these key/value pairs.
+ *
+ * This used to upsert, so a key that a publish stopped sending was never removed. A
+ * retired v2 publisher had written research_entries_included="6",
+ * certified_receipts_count="62" and min_trust_level, and the live API still served them
+ * beside a v4 table with 2 research rows. The metadata describes one publish, so it is
+ * replaced with each publish, the same delete-then-insert as replaceEntries.
  */
-export async function upsertMetadata(updates) {
+export async function replaceMetadata(metadata) {
   const sql = getDb();
-  for (const [key, value] of Object.entries(updates)) {
+  await sql`DELETE FROM leaderboard_metadata`;
+  for (const [key, value] of Object.entries(metadata)) {
     await sql`
       INSERT INTO leaderboard_metadata (key, value, updated_at)
       VALUES (${key}, ${String(value)}, NOW())
-      ON CONFLICT (key) DO UPDATE
-        SET value = EXCLUDED.value, updated_at = NOW()
     `;
   }
 }

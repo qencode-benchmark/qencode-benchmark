@@ -1739,8 +1739,8 @@
   "trust": {
     "level": "certified",
     "certified_utc": "2026-07-15T13:31:58.090424+00:00",
-    "signature_b64": null,
-    "signing_key_id": null
+    "signature_b64": "c0CbOuLoOP4CCX1iP52t96WtU1QEOIW1Tk5uDTz/NIzqQqvuIbzHGm2Fm7DYeEdk0Wu282LjoyoRj6c4ZPuuAQ==",
+    "signing_key_id": "ed25519:85d603a74774d0ac"
   },
   "run_config": {
     "optimizer": "L-BFGS-B",

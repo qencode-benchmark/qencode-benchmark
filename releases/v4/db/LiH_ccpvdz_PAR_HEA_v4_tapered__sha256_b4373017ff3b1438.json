@@ -767,8 +767,8 @@
   "trust": {
     "level": "certified",
     "certified_utc": "2026-09-07T12:10:14.258113+00:00",
-    "signature_b64": null,
-    "signing_key_id": null
+    "signature_b64": "5hugZ+pi3hL9EizFwrZKsWE2C392owoFY4BS/gqz7o2IZt0atRKoMS8UiuMw0RXokkkMRrj6fq37P6A6erciAg==",
+    "signing_key_id": "ed25519:85d603a74774d0ac"
   },
   "run_config": {
     "optimizer": "COBYLA",
