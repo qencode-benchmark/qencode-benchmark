@@ -215,7 +215,7 @@ the earlier text had to call unmeasured:
 
 **H₁₀ has the smallest certification margin in the suite, 0.02 mHa, and it survived.** It
 moved 0.001 mHa, a twentieth of its margin, on an 18-qubit ADAPT circuit with 300 selected
-operators that takes four and a half hours to re-verify. Size and tightness of margin are
+operators that takes more than four hours to re-verify. Size and tightness of margin are
 not what predicts fragility here. The three that failed are all hardware-efficient
 ansätze; the six largest ADAPT entries in the suite are among the steadiest things in it.
 
