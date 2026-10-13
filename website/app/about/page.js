@@ -27,8 +27,8 @@ const achievements = [
     detail: "Across 16 molecules at cc-pVDZ basis — H₂, HF, LiH, BeH₂, H₂O, NH₃, H₂CO, C₄H₆, (H₂O)₂, C₄H₄, H₄, N₂, H₆, benzene, H₈, and H₁₀."
   },
   {
-    label: "N₂ certified — 4.5 mHa gap",
-    detail: "12 qubits tapered to 8, CASSCF orbital optimization, certified via the hardware-efficient ansatz with L-BFGS-B analytic gradients. DARPA QB-GSEE benchmark candidate."
+    label: "N₂ certified — 4.4 mHa gap",
+    detail: "12 qubits tapered to 8, CASSCF orbital optimization, certified via the hardware-efficient ansatz with L-BFGS-B analytic gradients (4.404 mHa under the parity mapping, 4.513 mHa under Jordan–Wigner) and via ADAPT-VQE at 8.831 mHa."
   },
   {
     label: "Benzene certified — first aromatic",
@@ -36,7 +36,7 @@ const achievements = [
   },
   {
     label: "H₁₀ certified — largest system in the suite",
-    detail: "[10e,10o] active space, 20 JW qubits tapered to 18, CASSCF orbitals, certified via ADAPT-VQE at a 9.977 mHa best gap. DARPA QB-GSEE aligned."
+    detail: "[10e,10o] active space, 20 JW qubits tapered to 18, CASSCF orbitals, certified via ADAPT-VQE at a 9.977 mHa best gap."
   },
   {
     label: "Ed25519-signed artifacts",
@@ -63,7 +63,7 @@ const principles = [
   },
   {
     title: "The leaderboard records what actually happened",
-    desc: "Entries that don't pass certification (gap ≥ 0.01 Ha) appear in the Research tab, not the trash. The N₂ hardware-efficient result — 0.139 Ha with a gradient-free optimizer — sits in the database beside the 4.5 mHa result from the same ansatz with analytic gradients. And when the v4.4 re-baseline demoted N₂ UCCSD from certified to research tier, the entry stayed and the change was published, rather than quietly disappearing."
+    desc: "Entries that don't pass certification (gap ≥ 0.01 Ha) stay in the database as research-tier entries, not the trash. The N₂ Jordan–Wigner hardware-efficient result at four layers — 0.139 Ha with a gradient-free optimizer — sits beside the 4.5 mHa result from the same ansatz at ten layers with analytic gradients. And when the v4.4 re-baseline demoted N₂ UCCSD from certified to research tier, the entry stayed and the change was published, rather than quietly disappearing."
   },
 ];
 
@@ -109,9 +109,12 @@ export default function AboutPage() {
         <h2 className="text-xl font-semibold mb-2">Why this matters</h2>
         <p className="text-muted-foreground text-sm mb-5">
           DARPA&apos;s Quantum Benchmarking program (QB-GSEE) explicitly targets ground-state energy
-          estimation for molecules where classical methods are insufficient. QEncode&apos;s certified N₂
-          result at cc-pVDZ with a [6e,6o] active space is directly comparable to the QB-GSEE target
-          specification — with a provenance hash and Ed25519 signature that makes the claim verifiable.
+          estimation for molecules where classical methods are insufficient. Five QEncode molecules,
+          N₂ among them, are also QB-GSEE systems, and a certified entry exports as a QB-GSEE
+          solution file. The problems are comparable, not identical: QB-GSEE instances carry their
+          own integrals and active spaces, while a QEncode gap is measured against its own
+          active-space CASCI reference — with a provenance hash and Ed25519 signature that make it
+          verifiable.
         </p>
         <p className="text-muted-foreground text-sm">
           As quantum hardware moves toward fault tolerance, the field needs a trusted benchmark that
