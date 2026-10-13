@@ -286,12 +286,14 @@ export default function Post() {
         </div>
 
         <p>
-          The suite total is unchanged — 39 certified entries across 14 molecules — but that is
-          partly coincidence and we would rather say so. Two entries crossed the threshold in
+          The suite total is unchanged — 39 certified entries across 14 molecules at the time of
+          writing (July 2026; the suite now has 47 certified entries across 16 molecules) — but
+          that is partly coincidence and we would rather say so. Two entries crossed the threshold in
           opposite directions and cancelled out. N₂ JW/UCCSD, our 404-parameter run, was published
           at 2.016 mHa; its deterministic value is 10.832 mHa, just over the 10 mHa line, so it is
           now research tier. N₂ PAR/HEA went the other way, from 14.261 to 9.504, and is now
-          certified. N₂ remains certified as a molecule through its ADAPT and JW/HEA entries.
+          certified (regenerated in September 2026 after the tapering-sector fix, it now
+          certifies at 4.404 mHa). N₂ remains certified as a molecule through its ADAPT and JW/HEA entries.
         </p>
 
         <p>

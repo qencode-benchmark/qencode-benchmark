@@ -21,7 +21,7 @@ const articleSchema = {
   description:
     "We added water to the QEncode benchmark suite. Here's what it takes to simulate H₂O with a [4,4] active space — 8 qubits, 185 Pauli terms, and what the VQE results reveal about UCCSD's limits.",
   datePublished: "2026-05-07",
-  dateModified: "2026-05-07",
+  dateModified: "2026-10-13",
   author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   url: "https://www.qencode-benchmark.org/blog/h2o-first-8-qubit-benchmark",
@@ -58,6 +58,18 @@ export default function Post() {
       </div>
 
       <div className="prose prose-neutral dark:prose-invert max-w-none text-[15px] leading-7 text-foreground/90 space-y-6">
+
+        <div className="rounded-lg border-l-4 border-amber-500 bg-amber-500/5 p-5 not-prose">
+          <p className="text-sm text-foreground leading-6">
+            <strong>Correction, 13 October 2026.</strong> The results in this post predate the
+            current suite. H₂O now has three certified entries, all within chemical accuracy:
+            Jordan–Wigner UCCSD at 1.4 × 10⁻⁷ Ha, and the hardware-efficient ansatz at 0.40 mHa
+            under both the parity and the Jordan–Wigner mapping. The parity and Bravyi–Kitaev
+            UCCSD runs and the Bravyi–Kitaev hardware-efficient run below are not part of the
+            current suite, and the current suite does not reproduce the gaps of about 3.5 mHa
+            that the post reads as a limit of UCCSD on H₂O. The original text is left unchanged.
+          </p>
+        </div>
 
         <p>
           Water is arguably the most important molecule in chemistry. It is also a meaningful step

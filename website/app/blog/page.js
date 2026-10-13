@@ -20,7 +20,7 @@ const posts = [
     readingTime: "11 min read",
     title: "We Said Every Result Was Reproducible. Then We Tried to Check.",
     excerpt:
-      "Our verifier could not re-run 29 of our 54 published entries, and nobody had noticed — a verifier that errors out looks like a broken command, not a broken guarantee. Three bugs later, all 54 reproduce. Then CI failed, because we had asked for bit-identical energies across machines and the numerics do not support that. The finding that outlasts the bugs: an entry certified close to the threshold is not robustly certified.",
+      "Our verifier could not re-run 29 of our 54 published entries, and nobody had noticed — a verifier that errors out looks like a broken command, not a broken guarantee. Three bugs later, all 54 reproduce. Then CI failed, because we had asked for bit-identical energies across machines and the numerics do not support that. The finding that outlasts the bugs: an entry certified close to the threshold is not robustly certified. Corrected 13 October 2026: a later measurement on two machines found that margin alone does not predict which entries fail.",
     tags: ["reproducibility", "verification", "certification margin", "CI", "COBYLA", "benchmark integrity"],
   },
   {
@@ -74,7 +74,7 @@ const posts = [
     readingTime: "8 min read",
     title: "Certifying N₂: QEncode Benchmarks the Triple Bond",
     excerpt:
-      "N₂ is one of the hardest molecules in quantum chemistry — a triple bond, strong multireference character, and an orbital manifold that defeats standard HF partitioning. Here's how we certified it at cc-pVDZ with CASSCF orbitals, 12 qubits, and a 2 mHa gap.",
+      "N₂ is one of the hardest molecules in quantum chemistry — a triple bond, strong multireference character, and an orbital manifold that defeats standard HF partitioning. Here's how we certified it at cc-pVDZ with CASSCF orbitals, 12 qubits, and a 2 mHa gap. Corrected 13 October 2026: that UCCSD result did not reproduce; N₂ is certified at 4.4 mHa (HEA, L-BFGS-B) and 8.8 mHa (ADAPT-VQE).",
     tags: ["N₂", "CASSCF", "12-qubit", "UCCSD", "benchmark", "DARPA QB-GSEE"],
   },
   {
