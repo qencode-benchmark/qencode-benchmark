@@ -18,8 +18,8 @@ abstract: >
   tapering), with 47 certified entries. Every entry also reports classical
   reference energies (HF, MP2, CCSD, CCSD(T)) and a T-gate estimate of its
   ansatz circuit; per-entry fault-tolerant resource estimation is planned.
-version: "4.5.0"
-date-released: "2026-09-04"
+version: "4.6.0"
+date-released: "2026-10-13"
 url: "https://www.qencode-benchmark.org"
 repository-code: "https://github.com/qencode-benchmark/qencode-benchmark"
 license: Apache-2.0

@@ -17,7 +17,50 @@ All notable changes to QEncode are recorded here.
 
 ---
 
-## Unreleased — 2026-09-09 — reproduction is machine-bound, and the noisy tier completes
+## v4.6.0 — 2026-10-13 — the corrected pipeline on PyPI, signed entries, and the paper's figures
+
+PyPI 4.5.0 (2026-09-04) shipped the pipeline as it was before the Z₂ sector fix. This
+release carries everything since, so `pip install qencode-benchmark` now gets the code
+that produced the published entries. The suite itself is unchanged: 54 entries, 47
+certified, the same hashes. The paper describing the benchmark cites this release.
+
+From the full-platform audit of 2026-10-08:
+
+- **Every published entry is signed.** Ed25519 over `qencode/entry-sha256/v1:<hash>`, key
+  id `ed25519:85d603a74774d0ac`, public key in `keys/`. `scripts/verify_entry.py` checks
+  the signature, fails on a hash mismatch (it used to print MISMATCH and exit 0), checks
+  the stored numbers against each other, and in certification mode reproduces the
+  published outcome with the entry's own seed.
+- **CI points at entries that exist.** 16 of 40 regression names and the fragile list
+  named superseded files, so the Reproducibility workflow had failed since 2026-09-07. It
+  passes again, and `tests/test_ci_wiring.py` keeps the names honest.
+- **Paid checkout is paused.** The automated fulfilment path called a v2 script that no
+  longer exists, so every order would have failed. Certification is now by application;
+  the v2 publish chain is in `scripts/archive/`.
+- **The noisy tier counted each UCCSD and ADAPT-VQE operator twice.** The circuit builder
+  applies every operator twice in a row with half the angle — the same unitary, so no
+  energy, gap or hash changes — but the noise simulation counted, and put noise on, both
+  copies. `tools/noisy_tier.py` now fuses the pairs; all 52 records were re-measured: 35
+  identical, 17 with exactly half the two-qubit gates and a smaller penalty. The pipeline's
+  own `circuit_stats` still count the doubled circuit; that is left for the next suite
+  version, because fixing it re-hashes 13 entries.
+- **Site and documents agree with the data and the paper**: the README best-gap table
+  (C₄H₄ 3.834 and N₂ 4.404, parity hardware-efficient), the smallest noise penalty (34
+  mHa), dated corrections on blog posts the current suite supersedes, QB-GSEE described as
+  comparable rather than identical, and the reference image cited by digest.
+
+Two statements in the dated entries below are corrected here rather than rewritten:
+
+- Cross-machine certification was later measured on all 47 certified entries: **44 of 47**
+  survive (three fail: C₄H₄ parity and N₂ parity and Jordan–Wigner, all hardware-efficient,
+  the two N₂ entries optimised with L-BFGS-B). `docs/CROSS_MACHINE.md`.
+- The 2026-09-09 explanation that the L-BFGS-B entry moved because "its multistart loop
+  stops at the first attempt that certifies" is withdrawn. Both certifying attempts were
+  about 5.5 mHa from the bar, so the stop decision was no near-tie; the trajectories
+  diverged inside L-BFGS-B, whose line search and convergence tests also compare nearly
+  equal values. The loop only decides which attempt's minimum is reported.
+
+### 2026-09-09 — reproduction is machine-bound, and the noisy tier completes
 
 - **An entry reproduces bit-for-bit only on the machine that generated it.** The whole
   suite was re-verified on a second machine with the same pinned stack, the same seeds and
@@ -63,7 +106,7 @@ All notable changes to QEncode are recorded here.
   before: two machines differing in processor, instruction sets and C library produce that
   entry identically, because H₂ converges rather than stopping on a comparison.
 
-## Unreleased — 2026-09-07 — Z₂ sector fault fixed, 18 entries regenerated
+### 2026-09-07 — Z₂ sector fault fixed, 18 entries regenerated
 
 - **Every non-Jordan–Wigner entry was tapered into the wrong symmetry sector.**
   `pennylane.qchem.optimal_sector` hard-codes the Jordan–Wigner Hartree–Fock occupation
@@ -84,7 +127,7 @@ All notable changes to QEncode are recorded here.
 - Fifteen new tests parametrised over all three mappings; `docs/SECTOR_FIX.md`;
   `tools/compare_regenerated.py` and `tools/apply_regenerated.py`.
 
-## Unreleased — 2026-09-04 — the hardware-penalty track
+### 2026-09-04 — the hardware-penalty track
 
 - **Every entry at or below 10 tapered qubits now carries a measured hardware penalty**:
   the same circuit, same parameters, re-evaluated as a density matrix with a named
