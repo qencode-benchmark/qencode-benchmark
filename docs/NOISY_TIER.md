@@ -180,9 +180,9 @@ The table is generated from the records by `python tools/noisy_tier.py --table`;
 | water_dimer JW HEA r2 | 5 | 15 | 8 | 0.332 | 12.7 | **62.5** | 122.6 | 83.0 | 0.37 | +0.14 | no | yes |
 | water_dimer PAR HEA r2 | 5 | 15 | 8 | 0.114 | 16.6 | **81.0** | 157.0 | 102.1 | 0.48 | +0.39 | no | yes |
 | water_dimer JW UCCSD | 5 | 330 | 264 | 0.002 | 330.9 | **1028.0** | 1333.6 | 1143.2 | 0.69 | +531.08 | no | no |
-| C4H4 JW ADAPT | 6 | 28 | 24 | 5.963 | 35.9 | **167.9** | 309.5 | 199.4 | 0.50 | +4.54 | no | no |
+| C4H4 JW ADAPT | 6 | 14 | 12 | 5.963 | 18.1 | **87.6** | 168.3 | 105.0 | 0.48 | +0.65 | no | yes |
 | C4H4 JW HEA r2 | 6 | 18 | 10 | 9.637 | 20.2 | **97.3** | 186.0 | 120.4 | 0.62 | +0.89 | no | no |
-| C4H4 JW UCCSD | 6 | 2012 | 1664 | 7.917 | 990.7 | **1163.7** | 1166.9 | 1186.7 | 1.00 | +1157.44 | no | no |
+| C4H4 JW UCCSD | 6 | 1008 | 832 | 7.917 | 755.0 | **1137.2** | 1163.8 | 1165.1 | 0.97 | +1086.62 | no | no |
 | N2 JW ADAPT | 8 | 163 | 184 | 8.831 | 940.7 | **2676.0** | 3211.7 | 2805.2 | 0.81 | +1751.28 | no | no |
 | N2 JW HEA r10 | 8 | 88 | 70 | 4.513 | 318.1 | **1306.9** | 2093.2 | 1526.6 | 0.58 | +220.31 | no | no |
 | N2 JW HEA r6 | 8 | 56 | 42 | 48.450 | 262.9 | **1127.8** | 1885.1 | 1324.1 | 0.70 | +126.63 | no | no |
@@ -200,9 +200,8 @@ The table is generated from the records by `python tools/noisy_tier.py --table`;
 
 ### What the numbers say
 
-Figures below are from the 50 version-2 records, measured 2026-10-13; the two C₄H₄
-CASSCF UCCSD and ADAPT-VQE records are still version 1 and are left out of every range
-until they are re-measured on the cluster (see *What the measurement exposed*, 3).
+Figures below are from the 52 version-2 records, measured 2026-10-13 (the two C₄H₄
+CASSCF UCCSD and ADAPT-VQE records on the cluster; see *Rebuild discipline*).
 
 - **Under noise near current hardware no multi-qubit entry stays under the bar.** The
   smallest multi-qubit penalty is 33.6 mHa (water dimer, ADAPT-VQE, 4 two-qubit gates),
@@ -213,10 +212,10 @@ until they are re-measured on the cluster (see *What the measurement exposed*, 3
   one-qubit H₂ and HF circuits, with one to three gates and no two-qubit gate. That is a
   statement about circuit size, not about robustness.
 - **The penalty is set by the two-qubit gate count, and it saturates.** Along each
-  molecule's entries the penalty tracks N₂; for the seven circuits with ε above 0.85 —
-  184 to 2856 two-qubit gates: the LiH, NH₃, H₄, water-dimer and N₂ UCCSD entries and the
-  N₂ and H₆ ADAPT-VQE entries — the penalty approaches c_I − E, so adding gates no longer
-  adds penalty. N₂ UCCSD makes the point twice over: 2856 two-qubit gates after
+  molecule's entries the penalty tracks N₂; for the eight circuits with ε above 0.85 —
+  184 to 2856 two-qubit gates: the LiH, NH₃, H₄, water-dimer, C₄H₄ and N₂ UCCSD entries
+  and the N₂ and H₆ ADAPT-VQE entries — the penalty approaches c_I − E, so adding gates no
+  longer adds penalty. N₂ UCCSD makes the point twice over: 2856 two-qubit gates after
   decomposition, against 70 for the ten-layer hardware-efficient entry on the same
   molecule. UCCSD's certified gaps of a few µHa are bought with circuits that a device
   turns into a random state.
@@ -256,8 +255,7 @@ It is `—` for entries above 10 qubits (absent, not zero). The ten-qubit ceilin
 measured on 2026-09-09 rather than assumed, on H₈, and the reason is not the one the
 ceiling was originally set for (see below). All 52 entries at or below 10 qubits
 are measured; the two C₄H₄ CASSCF entries whose circuit only rebuilds under the kernel
-they were generated with were measured on that machine (below), and until they are
-re-measured there they show the version-1 value, which counted their gates twice. Export: `scripts/export_leaderboard_v4.py` reads
+they were generated with were measured on that machine (below). Export: `scripts/export_leaderboard_v4.py` reads
 `experiments/noisy_tier/summary.json`; the CSVs and the database carry `noise_status`,
 `noise_penalty`, `noisy_gap`, `zne_residual` and `noise_model`, in Ha like `gap` and
 `margin`.
@@ -351,8 +349,8 @@ against the stored sectors and HF state before the pool is built. Two consequenc
   cluster, whose SkylakeX kernel is the one these two entries were generated with, the
   re-derived Hamiltonian matches the stored coefficients exactly (maximum deviation 0.0),
   the pipeline tapers to six qubits, and both entries rebuild to 3×10⁻¹³ Ha. **That is how
-  the two published records were measured** (2026-09-09); their provenance names the
-  machine, as every noisy-tier record now does. The two C₄H₄ HEA entries need no pool and
+  the two published records were measured** (2026-09-09, and again for record version 2
+  on 2026-10-13); their provenance names the machine, as every noisy-tier record now does. The two C₄H₄ HEA entries need no pool and
   are measured on either machine. The general statement is the one in
   [`CROSS_MACHINE.md`](CROSS_MACHINE.md): reusing a CASSCF entry's stored circuit is bound
   to the kernel it was generated under, and here that binding is visible as a whole qubit
@@ -439,13 +437,13 @@ operators that share a Pauli word stay two gates), and the decomposition gate st
 the result against the pipeline's circuit to 10⁻⁸ Ha. Re-measured, version 2:
 
 - **35 records are bit-identical**: every hardware-efficient and one-qubit circuit.
-- **15 changed** (8 UCCSD, 7 ADAPT-VQE), and in every one the two-qubit count is exactly
+- **17 changed** (9 UCCSD, 8 ADAPT-VQE), and in every one the two-qubit count is exactly
   half. For example, LiH UCCSD goes from 560 to 280 two-qubit gates and from 2720 to 1984
-  mHa, H₂O UCCSD from 893 to 532 mHa, and H₂CO ADAPT-VQE from 81.7 to 41.9 mHa. Every
-  conclusion above held under both versions; the numbers in it are version 2.
-- **The two C₄H₄ CASSCF UCCSD and ADAPT-VQE records are still version 1**, because they
-  rebuild only on the cluster (*Rebuild discipline*), and are excluded from the ranges
-  above until they are re-measured there.
+  mHa, H₂O UCCSD from 893 to 532 mHa, and H₂CO ADAPT-VQE from 81.7 to 41.9 mHa. The two
+  C₄H₄ CASSCF records were re-measured on the cluster, under the kernel they were
+  generated with: ADAPT-VQE from 24 to 12 two-qubit gates and from 167.9 to 87.6 mHa, its
+  extrapolated gap now under the bar; UCCSD from 1664 to 832 and from 1163.7 to 1137.2 mHa.
+  Every conclusion above held under both versions; the numbers in it are version 2.
 
 Not changed: the entries' own `circuit_stats`, which also count each operator twice and
 feed the leaderboard's hardware-cost tab. They are inside the content hash of the frozen
@@ -481,5 +479,6 @@ python -m pytest tests/test_noisy_tier.py        # conventions, extrapolation, r
 
 The run is deterministic (no sampling, single-threaded BLAS pinned before NumPy loads).
 With 12 workers the 50 records measurable on the workstation took 18 minutes on
-2026-10-13 (version 1, with the doubled circuits, took about 45); the deep UCCSD and ADAPT
-circuits at 8–9 qubits dominate.
+2026-10-13 (version 1, with the doubled circuits, took about 45), and the two C₄H₄
+records 25 seconds on the cluster; the deep UCCSD and ADAPT circuits at 8–9 qubits
+dominate.
