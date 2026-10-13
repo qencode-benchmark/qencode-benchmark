@@ -123,8 +123,9 @@ The export writes `leaderboard_accuracy.csv`, `leaderboard_hardware_cost.csv`,
 to `website/public/data/`. `--dry-run` prints what would be written without touching
 anything.
 
-`scripts/generate_leaderboard.py` is the earlier v2 CSV path, kept for the frozen v2
-and v3 suites. It is not what produces the current leaderboard.
+`scripts/archive/generate_leaderboard.py` is the earlier v2 CSV path, kept for the record
+of the frozen v2 and v3 suites. It is not what produces the current leaderboard, and since
+2026-10-09 nothing calls it (see `scripts/archive/README.md`).
 
 ---
 

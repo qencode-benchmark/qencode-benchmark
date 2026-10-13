@@ -57675,8 +57675,8 @@
   "trust": {
     "level": "certified",
     "certified_utc": "2026-07-16T12:13:54.261227+00:00",
-    "signature_b64": null,
-    "signing_key_id": null
+    "signature_b64": "ExlRnNmnFCdOgv68DGB40ZgicedAV0A3E6gQdapm2gg1BRl8ZGZDrLRmkedTZOMYS0GfNaD2atbFoXPolCW4Bw==",
+    "signing_key_id": "ed25519:85d603a74774d0ac"
   },
   "run_config": {
     "optimizer": "ADAPT-VQE (L-BFGS-B inner, statevector engine)",
