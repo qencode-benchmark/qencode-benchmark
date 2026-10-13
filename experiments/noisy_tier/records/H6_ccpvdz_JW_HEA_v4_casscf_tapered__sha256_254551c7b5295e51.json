@@ -1,5 +1,5 @@
 {
- "record_version": "1",
+ "record_version": "2",
  "entry_id": "H6_ccpvdz_JW_HEA_v4_casscf_tapered__sha256_254551c7b5295e51",
  "molecule": "H6",
  "basis": "cc-pvdz",
@@ -29,15 +29,16 @@
  "hamiltonian": {
   "n_qubits": 9,
   "c_I_Ha": -0.631684484990946,
-  "lambda_min_Ha": -3.3168688205670103,
-  "lambda_max_Ha": 3.0050295338321655,
+  "lambda_min_Ha": -3.316868820566989,
+  "lambda_max_Ha": 3.0050295338321598,
   "mixed_minus_E_Ha": 2.579807678844727,
   "tapered_sector_offset_Ha": 0.0
  },
  "gate_counts": {
   "n_1q": 45,
   "n_2q": 32,
-  "n_ops_total": 78
+  "n_ops_total": 78,
+  "duplicate_exponentials_fused": 0
  },
  "gate_set": [
   "BasisState",
@@ -74,9 +75,9 @@
    "eps_eff": 0.046470602413157265,
    "eps_model": 0.08733891069023858,
    "eps_ratio": 0.5320721548494313,
-   "bound_mHa": 542.9442333565416,
+   "bound_mHa": 542.9442333565412,
    "full_mixing_estimate_mHa": 225.31759246061128,
-   "seconds": 10.917
+   "seconds": 11.322
   },
   "depolarizing-current/v1": {
    "params": {
@@ -94,9 +95,9 @@
    "eps_eff": 0.21035882299366876,
    "eps_model": 0.36751909344292977,
    "eps_ratio": 0.5723752228027694,
-   "bound_mHa": 2284.690418695187,
+   "bound_mHa": 2284.6904186951847,
    "full_mixing_estimate_mHa": 948.128579386123,
-   "seconds": 10.716
+   "seconds": 11.541
   },
   "depolarizing-pessimistic/v1": {
    "params": {
@@ -114,9 +115,9 @@
    "eps_eff": 0.3734097410799224,
    "eps_model": 0.601127450067971,
    "eps_ratio": 0.6211823150609742,
-   "bound_mHa": 3736.9218364112817,
+   "bound_mHa": 3736.9218364112785,
    "full_mixing_estimate_mHa": 1550.7932116497016,
-   "seconds": 8.485
+   "seconds": 9.714
   },
   "device-sc/v1": {
    "params": {
@@ -140,13 +141,13 @@
    "eps_ratio": null,
    "bound_mHa": null,
    "full_mixing_estimate_mHa": null,
-   "seconds": 16.484
+   "seconds": 27.912
   }
  },
- "seconds_total": 88.674,
+ "seconds_total": 92.709,
  "provenance": {
-  "computed_utc": "2026-09-07T07:50:45.027204+00:00",
-  "git_commit": "2484e2f",
+  "computed_utc": "2026-10-13T07:07:45.434318+00:00",
+  "git_commit": "4698f99d",
   "noise_models_sha256": "f7599b8e38be626fa8298c3ccb1edb5d3d24a7c83434cb7fa8a833000b1c4162",
   "tool_versions": {
    "python": "3.11.15",
@@ -156,6 +157,18 @@
    "pyscf": "2.6.2"
   },
   "blas_threads": "1",
+  "machine": {
+   "cpu_model": "AMD Ryzen Threadripper 2990WX 32-Core Processor",
+   "vector_isa": [
+    "avx2",
+    "fma",
+    "avx"
+   ],
+   "libc": "glibc 2.39",
+   "os": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+   "openblas_core": "Haswell",
+   "openblas_coretype_env": null
+  },
   "simulator": "pennylane default.mixed (density matrix, no sampling)"
  },
  "zne": {
@@ -177,6 +190,6 @@
   "residual_mHa": 29.253620293613114,
   "zne_gap_mHa": 134.6302770249368,
   "meets_threshold_after_zne": false,
-  "seconds": 34.138
+  "seconds": 23.975
  }
 }

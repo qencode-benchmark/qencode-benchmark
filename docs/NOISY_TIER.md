@@ -39,12 +39,14 @@ For each entry at or below 10 tapered qubits:
 2. **Gate the rebuild.** The noiseless energy of the rebuilt circuit on the pipeline's
    statevector device must reproduce the stored energy to 10⁻⁶ Ha, or the entry is recorded
    as failed with the reason and nothing else is reported for it. Every measured record
-   reproduces to 10⁻¹³ Ha or better except the CASSCF entries, which reproduce to 10⁻⁷.
+   reproduces to 3×10⁻¹³ Ha or better, CASSCF entries included.
 3. **Decompose to a fixed gate set** — RX, RY, RZ, H, X, Y, Z, S, T, phase shift, CNOT, CZ —
-   so that "a gate" means the same thing for every ansatz. Exponentials of sums of
-   commuting Pauli words are split into products first (exact; commutation is verified
-   for every pair). State preparation is treated as noiseless, consistent with the
-   `circuit_stats` counts.
+   so that "a gate" means the same thing for every ansatz. The pipeline applies every
+   multi-qubit UCCSD and ADAPT-VQE operator twice in a row; each such pair is first fused
+   into one exponential at twice the angle, the same unitary (see *What the measurement
+   exposed*, 3). Exponentials of sums of commuting Pauli words are then split into
+   products (exact; commutation is verified for every pair). State preparation is treated
+   as noiseless, consistent with the `circuit_stats` counts.
 4. **Gate the decomposition.** The decomposed circuit, run as a density matrix with no
    noise, must reproduce the statevector energy to 10⁻⁸ Ha.
 5. **Insert a named noise model's channels after every gate** and evaluate the energy of
@@ -113,7 +115,8 @@ says how far from that a real circuit is.
 **Gate counts are the decomposed circuit's**, because those are the gates the channels
 follow. They differ from `circuit_stats`, which counts the untapered standard
 decomposition: an entry's `ansatz_num_2q_gates` and the `n_2q` in its record are
-different quantities and should not be compared.
+different quantities and should not be compared. (`circuit_stats` also counts each
+UCCSD and ADAPT-VQE operator twice; the records, since version 2, do not.)
 
 **Extrapolation axis.** Composing λ copies of `DepolarizingChannel(p)` equals one channel
 with 1 − 4p'/3 = (1 − 4p/3)^λ (`test_channel_composition_scaling_equals_closed_form`), so
@@ -155,76 +158,82 @@ The table is generated from the records by `python tools/noisy_tier.py --table`;
 | HF PAR UCCSD | 1 | 1 | 0 | 0.000 | 0.1 | **0.5** | 0.9 | 1.9 | 1.00 | +0.00 | yes | yes |
 | BeH2 JW HEA r2 | 3 | 9 | 4 | 0.000 | 6.9 | **34.4** | 67.9 | 45.4 | 0.47 | +0.04 | no | yes |
 | BeH2 PAR HEA r2 | 3 | 9 | 4 | 0.000 | 6.9 | **34.4** | 67.9 | 45.4 | 0.47 | +0.04 | no | yes |
-| BeH2 JW UCCSD | 3 | 54 | 32 | 0.007 | 57.9 | **263.1** | 468.9 | 320.1 | 0.56 | +13.75 | no | no |
-| BeH2 PAR UCCSD | 3 | 110 | 64 | 0.002 | 112.2 | **466.4** | 755.1 | 556.3 | 0.61 | +71.40 | no | no |
-| C4H6 JW ADAPT | 4 | 10 | 12 | 2.829 | 16.2 | **77.8** | 148.4 | 94.0 | 0.51 | +0.86 | no | yes |
-| H2CO JW ADAPT | 4 | 14 | 8 | 1.124 | 16.9 | **81.7** | 156.4 | 99.1 | 0.51 | +0.68 | no | yes |
+| BeH2 JW UCCSD | 3 | 28 | 16 | 0.007 | 29.4 | **140.1** | 264.2 | 173.1 | 0.53 | +2.12 | no | yes |
+| BeH2 PAR UCCSD | 3 | 56 | 32 | 0.002 | 57.6 | **261.9** | 468.0 | 319.3 | 0.55 | +12.96 | no | no |
+| C4H6 JW ADAPT | 4 | 5 | 6 | 2.829 | 8.2 | **40.1** | 78.4 | 48.7 | 0.51 | +0.12 | no | yes |
+| H2CO JW ADAPT | 4 | 7 | 4 | 1.124 | 8.5 | **41.9** | 82.2 | 51.2 | 0.51 | +0.09 | no | yes |
 | H2O JW HEA r2 | 4 | 12 | 6 | 0.403 | 10.9 | **53.7** | 106.0 | 72.7 | 0.34 | +0.05 | no | yes |
 | H2O PAR HEA r2 | 4 | 12 | 6 | 0.399 | 18.7 | **91.4** | 177.9 | 115.2 | 0.58 | +0.33 | no | yes |
-| H2O JW UCCSD | 4 | 170 | 120 | 0.000 | 238.4 | **893.4** | 1331.9 | 1027.9 | 0.58 | +253.17 | no | no |
+| H2O JW UCCSD | 4 | 86 | 60 | 0.000 | 124.2 | **532.2** | 895.7 | 630.1 | 0.49 | +62.98 | no | no |
 | C4H4 PAR HEA r2 | 5 | 15 | 8 | 3.834 | 16.4 | **79.5** | 153.3 | 93.8 | 0.61 | +0.50 | no | yes |
-| H4 JW ADAPT | 5 | 14 | 16 | 9.942 | 26.6 | **126.2** | 237.1 | 150.5 | 0.49 | +2.27 | no | no |
+| H4 JW ADAPT | 5 | 7 | 8 | 9.942 | 13.4 | **65.3** | 126.7 | 78.4 | 0.48 | +0.32 | no | no |
 | H4 JW HEA r4 | 5 | 25 | 16 | 9.283 | 26.7 | **126.8** | 238.5 | 160.8 | 0.48 | +2.15 | no | no |
 | H4 PAR HEA r4 | 5 | 25 | 16 | 4.492 | 27.4 | **130.3** | 245.4 | 160.9 | 0.49 | +2.12 | no | yes |
-| H4 JW UCCSD | 5 | 713 | 576 | 2.222 | 670.8 | **1222.7** | 1292.5 | 1281.5 | 0.94 | +1091.28 | no | no |
+| H4 JW UCCSD | 5 | 358 | 288 | 2.222 | 411.2 | **1040.4** | 1223.6 | 1119.3 | 0.81 | +727.53 | no | no |
 | LiH JW HEA r2 | 5 | 15 | 8 | 0.096 | 17.7 | **87.2** | 171.6 | 119.8 | 0.25 | +0.18 | no | yes |
 | LiH PAR HEA r2 | 5 | 15 | 8 | 3.370 | 19.4 | **95.6** | 187.8 | 131.2 | 0.27 | +0.23 | no | yes |
-| LiH JW UCCSD | 5 | 662 | 560 | 0.003 | 1047.5 | **2719.7** | 3129.5 | 2995.6 | 0.85 | +1971.75 | no | no |
+| LiH JW UCCSD | 5 | 332 | 280 | 0.003 | 583.3 | **1984.3** | 2723.1 | 2290.0 | 0.63 | +803.14 | no | no |
 | NH3 JW HEA r2 | 5 | 15 | 8 | 1.880 | 13.8 | **67.3** | 130.4 | 84.3 | 0.42 | +0.37 | no | yes |
 | NH3 PAR HEA r2 | 5 | 15 | 8 | 0.734 | 16.4 | **80.0** | 155.3 | 98.1 | 0.49 | +0.38 | no | yes |
-| NH3 JW UCCSD | 5 | 713 | 576 | 0.032 | 671.6 | **1316.2** | 1439.3 | 1409.1 | 0.90 | +1093.14 | no | no |
-| water_dimer JW ADAPT | 5 | 6 | 8 | 0.111 | 13.5 | **65.9** | 127.6 | 79.0 | 0.41 | +0.33 | no | yes |
+| NH3 JW UCCSD | 5 | 358 | 288 | 0.032 | 407.2 | **1075.8** | 1317.2 | 1176.4 | 0.75 | +681.90 | no | no |
+| water_dimer JW ADAPT | 5 | 3 | 4 | 0.111 | 6.8 | **33.6** | 66.1 | 40.3 | 0.41 | +0.04 | no | yes |
 | water_dimer JW HEA r2 | 5 | 15 | 8 | 0.332 | 12.7 | **62.5** | 122.6 | 83.0 | 0.37 | +0.14 | no | yes |
 | water_dimer PAR HEA r2 | 5 | 15 | 8 | 0.114 | 16.6 | **81.0** | 157.0 | 102.1 | 0.48 | +0.39 | no | yes |
-| water_dimer JW UCCSD | 5 | 657 | 528 | 0.002 | 578.8 | **1332.4** | 1490.3 | 1429.0 | 0.88 | +1044.32 | no | no |
+| water_dimer JW UCCSD | 5 | 330 | 264 | 0.002 | 330.9 | **1028.0** | 1333.6 | 1143.2 | 0.69 | +531.08 | no | no |
 | C4H4 JW ADAPT | 6 | 28 | 24 | 5.963 | 35.9 | **167.9** | 309.5 | 199.4 | 0.50 | +4.54 | no | no |
 | C4H4 JW HEA r2 | 6 | 18 | 10 | 9.637 | 20.2 | **97.3** | 186.0 | 120.4 | 0.62 | +0.89 | no | no |
 | C4H4 JW UCCSD | 6 | 2012 | 1664 | 7.917 | 990.7 | **1163.7** | 1166.9 | 1186.7 | 1.00 | +1157.44 | no | no |
-| N2 JW ADAPT | 8 | 326 | 368 | 8.831 | 1608.7 | **3210.0** | 3416.3 | 3254.6 | 0.90 | +2868.97 | no | no |
+| N2 JW ADAPT | 8 | 163 | 184 | 8.831 | 940.7 | **2676.0** | 3211.7 | 2805.2 | 0.81 | +1751.28 | no | no |
 | N2 JW HEA r10 | 8 | 88 | 70 | 4.513 | 318.1 | **1306.9** | 2093.2 | 1526.6 | 0.58 | +220.31 | no | no |
 | N2 JW HEA r6 | 8 | 56 | 42 | 48.450 | 262.9 | **1127.8** | 1885.1 | 1324.1 | 0.70 | +126.63 | no | no |
 | N2 JW HEA r4 | 8 | 40 | 28 | 138.646 | 131.4 | **601.2** | 1081.2 | 727.2 | 0.53 | +27.23 | no | no |
 | N2 PAR HEA r4 | 8 | 40 | 28 | 103.522 | 116.0 | **540.2** | 990.5 | 633.4 | 0.47 | +16.42 | no | no |
 | N2 PAR HEA r10 | 8 | 88 | 70 | 4.404 | 329.2 | **1352.9** | 2167.2 | 1575.8 | 0.60 | +227.36 | no | no |
-| N2 JW UCCSD | 8 | 5108 | 5712 | 10.832 | 3559.5 | **3590.2** | 3590.3 | 3624.0 | 1.00 | +3590.23 | no | no |
-| H6 JW ADAPT | 9 | 400 | 424 | 9.273 | 1112.9 | **2301.0** | 2536.6 | 2373.6 | 0.86 | +1909.93 | no | no |
+| N2 JW UCCSD | 8 | 2556 | 2856 | 10.832 | 3446.6 | **3589.5** | 3590.2 | 3621.4 | 1.00 | +3587.88 | no | no |
+| H6 JW ADAPT | 9 | 200 | 212 | 9.273 | 650.5 | **1869.4** | 2302.8 | 1990.9 | 0.74 | +1161.07 | no | no |
 | H6 JW HEA r4 | 9 | 45 | 32 | 105.377 | 119.9 | **542.7** | 963.3 | 648.9 | 0.57 | +29.25 | no | no |
 | H6 JW HEA r10 | 9 | 99 | 80 | 27.256 | 298.6 | **1169.5** | 1783.4 | 1342.7 | 0.65 | +273.76 | no | no |
-| benzene JW ADAPT | 9 | 154 | 176 | 9.540 | 611.0 | **1737.8** | 2069.4 | 1821.2 | 0.83 | +1147.70 | no | no |
+| benzene JW ADAPT | 9 | 77 | 88 | 9.540 | 331.5 | **1215.5** | 1739.8 | 1333.4 | 0.75 | +399.61 | no | no |
 | benzene JW HEA r6 | 9 | 63 | 48 | 127.956 | 170.5 | **719.1** | 1180.8 | 847.9 | 0.67 | +96.02 | no | no |
 | benzene JW HEA r10 | 9 | 99 | 80 | 8.741 | 193.4 | **794.3** | 1276.7 | 936.7 | 0.51 | +135.29 | no | no |
 <!-- TABLE:END -->
 
 ### What the numbers say
 
+Figures below are from the 50 version-2 records, measured 2026-10-13; the two C₄H₄
+CASSCF UCCSD and ADAPT-VQE records are still version 1 and are left out of every range
+until they are re-measured on the cluster (see *What the measurement exposed*, 3).
+
 - **Under noise near current hardware no multi-qubit entry stays under the bar.** The
-  smallest multi-qubit penalty is 34.4 mHa (BeH₂, HEA, 4 two-qubit gates — the same to
-  three figures under Jordan–Wigner and parity, as it should be), the largest 3590 mHa
-  (N₂ Jordan–Wigner UCCSD, 5712 two-qubit gates), where ε = 1.000 to three decimals: the
-  state is maximally mixed and the energy is c_I. The only entries under the bar with
-  noise are the twelve one-qubit H₂ and HF circuits, with one to three gates and no
-  two-qubit gate. That is a statement about circuit size, not about robustness.
+  smallest multi-qubit penalty is 33.6 mHa (water dimer, ADAPT-VQE, 4 two-qubit gates),
+  then 34.4 mHa (BeH₂, HEA, 4 two-qubit gates — the same to three figures under
+  Jordan–Wigner and parity, as it should be); the largest is 3590 mHa (N₂ Jordan–Wigner
+  UCCSD, 2856 two-qubit gates), where ε = 1.000 to three decimals: the state is maximally
+  mixed and the energy is c_I. The only entries under the bar with noise are the twelve
+  one-qubit H₂ and HF circuits, with one to three gates and no two-qubit gate. That is a
+  statement about circuit size, not about robustness.
 - **The penalty is set by the two-qubit gate count, and it saturates.** Along each
-  molecule's entries the penalty tracks N₂; for the eight circuits above a few hundred
-  two-qubit gates (the [4,4] and [6,6] UCCSD entries, N₂ and H₆ and benzene ADAPT) ε
-  exceeds 0.85 and the penalty approaches c_I − E, so adding gates no longer adds penalty.
-  N₂ UCCSD makes the point twice over: 5712 two-qubit gates after decomposition, against
-  70 for the ten-layer hardware-efficient entry on the same molecule. UCCSD's certified
-  gaps of a few µHa are bought with circuits that a device turns into a random state.
-- **An error event carries the energy about half way to the mixed value** in shallow
-  circuits (ε_eff/ε from 0.25 for LiH HEA to 0.62), and nearly all the way (0.83–1.00) in
-  deep ones, where later gates spread each local error across the register. This is the
-  quantitative form of the locality argument the first probe made, now against the correct
-  ε.
+  molecule's entries the penalty tracks N₂; for the seven circuits with ε above 0.85 —
+  184 to 2856 two-qubit gates: the LiH, NH₃, H₄, water-dimer and N₂ UCCSD entries and the
+  N₂ and H₆ ADAPT-VQE entries — the penalty approaches c_I − E, so adding gates no longer
+  adds penalty. N₂ UCCSD makes the point twice over: 2856 two-qubit gates after
+  decomposition, against 70 for the ten-layer hardware-efficient entry on the same
+  molecule. UCCSD's certified gaps of a few µHa are bought with circuits that a device
+  turns into a random state.
+- **An error event carries the energy part of the way to the mixed value** in circuits
+  with ε up to 0.85 (ε_eff/ε from 0.25 for LiH HEA to 0.75 for benzene ADAPT-VQE), and
+  most or all of the way (0.63 for LiH UCCSD to 1.00 for N₂ UCCSD) above it, where later
+  gates spread each local error across the register. This is the quantitative form of the
+  locality argument the first probe made, now against the correct ε.
 - **Zero-noise extrapolation recovers the shallow circuits and not the deep ones.** For
-  HEA and ADAPT circuits with up to 16 two-qubit gates (ε ≲ 0.2) the extrapolated
-  residual is 0.04–2.3 mHa and the extrapolated gap is under the bar wherever the
+  HEA and ADAPT circuits with up to 16 two-qubit gates (ε ≤ 0.21) the extrapolated
+  residual is 0.04–2.1 mHa and the extrapolated gap is under the bar wherever the
   noiseless gap left room for it. Where it does not — H₄ JW HEA and ADAPT at 9.3 and
   9.9 mHa noiseless, C₄H₄ JW HEA at 9.6 — the failure after extrapolation is the thin
   certification margin, not the noise: the same entries the margin column already flags.
-  Beyond that the residual grows with depth without interruption: 14 to 274 mHa for the
-  circuits between 17 and 100 two-qubit gates, and 253 mHa to 3590 mHa above 100, where
-  the three-point polynomial is extrapolating a curve that saturated long before λ = 1.
+  Beyond that the residual grows with depth without interruption: 13 to 400 mHa for the
+  circuits between 17 and 100 two-qubit gates, and 531 to 3588 mHa above 100, where the
+  three-point polynomial is extrapolating a curve that saturated long before λ = 1.
   At N₂ UCCSD the extrapolation returns the noisy energy unchanged to two decimals,
   because all three noise scales sit at the fully mixed value.
 - **Depth is a trade-off the accuracy ranking cannot see.** N₂ HEA at 4, 6 and 10 layers
@@ -233,20 +242,22 @@ The table is generated from the records by `python tools/noisy_tier.py --table`;
   for this reason; the noisy tier puts a measured energy on the same axis.
 - **Damping is not much worse than depolarizing here.** `device-sc/v1` adds amplitude and
   phase damping at 10⁻³ per gate on top of the current depolarizing rates and raises the
-  penalty by 15–35%. Its asymmetry (relaxation toward |0⟩) does not change any conclusion
-  above.
+  multi-qubit penalties by 0.9% (N₂ UCCSD, already saturated) to 37.5% (LiH HEA); on the
+  one-qubit circuits, where depolarizing alone costs well under a millihartree, it
+  multiplies the penalty by four. Its asymmetry (relaxation toward |0⟩) does not change any
+  conclusion above.
 
 ### What the leaderboard shows
 
 One column, **Noise**: the `depolarizing-current/v1` penalty in mHa, green if the gap under
 noise is still under the bar, blue if it is over but the extrapolated gap is under, plain
 otherwise. Hovering gives the gap under noise, the extrapolated residual, and the model.
-It is `—` for entries above 10 qubits (absent, not zero) and for the four
-constant-Hamiltonian entries (not measurable, below). The ten-qubit ceiling was measured on
-2026-09-09 rather than assumed, on H₈, and the reason is not the one the ceiling was
-originally set for (see below). All 52 entries at or below 10 qubits
+It is `—` for entries above 10 qubits (absent, not zero). The ten-qubit ceiling was
+measured on 2026-09-09 rather than assumed, on H₈, and the reason is not the one the
+ceiling was originally set for (see below). All 52 entries at or below 10 qubits
 are measured; the two C₄H₄ CASSCF entries whose circuit only rebuilds under the kernel
-they were generated with were measured on that machine (below). Export: `scripts/export_leaderboard_v4.py` reads
+they were generated with were measured on that machine (below), and until they are
+re-measured there they show the version-1 value, which counted their gates twice. Export: `scripts/export_leaderboard_v4.py` reads
 `experiments/noisy_tier/summary.json`; the CSVs and the database carry `noise_status`,
 `noise_penalty`, `noisy_gap`, `zne_residual` and `noise_model`, in Ha like `gap` and
 `margin`.
@@ -263,32 +274,37 @@ numbers, 1.07 GB, and the cluster node has 250 GB. H₈ was therefore attempted 
 **A bug that had never been reached.** Z₂ tapering maps a Pauli word to ± the identity
 when the word is supported only on removed qubits, and the ADAPT pool is built after
 tapering. H₈ removes three symmetries where every other entry removes at most two, and
-all 196 of its selected operators carry an identity term. Splitting the exponential then
+every one of its 98 selected operators carries an identity term. (The tape showed 196
+exponentials, which is how the pipeline's double application of each operator, item 3
+below, first became visible; it was read as 196 operators at the time.) Splitting the exponential then
 produces exp(iθI) — an `Exp` on zero wires, which PennyLane cannot decompose. Identity
 terms are now dropped, which is exact: exp(iθI) is a global phase and changes no
 expectation value. Two tests cover it.
 
-**The circuit is sixty times larger than any other in the tier.** Decomposed, H₈ carries
-11,712 one-qubit and 12,928 two-qubit gates, against 154 and 176 for the largest entry
-that is measured (benzene, ADAPT-VQE, 9 qubits). At 13 qubits each operation on the
-density matrix costs 2.3 s, so one noise model is about 40 hours and the four models with
-the zero-noise extrapolation are about 363 hours. Time, not memory, is the wall.
+**The circuit is the largest in the suite by far.** Decomposed, with each operator
+applied once, H₈ carries 5,856 one-qubit and 6,464 two-qubit gates, against 77 and 88 for
+the largest-register entry that is measured (benzene, ADAPT-VQE, 9 qubits) and 2,856
+two-qubit gates for the deepest (N₂ UCCSD, 8 qubits). (The figures first recorded here,
+11,712 and 12,928, counted the doubled tape; each is exactly twice the true count.) At
+13 qubits each operation on the density matrix costs 2.3 s, so one noise model is about
+20 hours and the four models with the zero-noise extrapolation are about 180 hours. Time,
+not memory, is the wall.
 
 **And the answer is already known in closed form, which is why that time would be
-wasted.** With N₁ = 11,712 and N₂ = 12,928 the probability that no depolarizing event
+wasted.** With N₁ = 5,856 and N₂ = 6,464 the probability that no depolarizing event
 occurs anywhere is
 
 | model | surviving coherent fraction |
 |---|---|
-| optimistic | 2 × 10⁻¹⁶ |
-| current | 3 × 10⁻⁷⁹ |
-| pessimistic | 3 × 10⁻¹⁵⁸ |
+| optimistic | 1.5 × 10⁻⁸ |
+| current | 6 × 10⁻⁴⁰ |
+| pessimistic | 2 × 10⁻⁷⁹ |
 
-Even the optimistic model leaves a coherent fraction at machine epsilon. The state is the
-maximally mixed one to far beyond any precision a simulation could report, so E_noisy is
-c_I exactly, and for H₈ that gives a penalty of **3658 mHa** and a gap under noise of
-**3668 mHa**, with zero-noise extrapolation meaningless because every scale returns the
-same c_I. Fifteen days of simulation would reproduce those two numbers.
+Even the optimistic model's coherent fraction moves the energy by about 5 × 10⁻⁵ mHa
+(1.5 × 10⁻⁸ of c_I − E). The state is the maximally mixed one to far beyond any precision
+the tier reports, so E_noisy is c_I, and for H₈ that gives a penalty of **3658 mHa** and a
+gap under noise of **3668 mHa**, with zero-noise extrapolation meaningless because every
+scale returns the same c_I. Eight days of simulation would reproduce those two numbers.
 
 They are stated here rather than recorded as a measurement, because they are not one. The
 tier reports simulated values, and H₈ keeps its `—`. What changed is that the ceiling is
@@ -405,6 +421,36 @@ Described above under *Rebuild discipline*. Not a defect in any entry — every 
 re-verifies — but a property the schema does not state and downstream users would not
 guess.
 
+### 3. Every UCCSD and ADAPT-VQE circuit counted its gates twice — fixed in the records 2026-10-13
+
+The pipeline applies each multi-qubit ansatz operator with
+`qml.apply(qml.exp(base, coeff=1j*θ))` (`generate_entry_v4._apply_tapered_op`). Inside a
+circuit `qml.exp` has already queued itself and `qml.apply` queues a copy, so the circuit
+contains exp(iθG) twice: the unitary exp(2iθG), built from two gates. It has been so since
+the first v4 generator. Every stored energy and parameter vector is consistent with that
+unitary, so nothing certified is affected. But the noisy tier decomposed the circuit as
+built, so every version-1 UCCSD and ADAPT-VQE record counted, and put noise on, twice the
+gates its circuit needs. The 2026-10-08 audit found it; H₈'s "196 selected operators"
+above was the same thing seen earlier and not recognised.
+
+The tool now fuses each identical adjacent pair into one exponential at twice the angle
+before decomposing (`_fuse_duplicated_exponentials`; exact pairs only, so two different
+operators that share a Pauli word stay two gates), and the decomposition gate still checks
+the result against the pipeline's circuit to 10⁻⁸ Ha. Re-measured, version 2:
+
+- **35 records are bit-identical**: every hardware-efficient and one-qubit circuit.
+- **15 changed** (8 UCCSD, 7 ADAPT-VQE), and in every one the two-qubit count is exactly
+  half. For example, LiH UCCSD goes from 560 to 280 two-qubit gates and from 2720 to 1984
+  mHa, H₂O UCCSD from 893 to 532 mHa, and H₂CO ADAPT-VQE from 81.7 to 41.9 mHa. Every
+  conclusion above held under both versions; the numbers in it are version 2.
+- **The two C₄H₄ CASSCF UCCSD and ADAPT-VQE records are still version 1**, because they
+  rebuild only on the cluster (*Rebuild discipline*), and are excluded from the ranges
+  above until they are re-measured there.
+
+Not changed: the entries' own `circuit_stats`, which also count each operator twice and
+feed the leaderboard's hardware-cost tab. They are inside the content hash of the frozen
+suite, so correcting them is a suite change and is not made here.
+
 ---
 
 ## What this does not establish
@@ -434,5 +480,6 @@ python -m pytest tests/test_noisy_tier.py        # conventions, extrapolation, r
 ```
 
 The run is deterministic (no sampling, single-threaded BLAS pinned before NumPy loads).
-On 64 cores with 12 workers the full sweep takes about 45 minutes; the deep UCCSD and
-ADAPT circuits at 8–9 qubits dominate.
+With 12 workers the 50 records measurable on the workstation took 18 minutes on
+2026-10-13 (version 1, with the doubled circuits, took about 45); the deep UCCSD and ADAPT
+circuits at 8–9 qubits dominate.
