@@ -68,7 +68,7 @@ const faqSchema = {
       name: "How many ADAPT-VQE operators does an H10 hydrogen chain need?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "300 operators to reach a 9.977 mHa gap against the CASCI reference for H10 at cc-pVDZ with a [10e,10o] active space, 20 qubits tapered to 18. The measured series is H6: 28 operators, H8: 98, H10: 300 — roughly 3.2x per two added orbitals, consistent with exponential scaling in system size.",
+        text: "300 operators to reach a 9.977 mHa gap against the CASCI reference for H10 at cc-pVDZ with a [10e,10o] active space, 20 qubits tapered to 18. The measured series is H6: 28 operators, H8: 98, H10: 300. The counts grow quickly, but H6 counts single Pauli-word rotations and H8 and H10 count whole excitation generators, so the ratios between them are not a growth rate.",
       },
     },
   ],
@@ -286,12 +286,14 @@ export default function Post() {
         </div>
 
         <p>
-          The suite total is unchanged — 39 certified entries across 14 molecules — but that is
-          partly coincidence and we would rather say so. Two entries crossed the threshold in
+          The suite total is unchanged — 39 certified entries across 14 molecules at the time of
+          writing (July 2026; the suite now has 47 certified entries across 16 molecules) — but
+          that is partly coincidence and we would rather say so. Two entries crossed the threshold in
           opposite directions and cancelled out. N₂ JW/UCCSD, our 404-parameter run, was published
           at 2.016 mHa; its deterministic value is 10.832 mHa, just over the 10 mHa line, so it is
           now research tier. N₂ PAR/HEA went the other way, from 14.261 to 9.504, and is now
-          certified. N₂ remains certified as a molecule through its ADAPT and JW/HEA entries.
+          certified (regenerated in September 2026 after the tapering-sector fix, it now
+          certifies at 4.404 mHa). N₂ remains certified as a molecule through its ADAPT and JW/HEA entries.
         </p>
 
         <p>
@@ -383,10 +385,13 @@ export default function Post() {
         </div>
 
         <p>
-          Roughly 3.2× per two added orbitals. That is exponential growth in the ansatz size, and
-          it is consistent with recent work arguing that ADAPT-VQE parameter counts scale
-          exponentially with system size. Those analyses generally report the trend without
-          publishing per-molecule operator counts at a fixed accuracy threshold. Ours are above,
+          The counts grow quickly. Correction, 13 October 2026: when this post was written we
+          read the 3.5× and 3.1× ratios as exponential growth. They are not in the same unit.
+          H₆ selects single Pauli-word rotations, while H₈ and H₁₀ run on the state-vector
+          engine, which selects whole excitation generators of up to eight Pauli words each,
+          so the ratios do not measure a growth rate. H₁₀&apos;s 300 is exact: the run met the
+          threshold at its 300th operator. Per-molecule operator counts at a fixed accuracy
+          threshold are still rarely published. Ours are above,
           and the full entries — including every selected operator index and the serialized
           Hamiltonian — are downloadable, so the numbers can be checked rather than taken on
           trust.

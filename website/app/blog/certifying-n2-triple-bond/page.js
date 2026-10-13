@@ -3,12 +3,12 @@ import Link from "next/link";
 export const metadata = {
   title: "Certifying N₂: QEncode Benchmarks the Triple Bond",
   description:
-    "N₂ is one of the hardest molecules in quantum chemistry — a triple bond with strong multireference character. Here's how we certified it at cc-pVDZ with CASSCF orbitals, 12 qubits, and a 2 mHa gap.",
+    "N₂ is one of the hardest molecules in quantum chemistry — a triple bond with strong multireference character. Here's how we certified it at cc-pVDZ with CASSCF orbitals, 12 qubits, and a 2 mHa gap. Corrected 13 October 2026: that UCCSD result did not reproduce; N₂ is certified at 4.4 mHa (HEA, L-BFGS-B) and 8.8 mHa (ADAPT-VQE).",
   alternates: { canonical: "/blog/certifying-n2-triple-bond" },
   openGraph: {
     title: "Certifying N₂: QEncode Benchmarks the Triple Bond",
     description:
-      "How QEncode certified nitrogen — 12 qubits, CASSCF orbital optimization, 404 UCCSD parameters, and a 2 mHa gap on one of quantum chemistry's hardest benchmarks.",
+      "How QEncode certified nitrogen — 12 qubits, CASSCF orbital optimization, 404 UCCSD parameters, and a 2 mHa gap on one of quantum chemistry's hardest benchmarks. Corrected 13 October 2026: that UCCSD result did not reproduce; N₂ is certified at 4.4 mHa (HEA, L-BFGS-B) and 8.8 mHa (ADAPT-VQE).",
     url: "https://www.qencode-benchmark.org/blog/certifying-n2-triple-bond",
     type: "article",
   },
@@ -19,9 +19,9 @@ const articleSchema = {
   "@type": "Article",
   headline: "Certifying N₂: QEncode Benchmarks the Triple Bond",
   description:
-    "N₂ is one of the hardest molecules in quantum chemistry — a triple bond with strong multireference character. How we certified it at cc-pVDZ with CASSCF orbitals, 12 qubits, and a 2 mHa gap.",
+    "N₂ is one of the hardest molecules in quantum chemistry — a triple bond with strong multireference character. How we certified it at cc-pVDZ with CASSCF orbitals, 12 qubits, and a 2 mHa gap. Corrected 13 October 2026: that UCCSD result did not reproduce; N₂ is certified at 4.4 mHa (HEA, L-BFGS-B) and 8.8 mHa (ADAPT-VQE).",
   datePublished: "2026-05-21",
-  dateModified: "2026-05-21",
+  dateModified: "2026-10-13",
   author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   url: "https://www.qencode-benchmark.org/blog/certifying-n2-triple-bond",
@@ -59,6 +59,26 @@ export default function Post() {
       </div>
 
       <div className="prose prose-neutral dark:prose-invert max-w-none text-[15px] leading-7 text-foreground/90 space-y-6">
+
+        <div className="rounded-lg border-l-4 border-amber-500 bg-amber-500/5 p-5 not-prose">
+          <p className="text-sm text-foreground leading-6">
+            <strong>Correction, 13 October 2026.</strong> The 2.015 mHa N₂ UCCSD result
+            reported below did not reproduce. It came from runs whose outcome depended on the
+            number of linear-algebra threads; under the deterministic single-thread protocol the
+            same configuration (Jordan–Wigner, UCCSD, COBYLA, 10,000 iterations) reaches
+            10.83 mHa and is research tier, not certified. N₂ is certified by the
+            hardware-efficient ansatz with L-BFGS-B at 4.40 mHa (parity mapping; 4.51 mHa under
+            Jordan–Wigner) and by ADAPT-VQE at 8.83 mHa. Two further statements below no longer
+            hold: the <em>beats_classical</em> flag means only that the VQE error is smaller than
+            the CCSD(T) correlation energy, not that VQE recovers more correlation than CCSD(T);
+            and QB-GSEE instances carry their own integrals and active spaces, so this problem is
+            comparable to theirs, not identical to it. What went wrong is explained in{" "}
+            <Link href="/blog/vqe-reproducibility-threading-bug" className="text-primary hover:underline">
+              We Audited Our Own VQE Benchmark
+            </Link>
+            . The original text is left unchanged.
+          </p>
+        </div>
 
         <p>
           Every quantum chemistry benchmark suite eventually has to reckon with N₂. The nitrogen

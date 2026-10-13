@@ -21,7 +21,7 @@ const articleSchema = {
   description:
     "COBYLA and UCCSD hit a wall at ~400 parameters. ADAPT-VQE breaks it by building the ansatz adaptively. We used it to certify H₆ and benzene — the first aromatic molecule certified on QEncode.",
   datePublished: "2026-05-29",
-  dateModified: "2026-05-29",
+  dateModified: "2026-10-13",
   author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   url: "https://www.qencode-benchmark.org/blog/adapt-vqe-certifies-benzene",
@@ -64,6 +64,24 @@ export default function Post() {
       </div>
 
       <div className="prose prose-neutral dark:prose-invert max-w-none text-[15px] leading-7 text-foreground/90 space-y-6">
+
+        <div className="rounded-lg border-l-4 border-amber-500 bg-amber-500/5 p-5 not-prose">
+          <p className="text-sm text-foreground leading-6">
+            <strong>Correction, 13 October 2026.</strong> The N₂ UCCSD result this post builds on
+            did not reproduce: it came from runs whose outcome depended on the number of
+            linear-algebra threads, and the explanation given below — D∞h symmetry and a lucky
+            Hartree-Fock initialisation — described an artifact. Under the deterministic
+            single-thread protocol N₂ UCCSD with COBYLA reaches 10.83 mHa and is research tier.
+            The ADAPT-VQE figures here are superseded too: H₆ now certifies at 9.273 mHa with 28
+            operators and benzene at 9.540 mHa with 11. Benzene is also certified by the
+            hardware-efficient ansatz with L-BFGS-B at 8.741 mHa, so the comparison with a
+            hardware-efficient entry unable to certify no longer holds. See{" "}
+            <Link href="/blog/vqe-reproducibility-threading-bug" className="text-primary hover:underline">
+              We Audited Our Own VQE Benchmark
+            </Link>
+            . The original text is left unchanged.
+          </p>
+        </div>
 
         <h2 className="text-xl font-semibold mt-8 mb-3">The wall we kept hitting</h2>
 

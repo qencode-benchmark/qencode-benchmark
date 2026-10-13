@@ -359,10 +359,10 @@ function OptimizerChip({ r }) {
         <p className="text-muted-foreground">
           {free ? "Gradient-free." : "Gradient-based."}{" "}
           {r.amplifies
-            ? "A gradient-free optimiser on an unstructured ansatz amplifies last-bit arithmetic differences into a different local minimum, so the energy can move by up to ~10⁻² Ha on another machine while still certifying. Measured: HEA/COBYLA entries moved 10³–10⁴× more across environments than ADAPT entries."
+            ? "A gradient-free optimiser on an unstructured ansatz can amplify last-bit arithmetic differences into a different local minimum, so the energy can move by up to ~10⁻² Ha on another machine. Measured across two machines: 35 of the 39 entries this rule flags were run on both, and 20 of those moved by less than 10⁻⁶ Ha, while C₄H₄ parity HEA moved 8.0 mHa and lost certification. Susceptible is not the same as unstable."
             : r.optimiserFamily === "gradient-free"
-              ? "ADAPT-VQE selects its operators by analytic gradient, so the ansatz structure is gradient-determined and the inner optimiser only polishes a small, well-conditioned set. Measured across two machines on all ten ADAPT entries: every one robust. H₈ moved 10⁻¹⁴ Ha; H₁₀, with the smallest margin in the suite, 10⁻⁹ Ha."
-              : "Gradients remove the comparison inside the optimiser step, but not the one in a multistart loop that halts at the first attempt to certify. Measured: two L-BFGS-B hardware-efficient entries — N₂ at ten layers, parity and Jordan–Wigner — moved 6.5 and 15.9 mHa across machines and lost certification. The other five gradient-based entries are robust."}
+              ? "ADAPT-VQE selects its operators by analytic gradient, so the ansatz structure is gradient-determined and the inner optimiser only polishes a small, well-conditioned set. Measured across two machines on all ten ADAPT entries: every one robust, each moving less than its own margin. H₈ moved 10⁻¹⁴ Ha; H₁₀, with the smallest margin in the suite, 10⁻⁶ Ha; the largest move was N₂, 0.94 mHa against a 1.17 mHa margin."
+              : "Gradients remove the comparison inside the optimiser step, but not the one in a multistart loop that halts at the first attempt to certify. Measured: two L-BFGS-B hardware-efficient entries — N₂ at ten layers, parity and Jordan–Wigner — moved 6.5 and 15.9 mHa across machines and lost certification. The other three certified gradient-based entries — benzene hardware-efficient and the H₈ and H₁₀ ADAPT-VQE runs — are robust; the two research-tier gradient-based entries were run on one machine only."}
         </p>
       </>
     }>
@@ -380,7 +380,7 @@ function FragilityBadges({ r }) {
       <Tip key="chem" content={
         <>
           <p className="font-semibold">Chemical accuracy</p>
-          <p className="text-muted-foreground">Gap below 1.6 × 10⁻³ Ha (1 kcal/mol) — accurate enough to make a chemical prediction with. Reported, not a certification criterion; 26 of 54 entries reach it.</p>
+          <p className="text-muted-foreground">Gap below 1.6 × 10⁻³ Ha (1 kcal/mol) — accurate enough to make a chemical prediction with. Reported, not a certification criterion; 28 of 54 entries reach it.</p>
         </>
       }>
         <Badge variant="outline" className="text-xs gap-1 cursor-help border-sky-400 text-sky-700 dark:text-sky-300">
@@ -394,7 +394,7 @@ function FragilityBadges({ r }) {
       <Tip key="rob" content={
         <>
           <p className="font-semibold">Re-run on another environment: still certifies</p>
-          <p className="text-muted-foreground">Regenerated on a machine with drifted package versions and the energy moved far less than its own margin. Measured, not inferred.</p>
+          <p className="text-muted-foreground">Regenerated on a second machine running identical pinned software, and the energy moved less than its own margin. Measured, not inferred.</p>
         </>
       }>
         <Badge variant="outline" className="text-xs gap-1 cursor-help border-emerald-500 text-emerald-700 dark:text-emerald-300">
@@ -420,7 +420,7 @@ function FragilityBadges({ r }) {
       <Tip key="frag" content={
         <>
           <p className="font-semibold">Re-run on another environment: does not certify</p>
-          <p className="text-muted-foreground">Reproduces exactly on the reference pinned environment, which is what certification attests, but regenerates above 0.01 Ha on a machine with drifted package versions. Flagged, not withdrawn.</p>
+          <p className="text-muted-foreground">Reproduces exactly on the machine that generated it, which is what its provenance attests, but regenerates above 0.01 Ha on a second processor running identical pinned software. Flagged, not withdrawn.</p>
         </>
       }>
         <Badge variant="outline" className="text-xs gap-1 cursor-help border-red-500 text-red-700 dark:text-red-300">
@@ -509,7 +509,8 @@ function LeaderboardTable({ rows, category, basisLabel, paretoIds = null }) {
                       <p className="text-muted-foreground">Under 20% is thin. Whether thin is
                         dangerous depends on the optimiser chip: a gradient-free optimiser on an
                         unstructured ansatz can move ~10⁻² Ha across environments. ADAPT runs
-                        moved at most 10⁻⁶ Ha; gradient-based hardware-efficient runs whose
+                        all moved less than their own margin (at most 0.94 mHa, N₂);
+                        gradient-based hardware-efficient runs whose
                         multistart stops at the first certifying attempt moved up to
                         1.6 × 10⁻² Ha. Hover the optimiser chip.</p>
                     </TooltipContent>
@@ -1082,9 +1083,10 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
               </h3>
               <p className="text-xs text-amber-800 mt-1">
                 These entries are <strong>validated</strong> but do not meet the 0.01 Ha certification threshold.
-                They represent strongly-correlated systems or mapping configurations where
-                standard UCCSD reaches its physical limit{basisLabel ? ` with the ${basisLabel} basis` : ""}. Results are reproducible and correct —
-                the gap reflects the method&apos;s limitation, not an implementation error.
+                They are strongly-correlated systems where a configuration — ansatz, optimiser and
+                depth together — did not reach the bar within its recorded budget{basisLabel ? ` with the ${basisLabel} basis` : ""}. Results are reproducible and correct —
+                the gap reflects that configuration, not an implementation error. For N₂ UCCSD the
+                limit is gradient-free optimisation of 404 parameters with COBYLA, not the ansatz itself.
                 Entries that do meet the CCSD(T) threshold carry the <strong>Beats CCSD(T)</strong> badge,
                 which means the VQE error is smaller than the best single-reference perturbative classical result
                 for that molecule — not that quantum beats classical computing overall.
@@ -1168,8 +1170,8 @@ export default function LeaderboardClient({ acc, cost, balanced, research = [], 
               <p>Chemistry-motivated ansatz that applies all single and double electronic excitations from the Hartree-Fock reference state. Produces the best energies because the circuit is designed around the molecule&apos;s physics.</p>
               <p className="text-amber-700 dark:text-amber-400 font-medium">Why 2Q gates and depth show &ldquo;—&rdquo;:</p>
               <p>UCCSD uses exponential Pauli operators (<span className="font-mono">exp(iθH)</span>) that are symbolic until compiled for a specific hardware target. The raw gate count before transpilation is not meaningful for hardware comparison, so these columns are intentionally left blank. On real superconducting hardware, a single UCCSD layer for LiH (4 qubits) typically expands to hundreds of CNOT gates after decomposition.</p>
-              <p className="text-emerald-700 dark:text-emerald-400 font-medium">N₂ — certified at cc-pVDZ:</p>
-              <p>N₂ with cc-pVDZ has 404 UCCSD parameters and a strongly-correlated triple bond. With CASSCF orbital optimisation, QEncode certified N₂ JW/UCCSD at 2.015 mHa gap — within chemical accuracy and aligned with DARPA QB-GSEE targets. Without CASSCF (HEA), the gap exceeds 0.1 Ha, illustrating how critical orbital optimisation is for multireference systems.</p>
+              <p className="text-amber-700 dark:text-amber-400 font-medium">N₂ — UCCSD with COBYLA does not certify:</p>
+              <p>N₂ with cc-pVDZ has 404 UCCSD parameters and a strongly-correlated triple bond. With CASSCF orbitals, UCCSD optimised by COBYLA reaches 10.83 mHa and is research tier. N₂ certifies with the hardware-efficient ansatz and L-BFGS-B at 4.40 mHa (parity; 4.51 mHa under Jordan–Wigner) and with ADAPT-VQE at 8.83 mHa (25 operators). An earlier suite version listed N₂ UCCSD as certified at 2.015 mHa; that value came from thread-dependent runs, did not reproduce, and is withdrawn. The hardware-efficient ansatz with COBYLA at four layers stays above 0.1 Ha.</p>
             </div>
             {/* HEA */}
             <div className="rounded-md border bg-background p-3 space-y-1.5">
