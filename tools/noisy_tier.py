@@ -88,7 +88,10 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 
 DB_DIR = os.path.join(ROOT, "releases", "v4", "db")
 OUT_DIR = os.path.join(ROOT, "experiments", "noisy_tier", "records")
-RECORD_VERSION = "1"
+# "2" (2026-10-13): duplicated exponentials are fused before decomposition, which halves
+# the gate counts of every UCCSD and ADAPT-VQE circuit; version-1 records counted the
+# pipeline's doubled tape. See _fuse_duplicated_exponentials.
+RECORD_VERSION = "2"
 
 # The decomposition target. Every operation the noisy circuit contains must be one of
 # these, so a "gate" means the same thing for every entry and every ansatz.
@@ -336,6 +339,41 @@ def _split_commuting_exponentials(tape):
     return qml.tape.QuantumScript(new_ops, tape.measurements, shots=tape.shots)
 
 
+def _fuse_duplicated_exponentials(tape):
+    """Merge each pair of identical, adjacent exponentials into one at twice the angle.
+
+    The pipeline's _apply_tapered_op (generate_entry_v4.py) applies every multi-qubit
+    ansatz operator as qml.apply(qml.exp(base, coeff=1j*theta)). Inside a circuit,
+    qml.exp already queues the operator and qml.apply queues a copy, so the circuit
+    contains exp(i theta G) twice in a row: the unitary exp(2i theta G), built from two
+    gates. Every stored UCCSD and ADAPT-VQE energy and parameter vector is consistent with
+    that unitary, so it is kept; what this removes is the second copy of the gates. A
+    device would run the unitary once, and a gate count, and the noise acting on it,
+    should describe that. Found by the 2026-10-08 audit: before this, every UCCSD and
+    ADAPT-VQE record counted, and put noise on, twice the gates its circuit needs.
+
+    Only exact duplicates are merged, and only in pairs, so two different operators that
+    happen to share a Pauli word stay two gates, as the ansatz defines them.
+    exp(aG) exp(aG) = exp(2aG) holds exactly for any operator G; the decomposed circuit
+    is still checked against the pipeline circuit to 1e-8 Ha afterwards.
+    """
+    import pennylane as qml
+    ops, fused, i = [], 0, 0
+    src = tape.operations
+    while i < len(src):
+        op = src[i]
+        nxt = src[i + 1] if i + 1 < len(src) else None
+        if (op.name == "Exp" and nxt is not None and nxt.name == "Exp"
+                and qml.equal(op, nxt)):
+            ops.append(qml.exp(op.base, coeff=2 * op.coeff))
+            fused += 1
+            i += 2
+            continue
+        ops.append(op)
+        i += 1
+    return qml.tape.QuantumScript(ops, tape.measurements, shots=tape.shots), fused
+
+
 def prepare_tape(circuit_fn, params, H_t, wires):
     """The pipeline circuit as a tape over GATE_SET, with its gate counts."""
     import pennylane as qml
@@ -345,6 +383,7 @@ def prepare_tape(circuit_fn, params, H_t, wires):
         return qml.expval(H_t)
 
     tape = qml.tape.make_qscript(full)(params)
+    tape, fused = _fuse_duplicated_exponentials(tape)
     tape = _split_commuting_exponentials(tape)
     (decomposed,), _ = qml.transforms.decompose(tape, gate_set=GATE_SET)
     n1 = n2 = 0
@@ -359,7 +398,8 @@ def prepare_tape(circuit_fn, params, H_t, wires):
             n2 += 1
         else:
             raise RuntimeError("%s acts on %d wires" % (op.name, len(op.wires)))
-    counts = {"n_1q": n1, "n_2q": n2, "n_ops_total": len(decomposed.operations)}
+    counts = {"n_1q": n1, "n_2q": n2, "n_ops_total": len(decomposed.operations),
+              "duplicate_exponentials_fused": fused}
     return decomposed, counts
 
 

@@ -1,5 +1,5 @@
 {
- "record_version": "1",
+ "record_version": "2",
  "entry_id": "C4H6_ccpvdz_JW_ADAPT_v4_tapered__sha256_d70625e50afebe76",
  "molecule": "C4H6",
  "basis": "cc-pvdz",
@@ -14,8 +14,8 @@
   "E_stored_Ha": -154.91906880298902,
   "E_rebuild_Ha": -154.9190688029892,
   "rebuild_deviation_Ha": 1.7053025658242404e-13,
-  "E_decomposed_mixed_Ha": -154.9190688029891,
-  "decomposition_deviation_Ha": 8.526512829121202e-14,
+  "E_decomposed_mixed_Ha": -154.91906880298913,
+  "decomposition_deviation_Ha": 5.684341886080802e-14,
   "E_exact_Ha": -154.9218973815816,
   "gap_Ha": 0.0028285785924140328,
   "constant_correction_Ha": 0.0,
@@ -38,9 +38,10 @@
   "tapered_sector_offset_Ha": 0.0
  },
  "gate_counts": {
-  "n_1q": 10,
-  "n_2q": 12,
-  "n_ops_total": 23
+  "n_1q": 5,
+  "n_2q": 6,
+  "n_ops_total": 12,
+  "duplicate_exponentials_fused": 1
  },
  "gate_set": [
   "BasisState",
@@ -69,17 +70,17 @@
      "depolarizing"
     ]
    },
-   "n_channels": 34,
-   "E_noisy_Ha": -154.9028895013212,
-   "penalty_mHa": 16.17930166798942,
-   "noisy_gap_mHa": 19.007880260403454,
+   "n_channels": 17,
+   "E_noisy_Ha": -154.91090030402808,
+   "penalty_mHa": 8.168498961111936,
+   "noisy_gap_mHa": 10.997077553525969,
    "meets_threshold_under_noise": false,
-   "eps_eff": 0.01647228593210026,
-   "eps_model": 0.032804637581196006,
-   "eps_ratio": 0.502132842996027,
-   "bound_mHa": 105.21348502412027,
-   "full_mixing_estimate_mHa": 32.22115799367745,
-   "seconds": 0.125
+   "eps_eff": 0.008316418921201841,
+   "eps_model": 0.016539089531869666,
+   "eps_ratio": 0.5028341436314668,
+   "bound_mHa": 53.0454038538569,
+   "full_mixing_estimate_mHa": 16.244917065732764,
+   "seconds": 0.084
   },
   "depolarizing-current/v1": {
    "params": {
@@ -89,17 +90,17 @@
      "depolarizing"
     ]
    },
-   "n_channels": 34,
-   "E_noisy_Ha": -154.8412505278717,
-   "penalty_mHa": 77.81827511749384,
-   "noisy_gap_mHa": 80.64685370990787,
+   "n_channels": 17,
+   "E_noisy_Ha": -154.878972933149,
+   "penalty_mHa": 40.09586984020075,
+   "noisy_gap_mHa": 42.92444843261478,
    "meets_threshold_under_noise": false,
-   "eps_eff": 0.0792274539892113,
-   "eps_model": 0.1539735080429453,
-   "eps_ratio": 0.5145525031949891,
-   "bound_mHa": 493.83534088709956,
-   "full_mixing_estimate_mHa": 151.23485870596315,
-   "seconds": 0.126
+   "eps_eff": 0.040821949318788964,
+   "eps_model": 0.08020301590130519,
+   "eps_ratio": 0.5089827216600298,
+   "bound_mHa": 257.2331058843419,
+   "full_mixing_estimate_mHa": 78.77648520057701,
+   "seconds": 0.071
   },
   "depolarizing-pessimistic/v1": {
    "params": {
@@ -109,17 +110,17 @@
      "depolarizing"
     ]
    },
-   "n_channels": 34,
-   "E_noisy_Ha": -154.77064814351039,
-   "penalty_mHa": 148.420659478802,
-   "noisy_gap_mHa": 151.24923807121604,
+   "n_channels": 17,
+   "E_noisy_Ha": -154.84068961586553,
+   "penalty_mHa": 78.37918712365877,
+   "noisy_gap_mHa": 81.2077657160728,
    "meets_threshold_under_noise": false,
-   "eps_eff": 0.15110834764906939,
-   "eps_model": 0.2850157168247053,
-   "eps_ratio": 0.530175491136183,
-   "bound_mHa": 914.1237052094185,
-   "full_mixing_estimate_mHa": 279.94628563597274,
-   "seconds": 0.104
+   "eps_eff": 0.07979852331827739,
+   "eps_model": 0.15443256733995792,
+   "eps_ratio": 0.5167208231578126,
+   "bound_mHa": 495.30767016834443,
+   "full_mixing_estimate_mHa": 151.6857529461723,
+   "seconds": 0.103
   },
   "device-sc/v1": {
    "params": {
@@ -133,23 +134,23 @@
      "phase_damping"
     ]
    },
-   "n_channels": 102,
-   "E_noisy_Ha": -154.82510310320527,
-   "penalty_mHa": 93.96569978392222,
-   "noisy_gap_mHa": 96.79427837633625,
+   "n_channels": 51,
+   "E_noisy_Ha": -154.8704102760464,
+   "penalty_mHa": 48.658526942773506,
+   "noisy_gap_mHa": 51.48710553518754,
    "meets_threshold_under_noise": false,
-   "eps_eff": 0.09566728567234911,
+   "eps_eff": 0.04953966402777215,
    "eps_model": null,
    "eps_ratio": null,
    "bound_mHa": null,
    "full_mixing_estimate_mHa": null,
-   "seconds": 0.096
+   "seconds": 0.071
   }
  },
- "seconds_total": 10.404,
+ "seconds_total": 11.609,
  "provenance": {
-  "computed_utc": "2026-09-07T07:49:17.505351+00:00",
-  "git_commit": "2484e2f",
+  "computed_utc": "2026-10-13T07:06:17.532731+00:00",
+  "git_commit": "4698f99d",
   "noise_models_sha256": "f7599b8e38be626fa8298c3ccb1edb5d3d24a7c83434cb7fa8a833000b1c4162",
   "tool_versions": {
    "python": "3.11.15",
@@ -159,6 +160,18 @@
    "pyscf": "2.6.2"
   },
   "blas_threads": "1",
+  "machine": {
+   "cpu_model": "AMD Ryzen Threadripper 2990WX 32-Core Processor",
+   "vector_isa": [
+    "avx2",
+    "fma",
+    "avx"
+   ],
+   "libc": "glibc 2.39",
+   "os": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+   "openblas_core": "Haswell",
+   "openblas_coretype_env": null
+  },
   "simulator": "pennylane default.mixed (density matrix, no sampling)"
  },
  "zne": {
@@ -170,16 +183,16 @@
    3
   ],
   "energies_Ha": [
-   -154.8412505278717,
-   -154.77107536123665,
-   -154.7076842226655
+   -154.878972933149,
+   -154.84092734214954,
+   -154.80481158374045
   ],
-  "E_linear_Ha": -154.91142569450665,
-  "E_quadratic_Ha": -154.91820972257037,
-  "E_zne_Ha": -154.91820972257037,
-  "residual_mHa": 0.8590804188202128,
-  "zne_gap_mHa": 3.6876590112342456,
+  "E_linear_Ha": -154.91701852414843,
+  "E_quadratic_Ha": -154.91894835673878,
+  "E_zne_Ha": -154.91894835673878,
+  "residual_mHa": 0.12044625040630308,
+  "zne_gap_mHa": 2.949024842820336,
   "meets_threshold_after_zne": true,
-  "seconds": 0.331
+  "seconds": 0.201
  }
 }

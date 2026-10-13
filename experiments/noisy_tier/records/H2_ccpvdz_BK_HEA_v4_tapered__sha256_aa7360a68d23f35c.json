@@ -1,5 +1,5 @@
 {
- "record_version": "1",
+ "record_version": "2",
  "entry_id": "H2_ccpvdz_BK_HEA_v4_tapered__sha256_aa7360a68d23f35c",
  "molecule": "H2",
  "basis": "cc-pvdz",
@@ -37,7 +37,8 @@
  "gate_counts": {
   "n_1q": 3,
   "n_2q": 0,
-  "n_ops_total": 4
+  "n_ops_total": 4,
+  "duplicate_exponentials_fused": 0
  },
  "gate_set": [
   "BasisState",
@@ -76,7 +77,7 @@
    "eps_ratio": 0.9999999997146336,
    "bound_mHa": 0.46364209551047264,
    "full_mixing_estimate_mHa": 0.23182104603723516,
-   "seconds": 0.008
+   "seconds": 0.01
   },
   "depolarizing-current/v1": {
    "params": {
@@ -96,7 +97,7 @@
    "eps_ratio": 0.99999999994253,
    "bound_mHa": 2.3169742635112547,
    "full_mixing_estimate_mHa": 1.1584871231702025,
-   "seconds": 0.043
+   "seconds": 0.012
   },
   "depolarizing-pessimistic/v1": {
    "params": {
@@ -116,7 +117,7 @@
    "eps_ratio": 0.9999999999713512,
    "bound_mHa": 4.630859228462213,
    "full_mixing_estimate_mHa": 2.3154295970717036,
-   "seconds": 0.012
+   "seconds": 0.013
   },
   "device-sc/v1": {
    "params": {
@@ -140,13 +141,13 @@
    "eps_ratio": null,
    "bound_mHa": null,
    "full_mixing_estimate_mHa": null,
-   "seconds": 0.021
+   "seconds": 0.019
   }
  },
- "seconds_total": 2.534,
+ "seconds_total": 3.656,
  "provenance": {
-  "computed_utc": "2026-09-07T12:23:20.592287+00:00",
-  "git_commit": "ab7185b",
+  "computed_utc": "2026-10-13T07:06:09.577609+00:00",
+  "git_commit": "4698f99d",
   "noise_models_sha256": "f7599b8e38be626fa8298c3ccb1edb5d3d24a7c83434cb7fa8a833000b1c4162",
   "tool_versions": {
    "python": "3.11.15",
@@ -156,6 +157,18 @@
    "pyscf": "2.6.2"
   },
   "blas_threads": "1",
+  "machine": {
+   "cpu_model": "AMD Ryzen Threadripper 2990WX 32-Core Processor",
+   "vector_isa": [
+    "avx2",
+    "fma",
+    "avx"
+   ],
+   "libc": "glibc 2.39",
+   "os": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+   "openblas_core": "Haswell",
+   "openblas_coretype_env": null
+  },
   "simulator": "pennylane default.mixed (density matrix, no sampling)"
  },
  "zne": {
@@ -177,6 +190,6 @@
   "residual_mHa": 4.6277739418343344e-06,
   "zne_gap_mHa": 1.3218924843627633e-05,
   "meets_threshold_after_zne": true,
-  "seconds": 0.031
+  "seconds": 0.105
  }
 }

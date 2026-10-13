@@ -1,5 +1,5 @@
 {
- "record_version": "1",
+ "record_version": "2",
  "entry_id": "N2_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_1092269e3f92c847",
  "molecule": "N2",
  "basis": "cc-pvdz",
@@ -29,7 +29,7 @@
  "hamiltonian": {
   "n_qubits": 8,
   "c_I_Ha": -105.48887109755675,
-  "lambda_min_Ha": -109.08995815196663,
+  "lambda_min_Ha": -109.08995815196701,
   "lambda_max_Ha": -100.05647099538386,
   "mixed_minus_E_Ha": 3.5966830958033142,
   "tapered_sector_offset_Ha": 0.0
@@ -37,7 +37,8 @@
  "gate_counts": {
   "n_1q": 88,
   "n_2q": 70,
-  "n_ops_total": 159
+  "n_ops_total": 159,
+  "duplicate_exponentials_fused": 0
  },
  "gate_set": [
   "BasisState",
@@ -76,7 +77,7 @@
    "eps_ratio": 0.5082628141671626,
    "bound_mHa": 1625.7857921271382,
    "full_mixing_estimate_mHa": 647.6223718097461,
-   "seconds": 5.635
+   "seconds": 5.891
   },
   "depolarizing-current/v1": {
    "params": {
@@ -96,7 +97,7 @@
    "eps_ratio": 0.5967341988225496,
    "bound_mHa": 5691.3020416245145,
    "full_mixing_estimate_mHa": 2267.097267506619,
-   "seconds": 4.593
+   "seconds": 6.212
   },
   "depolarizing-pessimistic/v1": {
    "params": {
@@ -116,7 +117,7 @@
    "eps_ratio": 0.697244920890135,
    "bound_mHa": 7803.010218593743,
    "full_mixing_estimate_mHa": 3108.28401225577,
-   "seconds": 5.095
+   "seconds": 5.664
   },
   "device-sc/v1": {
    "params": {
@@ -140,13 +141,13 @@
    "eps_ratio": null,
    "bound_mHa": null,
    "full_mixing_estimate_mHa": null,
-   "seconds": 7.06
+   "seconds": 11.581
   }
  },
- "seconds_total": 42.662,
+ "seconds_total": 56.682,
  "provenance": {
-  "computed_utc": "2026-09-07T12:24:04.531104+00:00",
-  "git_commit": "ab7185b",
+  "computed_utc": "2026-10-13T07:07:16.179478+00:00",
+  "git_commit": "4698f99d",
   "noise_models_sha256": "f7599b8e38be626fa8298c3ccb1edb5d3d24a7c83434cb7fa8a833000b1c4162",
   "tool_versions": {
    "python": "3.11.15",
@@ -156,6 +157,18 @@
    "pyscf": "2.6.2"
   },
   "blas_threads": "1",
+  "machine": {
+   "cpu_model": "AMD Ryzen Threadripper 2990WX 32-Core Processor",
+   "vector_isa": [
+    "avx2",
+    "fma",
+    "avx"
+   ],
+   "libc": "glibc 2.39",
+   "os": "Linux-6.18.40.1-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+   "openblas_core": "Haswell",
+   "openblas_coretype_env": null
+  },
   "simulator": "pennylane default.mixed (density matrix, no sampling)"
  },
  "zne": {
@@ -177,6 +190,6 @@
   "residual_mHa": 227.3616191095158,
   "zne_gap_mHa": 231.76557771597572,
   "meets_threshold_after_zne": false,
-  "seconds": 15.742
+  "seconds": 19.736
  }
 }

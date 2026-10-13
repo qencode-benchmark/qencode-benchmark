@@ -1,5 +1,5 @@
 {
- "record_version": "1",
+ "record_version": "2",
  "entry_id": "C4H4_ccpvdz_JW_ADAPT_v4_casscf_tapered__sha256_c9726695d8bdde1d",
  "molecule": "C4H4",
  "basis": "cc-pvdz",
@@ -14,8 +14,8 @@
   "E_stored_Ha": -153.66746315456638,
   "E_rebuild_Ha": -153.6674631545661,
   "rebuild_deviation_Ha": 2.8421709430404007e-13,
-  "E_decomposed_mixed_Ha": -153.66746315456567,
-  "decomposition_deviation_Ha": 4.263256414560601e-13,
+  "E_decomposed_mixed_Ha": -153.6674631545658,
+  "decomposition_deviation_Ha": 2.8421709430404007e-13,
   "E_exact_Ha": -153.67342655025251,
   "gap_Ha": 0.005963395686421791,
   "constant_correction_Ha": 0.0,
@@ -38,9 +38,10 @@
   "tapered_sector_offset_Ha": 0.0
  },
  "gate_counts": {
-  "n_1q": 28,
-  "n_2q": 24,
-  "n_ops_total": 53
+  "n_1q": 14,
+  "n_2q": 12,
+  "n_ops_total": 27,
+  "duplicate_exponentials_fused": 2
  },
  "gate_set": [
   "BasisState",
@@ -69,17 +70,17 @@
      "depolarizing"
     ]
    },
-   "n_channels": 76,
-   "E_noisy_Ha": -153.63155714829867,
-   "penalty_mHa": 35.90600626742457,
-   "noisy_gap_mHa": 41.86940195384636,
+   "n_channels": 38,
+   "E_noisy_Ha": -153.64935706436776,
+   "penalty_mHa": 18.106090198330094,
+   "noisy_gap_mHa": 24.069485884751884,
    "meets_threshold_under_noise": false,
-   "eps_eff": 0.030717420605354994,
-   "eps_model": 0.0655304967121163,
-   "eps_ratio": 0.4687500041438794,
-   "bound_mHa": 261.6626862205873,
-   "full_mixing_estimate_mHa": 76.59947936001188,
-   "seconds": 0.101
+   "eps_eff": 0.015489675571220064,
+   "eps_model": 0.03332037194948423,
+   "eps_ratio": 0.4648710282917424,
+   "bound_mHa": 133.04794664495654,
+   "full_mixing_estimate_mHa": 38.94863111789175,
+   "seconds": 0.072
   },
   "depolarizing-current/v1": {
    "params": {
@@ -89,17 +90,17 @@
      "depolarizing"
     ]
    },
-   "n_channels": 76,
-   "E_noisy_Ha": -153.4995744915955,
-   "penalty_mHa": 167.88866297059712,
-   "noisy_gap_mHa": 173.85205865701892,
+   "n_channels": 38,
+   "E_noisy_Ha": -153.57983847821902,
+   "penalty_mHa": 87.62467634707605,
+   "noisy_gap_mHa": 93.58807203349784,
    "meets_threshold_under_noise": false,
-   "eps_eff": 0.14362796677884118,
-   "eps_model": 0.288047670594616,
-   "eps_ratio": 0.4986256840138661,
-   "bound_mHa": 1150.1717677875356,
-   "full_mixing_estimate_mHa": 336.70279801697575,
-   "seconds": 0.107
+   "eps_eff": 0.07496250122373457,
+   "eps_model": 0.15622732362004987,
+   "eps_ratio": 0.4798296449476783,
+   "bound_mHa": 623.8143034236597,
+   "full_mixing_estimate_mHa": 182.61622071439714,
+   "seconds": 0.079
   },
   "depolarizing-pessimistic/v1": {
    "params": {
@@ -109,17 +110,17 @@
      "depolarizing"
     ]
    },
-   "n_channels": 76,
-   "E_noisy_Ha": -153.35799662087462,
-   "penalty_mHa": 309.46653369147725,
-   "noisy_gap_mHa": 315.42992937789904,
+   "n_channels": 38,
+   "E_noisy_Ha": -153.49914209283395,
+   "penalty_mHa": 168.32106173214356,
+   "noisy_gap_mHa": 174.28445741856535,
    "meets_threshold_under_noise": false,
-   "eps_eff": 0.26474717371468354,
-   "eps_model": 0.49422492296637355,
-   "eps_ratio": 0.5356815518846195,
-   "bound_mHa": 1973.4356891671994,
-   "full_mixing_estimate_mHa": 577.706162556319,
-   "seconds": 0.1
+   "eps_eff": 0.1439978818991342,
+   "eps_model": 0.28882134661280334,
+   "eps_ratio": 0.49857077251349824,
+   "bound_mHa": 1153.2610491960481,
+   "full_mixing_estimate_mHa": 337.6071583249226,
+   "seconds": 0.073
   },
   "device-sc/v1": {
    "params": {
@@ -133,23 +134,23 @@
      "phase_damping"
     ]
    },
-   "n_channels": 228,
-   "E_noisy_Ha": -153.4680774764902,
-   "penalty_mHa": 199.3856780758847,
-   "noisy_gap_mHa": 205.3490737623065,
+   "n_channels": 114,
+   "E_noisy_Ha": -153.562463167084,
+   "penalty_mHa": 104.9999874821026,
+   "noisy_gap_mHa": 110.96338316852439,
    "meets_threshold_under_noise": false,
-   "eps_eff": 0.1705735160442325,
+   "eps_eff": 0.08982699872057082,
    "eps_model": null,
    "eps_ratio": null,
    "bound_mHa": null,
    "full_mixing_estimate_mHa": null,
-   "seconds": 0.142
+   "seconds": 0.092
   }
  },
- "seconds_total": 7.257,
+ "seconds_total": 7.06,
  "provenance": {
-  "computed_utc": "2026-09-09T07:42:58.990256+00:00",
-  "git_commit": "ce61a39d",
+  "computed_utc": "2026-10-13T07:41:46.615510+00:00",
+  "git_commit": "9c9dcdfd",
   "noise_models_sha256": "f7599b8e38be626fa8298c3ccb1edb5d3d24a7c83434cb7fa8a833000b1c4162",
   "tool_versions": {
    "python": "3.11.15",
@@ -183,16 +184,16 @@
    3
   ],
   "energies_Ha": [
-   -153.4995744915955,
-   -153.35883415222557,
-   -153.2407053209425
+   -153.57983847821902,
+   -153.49964109925466,
+   -153.42621872107202
   ],
-  "E_linear_Ha": -153.64031483096542,
-  "E_quadratic_Ha": -153.66292633905218,
-  "E_zne_Ha": -153.66292633905218,
-  "residual_mHa": 4.536815513915826,
-  "zne_gap_mHa": 10.500211200337617,
-  "meets_threshold_after_zne": false,
-  "seconds": 0.284
+  "E_linear_Ha": -153.66003585718337,
+  "E_quadratic_Ha": -153.66681085796495,
+  "E_zne_Ha": -153.66681085796495,
+  "residual_mHa": 0.652296601145963,
+  "zne_gap_mHa": 6.615692287567754,
+  "meets_threshold_after_zne": true,
+  "seconds": 0.26
  }
 }
