@@ -149,7 +149,7 @@ export default function HomePage() {
               <p className="text-sm text-muted-foreground mt-1">Max qubits (certified)</p>
             </div>
             <div>
-              <p className="text-3xl font-bold">4.5<span className="text-lg font-medium"> mHa</span></p>
+              <p className="text-3xl font-bold">4.4<span className="text-lg font-medium"> mHa</span></p>
               <p className="text-sm text-muted-foreground mt-1">Best gap on N₂</p>
             </div>
           </div>

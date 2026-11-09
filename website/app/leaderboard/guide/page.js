@@ -8,7 +8,7 @@ export const metadata = {
   openGraph: {
     title: "What These Numbers Mean — Reading the QEncode Leaderboard",
     description:
-      "Energy gap, classical baseline, near-term gate counts, fault-tolerant T-gate estimates, and the Pareto front — what each column measures and what it does not.",
+      "Energy gap, classical baseline, near-term gate counts, ansatz T-gate estimates, and the Pareto front — what each column measures and what it does not.",
     url: "https://www.qencode-benchmark.org/leaderboard/guide",
     type: "article",
   },
@@ -39,7 +39,7 @@ const faqSchema = {
       name: "What is the difference between two-qubit gate count and T-gate estimate?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "They price two different eras of hardware. The two-qubit gate count and circuit depth are the near-term cost: on today's noisy devices the two-qubit gate is the dominant error source, so that count sets whether a circuit is runnable now. The T-gate estimate is the fault-tolerant cost: in an error-corrected machine Clifford gates are comparatively cheap and non-Clifford T gates dominate, so that count sets the runtime of a future error-corrected implementation. A circuit can look cheap on one axis and expensive on the other.",
+        text: "They price two different eras of hardware. The two-qubit gate count and circuit depth are the near-term cost: on today's noisy devices the two-qubit gate is the dominant error source, so that count sets whether a circuit is runnable now. The T-gate estimate is a fault-tolerant proxy: in an error-corrected machine Clifford gates are comparatively cheap and non-Clifford T gates dominate, so it prices the same ansatz circuit by its non-Clifford content. It is not a full fault-tolerant resource estimate; that, per entry, is planned. A circuit can look cheap on one axis and expensive on the other.",
       },
     },
     {
@@ -47,7 +47,7 @@ const faqSchema = {
       name: "How are the T-gate estimates on QEncode calculated?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "They are derived by classical post-processing of the stored Pauli decomposition, not measured. The method is qubitized quantum phase estimation: from the Hamiltonian one-norm lambda, the number of walk operator applications needed for a target precision is ceil(pi*lambda/(2*epsilon)); each walk step costs about 2L+mu Toffoli gates for L Pauli terms; and each Toffoli is four T gates. Logical qubit counts follow from the system register plus the index and coefficient registers. Wall-clock runtime is deliberately not published, because it would require assuming a code distance and a physical error rate, and those assumptions would dominate the answer.",
+        text: "They are derived from the certified ansatz circuit, not measured: the number of rotation gates in the circuit, times the T gates needed to synthesise one rotation to precision epsilon = 0.001, which is ceil(1.149*log2(1/epsilon)) = 12. That prices one execution of the ansatz circuit by its non-Clifford content. It is not a phase-estimation cost and carries no logical-qubit count or error-correction overhead; per-entry fault-tolerant resource estimation is planned. Wall-clock runtime is deliberately not published, because it would require assuming a code distance and a physical error rate, and those assumptions would dominate the answer.",
       },
     },
     {
@@ -173,8 +173,10 @@ export default function GuidePage() {
               threshold. For UCCSD and hardware-efficient runs that is a multistart loop
               halting at the first restart that certifies — most used one restart of ten. For
               ADAPT-VQE it is the operator loop halting at the first operator count that
-              certifies. The cell shows how much budget was used when it stopped. The seven
-              research entries show <em>full</em>: they used everything and never certified.
+              certifies. The cell shows how much budget was used when it stopped. Research
+              entries show <em>full</em>: they used everything and never certified. The
+              Research tab lists two of them, those with no better entry for the same
+              molecule, mapping and ansatz; all seven are in the repository.
             </p>
             <p>
               <strong>This changes what the accuracy column means.</strong> The gap of an
@@ -236,16 +238,18 @@ export default function GuidePage() {
               samples. Gate noise drives the state toward the maximally mixed state, whose
               energy is the mean of the spectrum, so it can only push the energy up and no
               number of shots removes it. On this suite the smallest penalty for a
-              multi-qubit circuit is 22 mHa against a 10 mHa bar, and deep UCCSD circuits
+              multi-qubit circuit is 34 mHa against a 10 mHa bar (33.6 mHa for the
+              water-dimer ADAPT-VQE circuit and 34.4 mHa for BeH₂ hardware-efficient, four
+              two-qubit gates each), and deep UCCSD circuits
               lose more than a hartree. Hover a value for the gap under noise and for the
               residual after zero-noise extrapolation, the standard mitigation, which
               recovers the shallow circuits and not the deep ones.
             </p>
             <p>
               <strong>Measured, not certified.</strong> No entry&rsquo;s status depends on
-              this column. It is absent for entries above ten qubits, where exact
-              density-matrix simulation is out of reach, and for two entries whose stored
-              circuit cannot be rebuilt from the record.
+              this column. It is absent only for the two entries above ten qubits, H₈ and
+              H₁₀, where exact density-matrix simulation is out of reach; all 52 entries at
+              or below ten qubits rebuild from the record and are measured.
               Method, conventions and every record: <code>docs/NOISY_TIER.md</code>.
             </p>
           </Row>
@@ -301,30 +305,27 @@ export default function GuidePage() {
             </p>
           </Row>
 
-          <Row name="T gates" sub="fault-tolerant cost">
+          <Row name="T gates" sub="ansatz circuit, fault-tolerant proxy">
             <p>
-              An estimate of the non-Clifford cost of solving the same Hamiltonian on an
-              error-corrected machine. In that setting Clifford gates are comparatively
-              cheap and T gates dominate, so this count — not the two-qubit count — sets
-              the runtime.
+              An estimate of the non-Clifford cost of the certified ansatz circuit itself.
+              On an error-corrected machine Clifford gates are comparatively cheap and T
+              gates dominate, so this count prices the same circuit on a different axis from
+              the two-qubit count.
             </p>
             <p>
-              <strong>It is derived, not measured.</strong> It comes from classical
-              post-processing of the stored Pauli decomposition, assuming qubitized quantum
-              phase estimation: from the Hamiltonian one-norm{" "}
-              <code className="font-mono text-xs bg-muted px-1 rounded">λ = Σ|h<sub>a</sub>|</code>,
-              reaching precision ε needs{" "}
-              <code className="font-mono text-xs bg-muted px-1 rounded">⌈πλ/2ε⌉</code>{" "}
-              applications of a walk operator; each costs about{" "}
-              <code className="font-mono text-xs bg-muted px-1 rounded">2L+μ</code>{" "}
-              Toffoli gates for L Pauli terms; each Toffoli is four T gates.
+              <strong>It is derived, not measured.</strong> It is the number of rotation
+              gates in the ansatz circuit times the T gates needed to synthesise one rotation
+              to precision ε = 10⁻³:{" "}
+              <code className="font-mono text-xs bg-muted px-1 rounded">⌈1.149 log₂(1/ε)⌉ = 12</code>.
+              It prices one execution of the ansatz. It is not a phase-estimation cost and
+              carries no logical-qubit count or error-correction overhead; per-entry
+              fault-tolerant resource estimation is planned.
             </p>
             <p>
               <strong>Wall-clock runtime is deliberately not published.</strong> Converting
               T gates to hours requires assuming a code distance and a physical error rate,
               and those assumptions would dominate the answer — a single number would say
-              more about the assumption than about the molecule. Logical qubit counts are
-              the honest stopping point.
+              more about the assumption than about the molecule.
             </p>
           </Row>
 

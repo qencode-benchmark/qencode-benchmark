@@ -41,6 +41,23 @@ export default function Post() {
 
       <div className="prose prose-neutral dark:prose-invert max-w-none text-[15px] leading-7 text-foreground/90 space-y-6">
 
+        <div className="rounded-lg border-l-4 border-amber-500 bg-amber-500/5 p-5 not-prose">
+          <p className="text-sm text-foreground leading-6">
+            <strong>Correction, 13 October 2026.</strong> Several numbers in this post come from
+            an earlier suite version. The gap is measured against the exact active-space
+            reference, CASCI (the FCI energy within the active space), not full-system FCI.
+            Current best gaps: H₂ 1.0 × 10⁻⁹ Ha and HF 1.8 × 10⁻⁹ Ha, but LiH 2.9 × 10⁻⁶ Ha,
+            not below 10 nHa; H₂O 1.4 × 10⁻⁷ Ha and BeH₂ 5.4 × 10⁻⁸ Ha, so both are now within
+            chemical accuracy (the worst H₂O entry is 0.40 mHa). N₂ UCCSD with COBYLA is at
+            10.83 mHa, not 44 mHa, and is still research tier; the limit is gradient-free
+            optimisation of 404 parameters rather than UCCSD itself, since the same ansatz
+            reaches 0.049 mHa with L-BFGS-B in an unpublished re-run (docs/SUITE_BALANCE.md).
+            N₂ is certified by the hardware-efficient ansatz with L-BFGS-B at 4.40 mHa and by
+            ADAPT-VQE at 8.83 mHa. 28 of the 54 entries reach chemical accuracy. The original
+            text is left unchanged.
+          </p>
+        </div>
+
         <h2 className="text-xl font-semibold mt-2 mb-3">The error metric: |E_VQE − E_FCI|</h2>
 
         <p>

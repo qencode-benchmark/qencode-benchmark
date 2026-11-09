@@ -81,8 +81,14 @@ export default function MethodologyPage() {
             <p>
               Conserved Z2 symmetry sectors are identified and eliminated, reducing the qubit count.
               H₂ and HF go from 4 → 1 qubit (3 symmetries removed). N₂ goes from 12 → 8 qubits
-              (4 symmetries removed). The tapered HF reference state is computed with{" "}
-              <code className="font-mono text-xs bg-muted px-1 rounded">qchem.taper_hf()</code>.
+              (4 symmetries removed). The symmetry sector is derived from the Hartree-Fock state of
+              the mapping actually in use and verified against the CASCI reference, and the tapered
+              Hartree-Fock reference state is built for that mapping and checked against the untapered
+              Hartree-Fock energy (
+              <code className="font-mono text-xs bg-muted px-1 rounded">qchem.taper_hf()</code> is
+              used only where it is correct, for Jordan-Wigner). Before 2026-09-07 both steps assumed
+              Jordan-Wigner for every mapping; see{" "}
+              <code className="font-mono text-xs bg-muted px-1 rounded">docs/SECTOR_FIX.md</code>.
               For BK tapering (H₂ and HF only), imaginary parts are verified to be below{" "}
               <code className="font-mono text-xs bg-muted px-1 rounded">1e-6 × max_abs</code> before the
               strip is applied.
@@ -183,10 +189,13 @@ export default function MethodologyPage() {
           <div className="rounded-lg border p-4">
             <h3 className="font-semibold text-sm mb-1">Research tab</h3>
             <p className="text-sm text-muted-foreground">
-              Validated entries (gap ≥ 0.01 Ha) are shown here. Example: N₂ JW/HEA with reps=4 achieved
-              a best gap of 0.121 Ha across 30 restarts — 12× the threshold, showing HEA cannot navigate
-              the N₂ energy landscape with 40 parameters. This is a meaningful data point, not a failure
-              to discard. The benchmark records what actually happened.
+              Validated entries (gap ≥ 0.01 Ha) are recorded, not discarded. Example: N₂ JW/HEA with
+              reps=4 and COBYLA reached a best gap of 0.139 Ha across 30 restarts — nearly 14× the
+              threshold, showing that HEA with a gradient-free optimiser cannot navigate the N₂ energy
+              landscape with 40 parameters. This is a meaningful data point, not a failure to discard.
+              The benchmark records what actually happened. The Research tab lists a research entry
+              when no better entry exists for the same molecule, mapping and ansatz (two at present);
+              all seven are in the repository.
             </p>
           </div>
         </div>

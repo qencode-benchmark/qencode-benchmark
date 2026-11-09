@@ -77,15 +77,20 @@ A certified entry carries four guarantees, each of them checkable:
 - **Not a hardware result.** Every entry is an exact statevector simulation. The
   same circuit on a device returns a different, noise-biased energy. That penalty is
   now measured per entry under named noise models and shown as the leaderboard's
-  *Noise* column — 22 mHa is the smallest multi-qubit penalty at rates near current
-  hardware, above the bar — see [`NOISY_TIER.md`](NOISY_TIER.md). It is reported, not
-  certified.
+  *Noise* column — 34 mHa is the smallest multi-qubit penalty at rates near current
+  hardware, above the bar (33.6 mHa for the water-dimer ADAPT-VQE circuit and 34.4 mHa
+  for BeH₂ hardware-efficient, four two-qubit gates each) — see
+  [`NOISY_TIER.md`](NOISY_TIER.md). It is reported, not certified.
 - **Not bit-identical energies across machines.** For gradient-free optimisers the
   energy can move by up to ~10⁻² Ha on a different machine while still certifying,
   because a last-bit arithmetic difference can steer the optimiser into a different local
   minimum. Certification across machines is on *outcome* (the gap stays below the bar);
-  bit-identity is guaranteed only on the reference environment. Two entries are known to
-  fail re-certification on a drifted environment and are flagged, not withdrawn. The full
+  bit-identity is guaranteed only on the reference environment. Two separate measurements
+  are recorded: with identical pinned software on a second processor, three certified
+  entries fail re-certification ([`CROSS_MACHINE.md`](CROSS_MACHINE.md)); on an environment
+  with drifted package versions, measured before the September tapering fix, two failed
+  ([`VERIFICATION_SWEEP.md`](VERIFICATION_SWEEP.md)).
+  They are flagged, not withdrawn. The full
   statement is the dated amendments in
   [`LEADERBOARD_RULES_V2.md`](LEADERBOARD_RULES_V2.md).
 - **Not chemical accuracy.** See the marker below.

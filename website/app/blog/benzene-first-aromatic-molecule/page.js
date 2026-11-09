@@ -21,7 +21,7 @@ const articleSchema = {
   description:
     "Benzene is the gateway to pharmaceutical chemistry. We added it to QEncode Suite v4.2 — 12 qubits, CASSCF orbital optimization, 914 Pauli terms, and the first aromatic molecule on the public leaderboard.",
   datePublished: "2026-05-27",
-  dateModified: "2026-05-27",
+  dateModified: "2026-10-13",
   author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   url: "https://www.qencode-benchmark.org/blog/benzene-first-aromatic-molecule",
@@ -62,6 +62,19 @@ export default function Post() {
       </div>
 
       <div className="prose prose-neutral dark:prose-invert max-w-none text-[15px] leading-7 text-foreground/90 space-y-6">
+
+        <div className="rounded-lg border-l-4 border-amber-500 bg-amber-500/5 p-5 not-prose">
+          <p className="text-sm text-foreground leading-6">
+            <strong>Correction, 13 October 2026.</strong> Under the deterministic single-thread
+            protocol, the hardware-efficient COBYLA run described below (six layers, 63
+            parameters, 30 restarts) reaches 128.0 mHa, not 91.1 mHa, and remains research
+            tier. Benzene is now certified by the hardware-efficient ansatz with L-BFGS-B at ten
+            layers (8.741 mHa) and by ADAPT-VQE (9.540 mHa, 11 operators). The Suite v4.1 N₂
+            certification mentioned below (UCCSD, 2.0 mHa) did not reproduce; N₂ is certified by the
+            hardware-efficient ansatz with L-BFGS-B at 4.40 mHa and by ADAPT-VQE at 8.83 mHa.
+            The original text is left unchanged.
+          </p>
+        </div>
 
         <p>
           When we certified N₂ in Suite v4.1, the challenge was the triple bond — a strongly

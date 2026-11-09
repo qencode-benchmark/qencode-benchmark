@@ -215,7 +215,7 @@ the earlier text had to call unmeasured:
 
 **H₁₀ has the smallest certification margin in the suite, 0.02 mHa, and it survived.** It
 moved 0.001 mHa, a twentieth of its margin, on an 18-qubit ADAPT circuit with 300 selected
-operators that takes four and a half hours to re-verify. Size and tightness of margin are
+operators that takes more than four hours to re-verify. Size and tightness of margin are
 not what predicts fragility here. The three that failed are all hardware-efficient
 ansätze; the six largest ADAPT entries in the suite are among the steadiest things in it.
 
@@ -237,19 +237,21 @@ unstructured ansatz amplifies, ADAPT and gradient-based runs do not. Measured ag
 entries on two machines, that rule is a useful *susceptibility* indicator and not a
 predictor:
 
-- Of the 38 entries the rule calls amplifying, **21 did not move at all** on the machine
-  that generated them and moved only slightly on the other. Being susceptible is not being
-  unstable.
-- **One entry the rule calls safe moved the second-most of any entry.** N₂ parity
-  hardware-efficient at ten layers uses L-BFGS-B with analytic gradients, and it moved
-  6.5 mHa, enough to lose certification. Its Jordan–Wigner counterpart, same optimiser and
-  same depth, reproduced at exactly zero.
+- Of the 39 entries the rule calls amplifying, 35 were measured on both machines, and
+  **20 of those moved by less than 10⁻⁶ Ha** on the other machine (11 by less than 10⁻⁹).
+  Being susceptible is not being unstable.
+- **The two entries that moved most are ones the rule calls safe.** N₂ hardware-efficient
+  at ten layers, parity and Jordan–Wigner, uses L-BFGS-B with analytic gradients; the two
+  moved 6.5 and 15.85 mHa and both lost certification. An earlier version of this section
+  cited the Jordan–Wigner entry as a control that reproduced at exactly zero; that was on
+  the machine that generated it, and on the other machine it moved further than anything
+  else in the suite.
 
 The distinguishing feature is not the optimiser's use of gradients. It is whether the run
-contains a **comparison that steers control flow**. That entry's multistart loop stops as
-soon as an attempt certifies; it stopped after 2 restarts on one machine, and the decision
-of whether restart 1 was good enough is a comparison against a threshold. The Jordan–Wigner
-counterpart stopped after 1.
+contains a **comparison that steers control flow**. Both entries' multistart loops stop as
+soon as an attempt certifies; the parity entry was published after 2 of 5 requested
+restarts, and the decision of whether restart 1 was good enough is a comparison against a
+threshold. The Jordan–Wigner entry was published after 1 of 5.
 
 So the rule should read: a run amplifies if any decision it makes — the optimiser's next
 step, or the loop's decision to stop — is taken by comparing quantities that can differ in

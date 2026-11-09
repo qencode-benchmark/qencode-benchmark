@@ -22,7 +22,8 @@
 # the same image gets the same hash, whatever processor they own.
 set -euo pipefail
 
-IMAGE="${QENCODE_REFERENCE_IMAGE:-ghcr.io/qencode-benchmark/qencode-reference:v4}"
+# Pinned to the measured digest, not the :v4 tag, which is rebuilt whenever the pipeline changes.
+IMAGE="${QENCODE_REFERENCE_IMAGE:-ghcr.io/qencode-benchmark/qencode-reference@sha256:76a012bb30b0e6a1405299993635a7f333813979ff5472ecf9e44a657e2b5c22}"
 ENGINE="${QENCODE_CONTAINER_ENGINE:-}"
 
 if [ -z "$ENGINE" ]; then

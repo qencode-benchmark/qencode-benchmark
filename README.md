@@ -17,8 +17,8 @@ Most published VQE results cannot be independently reproduced — different team
 - **Enforced determinism** — the linear-algebra backend is pinned to a single thread before NumPy loads, because multi-threaded BLAS makes gradient-free VQE non-reproducible ([why](https://www.qencode-benchmark.org/blog/vqe-reproducibility-threading-bug))
 - **Signed certification** — entries are signed with Ed25519 and carry a SHA-256 provenance hash
 - **Public leaderboard** — certified entries ranked by accuracy gap, circuit cost, and balanced score
-- **Fault-tolerant resource estimates** — every entry records non-Clifford and T-gate counts alongside its accuracy
-- **DARPA QB-GSEE aligned** — N₂ certified at cc-pVDZ, directly comparable to QB-GSEE target specification
+- **Ansatz T-gate estimates** — every entry records the non-Clifford gate count of its ansatz circuit and a T-gate estimate for it, alongside its accuracy; full per-entry fault-tolerant resource estimation is planned
+- **DARPA QB-GSEE interoperable** — five suite molecules, N₂ among them, are also QB-GSEE systems, and a certified entry exports as a schema-validated QB-GSEE solution; the problems are comparable, not identical ([`docs/QB_GSEE_INTEROP.md`](docs/QB_GSEE_INTEROP.md))
 
 ---
 
@@ -29,18 +29,18 @@ An entry is *certified* when its gap to the active-space CASCI reference is belo
 
 | Molecule | Name | Active space | Qubits (JW → tapered) | Orbitals | Certified | Best gap (mHa) |
 |---|---|---|---|---|---|---|
-| H₂ | Hydrogen | [2e, 2o] | 4 → 1 | HF | 6 | &lt;0.001 (PAR/UCCSD) |
-| HF | Hydrogen fluoride | [2e, 2o] | 4 → 1 | HF | 6 | &lt;0.001 (PAR/UCCSD) |
+| H₂ | Hydrogen | [2e, 2o] | 4 → 1 | HF | 6 | &lt;0.001 (BK/UCCSD) |
+| HF | Hydrogen fluoride | [2e, 2o] | 4 → 1 | HF | 6 | &lt;0.001 (JW/UCCSD) |
 | LiH | Lithium hydride | [4e, 4o] | 8 → 5 | HF | 3 | 0.003 (JW/UCCSD) |
-| BeH₂ | Beryllium hydride | [4e, 4o] | 8 → 3 | HF | 4 | &lt;0.001 (PAR/HEA) |
+| BeH₂ | Beryllium hydride | [4e, 4o] | 8 → 3 | HF | 4 | &lt;0.001 (JW/HEA) |
 | H₂O | Water | [4e, 4o] | 8 → 4 | HF | 3 | &lt;0.001 (JW/UCCSD) |
 | NH₃ | Ammonia | [4e, 4o] | 8 → 5 | HF | 3 | 0.032 (JW/UCCSD) |
 | H₂CO | Formaldehyde | [4e, 4o] | 8 → 4 | HF | 1 | 1.124 (JW/ADAPT) |
 | C₄H₆ | 1,3-Butadiene | [4e, 4o] | 8 → 4 | HF | 1 | 2.829 (JW/ADAPT) |
 | (H₂O)₂ | Water dimer | [4e, 4o] | 8 → 5 | HF | 4 | 0.002 (JW/UCCSD) |
 | H₄ | Hydrogen chain | [4e, 4o] | 8 → 5 | HF | 4 | 2.222 (JW/UCCSD) |
-| C₄H₄ | Cyclobutadiene | [4e, 4o] | 8 → 6 | CASSCF | 4 | 5.963 (JW/ADAPT) |
-| N₂ | Nitrogen | [6e, 6o] | 12 → 8 | CASSCF | 3 | 4.513 (JW/HEA) |
+| C₄H₄ | Cyclobutadiene | [4e, 4o] | 8 → 6 | CASSCF | 4 | 3.834 (PAR/HEA) |
+| N₂ | Nitrogen | [6e, 6o] | 12 → 8 | CASSCF | 3 | 4.404 (PAR/HEA) |
 | H₆ | Hydrogen chain | [6e, 6o] | 12 → 9 | CASSCF | 1 | 9.273 (JW/ADAPT) |
 | C₆H₆ | Benzene | [6e, 6o] | 12 → 9 | CASSCF | 2 | 8.741 (JW/HEA) |
 | H₈ | Hydrogen chain | [8e, 8o] | 16 → 13 | CASSCF | 1 | 9.797 (JW/ADAPT) |
@@ -174,7 +174,7 @@ Reproducibility is enforced by the pipeline, not assumed. Before any entry is wr
 
 An entry that fails any check is not written. Each entry records its thread count and full software environment in its provenance block.
 
-**What reproducibility means here.** Gradient-free optimizers are certified on **outcome** — the regenerated gap stays below the certification threshold — **not on bit-identical energies across machines. Bit-identical regeneration is guaranteed only on the reference pinned environment.** A gradient-free optimizer picks its next step by comparing two nearly equal energies, so a last-bit arithmetic difference can flip a comparison and land the run in a different local minimum: two simulator backends agreeing to 10⁻¹³ Ha have ended 11 mHa apart after COBYLA. Verify accordingly — `--mode certification` across machines, `--mode strict` on the pinned environment. Measured envelopes and the two entries that do not re-certify across environments are in [`docs/VERIFICATION_SWEEP.md`](docs/VERIFICATION_SWEEP.md).
+**What reproducibility means here.** Gradient-free optimizers are certified on **outcome** — the regenerated gap stays below the certification threshold — **not on bit-identical energies across machines. Bit-identical regeneration is guaranteed only on the reference pinned environment.** A gradient-free optimizer picks its next step by comparing two nearly equal energies, so a last-bit arithmetic difference can flip a comparison and land the run in a different local minimum: two simulator backends agreeing to 10⁻¹³ Ha have ended 11 mHa apart after COBYLA. Verify accordingly — `--mode certification` across machines, `--mode strict` on the pinned environment. Two separate measurements bound this. With identical pinned software on two different processors, three certified entries do not re-certify on the machine that did not generate them — C₄H₄ parity HEA and N₂ parity and Jordan–Wigner HEA at ten layers, the two N₂ entries optimised with L-BFGS-B — while 44 of 47 do ([`docs/CROSS_MACHINE.md`](docs/CROSS_MACHINE.md)). In an earlier, separate measurement on an environment with drifted package versions — a larger perturbation, taken before the September tapering fix regenerated the C₄H₄ parity entry — the two C₄H₄ hardware-efficient entries did not re-certify ([`docs/VERIFICATION_SWEEP.md`](docs/VERIFICATION_SWEEP.md)).
 
 The single-thread requirement is not a detail. Multi-threaded BLAS sums floating-point numbers in whatever order cores finish, which perturbs an energy in its last bits — and a gradient-free optimizer such as COBYLA, which picks its next step by *comparing* energies, can be driven into a different local minimum by that noise. We found this in our own published numbers and re-ran the entire suite. The full account is in **[We Audited Our Own VQE Benchmark](https://www.qencode-benchmark.org/blog/vqe-reproducibility-threading-bug)**.
 
@@ -216,7 +216,7 @@ All reference energies (HF, MP2, CCSD, CCSD(T), CASCI) are computed by PySCF. Th
 | **Balanced** | Equal-weight normalised rank score |
 | **Research** | Validated entries (gap ≥ 0.01 Ha) — recorded, never discarded |
 
-Cost and Balanced also report an estimated **T-gate count**, the resource-relevant cost of a fault-tolerant implementation.
+Cost and Balanced also report an estimated **T-gate count** for the ansatz circuit — its rotation gates times the T gates needed to synthesise each to 10⁻³ — a proxy for its cost on a fault-tolerant machine, not a full resource estimate.
 
 ---
 

@@ -16,10 +16,10 @@ abstract: >
   dependencies, from a clean source tree, and each records its full environment.
   Suite v4.4 covers 16 molecules from H₂ to the H₁₀ chain (20 qubits before
   tapering), with 47 certified entries. Every entry also reports classical
-  reference energies (HF, MP2, CCSD, CCSD(T)) and fault-tolerant resource
-  estimates.
-version: "4.5.0"
-date-released: "2026-09-04"
+  reference energies (HF, MP2, CCSD, CCSD(T)) and a T-gate estimate of its
+  ansatz circuit; per-entry fault-tolerant resource estimation is planned.
+version: "4.6.0"
+date-released: "2026-10-13"
 url: "https://www.qencode-benchmark.org"
 repository-code: "https://github.com/qencode-benchmark/qencode-benchmark"
 license: Apache-2.0

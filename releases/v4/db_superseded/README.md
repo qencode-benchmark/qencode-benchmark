@@ -28,7 +28,7 @@ Full account: `docs/SECTOR_FIX.md`. The fix is commit ab7185b.
 |---|---|---|
 | `BeH2_ccpvdz_PAR_HEA_v4_tapered__sha256_f1deabb249cd79ee.json` | `BeH2_ccpvdz_PAR_HEA_v4_tapered__sha256_c3c5a76f6786a95b.json` | wrong sector |
 | `BeH2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_f71541a4f8d3e964.json` | `BeH2_ccpvdz_PAR_UCCSD_v4_tapered__sha256_fee27caf9110d47f.json` | wrong sector |
-| `C4H4_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_0de79dd1611d708a.json` | `C4H4_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_8b12a22329451c03.json` | wrong sector, wrong HF reference |
+| `C4H4_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_0de79dd1611d708a.json` | `C4H4_ccpvdz_PAR_HEA_v4_casscf_tapered__sha256_8b12a22329451c03.json` | symmetry count changed with the CASSCF gauge (6 -> 5 qubits); wrong HF reference |
 | `H2O_ccpvdz_PAR_HEA_v4_tapered__sha256_442576f5b48d4354.json` | `H2O_ccpvdz_PAR_HEA_v4_tapered__sha256_b50cee1c91dc0410.json` | wrong HF reference |
 | `H2_ccpvdz_BK_HEA_v4_tapered__sha256_6e206ec6f1f02ea4.json` | `H2_ccpvdz_BK_HEA_v4_tapered__sha256_aa7360a68d23f35c.json` | wrong sector |
 | `H2_ccpvdz_BK_UCCSD_v4_tapered__sha256_d3f280f5c8f32ccc.json` | `H2_ccpvdz_BK_UCCSD_v4_tapered__sha256_ffcf6a5b220b54b6.json` | wrong sector |

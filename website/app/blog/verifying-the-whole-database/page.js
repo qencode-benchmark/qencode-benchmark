@@ -21,7 +21,7 @@ const articleSchema = {
   description:
     "QEncode's central claim is that any published benchmark entry can be independently rebuilt. Running that check across the whole database for the first time found three faults in the verifier — one of which made 29 of 54 entries impossible to verify at all — and a deeper result: entries certified close to the pass threshold do not survive being re-run on a different machine.",
   datePublished: "2026-09-03",
-  dateModified: "2026-09-03",
+  dateModified: "2026-10-13",
   author: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   publisher: { "@type": "Organization", name: "QEncode", url: "https://www.qencode-benchmark.org" },
   url: "https://www.qencode-benchmark.org/blog/verifying-the-whole-database",
@@ -119,6 +119,21 @@ export default function Post() {
       </div>
 
       <div className="prose prose-neutral dark:prose-invert max-w-none text-[15px] leading-7 text-foreground/90 space-y-6">
+
+        <div className="rounded-lg border-l-4 border-amber-500 bg-amber-500/5 p-5 not-prose">
+          <p className="text-sm text-foreground leading-6">
+            <strong>Correction, 13 October 2026.</strong> A later measurement on two processors
+            running identical pinned software (docs/CROSS_MACHINE.md) does not support this
+            post&apos;s headline that an entry certified close to the threshold is not robustly
+            certified. H₁₀, with the smallest margin in the suite (0.02 mHa), moved 0.001 mHa
+            and stayed certified, while the three entries that lost certification — C₄H₄ parity
+            HEA and N₂ parity and Jordan–Wigner HEA at ten layers — had been certified at 3.8 to
+            4.5 mHa. Margin says how far an entry can move, not whether it will. The C₄H₄ parity
+            entry in the table below has since been regenerated after the September
+            tapering-sector fix and now certifies at 3.834 mHa. The original text is left
+            unchanged.
+          </p>
+        </div>
 
         <div className="rounded-lg border bg-muted/40 p-5 not-prose">
           <p className="text-sm font-semibold text-foreground mb-2">The short version</p>

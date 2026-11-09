@@ -288,26 +288,32 @@ two-qubit gates for the deepest (N₂ UCCSD, 8 qubits). (The figures first recor
 20 hours and the four models with the zero-noise extrapolation are about 180 hours. Time,
 not memory, is the wall.
 
-**And the answer is already known in closed form, which is why that time would be
-wasted.** With N₁ = 5,856 and N₂ = 6,464 the probability that no depolarizing event
-occurs anywhere is
+**What the answer would probably be, and why it is only an estimate.** With N₁ = 5,856
+and N₂ = 6,464, two numbers per model:
 
-| model | surviving coherent fraction |
-|---|---|
-| optimistic | 1.5 × 10⁻⁸ |
-| current | 6 × 10⁻⁴⁰ |
-| pessimistic | 2 × 10⁻⁷⁹ |
+| model | error-free branch, 1 − ε | mean per-qubit attenuation |
+|---|---|---|
+| optimistic | 1.5 × 10⁻⁸ | 0.25 |
+| current | 6 × 10⁻⁴⁰ | 1 × 10⁻³ |
+| pessimistic | 2 × 10⁻⁷⁹ | 9 × 10⁻⁷ |
 
-Even the optimistic model's coherent fraction moves the energy by about 5 × 10⁻⁵ mHa
-(1.5 × 10⁻⁸ of c_I − E). The state is the maximally mixed one to far beyond any precision
-the tier reports, so E_noisy is c_I, and for H₈ that gives a penalty of **3658 mHa** and a
-gap under noise of **3668 mHa**, with zero-noise extrapolation meaningless because every
-scale returns the same c_I. Eight days of simulation would reproduce those two numbers.
+The first column is the weight of the branch in which no depolarizing event occurs
+anywhere. It says nothing on its own about how close the *other* branch is to the
+maximally mixed state: a single local error leaves most of the register coherent, which is
+why the measured ε_eff/ε ratio in the table above is well below 1 for shallow circuits. An
+earlier version of this section (and of the paper draft) read a tiny 1 − ε as "the state
+is maximally mixed"; that was a non sequitur.
 
-They are stated here rather than recorded as a measurement, because they are not one. The
-tier reports simulated values, and H₈ keeps its `—`. What changed is that the ceiling is
-now a measured limit with a reason attached, and the reason is the gate count, not the
-memory.
+The second column is the better guide. Each of the 13 qubits passes through about 1,445
+channels, and the product of (1 − 4p/3) over them is the factor by which that qubit's Bloch
+vector shrinks. Under the current model it is about 10⁻³, so we *expect* E_noisy to lie
+close to c_I, which for H₈ would give a penalty near **3658 mHa** and a gap under noise near
+**3668 mHa**. Under the optimistic model it is 0.25, and the state is clearly not maximally
+mixed.
+
+These are estimates, not measurements. The tier reports simulated values only, and H₈
+keeps its `—`. What changed is that the ceiling is now a measured limit with a reason
+attached, and the reason is the gate count, not the memory.
 
 ---
 
