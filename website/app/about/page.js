@@ -1,5 +1,21 @@
+import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle, GitFork, ExternalLink } from "lucide-react";
+
+const team = [
+  {
+    name: "Jovan Ilov",
+    role: "Founder",
+    photo: "/team/jovan-ilov.jpg",
+    bio: "Designed and built QEncode: the benchmark pipeline, the signed certification records and the public leaderboard. Corresponding author of the QEncode benchmark paper. Comes to quantum chemistry from 3D medical visualization."
+  },
+  {
+    name: "Prof. Ljupcho Pejov",
+    role: "Academic Advisor",
+    photo: "/team/ljupcho-pejov.jpg",
+    bio: "Professor of Physical Chemistry, Institute of Chemistry, Faculty of Natural Sciences and Mathematics, Ss. Cyril and Methodius University, Skopje, and University of Stavanger, Norway. Co-author of the QEncode benchmark paper (submitted to the Journal of Chemical Theory and Computation)."
+  }
+];
 
 export const metadata = {
   title: "About QEncode",
@@ -132,6 +148,27 @@ export default function AboutPage() {
             <div key={p.title} className="rounded-lg border p-5">
               <h3 className="font-semibold text-sm mb-1">{p.title}</h3>
               <p className="text-sm text-muted-foreground">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Team */}
+      <section className="mb-12">
+        <h2 className="text-xl font-semibold mb-4">Team</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {team.map((p) => (
+            <div key={p.name} className="rounded-lg border p-5">
+              <Image
+                src={p.photo}
+                alt={p.name}
+                width={96}
+                height={96}
+                className="h-24 w-24 rounded-full object-cover mb-4"
+              />
+              <p className="font-semibold">{p.name}</p>
+              <p className="text-sm text-primary mb-2">{p.role}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{p.bio}</p>
             </div>
           ))}
         </div>
