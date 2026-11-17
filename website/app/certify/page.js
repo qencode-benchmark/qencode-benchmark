@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CheckCircle2, Clock3, ShieldCheck, FlaskConical, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { OpenResearchTier, SameCriteriaNote } from "@/components/OpenResearchTier";
 
 // Direct checkout is paused: until fulfilment is rebuilt for Suite v4, every order starts
 // with an application, so nothing is sold that cannot be delivered. lib/payments.js keeps
@@ -10,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const metadata = {
   title: "Get Certified — QEncode",
   description:
-    "Apply for QEncode managed quantum benchmark certification for a single molecule or full Suite v4 and receive signed artifacts for publications, grants, and hardware evaluations.",
+    "Apply for QEncode managed quantum benchmark certification: free for open academic research, paid plans for companies and private results. Signed entries, same criteria for every run.",
   keywords: [
     "quantum benchmark certification",
     "QEncode certification",
@@ -34,7 +35,8 @@ export default function CertifyPage() {
       <h1 className="text-3xl sm:text-4xl font-bold mb-3">Get Certified</h1>
       <p className="text-muted-foreground max-w-2xl mb-4">
         Managed certification provides a signed artifact, provenance receipt, and audit-ready benchmark
-        report — suitable for papers, grant applications, and hardware evaluation claims.
+        report — suitable for papers, grant applications, and hardware evaluation claims. It is free for
+        open academic research.
       </p>
 
       {/* Apply-first callout */}
@@ -42,7 +44,7 @@ export default function CertifyPage() {
         <p className="font-medium mb-1">Certification starts with a short application.</p>
         <p className="text-sm text-muted-foreground mb-3">
           Tell us the molecules, active space requirements and timeline. We confirm the scope and
-          the right plan with you, and agree payment, before any run starts.
+          the right plan with you, and agree payment if one applies, before any run starts.
           The application takes 2 minutes and we respond within 1–2 business days.
         </p>
         <Link
@@ -54,8 +56,13 @@ export default function CertifyPage() {
         </Link>
       </div>
 
+      <OpenResearchTier trackPrefix="certify" />
+
       {/* Plans */}
-      <h2 className="text-xl font-semibold mb-4">Certification plans</h2>
+      <h2 className="text-xl font-semibold mb-1">Companies and private results</h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        For commercial use, company-funded work, or results that stay private.
+      </p>
       <div className="grid gap-6 md:grid-cols-2 mb-8">
         <Card className="border">
           <CardHeader>
@@ -81,7 +88,7 @@ export default function CertifyPage() {
               </li>
             </ul>
             <Button asChild className="w-full">
-              <Link href="/apply" data-track="certify_single_apply_click">
+              <Link href="/apply?type=commercial" data-track="certify_single_apply_click">
                 Apply — Single Molecule
               </Link>
             </Button>
@@ -108,17 +115,19 @@ export default function CertifyPage() {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="h-4 w-4 mt-0.5 text-green-600 dark:text-green-400 shrink-0" />
-                Strongest trust signal for external publication or hardware evaluation.
+                One package covering all 16 molecules, for hardware or algorithm comparisons.
               </li>
             </ul>
             <Button asChild className="w-full">
-              <Link href="/apply" data-track="certify_full_apply_click">
+              <Link href="/apply?type=commercial" data-track="certify_full_apply_click">
                 Apply — Full Suite v4
               </Link>
             </Button>
           </CardContent>
         </Card>
       </div>
+
+      <SameCriteriaNote />
 
       {/* Service level */}
       <section className="rounded-lg border p-5 mb-6">
@@ -155,7 +164,16 @@ export default function CertifyPage() {
               Anyone can run the code — that is the point. The certification service provides managed
               execution, Ed25519-signed artifacts, and an audit-ready report that reviewers, program
               officers, and hardware vendors can independently verify. Self-run results are valid for
-              research; signed certified results are required for leaderboard inclusion and external claims.
+              research; leaderboard entries carry a QEncode signature. For open academic research the
+              managed run and signature are free — companies and private results pay.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-medium">Who qualifies for the free open-research tier?</h3>
+            <p className="text-muted-foreground">
+              Researchers at universities, public research institutes and non-profits, for work whose
+              results will be published openly on the leaderboard. If a company funds the work or owns the
+              results, or the results must stay private, the paid plans apply. Places are limited each month.
             </p>
           </div>
           <div>
@@ -169,8 +187,9 @@ export default function CertifyPage() {
           <div>
             <h3 className="font-medium">Can results stay private?</h3>
             <p className="text-muted-foreground">
-              Yes. Public leaderboard inclusion is optional — private delivery is fully supported for
-              internal R&D, competitive benchmarking, and grant use.
+              On the paid plans, yes. Public leaderboard inclusion is optional — private delivery is fully
+              supported for internal R&D, competitive benchmarking, and grant use. Free open-research runs
+              are always published.
             </p>
           </div>
           <div>

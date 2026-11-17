@@ -1,15 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const SUPPORT_EMAIL = "support@qencode-benchmark.org";
+const APPLICANT_TYPES = ["academic", "commercial"];
 
 export default function ApplyPage() {
   const [form, setForm] = useState({
+    applicantType: "",
     company: "",
     contactName: "",
     workEmail: "",
@@ -25,12 +27,33 @@ export default function ApplyPage() {
   const [status, setStatus] = useState("idle"); // idle | submitting | success | error
   const [errorMsg, setErrorMsg] = useState("");
 
+  const isAcademic = form.applicantType === "academic";
+
+  // Pre-select the applicant type from the link that brought the visitor here
+  // (/apply?type=academic from the open-research card, ?type=commercial from a paid plan).
+  useEffect(() => {
+    const type = new URLSearchParams(window.location.search).get("type");
+    if (APPLICANT_TYPES.includes(type)) {
+      setForm((prev) => ({ ...prev, applicantType: type, ...(type === "academic" ? { needsPrivateBenchmark: "no" } : {}) }));
+    }
+  }, []);
+
   const recommendation = useMemo(() => {
+    if (isAcademic) return "Open research (free)";
     const runs = Number(form.monthlyRuns || 0);
     if (runs >= 40) return "Enterprise";
     if (runs >= 10) return "Team";
     return "Starter";
-  }, [form.monthlyRuns]);
+  }, [form.monthlyRuns, isAcademic]);
+
+  function selectApplicantType(type) {
+    // The free tier publishes results openly, so private benchmarking does not apply to it.
+    setForm((prev) => ({
+      ...prev,
+      applicantType: type,
+      needsPrivateBenchmark: type === "academic" ? "no" : prev.needsPrivateBenchmark,
+    }));
+  }
 
   function updateField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -111,6 +134,8 @@ export default function ApplyPage() {
         The QEncode benchmark suite is free and open source — clone the repo and run it yourself anytime.
         Use this form if you need <strong className="text-foreground">managed certification</strong>: a signed
         artifact, audit-ready report, and leaderboard inclusion for papers, grants, or hardware evaluations.
+        It is <strong className="text-foreground">free for open academic research</strong>; companies and
+        private results use the <Link href="/pricing" className="text-primary hover:underline">paid plans</Link>.
       </p>
       <p className="text-sm rounded-md border bg-muted/40 px-3 py-2 mb-8">
         Tell us your molecule scope, timeline, and what you need the output for. We respond within 1–2 business days.
@@ -122,6 +147,45 @@ export default function ApplyPage() {
         </CardHeader>
         <CardContent className="text-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
+            <fieldset className="space-y-2">
+              <legend className="text-muted-foreground mb-1">Applying as *</legend>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {[
+                  {
+                    value: "academic",
+                    title: "Open academic research — free",
+                    desc: "University, public institute or non-profit. Results published openly on the leaderboard.",
+                  },
+                  {
+                    value: "commercial",
+                    title: "Company or private results — paid",
+                    desc: "Commercial use, company-funded work, or results that stay private.",
+                  },
+                ].map((opt) => (
+                  <label
+                    key={opt.value}
+                    className={`flex gap-2 rounded-md border p-3 cursor-pointer ${
+                      form.applicantType === opt.value ? "border-primary bg-primary/5" : ""
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="applicantType"
+                      value={opt.value}
+                      required
+                      checked={form.applicantType === opt.value}
+                      onChange={() => selectApplicantType(opt.value)}
+                      className="mt-1"
+                    />
+                    <span>
+                      <span className="font-medium text-foreground block">{opt.title}</span>
+                      <span className="text-muted-foreground text-xs">{opt.desc}</span>
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="space-y-1">
                 <span className="text-muted-foreground">Company/Lab *</span>
@@ -201,17 +265,24 @@ export default function ApplyPage() {
                   <option value="no">No</option>
                 </select>
               </label>
-              <label className="space-y-1">
-                <span className="text-muted-foreground">Need Private Benchmarking?</span>
-                <select
-                  className="w-full rounded-md border bg-background px-3 py-2"
-                  value={form.needsPrivateBenchmark}
-                  onChange={(e) => updateField("needsPrivateBenchmark", e.target.value)}
-                >
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-              </label>
+              {isAcademic ? (
+                <p className="text-xs text-muted-foreground self-end pb-2">
+                  Open-research results are published on the leaderboard, including runs that do not
+                  pass. Need them private? Choose the paid option.
+                </p>
+              ) : (
+                <label className="space-y-1">
+                  <span className="text-muted-foreground">Need Private Benchmarking?</span>
+                  <select
+                    className="w-full rounded-md border bg-background px-3 py-2"
+                    value={form.needsPrivateBenchmark}
+                    onChange={(e) => updateField("needsPrivateBenchmark", e.target.value)}
+                  >
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </label>
+              )}
               <label className="space-y-1 sm:col-span-2">
                 <span className="text-muted-foreground">Notes</span>
                 <textarea
@@ -224,7 +295,9 @@ export default function ApplyPage() {
 
             <div className="rounded-md border bg-muted/40 p-3 text-muted-foreground">
               <span className="font-medium text-foreground">Suggested plan:</span>{" "}
-              {recommendation === "Starter" || recommendation === "Team"
+              {isAcademic
+                ? "Open research — free (limited places each month; results published on the leaderboard)"
+                : recommendation === "Starter" || recommendation === "Team"
                 ? "Single molecule ($1,500) or Full Suite v4 ($4,000)"
                 : "Full Suite v4 or Enterprise — we'll scope with you"
               }
