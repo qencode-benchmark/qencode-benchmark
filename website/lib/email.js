@@ -340,10 +340,14 @@ export async function sendApplyConfirmation({ contactName, workEmail, company, r
  * Notify admin of a new access application.
  */
 export async function sendApplyAdminNotification(fields) {
-  const { company, contactName, workEmail, role, moleculeScope, timeline,
+  const { applicantType, company, contactName, workEmail, role, moleculeScope, timeline,
           monthlyRuns, needsCertification, needsPrivateBenchmark, notes, recommendation } = fields;
 
-  const subject = `[QEncode] New access application — ${company}`;
+  const applyingAs = {
+    academic:   "Open academic research (FREE tier, results published)",
+    commercial: "Company / private results (paid)",
+  }[applicantType] ?? "Not specified";
+  const subject = `[QEncode] New ${applicantType === "academic" ? "open-research " : ""}application — ${company}`;
 
   const row = (label, value) =>
     `<tr><td style="padding:4px 12px 4px 0;color:#666;font-size:13px;white-space:nowrap;">${label}</td><td style="padding:4px 0;font-size:13px;">${value || "—"}</td></tr>`;
@@ -354,6 +358,7 @@ export async function sendApplyAdminNotification(fields) {
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding:24px;background:#fff;">
   <h2 style="margin:0 0 16px;font-size:16px;">New access application</h2>
   <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+    ${row("Applying as", `<strong>${applyingAs}</strong>`)}
     ${row("Company/Lab", `<strong>${company}</strong>`)}
     ${row("Contact", contactName)}
     ${row("Email", `<a href="mailto:${workEmail}">${workEmail}</a>`)}

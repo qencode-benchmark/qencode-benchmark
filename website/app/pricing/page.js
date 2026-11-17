@@ -2,14 +2,16 @@ import Link from "next/link";
 import { CheckCircle2, Clock3, ShieldCheck, GitFork } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { OpenResearchTier, SameCriteriaNote } from "@/components/OpenResearchTier";
 
 export const metadata = {
   title: "Pricing and Certification",
   description:
-    "QEncode is free to run yourself. Managed certification with signed artifacts is available for publications, grant applications, and hardware evaluations.",
+    "QEncode is free to run yourself, and managed certification is free for open academic research. Companies and private results use the paid plans. Same criteria for every run.",
   keywords: [
     "quantum benchmark pricing",
     "quantum certification pricing",
+    "free academic quantum benchmark",
     "single molecule certification",
     "full suite certification"
   ],
@@ -19,7 +21,7 @@ export const metadata = {
   openGraph: {
     title: "QEncode Pricing - Quantum Benchmark Certification",
     description:
-      "Run QEncode free. Apply for managed certification with signed artifacts for papers and grants.",
+      "Run QEncode free. Managed certification is free for open academic research; paid plans for companies.",
     url: "https://www.qencode-benchmark.org/pricing"
   }
 };
@@ -32,8 +34,9 @@ export default function PricingPage() {
         The benchmark suite is <strong className="text-foreground">free and open source</strong>. Run it yourself with one command.
       </p>
       <p className="text-muted-foreground max-w-2xl mb-10">
-        Managed certification — with signed artifacts, provenance receipts, and audit-ready reports — is available
-        for teams that need verified results for publications, grants, or hardware evaluations.
+        Managed certification — a signed entry, provenance hash and validation report — is{" "}
+        <strong className="text-foreground">free for open academic research</strong>. Companies, commercial
+        work and results kept private use the paid plans.
       </p>
 
       {/* Free path callout */}
@@ -58,8 +61,13 @@ export default function PricingPage() {
         </Button>
       </div>
 
+      <OpenResearchTier trackPrefix="pricing" />
+
       {/* Managed certification plans */}
-      <h2 className="text-xl font-semibold mb-4">Managed certification</h2>
+      <h2 className="text-xl font-semibold mb-1">Companies and private results</h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        For commercial use, company-funded work, or results that stay private.
+      </p>
       <div className="grid gap-6 md:grid-cols-2 mb-8">
         <Card className="border">
           <CardHeader>
@@ -82,7 +90,7 @@ export default function PricingPage() {
               </li>
             </ul>
             <Button asChild>
-              <Link href="/apply" data-track="pricing_single_apply">Apply for access</Link>
+              <Link href="/apply?type=commercial" data-track="pricing_single_apply">Apply for access</Link>
             </Button>
           </CardContent>
         </Card>
@@ -104,15 +112,17 @@ export default function PricingPage() {
               </li>
               <li className="flex gap-2">
                 <CheckCircle2 className="h-4 w-4 mt-0.5 text-green-600 dark:text-green-400 shrink-0" />
-                Strongest trust signal for external publication or hardware evaluation.
+                One package covering all 16 molecules, for hardware or algorithm comparisons.
               </li>
             </ul>
             <Button asChild>
-              <Link href="/apply" data-track="pricing_full_apply">Apply for access</Link>
+              <Link href="/apply?type=commercial" data-track="pricing_full_apply">Apply for access</Link>
             </Button>
           </CardContent>
         </Card>
       </div>
+
+      <SameCriteriaNote />
 
       {/* Access pipeline */}
       <section className="rounded-lg border p-5 mb-6">
@@ -145,7 +155,15 @@ export default function PricingPage() {
         <div className="space-y-4 text-sm">
           <div>
             <h3 className="font-medium">Is benchmark access free?</h3>
-            <p className="text-muted-foreground">Yes — the full suite is open source. Run it yourself for free anytime. Managed certification services are paid.</p>
+            <p className="text-muted-foreground">Yes — the full suite is open source. Run it yourself for free anytime. Managed certification is free for open academic research and paid for companies and private results.</p>
+          </div>
+          <div>
+            <h3 className="font-medium">Who qualifies for the free open-research tier?</h3>
+            <p className="text-muted-foreground">
+              Researchers at universities, public research institutes and non-profits, for work whose results
+              will be published openly on the leaderboard. If a company funds the work or owns the results, or the
+              results must stay private, the paid plans apply. Places are limited each month.
+            </p>
           </div>
           <div>
             <h3 className="font-medium">Do we need to pay before applying?</h3>
@@ -153,7 +171,7 @@ export default function PricingPage() {
           </div>
           <div>
             <h3 className="font-medium">Can results stay private?</h3>
-            <p className="text-muted-foreground">Yes. Public leaderboard publication is optional — private delivery is fully supported.</p>
+            <p className="text-muted-foreground">On the paid plans, yes — public leaderboard publication is optional and private delivery is fully supported. Free open-research runs are always published.</p>
           </div>
           <div>
             <h3 className="font-medium">What molecules are available in Suite v4?</h3>

@@ -22,7 +22,13 @@ import { ensureSchema, insertApplication, markApplicationEmail } from "@/lib/db"
 
 const REQUIRED = ["company", "contactName", "workEmail", "moleculeScope", "timeline"];
 
-function deriveRecommendation(monthlyRuns) {
+// "academic" = free open-research tier (results published on the leaderboard);
+// "commercial" = paid plans. Older clients send nothing, which is recorded as unspecified.
+const APPLICANT_TYPES = ["academic", "commercial"];
+const OPEN_RESEARCH_PLAN = "Open research (free)";
+
+function deriveRecommendation(monthlyRuns, applicantType) {
+  if (applicantType === "academic") return OPEN_RESEARCH_PLAN;
   const n = Number(monthlyRuns || 0);
   if (n >= 40) return "Enterprise";
   if (n >= 10) return "Team";
@@ -56,7 +62,11 @@ export async function POST(request) {
   }
 
   // ── 3. Build full fields object ────────────────────────────────────────────
+  const applicantType = APPLICANT_TYPES.includes(body.applicantType) ? body.applicantType : "unspecified";
+  const isAcademic = applicantType === "academic";
+
   const fields = {
+    applicantType,
     company:               String(body.company        || "").trim(),
     contactName:           String(body.contactName    || "").trim(),
     workEmail:             String(body.workEmail      || "").trim().toLowerCase(),
@@ -65,9 +75,10 @@ export async function POST(request) {
     timeline:              String(body.timeline       || "").trim(),
     monthlyRuns:           String(body.monthlyRuns    || "").trim(),
     needsCertification:    String(body.needsCertification    || "yes"),
-    needsPrivateBenchmark: String(body.needsPrivateBenchmark || "yes"),
+    // The free tier publishes results openly, so it never carries a private-benchmark request.
+    needsPrivateBenchmark: isAcademic ? "no" : String(body.needsPrivateBenchmark || "yes"),
     notes:                 String(body.notes          || "").trim(),
-    recommendation:        deriveRecommendation(body.monthlyRuns),
+    recommendation:        deriveRecommendation(body.monthlyRuns, applicantType),
   };
 
   // ── 4. Store it, before anything that can fail silently ────────────────────
