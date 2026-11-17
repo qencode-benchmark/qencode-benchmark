@@ -60,12 +60,153 @@ function fmtHa(v) {
   return `${Number(v).toFixed(10)} Ha`;
 }
 
+// ─── SEO helpers ──────────────────────────────────────────────────────────────
+
+const SITE_URL = "https://www.qencode-benchmark.org";
+
+// [formula, common name] — names as listed in the repository README.
+const MOLECULES = {
+  H2:          ["H₂", "hydrogen molecule"],
+  HF:          ["HF", "hydrogen fluoride"],
+  LiH:         ["LiH", "lithium hydride"],
+  BeH2:        ["BeH₂", "beryllium hydride"],
+  H2O:         ["H₂O", "water"],
+  NH3:         ["NH₃", "ammonia"],
+  H2CO:        ["H₂CO", "formaldehyde"],
+  C4H6:        ["C₄H₆", "1,3-butadiene"],
+  C4H4:        ["C₄H₄", "cyclobutadiene"],
+  N2:          ["N₂", "nitrogen"],
+  water_dimer: ["(H₂O)₂", "water dimer"],
+  benzene:     ["C₆H₆", "benzene"],
+  H4:          ["H₄", "hydrogen chain"],
+  H6:          ["H₆", "hydrogen chain"],
+  H8:          ["H₈", "hydrogen chain"],
+  H10:         ["H₁₀", "hydrogen chain"],
+};
+
+const SUBSCRIPT = "₀₁₂₃₄₅₆₇₈₉";
+const toSubscript = (s) => String(s).replace(/\d/g, (d) => SUBSCRIPT[Number(d)]);
+
+const MAPPINGS = {
+  jordan_wigner: { short: "Jordan–Wigner", long: "Jordan–Wigner" },
+  parity:        { short: "Parity",        long: "parity" },
+  bravyi_kitaev: { short: "Bravyi–Kitaev", long: "Bravyi–Kitaev" },
+};
+
+const ANSATZE = {
+  hea:           { short: "HEA",       long: "hardware-efficient ansatz" },
+  uccsd_tapered: { short: "UCCSD",     long: "UCCSD ansatz" },
+  uccsd:         { short: "UCCSD",     long: "UCCSD ansatz" },
+  adapt:         { short: "ADAPT-VQE", long: "ADAPT-VQE" },
+};
+
+function basisLabel(b) {
+  if (!b) return null;
+  const l = String(b).toLowerCase();
+  if (l === "cc-pvdz") return "cc-pVDZ";
+  if (l === "sto-3g")  return "STO-3G";
+  if (l === "6-31g")   return "6-31G";
+  return b;
+}
+
+/** Plain-language facts about an entry, shared by metadata, JSON-LD and the page summary. */
+function describeEntry(entry) {
+  const prob   = entry.problem ?? {};
+  const enc    = entry.encoding ?? {};
+  const res    = entry.results ?? {};
+  const qual   = res.quality ?? {};
+  const active = prob.active_space ?? {};
+  const tap    = enc.tapering ?? {};
+
+  const [formula, commonName] = MOLECULES[prob.name] ?? [toSubscript(prob.name ?? "?"), null];
+  const mapping   = MAPPINGS[enc.mapping] ?? { short: enc.mapping, long: enc.mapping };
+  const ansatzKey = String(enc.ansatz_type ?? "").toLowerCase();
+  const ansatz    = ANSATZE[ansatzKey] ?? { short: enc.ansatz_type, long: enc.ansatz_type };
+  const basis     = basisLabel(prob.basis);
+  const certified = qual.trusted === true;
+  // Gap in mHa; sub-µHa gaps would print as "0.000", which reads as exactly zero.
+  const gapRaw    = qual.abs_vqe_exact_gap != null ? Number(qual.abs_vqe_exact_gap) * 1000 : null;
+  const gapMha    = gapRaw == null ? null : gapRaw < 0.001 ? "< 0.001" : gapRaw.toFixed(3);
+  const reps      = ansatzKey === "hea" && enc.ansatz_reps != null ? Number(enc.ansatz_reps) : null;
+  const optimizer = res.vqe?.optimizer ?? entry.run_config?.optimizer ?? null;
+  const casscf    = (prob.orbital_optimization ?? active.method) === "casscf";
+  const space     = active.num_electrons != null && active.num_spatial_orbitals != null
+    ? `[${active.num_electrons}e, ${active.num_spatial_orbitals}o]`
+    : null;
+  const qubits    = tap.tapered_num_qubits != null && tap.original_num_qubits != null
+    && tap.tapered_num_qubits !== tap.original_num_qubits
+    ? `${tap.original_num_qubits} → ${tap.tapered_num_qubits} qubits`
+    : tap.tapered_num_qubits != null ? `${tap.tapered_num_qubits} qubits` : null;
+  const tier      = certified ? "certified" : "research tier";
+  const molecule  = commonName ? `${commonName} (${formula})` : formula;
+
+  const title = [
+    `${formula}${basis ? ` ${basis}` : ""} VQE: ${mapping.short} + ${ansatz.short}`,
+    gapMha != null ? `${gapMha} mHa gap (${tier})` : `(${tier})`,
+  ].join(", ");
+
+  const details = [
+    `${mapping.long} mapping`,
+    reps != null ? `${ansatz.long} (${reps} layer${reps === 1 ? "" : "s"})` : ansatz.long,
+    optimizer && !String(optimizer).startsWith("ADAPT") && `${optimizer} optimizer`,
+    space &&`${space} active space${casscf ? " with CASSCF orbitals" : ""}`,
+    qubits,
+  ].filter(Boolean).join(", ");
+
+  const summary =
+    `${certified ? "Certified" : "Research-tier"} VQE benchmark result for ${molecule}` +
+    `${basis ? ` in the ${basis} basis` : ""}: ${details}.` +
+    (gapMha != null
+      ? ` Energy gap to the exact CASCI reference: ${gapMha} mHa` +
+        ` (certification threshold ${(Number(qual.gap_threshold ?? 0.01) * 1000).toFixed(0)} mHa).`
+      : "");
+
+  return { formula, commonName, molecule, mapping, ansatz, basis, certified, gapMha, title, summary };
+}
+
 export async function generateMetadata({ params }) {
   const { id } = await params;
+  const entry = await fetchEntry(id);
+
+  // Unknown or not-yet-published IDs render a placeholder page — keep those out of the index.
+  if (!entry) {
+    return {
+      title: "Entry not found",
+      description: `QEncode benchmark entry ${id} is not available in the public repository.`,
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const d = describeEntry(entry);
+  const url = `/entry/${id}`;
+  const description = `${d.summary} Full energies, circuit statistics, provenance and a one-command reproduction recipe.`;
+
   return {
-    title: `Entry ${id} | QEncode`,
-    description: `Full benchmark artifact and reproducibility details for QEncode entry ${id}`,
-    robots: { index: false },
+    title: d.title,
+    description,
+    keywords: [
+      `${entry.problem?.name} VQE`,
+      d.commonName && `${d.commonName} VQE benchmark`,
+      d.basis && `${entry.problem?.name} ${d.basis}`,
+      `${d.mapping.long} mapping`,
+      d.ansatz.short,
+      "VQE benchmark",
+      "quantum chemistry benchmark",
+      "CASCI reference energy",
+    ].filter(Boolean),
+    alternates: { canonical: url },
+    robots: { index: true, follow: true },
+    openGraph: {
+      type: "article",
+      title: `${d.title} | QEncode`,
+      description,
+      url,
+    },
+    twitter: {
+      card: "summary",
+      title: `${d.title} | QEncode`,
+      description,
+    },
   };
 }
 
@@ -133,8 +274,58 @@ export default async function EntryPage({ params }) {
   const scriptName = v4 ? "generate_entry_v4.py" : "generate_entry_v3.py";
   const reqFile    = v4 ? "requirements-v4.txt" : "requirements-v3.txt";
 
+  const d = describeEntry(entry);
+  const rawJsonUrl = `${GITHUB_RAW}/${dbPath(id)}/${id}.json`;
+  const pageUrl = `${SITE_URL}/entry/${id}`;
+
+  // Each entry is a small open dataset — schema.org/Dataset makes it eligible for
+  // Google Dataset Search. Only facts present in the entry JSON are stated.
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      name: `${d.title} — QEncode benchmark entry`,
+      description: `${d.summary} Includes HF, MP2, CCSD and CCSD(T) energies, circuit statistics, tool versions and a SHA-256 provenance hash.`,
+      url: pageUrl,
+      identifier: entry.entry_id ?? id,
+      keywords: [
+        "VQE", "variational quantum eigensolver", "quantum chemistry", "benchmark",
+        d.formula, d.commonName, d.basis, d.mapping.long, d.ansatz.short,
+      ].filter(Boolean),
+      license: "https://www.apache.org/licenses/LICENSE-2.0",
+      isAccessibleForFree: true,
+      ...(entry.created_utc ? { dateCreated: entry.created_utc } : {}),
+      creator: { "@type": "Organization", name: "QEncode", url: SITE_URL },
+      includedInDataCatalog: {
+        "@type": "DataCatalog",
+        name: "QEncode Benchmark Leaderboard",
+        url: `${SITE_URL}/leaderboard`,
+      },
+      distribution: [
+        { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: rawJsonUrl },
+      ],
+      variableMeasured: [
+        "VQE ground-state energy (Hartree)",
+        "CASCI reference energy (Hartree)",
+        "Absolute VQE–CASCI energy gap (Hartree)",
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Leaderboard", item: `${SITE_URL}/leaderboard` },
+        { "@type": "ListItem", position: 2, name: d.title, item: pageUrl },
+      ],
+    },
+  ];
+
   return (
     <div className="container py-12 max-w-3xl">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+      />
       {/* Back */}
       <Link href="/leaderboard" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6">
         <ArrowLeft className="h-4 w-4" /> Back to leaderboard
@@ -143,11 +334,13 @@ export default async function EntryPage({ params }) {
       {/* Header */}
       <div className="mb-6">
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          <h1 className="text-2xl font-bold font-mono">{prob.name}</h1>
-          <span className="text-muted-foreground text-sm">/</span>
-          <span className="text-sm text-muted-foreground">{enc.mapping?.replace(/_/g, " ")}</span>
-          <span className="text-muted-foreground text-sm">/</span>
-          <span className="text-sm text-muted-foreground">{enc.ansatz_type?.replace(/_/g, " ")}</span>
+          <h1 className="text-2xl font-bold">
+            {d.formula}
+            {d.commonName && <span className="sr-only"> ({d.commonName})</span>}
+            <span className="text-muted-foreground font-normal text-base">
+              {" "}/ {d.mapping.short} / {d.ansatz.short}
+            </span>
+          </h1>
         </div>
         <div className="flex flex-wrap gap-2 mb-3">
           {certified ? (
@@ -169,6 +362,7 @@ export default async function EntryPage({ params }) {
             </Badge>
           )}
         </div>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-2">{d.summary}</p>
         <p className="text-xs font-mono text-muted-foreground break-all">{entry.entry_id}</p>
       </div>
 
