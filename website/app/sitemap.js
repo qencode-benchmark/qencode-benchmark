@@ -1,4 +1,28 @@
+import { loadLeaderboardData } from "@/lib/data";
+
 const BASE_URL = "https://www.qencode-benchmark.org";
+
+// Entry URLs come from the live leaderboard database, so render on request.
+export const dynamic = "force-dynamic";
+
+/** Every published entry (certified and research tier) linked from the leaderboard. */
+async function entryUrls() {
+  try {
+    const { acc = [], cost = [], balanced = [], research = [] } = await loadLeaderboardData();
+    const ids = new Set(
+      [...acc, ...cost, ...balanced, ...research].map((r) => r.entryId).filter(Boolean)
+    );
+    return [...ids].sort().map((id) => ({
+      url: `${BASE_URL}/entry/${id}`,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }));
+  } catch (err) {
+    // Never fail the sitemap because the database is unreachable.
+    console.error("[sitemap] could not load entries:", err?.message ?? err);
+    return [];
+  }
+}
 
 const blogPosts = [
   { slug: "verifying-the-whole-database",         date: "2026-09-03" },
@@ -15,7 +39,7 @@ const blogPosts = [
   { slug: "vqe-benchmarking-reproducibility",        date: "2026-04-18" },
 ];
 
-export default function sitemap() {
+export default async function sitemap() {
   const now = new Date();
 
   const staticRoutes = [
@@ -48,5 +72,6 @@ export default function sitemap() {
       priority,
     })),
     ...blogEntries,
+    ...(await entryUrls()),
   ];
 }
