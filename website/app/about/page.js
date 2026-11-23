@@ -13,7 +13,7 @@ const team = [
     name: "Prof. Ljupcho Pejov",
     role: "Academic Advisor",
     photo: "/team/ljupcho-pejov.jpg",
-    bio: "Professor of Physical Chemistry, Institute of Chemistry, Faculty of Natural Sciences and Mathematics, Ss. Cyril and Methodius University, Skopje, and University of Stavanger, Norway. Co-author of the QEncode benchmark paper (submitted to the Journal of Chemical Theory and Computation)."
+    bio: "Professor of Physical Chemistry, Institute of Chemistry, Faculty of Natural Sciences and Mathematics, Ss. Cyril and Methodius University, Skopje, and University of Stavanger, Norway. Co-author of the QEncode benchmark paper (submitted to The Journal of Physical Chemistry)."
   }
 ];
 
