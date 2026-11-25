@@ -54,6 +54,7 @@ async function entryUrls() {
 }
 
 const blogPosts = [
+  { slug: "why-10-mha-not-chemical-accuracy",       date: "2026-11-25" },
   { slug: "verifying-the-whole-database",         date: "2026-09-03" },
   { slug: "shot-allocation-neyman-trap",            date: "2026-08-27" },
   { slug: "vqe-reproducibility-scorecard",          date: "2026-07-28" },

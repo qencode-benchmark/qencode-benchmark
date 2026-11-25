@@ -54,7 +54,12 @@ export default function Post() {
             reaches 0.049 mHa with L-BFGS-B in an unpublished re-run (docs/SUITE_BALANCE.md).
             N₂ is certified by the hardware-efficient ansatz with L-BFGS-B at 4.40 mHa and by
             ADAPT-VQE at 8.83 mHa. 28 of the 54 entries reach chemical accuracy. The original
-            text is left unchanged.
+            text is left unchanged. A fuller and more careful answer to the same question
+            is in{" "}
+            <Link href="/blog/why-10-mha-not-chemical-accuracy" className="text-primary hover:underline">
+              Why We Certify at 10 mHa, and What Our Results Below 1.6 mHa Really Show
+            </Link>
+            .
           </p>
         </div>
 
