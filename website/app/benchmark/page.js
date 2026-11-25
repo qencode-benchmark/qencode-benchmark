@@ -205,7 +205,7 @@ const molecules = [
     casscf: true,
     tier: "certified",
     certifiedEntries: 4,
-    notes: "Cyclobutadiene, rectangular D2h. Antiaromatic 4n π system with substantial diradical character — the counterpart to benzene at identical [4,4] π treatment. CASSCF required. Certified via ADAPT-VQE with 2 operators.",
+    notes: "Cyclobutadiene, rectangular D2h. Antiaromatic 4n π system with substantial diradical character — the counterpart to benzene. The [4e,4o] CASSCF active space holds two π and two σ orbitals (not a pure π space). CASSCF required. Certified via ADAPT-VQE with 2 operators.",
   },
   {
     name: "Benzene",
@@ -219,7 +219,7 @@ const molecules = [
     casscf: true,
     tier: "certified",
     certifiedEntries: 2,
-    notes: "Aromatic π system. D6h symmetry. CASSCF required. First aromatic molecule certified.",
+    notes: "Aromatic π system, D6h symmetry. The [6e,6o] CASSCF active space holds four π and two σ orbitals (not a pure π space). CASSCF required. First aromatic molecule certified.",
   },
   {
     name: "H₈",
