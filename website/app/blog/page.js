@@ -15,6 +15,15 @@ export const metadata = {
 
 const posts = [
   {
+    slug: "why-10-mha-not-chemical-accuracy",
+    date: "2026-11-25",
+    readingTime: "7 min read",
+    title: "Why We Certify at 10 mHa, and What Our Results Below 1.6 mHa Really Show",
+    excerpt:
+      "28 of our 54 entries land below chemical accuracy (1.6 mHa). For seven of the eight molecules involved, Hartree–Fock already starts within 2.7 mHa of the exact answer, so the result says more about the molecule than the method. Formaldehyde is the one that earns it: 22.2 mHa down to 1.12 mHa. The hard molecules stop just under 10 mHa by design, so chemical accuracy there is not yet shown, and the bar stays at 10 mHa because some energies move by more than 1.6 mHa between machines.",
+    tags: ["chemical accuracy", "certification threshold", "Hartree–Fock", "correlation energy", "reproducibility"],
+  },
+  {
     slug: "verifying-the-whole-database",
     date: "2026-09-03",
     readingTime: "11 min read",
