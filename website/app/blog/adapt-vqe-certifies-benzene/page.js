@@ -193,8 +193,8 @@ export default function Post() {
         </p>
 
         <p>
-          The active space [6e, 6o] captures the full π manifold: three bonding π orbitals and
-          three antibonding π* orbitals. After CASSCF orbital optimization and Jordan-Wigner
+          The [6e, 6o] active space chosen by CASSCF holds four π orbitals and two σ orbitals
+          (an earlier version of this post said six π orbitals; see the correction below). After CASSCF orbital optimization and Jordan-Wigner
           encoding, this maps to 12 qubits and a Hamiltonian with 914 Pauli terms — the largest
           Hamiltonian in the QEncode suite to date.
         </p>
@@ -210,11 +210,21 @@ export default function Post() {
 
         <p>
           Benzene certified with just 10 operators — fewer than H₆ despite being a larger molecule.
-          This is not surprising in retrospect. Benzene's D6h symmetry, the highest of any molecule
-          in the suite, means the most impactful excitation operators are immediately obvious to the
-          gradient selector. The π system is perfectly symmetric, so a small number of operators
-          captures the dominant correlation. ADAPT exploits this directly; UCCSD cannot.
+          A small number of well-chosen operators captures the dominant correlation in this active
+          space, and the gradient selector finds them directly. ADAPT exploits this; UCCSD cannot.
         </p>
+
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 my-6 text-sm not-prose">
+          <p>
+            <strong>Correction, 25 November 2026.</strong> An earlier version of this post said the
+            [6e, 6o] active space holds benzene&rsquo;s six π orbitals. A symmetry analysis of the
+            published orbitals shows it holds four π and two σ orbitals. The CASSCF optimisation
+            settled on that set; the pure π active space is a different CASSCF solution, 6.9 mHa
+            lower in energy, which we will benchmark separately. The published gaps remain valid
+            for the problem that was solved, because the VQE energy and the exact reference use
+            the same active space.
+          </p>
+        </div>
 
         <p>
           The benchmark ran on a local machine using the{" "}

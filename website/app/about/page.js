@@ -48,7 +48,7 @@ const achievements = [
   },
   {
     label: "Benzene certified — first aromatic",
-    detail: "[6e,6o] π active space, D6h symmetry, CASSCF orbitals, certified at an 8.741 mHa best gap (hardware-efficient ansatz with L-BFGS-B; also certified via ADAPT-VQE at 9.540 mHa) — direct relevance to pharmaceutical chemistry."
+    detail: "[6e,6o] CASSCF active space (four π and two σ orbitals), D6h molecule, certified at an 8.741 mHa best gap (hardware-efficient ansatz with L-BFGS-B; also certified via ADAPT-VQE at 9.540 mHa) — direct relevance to pharmaceutical chemistry."
   },
   {
     label: "H₁₀ certified — largest system in the suite",

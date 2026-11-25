@@ -92,14 +92,13 @@ export default function Post() {
           to drug discovery. Benzene is the entry point to that class of chemistry.
         </p>
 
-        <h2 className="text-xl font-semibold mt-8 mb-3">The active space: 6 π electrons in 6 π orbitals</h2>
+        <h2 className="text-xl font-semibold mt-8 mb-3">The active space: 6 electrons in 6 orbitals</h2>
 
         <p>
-          In benzene's [6e, 6o] active space, we include the six π-type molecular orbitals —
-          three bonding (π₁, π₂, π₃) and three antibonding (π₄*, π₅*, π₆*) — along with the
-          six electrons that occupy them at equilibrium. This is the Hückel picture of benzene's
-          aromatic system: the electrons that make the ring stable, reactive, and chemically
-          interesting.
+          We set out to use a [6e, 6o] active space of the six π-type molecular orbitals —
+          three bonding and three antibonding, the Hückel picture of benzene's aromatic system.
+          The orbitals CASSCF actually settled on are different: four π orbitals and two σ
+          orbitals, with six electrons (see the correction below).
         </p>
 
         <p>
@@ -122,10 +121,22 @@ export default function Post() {
 
         <p>
           CASSCF pre-optimizes the orbital basis to minimize the energy of the active space
-          before any VQE evaluation runs. For benzene, this means the six π orbitals passed
-          to the circuit genuinely represent the aromatic system — they are the orbitals where
-          the interesting chemistry lives.
+          before any VQE evaluation runs. For benzene, CASSCF chose the six active orbitals that
+          lowered the energy most from its starting point; they turned out to be four π and two σ
+          orbitals rather than the pure π set.
         </p>
+
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/5 p-4 my-6 text-sm not-prose">
+          <p>
+            <strong>Correction, 25 November 2026.</strong> An earlier version of this post said the
+            [6e, 6o] active space holds benzene&rsquo;s six π orbitals. A symmetry analysis of the
+            published orbitals shows it holds four π and two σ orbitals. The CASSCF optimisation
+            settled on that set; the pure π active space is a different CASSCF solution, 6.9 mHa
+            lower in energy, which we will benchmark separately. The published gaps remain valid
+            for the problem that was solved, because the VQE energy and the exact reference use
+            the same active space.
+          </p>
+        </div>
 
         <h2 className="text-xl font-semibold mt-8 mb-3">The run: 12 → 9 qubits, 914 Pauli terms</h2>
 

@@ -248,7 +248,7 @@ export default function Post() {
 
         <p>
           The natural next step is benzene — the first aromatic molecule in the suite. Benzene
-          has a [6e, 6o] π active space with the same qubit count as N₂ but more complex
+          has a [6e, 6o] active space with the same qubit count as N₂ but more complex
           correlation structure from the conjugated ring. It also has direct relevance to
           pharmaceutical chemistry, where aromatic rings appear in nearly every drug molecule.
         </p>
